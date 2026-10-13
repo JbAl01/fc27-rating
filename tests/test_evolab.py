@@ -1,0 +1,405 @@
+"""Evo Lab: evo rules, live plan, simulations, cache, page and evo import."""
+import copy
+import random
+import sys
+import tempfile
+import unittest
+from datetime import date, datetime, timezone
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from fcrating import evo_import, evolab, evolab_report  # noqa: E402
+from fcrating.model import load_config, rank_by_position, rate  # noqa: E402
+from fcrating.schema import position_group  # noqa: E402
+from fcrating.sources import local  # noqa: E402
+
+CFG = load_config()
+LAB = evolab.load_lab_config()
+RULES = LAB["rules"]
+BASE = local.load_json(str(ROOT / "data" / "eksempel_spillere.json"))
+
+
+def card(name_part):
+    return copy.deepcopy(next(p for p in BASE if name_part in p.name))
+
+
+def low_striker(i=0, ovr=72, pace=(80, 82), ps=("Rapid",)):
+    """A low-rated striker built from Ekitiké with weaker numbers."""
+    p = card("Ekitiké")
+    p.name, p.id, p.rarity, p.status = f"Test Spiss {i}", str(9000 + i), "Rare", ""
+    p.ovr, p.alt_positions = ovr, []
+    p.attributes = {k: max(40, v - 12) for k, v in p.attributes.items()}
+    p.attributes["acceleration"], p.attributes["sprint_speed"] = pace
+    p.playstyles, p.playstyles_plus, p.playstyles_complete = list(ps), [], True
+    return p
+
+
+def evo(key, req=None, up=None, **kw):
+    return evolab.parse_evo(dict({"key": key, "name": key, "req": req or {}, "up": up or {}}, **kw))
+
+
+class RuleTests(unittest.TestCase):
+    def test_playstyle_cap_counts_what_the_card_has(self):
+        st = evolab.state_from(low_striker(ps=("Rapid", "Technical")))
+        st.ps, st.psp = ["Rapid", "Technical"], []
+        e = evo("cap3", up={"ps": [["Gamechanger", 3]]})
+        self.assertIn("Gamechanger", evolab.apply(e, st, RULES).ps)        # 2 PlayStyles -> gets the third
+        st.ps = ["Rapid", "Technical", "Trickster"]
+        self.assertNotIn("Gamechanger", evolab.apply(e, st, RULES).ps)     # already 3 -> nothing added
+
+    def test_option_comes_after_the_shared_levels(self):
+        st = evolab.state_from(low_striker())
+        st.attrs["reactions"] = 70.0
+        e = evo("fsa2", up={"stats": {"reactions": [2, 82]},
+                             "paths": [{"label": "B", "stats": {"reactions": [1, 83]}, "wf": [2, 4]}]})
+        st.wf = 2
+        after = evolab.apply(e, st, RULES, e["up"]["paths"][0])
+        self.assertEqual(after.attrs["reactions"], 73.0)   # +2 then +1, each up to its own max
+        self.assertEqual(after.wf, 4)                      # options can raise weak foot too
+
+    def test_two_roles_in_one_position(self):
+        e = evo("mgu", up={"roles": [["CDM", "Deep-Lying Playmaker", 1], ["CDM", "Box Crasher", 1]]})
+        st = evolab.state_from(low_striker())
+        roles = evolab.apply(e, st, RULES).roles["CDM"]
+        self.assertEqual(roles, {"Deep-Lying Playmaker": 1, "Box Crasher": 1})
+
+    def test_upgrade_never_lowers_and_stops_at_cap(self):
+        st = evolab.state_from(low_striker())
+        st.attrs["finishing"], st.attrs["volleys"] = 70.0, 90.0
+        e = evo("a", up={"stats": {"finishing": [7, 75], "volleys": [7, 80]}, "ovr": [40, 79]})
+        out = evolab.apply(e, st, RULES)
+        self.assertEqual(out.attrs["finishing"], 75)  # +7 would be 77, cap 75
+        self.assertEqual(out.attrs["volleys"], 90)    # already above the cap: unchanged
+        self.assertEqual(out.ovr, 79)                 # +40 = fill up to the cap
+        self.assertEqual(st.attrs["finishing"], 70)   # the original is untouched
+
+    def test_face_upgrade_raises_all_its_attributes(self):
+        st = evolab.state_from(low_striker(pace=(80, 80)))
+        out = evolab.apply(evo("f", up={"face": {"pace": [2, 84]}}), st, RULES)
+        self.assertEqual((out.attrs["acceleration"], out.attrs["sprint_speed"]), (82, 82))
+        st2 = evolab.state_from(low_striker(pace=(84, 84)))
+        self.assertEqual(evolab.apply(evo("f", up={"face": {"pace": [2, 84]}}), st2, RULES).attrs["acceleration"], 84)
+
+    def test_playstyle_plus_cap_is_three(self):
+        st = evolab.state_from(low_striker(ps=("Rapid", "Technical")))
+        st.psp = ["Finesse Shot", "Power Shot", "First Touch"]
+        out = evolab.apply(evo("p", up={"psp": ["Rapid"]}), st, RULES)
+        self.assertNotIn("Rapid", out.psp)  # FC 27: max 3 PlayStyle+
+        st.psp = ["Finesse Shot"]
+        out = evolab.apply(evo("p", up={"psp": ["Rapid"]}), st, RULES)
+        self.assertIn("Rapid", out.psp)
+        self.assertNotIn("Rapid", out.ps)  # upgraded from PlayStyle to PlayStyle+
+
+    def test_requirements(self):
+        st = evolab.state_from(low_striker(ovr=80, pace=(86, 86)))
+        self.assertEqual(evolab.check(evo("x", {"max_ovr": 79}), st, RULES)[0], "ovr")
+        self.assertEqual(evolab.check(evo("x", {"max_pace": 85}), st, RULES)[0], "pace")
+        self.assertEqual(evolab.check(evo("x", {"positions": ["CB"]}), st, RULES)[0], "pos")
+        st.positions = ("ST", "CAM")
+        self.assertEqual(evolab.check(evo("x", {"positions": ["ST"], "not_positions": ["CAM"]}), st, RULES)[0], "pos")
+        self.assertEqual(evolab.check(evo("x", {"max_ps": 0}), st, RULES)[0], "ps")
+        self.assertIsNone(evolab.check(evo("x", {"max_ovr": 80, "max_pace": 86}), st, RULES))
+        self.assertEqual(evolab.check(evo("x", {"requires_evo": "y"}), st, RULES)[0], "pre")
+
+    def test_fast_rater_matches_rate(self):
+        rng = random.Random(4)
+        players = [copy.deepcopy(p) for p in BASE] + [low_striker(i, ovr=60 + i) for i in range(8)]
+        uni = evolab.generate_universe(LAB, 1)
+        n = 0
+        for p in players:
+            g = position_group(p.position)
+            ev = evolab.Evaluator(p, g, CFG, RULES)
+            st = evolab.state_from(p)
+            for wave in uni:
+                for e in wave:
+                    if evolab.check(e, st, RULES) is None:
+                        st = evolab.apply(e, st, RULES, rng.choice(e["up"]["paths"]) if e["up"]["paths"] else None)
+                        full = rate(evolab.to_player(p, st, RULES, CFG), CFG, groups=[g])["by_group"].get(g, {}).get("igr", 0.0)
+                        self.assertAlmostEqual(ev.fast.igr(st), full, places=6, msg=p.name)
+                        n += 1
+        self.assertGreater(n, 20)
+
+    def test_inplace_simulation_matches_apply(self):
+        uni = evolab.generate_universe(LAB, 2)
+        for i in range(6):
+            st = evolab.state_from(low_striker(i, ovr=62 + 3 * i))
+            for evos, _ in evolab.card_waves({2: uni}, 2, st.positions):
+                for e in evos:
+                    if evolab._check_dyn(e, st, RULES) is None:
+                        path = e["up"]["paths"][0] if e["up"]["paths"] else None
+                        b = st.copy()
+                        evolab._apply_inplace(e, b, RULES, path)
+                        st = evolab.apply(e, st, RULES, path)
+                        self.assertEqual(st.key(), b.key())
+
+    def test_universes_are_deterministic(self):
+        a = evolab.generate_universe(LAB, 3)
+        b = evolab.generate_universe(LAB, 3)
+        self.assertEqual([[e["key"] for e in w] for w in a], [[e["key"] for e in w] for w in b])
+        self.assertEqual(a[0][0]["up"], b[0][0]["up"])
+
+
+class PlanTests(unittest.TestCase):
+    def plan(self, p, evos):
+        g = position_group(p.position)
+        ev = evolab.Evaluator(p, g, CFG, RULES)
+        return evolab.plan_live(p, evolab.state_from(p), evos, ev, RULES)
+
+    def test_restrictive_evo_first(self):
+        p = low_striker(ovr=78)
+        a = evo("A", {"max_ovr": 78, "positions": ["ST"]}, {"ovr": [2, 80], "stats": {"finishing": [6, 85]}})
+        b = evo("B", {"max_ovr": 80, "positions": ["ST"]}, {"ovr": [2, 82], "stats": {"positioning": [6, 85]}})
+        plan = self.plan(p, [b, a])
+        self.assertEqual([s["key"] for s in plan["steps"]], ["A", "B"])
+        self.assertTrue(any(t.startswith("A før B") for t in plan["tips"]))
+        self.assertEqual(plan["ovr"], 82)
+
+    def test_pace_trap(self):
+        # B raises the pace above A's limit, so A must come first
+        p = low_striker(ovr=74, pace=(80, 80))
+        a = evo("A", {"max_ovr": 79, "max_pace": 81, "positions": ["ST"]}, {"ovr": [3, 79], "stats": {"finishing": [8, 85]}})
+        b = evo("B", {"max_ovr": 79, "positions": ["ST"]}, {"stats": {"acceleration": [6, 90], "sprint_speed": [6, 90]}})
+        plan = self.plan(p, [b, a])
+        self.assertEqual([s["key"] for s in plan["steps"]], ["A", "B"])
+        self.assertIn("farten", plan["tips"][0])
+
+    def test_near_misses_and_unchecked(self):
+        p = low_striker(ovr=76)
+        near = evo("N", {"max_ovr": 75, "positions": ["ST"]}, {"ovr": [3, 79]})
+        far = evo("F", {"max_ovr": 70, "positions": ["ST"]}, {"ovr": [3, 79]})
+        age = evo("Y", {"max_ovr": 80, "positions": ["ST"]}, {"ovr": [3, 80]}, unchecked="født etter 2003")
+        plan = self.plan(p, [near, far, age])
+        self.assertEqual([n[0] for n in plan["near"]], ["N"])  # 1 over the limit, the 6-over one is not "nesten"
+        self.assertEqual(plan["chk"], [["Y", "født etter 2003"]])
+        self.assertEqual(plan["steps"], [])
+
+    def test_pathway_choice(self):
+        p = low_striker(ovr=74, ps=())
+        e = evo("P", {"max_ovr": 79}, {"paths": [{"label": "Jockey", "ps": ["Jockey"]}, {"label": "Finesse Shot", "ps": ["Finesse Shot"]}]})
+        plan = self.plan(p, [e])
+        self.assertEqual(plan["steps"][0]["path"], "Finesse Shot")  # the striker wants the shooting PlayStyle
+
+    def test_active_live_respects_dates_and_own_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            own = Path(d) / "mine.json"
+            own.write_text('{"evos": [{"key": "batigol_precision", "name": "Min Batigol", "req": {"max_ovr": 90}, "up": {}}]}',
+                           encoding="utf-8")
+            live, expired = evolab.active_live(LAB, date(2026, 10, 16), own)
+            names = {e["name"] for e in live}
+            self.assertIn("Min Batigol", names)            # your own file wins over the config
+            self.assertNotIn("Goal Guardian", names)       # could be started until 15 Oct 17:00 UTC
+            self.assertIn("Goal Guardian", expired)
+            live2, _ = evolab.active_live(LAB, date(2026, 10, 15), Path(d) / "none.json")
+            self.assertIn("Goal Guardian", {e["name"] for e in live2})
+            none = Path(d) / "none.json"
+            just_before = datetime(2026, 10, 15, 16, 59, tzinfo=timezone.utc)
+            at_close = datetime(2026, 10, 15, 17, 0, tzinfo=timezone.utc)
+            self.assertIn("Goal Guardian", {e["name"] for e in evolab.active_live(LAB, user_file=none, now=just_before)[0]})
+            self.assertIn("Goal Guardian", evolab.active_live(LAB, user_file=none, now=at_close)[1])
+
+    def test_live_evos_have_sources_and_close_times(self):
+        for raw in LAB["live"]:
+            self.assertTrue(raw.get("sources"), raw["key"])
+            self.assertIsNotNone(evolab.until_utc(raw["until"]), raw["key"])
+        self.assertEqual(evolab.until_utc("2026-10-17").hour, 17)  # a plain date means 18:00 in the UK
+
+
+class RunTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.players = [copy.deepcopy(p) for p in BASE] + [low_striker(i, ovr=58 + 2 * i) for i in range(10)]
+        cls.results = [rate(p, CFG) for p in cls.players]
+        rank_by_position(cls.results, CFG)
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.cache = Path(cls.tmp.name) / "cache.pkl"
+        cls.lab_run = evolab.run(cls.players, cls.results, CFG, cache_path=cls.cache, today=date(2026, 10, 11), quiet=True,
+                             user_file=Path(cls.tmp.name) / "none.json", used_file=Path(cls.tmp.name) / "none_used.json")
+        cls.summary = evolab.summarize(cls.lab_run, cls.players, cls.results, CFG)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_eligibility(self):
+        names = {r["name"]: r["uid"] for r in self.results}
+        self.assertNotIn(names["Kylian Mbappé"], self.summary)       # 91 OVR: too high
+        self.assertNotIn(names["Yuki Nagasato"], self.summary)       # Icon
+        self.assertIn(names["Test Spiss 0"], self.summary)
+
+    def test_summary_numbers(self):
+        hz = evolab.horizons(LAB)
+        for uid, s in self.summary.items():
+            self.assertEqual(len(s["h"]), len(hz))
+            for h in s["h"]:
+                self.assertLessEqual(h["p10"], h["p50"] + 1e-9)
+                self.assertLessEqual(h["p50"], h["p90"] + 1e-9)
+                self.assertTrue(0 <= h["op"] <= 100)
+            self.assertGreaterEqual(s["h"][0]["p50"], s["now"] - 0.05)  # evos never make a card worse
+            self.assertTrue(0 < s["dna"]["top"] <= 100)
+
+    def test_low_cards_gain_most(self):
+        low = [s for s in self.summary.values() if s["ovr"] and s["ovr"] <= 64]
+        high = [s for s in self.summary.values() if s["ovr"] and s["ovr"] >= 80]
+        self.assertGreater(min(x["gain"] for x in low), max(x["gain"] for x in high))
+
+    def test_cache_is_reused(self):
+        again = evolab.run(self.players, self.results, CFG, cache_path=self.cache, today=date(2026, 10, 11), quiet=True,
+                           user_file=Path(self.tmp.name) / "none.json")
+        for uid, e in self.lab_run["entries"].items():
+            self.assertEqual(again["entries"][uid]["mc"], e["mc"])
+        self.assertEqual(sum(e.get("calls", 0) for e in again["entries"].values()),
+                         sum(e.get("calls", 0) for e in self.lab_run["entries"].values()))  # nothing simulated again
+
+    def test_used_evos_are_left_out(self):
+        used = Path(self.tmp.name) / "brukt.json"
+        evolab.save_used(["batigol_precision", "Nine Duty"], used)
+        self.assertEqual(sorted(evolab.load_used(used)), ["batigol_precision", "nine duty"])
+        run2 = evolab.run(self.players, self.results, CFG, cache_path=Path(self.tmp.name) / "c2.pkl", today=date(2026, 10, 11),
+                          quiet=True, user_file=Path(self.tmp.name) / "none.json", used_file=used)
+        names = {e["name"] for e in run2["live"]}
+        self.assertNotIn("Batigol Precision", names)
+        self.assertNotIn("Nine Duty", names)
+        self.assertEqual(sorted(run2["used"]), ["Batigol Precision", "Nine Duty"])
+
+    def test_update_evos_and_page(self):
+        evos = {r["uid"]: {"eligible": False} for r in self.results}
+        evolab.update_evos(evos, self.summary, LAB)
+        uid = next(iter(self.summary))
+        self.assertEqual(evos[uid]["igr_after"], self.summary[uid]["h"][0]["p50"])   # the evos that are out now
+        page = evolab_report.render(self.summary, self.results, self.lab_run, CFG)
+        self.assertIn("Evo Lab", page)
+        self.assertIn("Test Spiss 0", page)
+        self.assertNotIn("__DATA__", page)
+        self.assertNotIn("__U__", page)
+        with tempfile.TemporaryDirectory() as d:
+            paths = evolab_report.write(self.summary, self.results, self.lab_run, CFG, d)
+            self.assertTrue(Path(paths["csv"]).read_text(encoding="utf-8-sig").startswith("name;version"))
+
+
+class ImportTests(unittest.TestCase):
+    def test_futbin_style(self):
+        text = """Batigol Precision
+Requirements
+Overall max 81
+Pace max 85
+Max PS 7
+Positions: ST
+Not: CB, CM, CAM
+Upgrades
+Overall +6 (max 83)
+Finishing +7 (max 83)
+Att. Position +7 (max 84)
+Skill Moves +1 (max 3)
+PlayStyle: Tiki Taka
+"""
+        e = evo_import.parse(text)
+        self.assertEqual(e["name"], "Batigol Precision")
+        self.assertEqual(e["req"]["max_ovr"], 81)
+        self.assertEqual(e["req"]["max_pace"], 85)
+        self.assertEqual(e["req"]["max_ps"], 7)
+        self.assertEqual(e["req"]["positions"], ["ST"])
+        self.assertEqual(e["req"]["not_positions"], ["CB", "CM", "CAM"])
+        self.assertEqual(e["up"]["ovr"], [6, 83])
+        self.assertEqual(e["up"]["stats"]["finishing"], [7, 83])
+        self.assertEqual(e["up"]["stats"]["positioning"], [7, 84])
+        self.assertEqual(e["up"]["sm"], [1, 3])
+        self.assertEqual(e["up"]["ps"], ["Tiki Taka"])
+
+    def test_futgg_style_split_lines(self):
+        text = """Nine Duty
+Overall
+Max. 74
+Pace
+Max. 85
+Max PS
+7
++40
+OVR
+79
++50
+Positioning
+80
++40
+Ball Control
+78
++2
+SM3
+Gamechanger 3
+Finesse Shot 4
+"""
+        e = evo_import.parse(text)
+        self.assertEqual(e["req"]["max_ovr"], 74)
+        self.assertEqual(e["req"]["max_pace"], 85)
+        self.assertEqual(e["up"]["ovr"], [40, 79])
+        self.assertEqual(e["up"]["stats"]["positioning"], [50, 80])
+        self.assertEqual(e["up"]["stats"]["ball_control"], [40, 78])
+        self.assertEqual(e["up"]["sm"], [2, 3])
+        # the number after a PlayStyle is EA's cap, not a PlayStyle+ marker
+        self.assertIn(["Gamechanger", 3], e["up"]["ps"])
+        self.assertIn(["Finesse Shot", 4], e["up"]["ps"])
+        self.assertNotIn("psp", e["up"])
+        e2 = evo_import.parse("Test\nOverall max 80\nPlayStyle+ Finesse Shot+")
+        self.assertEqual(e2["up"]["psp"], ["Finesse Shot"])
+        parsed = evolab.parse_evo(dict(e, key="x"))
+        self.assertIn(("Gamechanger", 3), parsed["up"]["ps"])
+
+    def test_face_stats_and_save(self):
+        e = evo_import.parse("Frontline Flair\nOverall max 83\nPace max 84\nPace +2 (max 84)\nDribbling +2 (max 84)\nOverall +1 (max 84)")
+        self.assertEqual(e["up"]["face"]["pace"], [2, 84])
+        self.assertEqual(e["up"]["face"]["dribbling"], [2, 84])  # with other main stats, Dribbling is the main stat
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "mine.json"
+            self.assertEqual(evo_import.save(e, path, until="2026-10-18"), 1)
+            self.assertEqual(evo_import.save(e, path), 1)  # same key replaces
+            live, _ = evolab.active_live(LAB, date(2026, 10, 12), path)
+            self.assertIn("Frontline Flair", [x["name"] for x in live])
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+class PageMathTests(unittest.TestCase):
+    """The page carries the same maths as Python; check the inputs it gets and the Python side of it."""
+
+    def test_detail_matches_rate_and_runs(self):
+        from fcrating import runs
+        rc = CFG["weights"]["run_ai"]
+        w = dict(evolab._clean(rc["weights"]))
+        for p in [copy.deepcopy(x) for x in BASE] + [low_striker(i, ovr=60 + 2 * i) for i in range(6)]:
+            g = position_group(p.position)
+            st = evolab.state_from(p)
+            d = evolab.FastRater(p, g, CFG).detail(st)
+            r = rate(evolab.to_player(p, st, RULES, CFG), CFG, groups=[g])
+            vil, eff = runs.sub_scores(runs.features(st.attrs, p.work_rate_att, rc, p.height_cm), w, rc)
+            self.assertEqual(d["igr"], r["by_group"][g]["igr"])
+            self.assertEqual(d["feel"], r["feel"])
+            self.assertEqual(d["acc"], r["accelerate"])
+            self.assertEqual((d["vil"], d["eff"]), (vil, eff))
+            self.assertEqual(d["run"], runs.card_run_score(st.attrs, p.work_rate_att, p.height_cm, CFG))
+
+    def test_page_payload(self):
+        import json as _json
+        players = [copy.deepcopy(p) for p in BASE] + [low_striker(i, ovr=58 + 2 * i) for i in range(10)]
+        results = [rate(p, CFG) for p in players]
+        rank_by_position(results, CFG)
+        with tempfile.TemporaryDirectory() as d:
+            run = evolab.run(players, results, CFG, cache_path=Path(d) / "c.pkl", today=date(2026, 10, 11), quiet=True,
+                             user_file=Path(d) / "none.json")
+            summ = evolab.summarize(run, players, results, CFG)
+            page = evolab_report.render(summ, results, run, CFG, players)
+        meta = _json.loads(page[page.index(",META=") + 6:page.index(",STR=")])
+        rows = _json.loads(page[page.index("const RAW=") + 10:page.index(",META=")])
+        self.assertEqual(len(rows), len(summ))
+        self.assertIn("ST", meta["rate"]["G"])
+        self.assertTrue(meta["evos"])
+        for r in rows:
+            self.assertEqual(len(r), 35)
+            for ei, pi in r[19][0][0]:  # the plan points at live evos and their pathways
+                self.assertLess(ei, len(meta["evos"]))
+                self.assertLess(pi, max(1, len(meta["evos"][ei][8][8])))
+        st0 = next(s for s in summ.values() if s.get("runcard"))
+        self.assertEqual(len(st0["runs"]["end"]), 3)
+        self.assertEqual(len(st0["cats"]["end"]), len(meta["cats"]))

@@ -1,0 +1,51 @@
+Lionel
+Messi
+Position
+RW
+Weak Foot
+Skill Moves
+Preferred Foot
+Left
+Height
+169cm / 5'7"
+Weight
+67kg / 148lb
+Alt Positions
+ST
+CAM
+RM
+  • Pace78
+  • Acceleration84
+  • Sprint Speed73
+  • Shooting85
+  • Positioning86
+  • Finishing84
+  • Shot Power84
+  • Long Shots87
+  • Volleys89
+  • Penalties75
+  • Passing85
+  • Vision87
+  • Crossing80
+  • Free Kick Accuracy93
+  • Short Passing85
+  • Long Passing84
+  • Curve90
+  • Dribbling90
+  • Agility84
+  • Balance89
+  • Reactions80
+  • Ball Control94
+  • Dribbling89
+  • Composure92
+  • Defending33
+  • Interceptions40
+  • Heading Accuracy60
+  • Def Awareness20
+  • Standing Tackle35
+  • Sliding Tackle24
+  • Physicality64
+  • Jumping70
+  • Stamina70
+  • Strength68
+  • Aggression44

@@ -1,0 +1,8 @@
+PACE 83
+Acceleration 82
+Sprint Speed 83
+SHOOTING 5▲ 93
+Att. Position 6▲ 96
+Finishing 9▲ 99
+Agility 6▲ 96
+Ball Control 92

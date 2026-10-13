@@ -1,0 +1,449 @@
+{
+  "_info": "Vekter for din egen ingame-rating (IGR). Alle tall kan endres. Vekter i hver liste summeres til 1.0. Felter som starter med _ er bare forklaringer.",
+  "_game": "Satt opp for FC 27 etter kildegjennomgangen 10.10.2026 (EA Pitch Notes FC 24-27, FC 27 Closed Beta Feedback Update 03.09.2026, NickRTFM, fifauteam m.fl.). Grenser og PlayStyle-effekter endres hvert år og av og til midt i sesongen, så sjekk Title Update-notatene.",
+
+  "feel": {
+    "_info": "Følelse = hvor kvikk og responsiv spilleren føles når du styrer ham. Agility styrer vendinger, Reactions hvor fort han reagerer, Ball Control førstetouch, Balance hvordan han tåler kontakt, Acceleration de første stegene.",
+    "attributes": {
+      "agility": 0.22,
+      "reactions": 0.18,
+      "ball_control": 0.15,
+      "balance": 0.17,
+      "acceleration": 0.16,
+      "dribbling": 0.06,
+      "composure": 0.06
+    },
+    "_attributes_info": "FC 27: Balance og Acceleration teller mer. EA har lagt til off-balance dribbling (Balance, Agility, Dribbling) og flyttet vekt fra Quick Step og AcceleRATE over på Acceleration.",
+    "height": {
+      "_info": "Høye spillere har lengre animasjoner og føles tyngre (EA justerte animasjonsfarten etter høyde i FC 26). Faktisk høyde i cm brukes, også for kvinner: EAs kjønnsdelte grenser gjelder bare AcceleRATE, mens animasjonene etter alt å dømme bruker faktisk høyde (NickRTFM, FC 27: små spillere er mye mer responsive). Sett female_offset_cm til 17 for den gamle måten.",
+      "neutral_cm": 180,
+      "short_cm": 175,
+      "penalty_per_cm_above": 0.28,
+      "bonus_per_cm_below": 0.14,
+      "min_adjust": -4.0,
+      "max_adjust": 2.0,
+      "_fc27_info": "Mindre utslag enn før: EA justerte animasjonsfarten etter høyde for å jevne ut høye og lave spillere (FC 26 Gameplay Deep Dive), og de mest brukte kortene blant proffene i FC 27 er både små og høye (FUT.GG 'What the Pros Use', okt. 2026).",
+      "female_offset_cm": 0
+    },
+    "accelerate": {
+      "_info": "FC 27: EA har redusert forskjellen mellom AcceleRATE-typene ('closer together'). Halvert fra FC 26-nivå.",
+      "Explosive": 0.75,
+      "Controlled": 0.0,
+      "Lengthy": -0.75
+    },
+    "body_type": {
+      "_info": "Brukes bare når kilden oppgir kroppstype (f.eks. 'Lean Tall'). Navngitte unike kroppstyper gir 0.",
+      "lean": 0.5,
+      "stocky": -0.5
+    }
+  },
+
+  "pace": {
+    "_info": "Effektiv fart. Acceleration teller mer enn i EAs PAC-tall (45/55): i FC 27 er Quick Step svekket 'for å gi Acceleration mer betydning', og manuelt utløste løp har begrenset lengde, så toppfart over lange avstander betyr mindre.",
+    "acceleration_share": {
+      "default": 0.60,
+      "CB": 0.50,
+      "FB": 0.55
+    },
+    "accelerate": {
+      "_info": "Halvert i FC 27 (AcceleRATE-typene er nærmere hverandre, og Lengthy har mistet noe av fordelen på lange løp).",
+      "Explosive": 0.5,
+      "Controlled": 0.0,
+      "Lengthy": -0.25
+    }
+  },
+
+  "skill": {
+    "_info": "Posisjonsferdigheter per posisjonsgruppe.",
+    "ST":  {"finishing": 0.20, "positioning": 0.16, "shot_power": 0.10, "composure": 0.10, "reactions": 0.10, "ball_control": 0.08, "dribbling": 0.06, "long_shots": 0.05, "volleys": 0.03, "heading_accuracy": 0.04, "strength": 0.04, "short_passing": 0.04},
+    "W":   {"dribbling": 0.16, "ball_control": 0.12, "finishing": 0.12, "positioning": 0.08, "short_passing": 0.10, "curve": 0.07, "crossing": 0.06, "long_shots": 0.07, "vision": 0.06, "reactions": 0.08, "composure": 0.08},
+    "CAM": {"short_passing": 0.16, "vision": 0.14, "ball_control": 0.12, "dribbling": 0.10, "long_shots": 0.08, "finishing": 0.08, "positioning": 0.08, "composure": 0.10, "reactions": 0.08, "curve": 0.03, "long_passing": 0.03},
+    "CM":  {"short_passing": 0.18, "long_passing": 0.10, "vision": 0.12, "ball_control": 0.10, "reactions": 0.08, "composure": 0.10, "interceptions": 0.08, "standing_tackle": 0.06, "def_awareness": 0.04, "stamina": 0.08, "long_shots": 0.03, "dribbling": 0.03},
+    "CDM": {"interceptions": 0.16, "def_awareness": 0.14, "standing_tackle": 0.14, "short_passing": 0.12, "long_passing": 0.06, "vision": 0.04, "reactions": 0.08, "composure": 0.06, "strength": 0.07, "stamina": 0.07, "ball_control": 0.04, "aggression": 0.02},
+    "FB":  {"def_awareness": 0.14, "standing_tackle": 0.14, "interceptions": 0.12, "stamina": 0.10, "short_passing": 0.10, "crossing": 0.08, "reactions": 0.08, "ball_control": 0.06, "sliding_tackle": 0.04, "strength": 0.04, "composure": 0.05, "dribbling": 0.05},
+    "CB":  {"def_awareness": 0.18, "standing_tackle": 0.16, "interceptions": 0.14, "strength": 0.10, "jumping": 0.06, "heading_accuracy": 0.07, "reactions": 0.08, "composure": 0.06, "sliding_tackle": 0.05, "short_passing": 0.06, "aggression": 0.04},
+    "GK":  {"gk_diving": 0.20, "gk_reflexes": 0.25, "gk_handling": 0.15, "gk_positioning": 0.20, "gk_kicking": 0.10, "gk_speed": 0.10}
+  },
+
+  "blend": {
+    "_info": "Hvor mye følelse, fart og posisjonsferdigheter teller i hver posisjon.",
+    "ST":  {"feel": 0.26, "pace": 0.15, "skill": 0.40, "run": 0.12, "stop": 0.07},
+    "W":   {"feel": 0.28, "pace": 0.19, "skill": 0.36, "run": 0.10, "stop": 0.07},
+    "CAM": {"feel": 0.30, "pace": 0.11, "skill": 0.49, "run": 0.06, "stop": 0.04},
+    "_run_info": "run = Løps-AI (bevegelse uten ball). Teller mest for spiss, så kant, litt for CAM. Tatt fra de andre delene i samme forhold.",
+    "_stop_info": "stop = Vanskelig å stoppe (se hard_to_stop). Tatt mest fra fart, fordi Sprint Speed og Acceleration allerede er med i stopp-tallet.",
+    "CM":  {"feel": 0.26, "pace": 0.12, "skill": 0.62},
+    "CDM": {"feel": 0.20, "pace": 0.14, "skill": 0.66},
+    "FB":  {"feel": 0.16, "pace": 0.30, "skill": 0.54},
+    "CB":  {"feel": 0.15, "pace": 0.24, "skill": 0.61},
+    "_defenders_info": "FC 27: mindre automatisk AI-forsvar og raskere manuell jockey, så attributtene til forsvareren du styrer (Agility, Acceleration) betyr mer for CB/CDM. For backer brukes farten mest til å ta igjen terreng (EA), så følelse teller litt mindre der.",
+    "GK":  {"feel": 0.00, "pace": 0.00, "skill": 1.00}
+  },
+
+  "gk_height": {
+    "_info": "Keepere: høyde hjelper på rekkevidde.",
+    "female_offset_cm": 17,
+    "_female_offset_info": "Usikkert om spillet bruker faktisk høyde for keeperrekkevidde. Sett 0 for faktisk høyde.",
+    "neutral_cm": 188,
+    "bonus_per_cm_above": 0.3,
+    "penalty_per_cm_below": 0.4,
+    "min_adjust": -4.0,
+    "max_adjust": 3.0
+  },
+
+  "weak_foot": {
+    "points": {"1": -4.0, "2": -2.5, "3": -1.0, "4": 0.5, "5": 1.5},
+    "group_factor": {"ST": 1.0, "W": 1.0, "CAM": 1.0, "CM": 0.8, "CDM": 0.5, "FB": 0.4, "CB": 0.3, "GK": 0.0}
+  },
+
+  "skill_moves": {
+    "points": {"1": -2.0, "2": -1.5, "3": 0.0, "4": 0.5, "5": 1.0},
+    "_points_info": "Mange skill moves krever 3-5 stjerner (FC 26+), så under 3 straffes mer.",
+    "group_factor": {"ST": 0.8, "W": 1.0, "CAM": 0.9, "CM": 0.5, "CDM": 0.2, "FB": 0.3, "CB": 0.0, "GK": 0.0}
+  },
+
+  "roles": {
+    "_info": "Bonus for rollefamiliaritet i beste rolle for posisjonen. ++ = 2, + = 1.",
+    "points": {"0": 0.0, "1": 1.0, "2": 2.0},
+    "group_positions": {
+      "ST": ["ST", "CF"],
+      "W": ["LW", "RW", "LM", "RM"],
+      "CAM": ["CAM"],
+      "CM": ["CM"],
+      "CDM": ["CDM"],
+      "FB": ["LB", "RB", "LWB", "RWB"],
+      "CB": ["CB"],
+      "GK": ["GK"]
+    }
+  },
+
+  "tiers": {
+    "_info": "Bokstavkarakter ut fra IGR. Brukes bare når det er for få spillere i en posisjon til å rangere mot hverandre.",
+    "S": 95, "A": 90, "B": 85, "C": 80, "D": 0
+  },
+
+  "position_tiers": {
+    "_info": "Bokstavkarakter ut fra plassering blant spillere i samme posisjon. Tallene er 'topp X %': S = topp 1 %, A = topp 5 % osv. Krever minst min_pool_size spillere i posisjonen, ellers brukes 'tiers' over.",
+    "min_pool_size": 30,
+    "S": 1, "A": 5, "B": 15, "C": 35, "D": 100
+  },
+
+  "off_balance": {
+    "_info": "FC 27 (EA): off-balance dribbling lar driblere holde kontrollen når de blir dyttet eller taklet skulder mot skulder, styrt av Balance, Agility og Dribbling. Verdien er snittet av de tre (som EasySBC viser per kort). Kort med snitt fra 75 kommer inn i mekanikken, og jo høyere snitt, jo bedre. Den slår bare inn ved kontakt, så bonusen er moderat.",
+    "start": 75, "per_point": 0.12, "max": 1.8,
+    "group_factor": {"ST": 0.8, "W": 1.0, "CAM": 0.9, "CM": 0.5, "CDM": 0.2, "FB": 0.3, "CB": 0.0, "GK": 0.0}
+  },
+
+  "stand_tackle_tiers": {
+    "_info": "EA (FC 26): Standing Tackle under 71 gir bare enkle taklingsanimasjoner, 71-84 de fleste, 85+ alle. Poeng per nivå, ganget med posisjonsfaktor.",
+    "tiers": [[0, -1.5], [71, 0.0], [85, 1.0]],
+    "group_factor": {"ST": 0.0, "W": 0.0, "CAM": 0.0, "CM": 0.5, "CDM": 1.0, "FB": 0.8, "CB": 1.0, "GK": 0.0}
+  },
+
+  "accelerate_rules": {
+    "_info": "FC 27-terskler. Explosive: fifauteam/FUT.GG. Lengthy for kvinner (172 cm): EAs Closed Beta-notater. Lengthy for menn (185 cm): fifauteam og FC 26 TU 1.4.0, ikke gjentatt av EA for FC 27 (ProClubsHQ sier 183). Sjekk typen i Team Management i spillet. Typen beregnes etter kjemistil, men høyden kan ikke endres.",
+    "explosive": {
+      "max_height_cm": {"male": 182, "female": 162},
+      "min_agility": 65,
+      "min_agility_minus_strength": 10,
+      "min_acceleration": 80
+    },
+    "lengthy": {
+      "min_height_cm": {"male": 185, "female": 172},
+      "min_strength": 65,
+      "min_strength_minus_agility": 4,
+      "min_acceleration": 40
+    }
+  },
+
+  "off_balance_dribbling": {
+    "_info": "Off-Balance Dribbling = snittet av Agility, Balance og Dribbling, slik EasySBC regner det for hvert kort (treffer Nagasato: 90/83/87 gir 87). Vektene deles på summen, så like vekter gir snittet. Står verdien i kortdataene (f.eks. limt inn fra EasySBC), brukes den.",
+    "weights": {"agility": 1, "balance": 1, "dribbling": 1}
+  },
+
+  "face_stats": {
+    "_info": "Hvordan EA regner de seks hovedtallene fra attributtene (fifauteam). Sjekket mot Bellinghams TOTW-kort: alle seks treffer. Brukes til å lage kampanjekort fra basekort.",
+    "pac": {"acceleration": 0.45, "sprint_speed": 0.55},
+    "sho": {"finishing": 0.45, "positioning": 0.05, "shot_power": 0.20, "long_shots": 0.20, "volleys": 0.05, "penalties": 0.05},
+    "pas": {"short_passing": 0.35, "vision": 0.20, "crossing": 0.20, "long_passing": 0.15, "curve": 0.05, "fk_accuracy": 0.05},
+    "dri": {"dribbling": 0.50, "ball_control": 0.35, "agility": 0.10, "balance": 0.05},
+    "def": {"def_awareness": 0.30, "standing_tackle": 0.30, "interceptions": 0.20, "heading_accuracy": 0.10, "sliding_tackle": 0.10},
+    "phy": {"strength": 0.50, "stamina": 0.25, "aggression": 0.20, "jumping": 0.05}
+  },
+
+  "promo": {
+    "_info": "Kampanjekort som bare har hovedtall (f.eks. lekkasjer) lages fra basekortet. Reactions og Composure er ikke med i noe hovedtall, så de økes med OVR-økningen ganger denne faktoren.",
+    "reactions_composure_per_ovr": 1.0,
+    "special_items_role_level": 2
+  },
+
+  "evo": {
+    "_info": "Evo-potensial: hvor god spilleren blir etter evoer, og hvor han da havner blant dagens kort i posisjonen. Bare kort som kan evolueres er med.",
+    "max_ovr": 84,
+    "_max_ovr_info": "Kort over denne OVR-en regnes som for høye for de fleste evoer.",
+    "excluded_versions": ["Icon", "Hero", "Hall of FUT"],
+    "exclude_leaks": true,
+    "include_gk": false,
+    "target_ovr": 88,
+    "points_per_ovr": 1.0,
+    "max_boost": 12,
+    "_boost_info": "Hver attributt øker med (target_ovr - OVR) × points_per_ovr, maks max_boost. En 74-er får +12, en 84-er +4. Lavt rangerte kort får altså mest.",
+    "attribute_cap": 95,
+    "attribute_boosts": {},
+    "_attribute_boosts_info": "Fyll inn f.eks. {\"acceleration\": 5, \"agility\": 4} for å etterligne én bestemt evo. Da brukes bare disse økningene.",
+    "weak_foot_min": 4,
+    "skill_moves_min": 4,
+    "add_playstyles": []
+  },
+
+  "explain": {
+    "_info": "Forklaringen av hvorfor et kort er høyt: styrker og svakheter sammenlignet med snittet i posisjonen.",
+    "strength_z": 0.6,
+    "weakness_z": -0.6,
+    "max_strengths": 4,
+    "max_weaknesses": 3,
+    "min_pool_size": 10,
+    "_min_pool_size_info": "Prosenter og styrker/svakheter vises bare når minst så mange kort kan spille posisjonen."
+  },
+
+  "run_ai": {
+    "_info": "Løps-AI: hvor godt spilleren beveger seg uten ball (spiss, kant, CAM). Vektet snitt av tallene under, på samme skala som OVR. Rollen er ikke med, fordi nesten alle kort kan få ++. Vektene er et startpunkt: kjør 'kalibrer' med løp du har talt selv, så lages config/run_ai_kalibrert.json som brukes i stedet.",
+    "groups": ["ST", "W", "CAM"],
+    "weights": {
+      "positioning": 0.27, "reactions": 0.10, "arbeidsrate": 0.0,
+      "acceleration": 0.17, "sprint_speed": 0.09, "agility": 0.09, "balance": 0.05, "strength": 0.04,
+      "kvikk_sterk": 0.06, "kort_kropp": 0.03, "stamina": 0.05, "ball_control": 0.0, "composure": 0.0,
+      "balanse_sterk": 0.0
+    },
+    "decision_features": ["positioning", "reactions", "arbeidsrate"],
+    "_decision_info": "Løps-AI deles i to. Løpsvilje = tallene i decision_features (om spilleren tar løpet). Løpseffekt = resten (om løpet skaper avstand til forsvareren: fart, smidighet, kropp, høyde og Stamina).",
+    "_fc27_info": "Justert etter FC 27 Gameplay Deep Dive (29.07.2026): løpene er nå korte og buede (Attacking Spatial Awareness, Triggered Curved Runs, manuelle løp stopper etter en viss distanse), så Acceleration (de første 5-15 m) og Agility (svingen) teller mer, Sprint Speed er sekundær. Ball Control og Composure er tatt ut: de avgjør hva som skjer etter at spilleren er fri (mottak), ikke om løpet gir avstand, og de teller allerede i følelsen og ferdighetene. Høyden teller mindre fordi EA jevnet ut animasjonsfarten mellom høye og lave spillere (FC 26). Stamina teller mer: AI-styrte løpere mister Acceleration og Sprint Speed når de er slitne, spilleren du styrer gjør ikke det (EA, FC 26).",
+    "short_body": {
+      "_info": "kort_kropp: faktisk høyde gjort om til et tall på attributtskala. 175 cm = 80, ett poeng per cm (165 cm = 90, 190 cm = 65). Hypotese: små spillere kommer oftere fri på samme løp.",
+      "ref_cm": 175, "ref_value": 80, "per_cm": 1.0, "min": 50, "max": 95
+    },
+    "_weights_info": "kvikk_sterk = laveste av Agility og Strength (høy bare når spilleren er både kvikk og sterk, en hypotese). balanse_sterk = laveste av Balance og Strength, alternativ hypotese med vekt 0 som 'kalibrer' tester. stamina: fra FC 26 mister AI-styrte spillere fart når de blir slitne, mens spilleren du styrer ikke påvirkes, så Stamina teller for løpene, ikke for følelsen. arbeidsrate = den gamle angreps-arbeidsraten: EA fjernet den i FC 25 ('no longer present'), derfor vekt 0. 'kalibrer' viser fortsatt om den henger sammen med løpene dine.",
+    "_roles_info": "Roller er ikke med i tallet. EA bekrefter for FC 27 at rollen bestemmer hvilke løp spilleren kan ta, og at familiarity (+/++) bestemmer hvor ivrig de tas (Closed Beta Feedback Update, 03.09.2026). Men alle spesialkort i FC 27 har Role++ i alle roller, og basekort får det med Roles++-evoen for 7 500 mynter. Løps-AI regner derfor som om kortet har ++, og Evo Lab tar Roles++ med i planen for kort som mangler det. Gi spillerne samme rolle når du tester.",
+    "work_rate_values": {"H": 85, "M": 70, "L": 55},
+    "constant_share": 0.9,
+    "_constant_share_info": "Har så stor andel av kortene samme arbeidsrate (f.eks. M/M), tas den ut av Løps-AI, fordi den da ikke skiller kortene.",
+    "gem": {
+      "_info": "Skjult perle: løper mye bedre enn andre kort med samme OVR (±ovr_window) i posisjonen. Kortet må være blant de max_res_top_pct % som slår snittet for sin OVR mest, minst min_res poeng over snittet, og selv være i topp max_run_top_pct % på Løps-AI. Det må finnes minst min_same_ovr kort med samme OVR å sammenligne med.",
+      "min_pool_size": 30, "ovr_window": 1, "min_same_ovr": 8, "max_res_top_pct": 5, "min_res": 2.0, "max_run_top_pct": 40
+    },
+    "body": {
+      "_info": "Kroppsprofil ut fra faktisk høyde: Kvikk og sterk, Liten og kvikk, Stor og tung eller Balansert.",
+      "quick": 80, "strong": 80, "small_cm": 175, "big_cm": 188, "heavy_gap": 15
+    },
+    "similar": {
+      "_info": "Hvilke tall som teller når kort med lignende løpsprofil finnes, og hvor mye.",
+      "features": {
+        "positioning": 1.5, "acceleration": 1.2, "sprint_speed": 1.0, "reactions": 0.8, "agility": 1.0,
+        "balance": 0.8, "strength": 0.8, "ball_control": 0.6, "composure": 0.5, "height_cm": 0.8, "stamina": 0.4, "arbeidsrate": 0.5
+      }
+    },
+    "calibration": {
+      "_info": "ridge demper store utslag. prior_cards: med så mange kort teller dine data og startvektene like mye.",
+      "ridge": 1.0, "prior_cards": 10, "min_gain": 0.02,
+      "_min_gain_info": "Vektene endres bare når de nye treffer rekkefølgen på kort de ikke ble tilpasset til minst så mye bedre enn dagens."
+    }
+  },
+
+  "hard_to_stop": {
+    "_info": "Vanskelig å stoppe: hvor vanskelig kortet er å stoppe når det først er i gang, med ball (bære ballen i fart) og uten ball (på løp mot bakrommet). Bygger på det som har holdt i mange FIFA/FC-år: Strength vinner skulderdueller og skjermer, Balance holder spilleren på beina, rask og sterk (laveste av Sprint Speed og Strength) var den vanskeligste kombinasjonen å stoppe i alle meta-år, Lengthy tar igjen alle over lang avstand (AcceleRATE fra FIFA 23), og Rapid, Press Proven, Enforcer og Bruiser (EA, FC 24-27). Vektene er startverdier.",
+    "ball": {"sprint_speed": 0.18, "acceleration": 0.10, "strength": 0.16, "balance": 0.14, "ball_control": 0.12, "dribbling": 0.12, "agility": 0.08, "reactions": 0.05, "rask_sterk": 0.05},
+    "run": {"sprint_speed": 0.32, "acceleration": 0.16, "strength": 0.20, "balance": 0.14, "stamina": 0.06, "rask_sterk": 0.12},
+    "ball_share": 0.5,
+    "accelerate_run": {"Explosive": 0.4, "Controlled": 0.0, "Lengthy": 1.0},
+    "_accelerate_info": "Bare uten ball: et langt løp er der Lengthy tar igjen alle. Halvert fra tidligere år fordi typene er 'closer together' i FC 27.",
+    "playstyles_ball": {"Rapid": [1.5, 3.0], "Press Proven": [1.0, 2.0], "Enforcer": [1.0, 2.0], "Technical": [0.5, 1.0], "Bruiser": [0.4, 0.8]},
+    "playstyles_run": {"Bruiser": [0.4, 0.8], "Quick Step": [0.4, 0.8]},
+    "_playstyles_info": "[PS, PS+] i poeng på attributtskalaen. Rapid: holder toppfarten lenger og færre feil i sprint-dribling. Press Proven/Enforcer: skjermer bedre og holder unna sterkere spillere. Bruiser: mer styrke i fysiske dueller (svekket i FC 27). Quick Step: raskere eksplosiv sprint (svekket i FC 27).",
+    "ps_cap_ball": 4.0,
+    "ps_cap_run": 1.5
+  },
+
+  "profile": {
+    "_info": "Spillerprofil: åtte kategorier på attributtskala, pluss Løps-IQ, Løpseffekt og Vanskelig å stoppe som bare brukes til filter og rangering (style: false). Rangering og kombinasjoner bruker plassering blant alle som kan spille posisjonen. Stil-merkelappen og «passer hvis du liker» bruker kategoriene der kortet er topp style_top_pct % blant kort i samme posisjon med omtrent samme OVR (±style_ovr_window, utvides til minst min_pool_size kort), så også lavere ratede kort får en stil.",
+    "style_top_pct": 25,
+    "max_words": 3,
+    "min_pool_size": 30,
+    "default_noun": "spiller",
+    "categories": {
+      "feel": {
+        "label": "Følelse",
+        "source": "feel",
+        "word": "kvikk",
+        "kind": "adj",
+        "like": "kjappe vendinger og responsiv kontroll",
+        "aliases": [
+          "folelse",
+          "feel"
+        ]
+      },
+      "pace": {
+        "label": "Fart",
+        "weights": {
+          "acceleration": 0.6,
+          "sprint_speed": 0.4
+        },
+        "word": "rask",
+        "kind": "adj",
+        "like": "å løpe fra forsvarere",
+        "aliases": [
+          "pace"
+        ]
+      },
+      "run": {
+        "label": "Løp",
+        "source": "run",
+        "word": "løper",
+        "kind": "noun",
+        "like": "løp bak backlinja uten at du trykker",
+        "aliases": [
+          "lop",
+          "løps-ai",
+          "lops-ai",
+          "runs"
+        ]
+      },
+      "vilje": {
+        "label": "Løps-IQ",
+        "source": "run_decision",
+        "style": false,
+        "_info": "Løps-IQ (het Løpsvilje før): Att. Position og Reactions, altså hvor og når spilleren løper. Hvor ofte styres av rollen og ++ (EA, FC 25: familiaritet gir bedre typer løp og timing). Bare for filter og rangering. Teller ikke i stil-merkelappen, siden Løp gjør det.",
+        "aliases": [
+          "iq",
+          "løps-iq",
+          "lops-iq",
+          "løpsiq",
+          "lopsiq",
+          "vilje",
+          "løpsvilje",
+          "lopsvilje",
+          "decision"
+        ]
+      },
+      "effekt": {
+        "label": "Løpseffekt",
+        "source": "run_execution",
+        "style": false,
+        "_info": "Bare for filter og rangering (Løps-AI-panelet viser den allerede). Teller ikke i stil-merkelappen, siden Løp gjør det.",
+        "aliases": [
+          "effekt",
+          "lopseffekt",
+          "execution"
+        ]
+      },
+      "stopp": {
+        "label": "Vanskelig å stoppe",
+        "source": "stop",
+        "style": false,
+        "_info": "Snittet av med ball og uten ball (se hard_to_stop). Bare for filter og rangering, ikke i stil-merkelappen (Fart og Fysikk dekker mye av det samme).",
+        "aliases": [
+          "stopp",
+          "stoppe",
+          "ustoppelig",
+          "vanskelig",
+          "stop"
+        ]
+      },
+      "dribble": {
+        "label": "Dribling",
+        "weights": {
+          "dribbling": 0.35,
+          "ball_control": 0.3,
+          "agility": 0.15,
+          "balance": 0.1,
+          "composure": 0.1
+        },
+        "word": "dribler",
+        "kind": "noun",
+        "like": "å drible seg gjennom trange rom",
+        "aliases": [
+          "drible",
+          "dribble",
+          "dribbling"
+        ]
+      },
+      "finish": {
+        "label": "Avslutning",
+        "weights": {
+          "finishing": 0.35,
+          "positioning": 0.15,
+          "shot_power": 0.15,
+          "composure": 0.15,
+          "long_shots": 0.1,
+          "volleys": 0.1
+        },
+        "word": "avslutter",
+        "kind": "noun",
+        "like": "å score fra mange posisjoner",
+        "aliases": [
+          "skudd",
+          "finishing",
+          "shooting"
+        ]
+      },
+      "pass": {
+        "label": "Pasning",
+        "weights": {
+          "short_passing": 0.3,
+          "vision": 0.25,
+          "long_passing": 0.2,
+          "crossing": 0.15,
+          "curve": 0.1
+        },
+        "word": "playmaker",
+        "kind": "noun",
+        "like": "å styre spillet med pasninger",
+        "aliases": [
+          "pasninger",
+          "passing"
+        ]
+      },
+      "physical": {
+        "label": "Fysikk",
+        "weights": {
+          "strength": 0.45,
+          "aggression": 0.2,
+          "balance": 0.15,
+          "jumping": 0.1,
+          "stamina": 0.1
+        },
+        "word": "fysisk",
+        "kind": "adj",
+        "like": "å vinne dueller og skjerme ballen",
+        "aliases": [
+          "fysisk",
+          "physical"
+        ]
+      },
+      "defend": {
+        "label": "Forsvar",
+        "weights": {
+          "def_awareness": 0.3,
+          "standing_tackle": 0.3,
+          "interceptions": 0.25,
+          "sliding_tackle": 0.15
+        },
+        "word": "ballvinner",
+        "kind": "noun",
+        "like": "å vinne ballen tilbake",
+        "aliases": [
+          "defending",
+          "forsvar"
+        ]
+      }
+    },
+    "style_ovr_window": 2
+  },
+
+  "playstyles_missing": {
+    "_info": "Kort der PlayStyles ikke er kjent (f.eks. Icons fra FIFA Rosters) får medianen for kort i samme posisjon med lignende OVR, merket som anslått. Sett 'mode' til 'zero' for å gi 0.",
+    "mode": "median",
+    "ovr_window": 3,
+    "min_known": 20,
+    "_min_known_info": "Er det færre enn så mange kort med kjente PlayStyles innenfor ±ovr_window, utvides vinduet til det er nok (maks ±12)."
+  }
+}

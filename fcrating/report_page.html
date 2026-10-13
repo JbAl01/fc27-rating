@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="no"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FC 27-rating</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#15191e" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+__CSS__
+.filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px 22px;padding:12px 0 4px}
+.filters fieldset{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end}
+.filters legend{font-weight:600;font-size:14px;padding:0;margin-bottom:6px}
+.filters .cats{display:flex;flex-wrap:wrap;gap:6px 14px}
+#combohint{color:var(--muted);font-size:13px}
+td.cmb{color:var(--link)}
+table:not(.combo) .cmb{display:none}
+</style></head><body>
+<div class="page">
+<header class="top"><div><h1>FC 27-rating</h1>
+<p>Hvert kort er rangert mot kortene som kan spille samme posisjon, med vår egen rating (IGR). Oppdatert __STAMP__.</p></div>
+<nav>__EVOLAB__</nav></header>
+
+<section class="controls" aria-label="Søk og sortering">
+<label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
+<label class="f">Posisjon<select id="g"><option value="">Alle, i sin egen posisjon</option></select></label>
+<label class="f">Sorter etter<select id="sort">
+<option value="top_pct">Plass i posisjonen</option><option value="igr">IGR</option><option value="feel">Følelse</option><option value="obd">Off-balance</option>
+<option value="run_ai">Løps-AI</option><option value="dec">Løps-IQ</option><option value="exe">Løpseffekt</option><option value="stop">Vanskelig å stoppe</option>
+<option value="run_vs">Løper best for OVR-en</option><option value="evo_after">Beste evo-kandidater</option><option value="evo_gain">Størst evo-økning</option>
+<option value="combo">Kombinasjon (velg i filtrene)</option><option value="ovr">OVR</option><option value="price">Pris</option></select></label>
+<span class="count" id="count"></span>
+<details class="more" id="fp"><summary id="fsum">Filtre</summary>
+<div class="filters">
+<fieldset><legend>Kort</legend>
+<label class="f">OVR fra<input class="small" type="number" data-f="ovrMin" inputmode="numeric"></label>
+<label class="f">til<input class="small" type="number" data-f="ovrMax" inputmode="numeric"></label>
+<label class="f">Maks høyde (cm)<input class="small" type="number" data-f="hMax" inputmode="numeric"></label>
+<label class="f">Korttype<select data-f="type"><option value="">Alle</option><option value="base">Basekort</option><option value="special">Spesialkort</option><option value="icon">Icons</option><option value="hero">Heroes</option><option value="leak">Lekkasjer</option></select></label>
+<label class="f">Kjønn<select data-f="gender"><option value="">Alle</option><option value="M">Menn</option><option value="F">Kvinner</option></select></label>
+</fieldset>
+<fieldset><legend>Med ball, minst</legend>
+<label class="f">Følelse<input class="small" type="number" data-f="feelMin" placeholder="85"></label>
+<label class="f">Off-balance<input class="small" type="number" data-f="obMin" placeholder="75"></label>
+<label class="f">Stopp<input class="small" type="number" data-f="stopMin" placeholder="80"></label>
+<label class="f">AcceleRATE<select data-f="acc"><option value="">Alle</option><option>Explosive</option><option>Controlled</option><option>Lengthy</option></select></label>
+</fieldset>
+<fieldset><legend>Uten ball, minst (spiss, kant, CAM)</legend>
+<label class="f">Løps-AI<input class="small" type="number" data-f="runMin" placeholder="80"></label>
+<label class="f">Løps-IQ<input class="small" type="number" data-f="vilMin" placeholder="85"></label>
+<label class="f">Effekt<input class="small" type="number" data-f="effMin" placeholder="85"></label>
+</fieldset>
+<fieldset><legend>PlayStyle</legend>
+<label class="f">Har<select data-f="ps" id="pssel"><option value="">Alle</option></select></label>
+<label class="check"><input type="checkbox" data-f="psPlus"> bare PS+</label>
+</fieldset>
+<fieldset><legend>Vis bare</legend>
+<label class="check"><input type="checkbox" data-f="gem"> skjulte perler (løper mye bedre enn OVR-en)</label>
+<label class="check"><input type="checkbox" data-f="evo"> evo-kandidater</label>
+<label class="check"><input type="checkbox" data-f="wf4"> svakfot 4 eller 5</label>
+<label class="check"><input type="checkbox" data-f="sm4"> skill moves 4 eller 5</label>
+</fieldset>
+<fieldset><legend>Ranger etter snittet av</legend><div class="cats" id="combo"></div><span id="combohint">Velg det du liker, så rangeres kortene etter plassen i de kategoriene.</span></fieldset>
+</div>
+<p><button type="button" class="link" id="freset">Nullstill filtre</button></p>
+</details>
+</section>
+
+<div class="tw"><table class="data" id="tbl"><thead><tr>
+<th data-k="name">Spiller</th><th class="cmb" data-k="combo" title="Snittet av plassen i kategoriene du valgte (100 = best i posisjonen)">Kombo</th><th class="l" data-k="group">Pos</th><th data-k="ovr">OVR</th><th data-k="igr">IGR</th><th data-k="top_pct">Plass</th>
+<th data-k="feel">Følelse</th><th data-k="pace">Fart</th><th data-k="skill">Ferdighet</th><th data-k="run_ai">Løps-AI</th><th data-k="stop">Stopp</th>
+<th data-k="playstyles" title="Hvor mye PlayStyles gir i IGR">PS</th><th class="l" data-k="accelerate">AcceleRATE</th><th data-k="evo_after" title="IGR med evoene som er ute nå (fra Evo Lab)">Etter evo</th><th data-k="price">Pris</th></tr></thead><tbody id="rows"></tbody></table></div>
+<button type="button" class="more-rows" id="more" hidden></button>
+
+<footer class="foot"><details><summary>Hva tallene betyr</summary>
+<p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. Den er satt sammen av følelse, fart, posisjonsferdighet og, for spiss, kant og CAM, Løps-AI og Stopp. PlayStyles, rolle, svakfot og skill moves kommer på toppen.</p>
+<p><b>Følelse</b>: hvor kvikt og responsivt kortet føles med ball. <b>Off-balance</b>: snittet av Agility, Balance og Dribbling, som EasySBC viser; fra 75 er kortet med i mekanikken. <b>Løps-AI</b>: hvor godt kortet beveger seg uten ball, delt i <b>Løps-IQ</b> (hvor og når det løper) og <b>Effekt</b> (om løpet gir avstand). <b>Stopp</b>: hvor vanskelig kortet er å stoppe med ball og på løp.</p>
+<p><b>Plass</b> er plassen blant alle kort som kan spille posisjonen. «Alle, i sin egen posisjon» viser hvert kort i posisjonen det står i.</p>
+</details>
+<p class="legal">Denne siden er ikke godkjent av eller tilknyttet EA eller deres lisensgivere. <a href="om.html">Om siden, kilder og personvern</a></p></footer>
+</div>
+<script>
+const RAW=__DATA__,META=__META__,PAGE=200,STR=META.strings;let key="top_pct",dir=1,open=null,shown=PAGE;
+const DATA=RAW.map((r,i)=>{const groups={};for(const g in r[22]){const a=r[22][g],ps=[];for(let j=0;j<a[14].length;j+=2)ps.push([STR[a[14][j]],a[14][j+1]]);
+const ru=a[16],tri=x=>{const o=[];for(let j=0;j<x.length;j+=3)o.push([STR[x[j]],x[j+1],x[j+2]]);return o};
+groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6],core:a[7],playstyles:a[8],role:a[9],role_name:STR[a[10]],wfp:a[11],smp:a[12],gkh:a[13],ps,pse:a[15],
+run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null}}
+const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
+const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null}});
+const $=id=>document.getElementById(id);
+const present=new Set(DATA.flatMap(d=>Object.keys(d.groups)));
+const gs=$("g");META.order.filter(g=>present.has(g)).forEach(g=>{const o=document.createElement("option");o.value=g;o.textContent=g;gs.appendChild(o)});
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=(v,dg=1)=>v===null||v===undefined||v===""?"–":(typeof v==="number"?(dg===0?Math.round(v).toLocaleString("no"):v.toFixed(dg)):esc(v));
+const sg=(v,dg=1)=>(v>=0?"+":"−")+Math.abs(v).toFixed(dg);
+const pct=p=>p===null||p===undefined?"":(p<1?"topp 1 %":"topp "+Math.round(p)+" %");
+const n0=v=>v==null?"–":Number(v).toLocaleString("no");
+function list(items){return items.length<2?items.join(""):items.slice(0,-1).join(", ")+" og "+items[items.length-1]}
+const GCODE={"Spiss":"ST","Kant":"W","CAM":"CAM","CM":"CM","CDM":"CDM","Back":"FB","Midtstopper":"CB","Keeper":"GK"};
+const posClass=g=>({ST:"att",W:"att",CAM:"mid",CM:"mid",CDM:"mid",FB:"def",CB:"def",GK:"gk"})[GCODE[g]||g]||"";
+/* --- explanation: same logic as explain.add_explanations --- */
+const SORTED={};
+function sortedFor(g){if(SORTED[g])return SORTED[g];const f=[],p=[],s=[],ps=[],rs=[],ss=[];
+for(const d of DATA){const e=d.groups[g];if(!e)continue;if(d.feel!=null)f.push(d.feel);if(e.pace!=null)p.push(e.pace);if(e.skill!=null)s.push(e.skill);if(e.playstyles!=null)ps.push(e.playstyles);if(e.rs!=null)rs.push(e.rs);if(e.ss!=null)ss.push(e.ss)}
+for(const a of [f,p,s,ps,rs,ss])a.sort((x,y)=>x-y);return SORTED[g]={f,p,s,ps,rs,ss}}
+function topPct(arr,v){if(v==null||!arr.length)return null;let lo=0,hi=arr.length;while(lo<hi){const m=(lo+hi)>>1;if(arr[m]<=v)lo=m+1;else hi=m}return Math.round(1000*(arr.length-lo+1)/arr.length)/10}
+function whyData(d,g){const e=d.groups[g],X=META.x,sw=META.skill[g]||[],sk=sw.map(x=>x[0]),gk=g===META.gk,at=d.at,has=i=>at[i]>0,few=!e.of||e.of<X.min;
+const st={},order=[];if(!few)for(const [i,m,sd] of META.stats[g]||[]){st[i]=[m,sd];order.push(i)}
+const T=i=>i in st?[i,at[i],Math.round(st[i][0])]:[i,at[i]];
+const lifts=W=>W.filter(([i])=>has(i)&&(few||i in st)).map(([i,wt])=>[i,few?wt*at[i]:wt*(at[i]-st[i][0])]).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+const tfI=gk?[]:lifts(META.fw),tsI=lifts(sw),shown=new Set([...tfI,...tsI,META.idx.acceleration,META.idx.sprint_speed]);
+const z={},ks=order.filter(has);for(const i of ks)z[i]=(at[i]-st[i][0])/st[i][1];
+const s=ks.filter(i=>z[i]>=X.sz&&!shown.has(i)).sort((a,b)=>z[b]-z[a]).slice(0,X.ms).map(T);
+const w=ks.filter(i=>z[i]<=X.wz&&(sk.includes(i)||META.feel.includes(i))).sort((a,b)=>z[a]-z[b]).slice(0,X.mw).map(T);
+const S=few?null:sortedFor(g),tp=(a,v)=>few?null:topPct(a,v);
+return {few,fp:gk||few?null:tp(S.f,d.feel),pp:few?null:tp(S.p,e.pace),sp:few?null:tp(S.s,e.skill),psp:few?null:tp(S.ps,e.playstyles),rp:few||e.rs==null?null:tp(S.rs,e.rs),ssp:few||e.ss==null?null:tp(S.ss,e.ss),tf:tfI.map(T),ts:tsI.map(T),s,w}}
+function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
+const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
+function similarTo(d,g,n){const S=META.run.sim,tot=S.reduce((a,x)=>a+x[3],0),ref=S.map(([k])=>simVal(d,k)),res=[];
+for(const o of DATA){if(o===d||!o.ra||!o.groups[g]||!o.groups[g].run||(o.name===d.name&&o.version===d.version))continue;let t=0,u=0;
+S.forEach(([k,m,sd,w],j)=>{const a=ref[j],b=simVal(o,k);if(a==null||b==null)return;t+=w*((a-b)/sd)**2;u+=w});
+if(u>=0.5*tot)res.push([o,Math.sqrt(t/u)])}
+res.sort((a,b)=>a[1]-b[1]);return res.slice(0,n)}
+/* --- profile and combinations --- */
+const PROF=META.prof||{order:[],labels:[]},PCACHE={};
+function profPool(g,i){const k=g+"|"+i;if(PCACHE[k])return PCACHE[k];const a=[];for(const d of DATA){if(d.groups[g]&&d.prof[i]!=null)a.push(d.prof[i])}a.sort((x,y)=>x-y);return PCACHE[k]=a}
+function profPct(d,g,i){const v=d.prof[i];if(v==null)return null;const a=profPool(g,i);return a.length>=30?topPct(a,v):null}
+function comboScore(d,g){if(!F.combo.length)return null;let t=0;for(const k of F.combo){const i=PROF.order.indexOf(k);const p=profPct(d,g,i);if(p==null)return null;t+=p}return Math.round(10*(100-t/F.combo.length))/10}
+/* --- off-balance --- */
+const OB=META.ob||{start:75,gf:{}},obIn=v=>v!=null&&Math.round(v)>=OB.start,obUsed=g=>(OB.gf[g]||0)>0;
+/* --- card view --- */
+const lab=i=>typeof i==="number"?META.labels[i]:i;
+function runGroup(d,g){if(!d.ra||!META.run)return null;if(d.groups[g]&&d.groups[g].run)return g;
+const c=META.run.groups.filter(x=>d.groups[x]&&d.groups[x].run);return c.length?c.sort((a,b)=>d.groups[a].run.top-d.groups[b].run.top)[0]:null}
+function bar(label,val,p,title){if(val==null)return"";const w=p!=null?Math.max(3,100-p):Math.max(3,Math.min(100,(val-40)/0.59));
+return`<div class="bar"${title?` title="${esc(title)}"`:""}><span>${esc(label)}</span><span class="tr"><i style="width:${w.toFixed(1)}%"></i></span><span class="v">${fmt(val)}</span><span class="p">${p!=null?pct(p):""}</span></div>`}
+const kvr=(label,val,extra)=>`<tr><th>${label}</th><td>${val}</td><td class="note">${extra||""}</td></tr>`;
+const attrList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}${x.length>2&&x[1]!==x[2]?` (${x[1]>x[2]?"+":"−"}${Math.abs(x[1]-x[2])} mot snittet)`:""}`));
+function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g);
+const share=k=>B[k]?`${Math.round(B[k]*100)} %`:"";
+const bon=[];if(e.role)bon.push(`rolle ${"+".repeat(e.role)} ${sg(e.role,0)}`);if(d.wf&&e.wfp)bon.push(`svakfot ${d.wf} ${sg(e.wfp)}`);if(d.sm&&e.smp)bon.push(`skill moves ${d.sm} ${sg(e.smp)}`);
+if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);
+const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0);
+const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet":"",d.estimated?"attributtene er anslått":"",e.pse?"PlayStyles anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
+let h=`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>
+<p>IGR ${fmt(e.igr)} som ${esc(g.toLowerCase())}, plass ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${d.style?` ${esc(d.style)}.`:""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>
+${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}
+<div class="cols"><section><h3>Ratingen</h3><table class="kv"><thead><tr><th></th><th>Verdi</th><th style="text-align:left">I posisjonen</th></tr></thead><tbody>
+${g!==META.gk?kvr("Følelse",fmt(d.feel),[pct(w.fp),share("feel")&&"teller "+share("feel")].filter(Boolean).join(", ")):""}
+${kvr("Fart",fmt(e.pace),[pct(w.pp),share("pace")&&"teller "+share("pace")].filter(Boolean).join(", "))}
+${kvr("Ferdighet",fmt(e.skill),[pct(w.sp),"teller "+share("skill")].filter(Boolean).join(", "))}
+${B.run&&e.rs!=null?kvr("Løps-AI",fmt(e.rs),[pct(w.rp),"teller "+share("run")].filter(Boolean).join(", ")):""}
+${B.stop&&e.ss!=null?kvr("Stopp",fmt(e.ss),[pct(w.ssp),"teller "+share("stop")].filter(Boolean).join(", ")):""}
+${kvr("PlayStyles",sg(e.playstyles||0),e.pse?"anslått":"")}
+${kvr("Bonuser",sg(bonus),esc(bon.join(", ")))}
+</tbody></table></section>
+<section><h3>Med og uten ball</h3><table class="kv"><tbody>
+${g!==META.gk&&d.obd!=null?kvr("Off-balance",Math.round(d.obd),obIn(d.obd)?"med i mekanikken (75 eller mer)":`under ${OB.start}, ikke med`):""}
+${d.hs?kvr("Stopp med ball",fmt(d.hs.ball),"Strength, Balance, fart, Ball Control, Dribbling"):""}
+${rg&&d.ra?kvr("Løps-AI",fmt(d.ra.score),`plass ${n0(d.groups[rg].run.rank)} av ${n0(d.groups[rg].run.of)} ${esc(META.plural[rg]||rg)}, ${sg(d.groups[rg].run.res)} mot samme OVR`):""}
+${rg&&d.ra&&d.ra.dec!=null?kvr("Løps-IQ",fmt(d.ra.dec),"hvor og når spilleren løper (Att. Position, Reactions)"):""}
+${rg&&d.ra&&d.ra.exe!=null?kvr("Effekt",fmt(d.ra.exe),"om løpet gir avstand (fart, smidighet, kropp, Stamina)"):""}
+${d.hs?kvr("Stopp på løp",fmt(d.hs.run),d.accelerate==="Lengthy"?"Lengthy: tar igjen alle over lang avstand":"Sprint Speed, Strength, Acceleration, Balance"):""}
+${kvr("AcceleRATE",esc(d.accelerate||"–"),d.fpa?`${sg(d.fpa)} på følelsen`:"")}
+${d.h?kvr("Høyde",Math.round(d.h)+" cm",(d.ra&&d.ra.body?esc(d.ra.body.toLowerCase())+", ":"")+(d.fph?`${sg(d.fph)} på følelsen`:"")):""}
+</tbody></table>`;
+if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Løper likt som: ${sims.map(([o,dist])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a> <span class="muted">${Math.round(100*Math.exp(-dist/1.2))} %</span>`).join(", ")}</p>`}
+h+=`</section></div>`;
+const profBars=PROF.order.map((k,i)=>d.prof[i]==null||!(PROF.panel||PROF.order).includes(k)?"":bar(PROF.labels[i],d.prof[i],profPct(d,g,i),"Plass blant alle som kan spille posisjonen")).join("");
+if(profBars)h+=`<h3 style="margin-top:20px">Profil</h3><div class="bars">${profBars}</div>`;
+const strong=[];const seen=new Set();for(const x of [...w.tf,...w.ts,...w.s]){if(!seen.has(x[0])){seen.add(x[0]);strong.push(x)}}
+strong.sort((a,b)=>(b[1]-(b[2]??b[1]))-(a[1]-(a[2]??a[1])));
+h+=`<p style="margin-top:14px"><b>Sterkest:</b> ${strong.length?attrList(strong.slice(0,5)):"–"}.</p>`;
+if(w.w.length)h+=`<p><b>Svakest:</b> ${attrList(w.w)}.</p>`;
+const ps=e.pse?["ukjent (anslått "+sg(e.playstyles||0)+")"]:e.ps.slice(0,8).map(p=>`${p[0]} (${sg(p[1])})`);if(ps.length)h+=`<p><b>PlayStyles:</b> ${esc(list(ps))}.</p>`;
+const v=d.evo;if(v){h+=v.x!==undefined?`<p class="muted">Evo: ikke med (${esc(v.x)}).</p>`:`<p><b>Med evoene som er ute nå:</b> IGR ${fmt(v.n)} til ${fmt(v.a)} (${sg(v.g)}), plass ${n0(v.rn)} til ${n0(v.r)}, OVR ${d.ovr} til ${v.o}.${META.evolab?' <a href="evolab.html">Se planen i Evo Lab</a>.':""}</p>`}
+const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${Math.round(B.feel*100)} %`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${Math.round(B.pace*100)} %`);core.push(`ferdighet ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løps-AI ${fmt(e.rs)} × ${Math.round(B.run*100)} %`);if(B.stop&&e.ss!=null)core.push(`stopp ${fmt(e.ss)} × ${Math.round(B.stop*100)} %`);
+const per=Object.entries(d.groups).sort((a,b)=>b[1].igr-a[1].igr).map(([k,x])=>`${esc(k)} ${x.igr.toFixed(1)} (plass ${x.rank} av ${x.of})`).join(", ");
+h+=`<details style="margin-top:12px"><summary>Utregning og kilde</summary><p class="muted">IGR ${fmt(e.igr)} = kjerne ${fmt(e.core)} (${core.join(" + ")}) ${sg(e.playstyles||0)} PlayStyles ${sg(bonus)} bonuser.</p>
+<p class="muted">Posisjoner (${esc(d.positions)}): ${per}.</p>${d.chem?`<p class="muted">Kjemistil: ${esc(d.chem)}.</p>`:""}${d.src?`<p class="muted">Kilde: ${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.src)}</a>`:esc(d.src)}.</p>`:""}${d.warn?`<p class="muted">Merk: ${esc(d.warn)}.</p>`:""}
+${META.run&&META.run.calibrated?`<p class="muted">Løps-AI er kalibrert mot ${META.run.calibrated.cards} kort du har testet.</p>`:""}</details></div>`;
+return h}
+/* --- filters --- */
+const kind=d=>d.status==="lekket"?"leak":/icon/i.test(d.version)?"icon":/hero/i.test(d.version)?"hero":d.status?"special":"base";
+const F0={ovrMin:"",ovrMax:"",hMax:"",feelMin:"",obMin:"",stopMin:"",runMin:"",vilMin:"",effMin:"",type:"",gender:"",acc:"",ps:"",psPlus:false,gem:false,evo:false,wf4:false,sm4:false,combo:[]};
+let F={...F0};
+try{const s=JSON.parse(localStorage.getItem("fc27-filter2")||"null");if(s)F={...F0,...(s.F||{})}}catch(err){}
+if(!Array.isArray(F.combo))F.combo=[];F.combo=F.combo.filter(k=>PROF.order.includes(k));
+const saveF=()=>{try{localStorage.setItem("fc27-filter2",JSON.stringify({F}))}catch(err){}};
+$("combo").innerHTML=PROF.order.map((k,i)=>(PROF.use||PROF.order).includes(k)?`<label class="check"><input type="checkbox" data-k="${k}"> ${esc(PROF.labels[i])}</label>`:"").join("");
+$("combo").onchange=ev=>{const k=ev.target.dataset.k;if(!k)return;F.combo=ev.target.checked?[...F.combo,k]:F.combo.filter(x=>x!==k);
+if(F.combo.length){key="combo";dir=-1}else if(key==="combo"){key="top_pct";dir=1}$("sort").value=key;syncF();reset()};
+const psNames=[...new Set(DATA.flatMap(d=>d.ps.map(n=>n.endsWith("+")?n.slice(0,-1):n)))].sort((a,b)=>a.localeCompare(b,"no"));
+$("pssel").innerHTML='<option value="">Alle</option>'+psNames.map(n=>`<option>${esc(n)}</option>`).join("");
+document.querySelectorAll("#fp [data-f]").forEach(el=>{el.addEventListener(el.type==="checkbox"||el.tagName==="SELECT"?"change":"input",()=>{F[el.dataset.f]=el.type==="checkbox"?el.checked:el.value;syncF();reset()})});
+function syncF(){document.querySelectorAll("#fp [data-f]").forEach(el=>{if(el.type==="checkbox")el.checked=!!F[el.dataset.f];else if(el.value!==String(F[el.dataset.f]))el.value=F[el.dataset.f]});
+$("combo").querySelectorAll("input").forEach(b=>b.checked=F.combo.includes(b.dataset.k));
+$("tbl").classList.toggle("combo",F.combo.length>0);$("combohint").hidden=F.combo.length>0;
+const n=Object.keys(F0).filter(k=>JSON.stringify(F[k])!==JSON.stringify(F0[k])).length;$("fsum").textContent=n?`Filtre (${n} på)`:"Filtre";saveF()}
+$("freset").onclick=()=>{F={...F0};if(key==="combo"){key="top_pct";dir=1;$("sort").value=key}syncF();reset()};
+const anyGem=d=>Object.values(d.groups).some(e=>e.run&&e.run.gem);
+function pass(d,v,g){if(F.ovrMin!==""&&(d.ovr??0)<+F.ovrMin)return false;if(F.ovrMax!==""&&(d.ovr??0)>+F.ovrMax)return false;
+if(F.hMax!==""&&(!d.h||d.h>+F.hMax))return false;if(F.feelMin!==""&&(d.feel==null||d.feel<+F.feelMin))return false;if(F.obMin!==""&&(d.obd==null||d.obd<+F.obMin))return false;if(F.stopMin!==""&&(!d.hs||d.hs.score<+F.stopMin))return false;
+if(F.runMin!==""&&(v.run_ai==null||v.run_ai<+F.runMin))return false;
+if(F.vilMin!==""&&(v.dec==null||v.dec<+F.vilMin))return false;if(F.effMin!==""&&(v.exe==null||v.exe<+F.effMin))return false;
+if(F.type&&kind(d)!==F.type)return false;if(F.gender&&d.gender!==F.gender)return false;if(F.acc&&d.accelerate!==F.acc)return false;
+if(F.ps&&!d.ps.some(n=>F.psPlus?n===F.ps+"+":(n===F.ps||n===F.ps+"+")))return false;
+if(F.gem&&!(g?v.gem:anyGem(d)))return false;if(F.evo&&d.evo_after==null)return false;if(F.wf4&&!(d.wf>=4))return false;if(F.sm4&&!(d.sm>=4))return false;return true}
+/* --- table --- */
+function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null;
+return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:!!(ru&&ru.gem),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,playstyles:e.playstyles,role:e.role}}
+function rowsNow(){const q=$("q").value.trim().toLowerCase(),g=gs.value;
+let rows=DATA.filter(d=>(d.name+" "+d.version).toLowerCase().includes(q)&&(!g||g in d.groups)).map(d=>view(d,g)).filter(v=>pass(v,v,g));
+rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return 0;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}
+function head(){document.querySelectorAll("#tbl th").forEach(th=>{if(th.dataset.k===key)th.setAttribute("aria-sort",dir<0?"descending":"ascending");else th.removeAttribute("aria-sort")})}
+function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
+$("count").textContent=rows.length===DATA.length?`${n0(DATA.length)} kort`:`${n0(rows.length)} av ${n0(DATA.length)} kort`;
+const ncol=F.combo.length?15:14;
+rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
+const sub=[d.version,d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
+const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
+tr.innerHTML=`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(sub)}</div></td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
+<td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
+<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
+<td class="num">${fmt(d.feel)}${d.obd!=null&&obUsed(d.group)?`<small>OB ${Math.round(d.obd)}</small>`:""}</td>
+<td class="num">${fmt(d.pace)}</td><td class="num">${fmt(d.skill)}</td>
+<td class="num">${d.run_ai!=null?fmt(d.run_ai)+(d.dec!=null?`<small>IQ ${fmt(d.dec,0)}, eff. ${fmt(d.exe,0)}</small>`:""):"–"}</td>
+<td class="num">${d.stop!=null?fmt(d.stop)+`<small>${fmt(d.hs.ball,0)} med, ${fmt(d.hs.run,0)} uten</small>`:"–"}</td>
+<td class="num">${fmt(d.playstyles)}</td><td class="l">${esc(d.accelerate||"–")}</td>
+<td class="num">${d.evo_after!=null?fmt(d.evo_after)+`<small class="${d.evo_gain>0?"up":""}">${sg(d.evo_gain)}</small>`:'<span class="faint">–</span>'}</td><td class="num">${d.price?fmt(d.price,0):"–"}</td>`;
+const tog=()=>{open=open===d.uid?null:d.uid;render()};tr.onclick=tog;tr.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();tog()}};tb.appendChild(tr);
+if(open===d.uid){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${detail(d,d.group)}</td>`;tb.appendChild(dt)}});
+if(!rows.length)tb.innerHTML=`<tr><td colspan="${ncol}" style="padding:18px">Ingen kort passer. Prøv å nullstille filtrene.</td></tr>`;
+$("more").hidden=rows.length<=shown;$("more").textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til (av ${n0(rows.length)})`}
+const reset=()=>{shown=PAGE;render()};
+document.querySelectorAll("#tbl th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;dir=key===k?-dir:(k==="top_pct"||k==="name"||k==="group"||k==="accelerate"?1:-1);key=k;$("sort").value=[...$("sort").options].some(o=>o.value===k)?k:$("sort").value;reset()});
+document.addEventListener("click",ev=>{const a=ev.target.closest("a[data-q]");if(!a)return;ev.preventDefault();$("q").value=a.dataset.q;open=null;reset();window.scrollTo(0,0)});
+$("q").oninput=reset;$("more").onclick=()=>{shown+=PAGE;render()};
+gs.onchange=()=>{key=gs.value?"igr":"top_pct";dir=gs.value?-1:1;$("sort").value=key;reset()};
+$("sort").onchange=ev=>{key=ev.target.value;dir=key==="top_pct"?1:-1;if(key==="combo"&&!F.combo.length)$("fp").open=true;if(key.startsWith("evo")&&!F.evo){F.evo=true;syncF()}reset()};
+syncF();render();
+</script></body></html>

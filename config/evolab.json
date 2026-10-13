@@ -1,0 +1,2641 @@
+{
+  "_info": "Evo Lab: simulerer evo-veier for hvert kort og rangerer etter hvor god kortet kan bli. 'live' er evoene som er ute nå (lagt inn for hånd fra FUTBIN/FUT.GG). 'future' er antatte evoer resten av året, brukt i mange parallelle «fremtider» for å finne spredningen (P10/P50/P90). Egne evoer legger du i data/mine_evoer.json (med py -m fcrating evo-import), så overskrives de ikke når du oppdaterer systemet.",
+  "_research": "13. okt. 2026 kl. 22. Hver evo er sjekket mot minst to av FUT.GG, futnext, FUTBIN og RealSport101 (lenker under 'sources' på hver evo). Sluttidspunktet er når du senest kan starte evoen (EA bytter innhold kl. 19 norsk tid). Sesongpass-evoer må hentes før sesong 1 slutter 22. okt kl. 09.",
+  "_checked": "2026-10-13T20:05:00Z",
+  "eligible": {
+    "_info": "Hvilke kort Evo Lab ser på. Icons og Heroes er sjelden med i vanlige evoer (og er nesten alltid for høyt ratet).",
+    "excluded_versions": [
+      "Icon",
+      "Hero",
+      "Hall of FUT"
+    ],
+    "exclude_leaks": true,
+    "include_gk": false,
+    "_include_gk_info": "Keepere er utelatt (sett true for å ta dem med).",
+    "max_start_ovr": 86
+  },
+  "rules": {
+    "_info": "Regler fra FC 27. En oppgradering «+X (maks Y)» løfter attributten med X, men aldri over Y, og aldri ned. +40/+50 i treningsleir-evoer betyr i praksis «fyll opp til maks».",
+    "ps_plus_cap": 3,
+    "ps_cap": 8,
+    "_ps_cap_info": "PlayStyle+: maks 3 per kort i FC 27 (EA). Vanlige PlayStyles: 8 var taket i FC 26, ikke bekreftet for FC 27.",
+    "assume_ps_count_unknown": 5,
+    "_assume_info": "Kort der vi ikke vet PlayStyles regnes som om de har så mange når en evo krever «maks N PlayStyles».",
+    "roles_plus_plus": true,
+    "_roles_info": "Roles++-evoen finnes for hver posisjon og koster 7 500 mynter eller 150 FC Points (FUTBIN, futnext). Alle basekort kan ta den, så Evo Lab regner med ++ i hovedposisjonen etter evo.",
+    "roles_plus_plus_cost": "7 500 mynter eller 150 FC Points",
+    "include_premium": true,
+    "include_unchecked": false,
+    "_unchecked_info": "Evoer med krav vi ikke kan sjekke (f.eks. alder) er ikke med i kjeden, men vises som «sjekk selv».",
+    "face": {
+      "_info": "Hovedtall (for «Pace max 85» og oppgraderinger som «+2 Pace»). Samme formler som EA.",
+      "pace": {
+        "acceleration": 0.45,
+        "sprint_speed": 0.55
+      },
+      "shooting": {
+        "finishing": 0.45,
+        "shot_power": 0.2,
+        "long_shots": 0.2,
+        "positioning": 0.05,
+        "volleys": 0.05,
+        "penalties": 0.05
+      },
+      "passing": {
+        "short_passing": 0.35,
+        "vision": 0.2,
+        "crossing": 0.2,
+        "long_passing": 0.15,
+        "fk_accuracy": 0.05,
+        "curve": 0.05
+      },
+      "dribbling": {
+        "dribbling": 0.5,
+        "ball_control": 0.35,
+        "agility": 0.1,
+        "balance": 0.05
+      },
+      "defending": {
+        "def_awareness": 0.3,
+        "standing_tackle": 0.3,
+        "interceptions": 0.2,
+        "heading_accuracy": 0.1,
+        "sliding_tackle": 0.1
+      },
+      "physical": {
+        "strength": 0.5,
+        "stamina": 0.25,
+        "aggression": 0.2,
+        "jumping": 0.05
+      }
+    }
+  },
+  "op": {
+    "_info": "OP = blant de top_pct % beste i posisjonen (alle kort i dag, også spesialkort og Icons). meta_drift: hvor mye høyere grensen antas å ligge ved hver horisont, fordi nye promokort kommer. EA sier forskjellen mellom basekort og sluttkort blir mindre i FC 27, så driften er satt lavt. Endre fritt.",
+    "top_pct": 5,
+    "meta_drift": {
+      "live": 0.0,
+      "s2": 0.8,
+      "s4": 1.8,
+      "aar": 3.0
+    }
+  },
+  "favorites": {
+    "_info": "Kortene du liker best. Evo Lab viser hvor likt et kort beveger seg etter evo (løpsprofil, kropp og fart).",
+    "cards": [
+      {
+        "name": "Aimar",
+        "version": "Hero"
+      },
+      {
+        "name": "Pichon",
+        "version": "Icon"
+      }
+    ]
+  },
+  "live": [
+    {
+      "key": "touchline_magic",
+      "name": "Touchline Magic",
+      "cost": "20 000 mynter eller 150 FC Points",
+      "until": "2026-10-22T17:00Z",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "positions": [
+          "LW",
+          "RW"
+        ],
+        "not_positions": [
+          "ST",
+          "CM",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          84
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "Technical",
+            3
+          ],
+          [
+            "Quick Step",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            10,
+            85
+          ],
+          "long_shots": [
+            7,
+            81
+          ],
+          "agility": [
+            10,
+            84
+          ],
+          "dribbling": [
+            10,
+            84
+          ],
+          "positioning": [
+            7,
+            81
+          ],
+          "vision": [
+            7,
+            79
+          ],
+          "balance": [
+            10,
+            83
+          ],
+          "composure": [
+            10,
+            83
+          ],
+          "finishing": [
+            7,
+            82
+          ],
+          "short_passing": [
+            7,
+            80
+          ],
+          "reactions": [
+            10,
+            83
+          ],
+          "stamina": [
+            7,
+            82
+          ],
+          "acceleration": [
+            10,
+            85
+          ],
+          "shot_power": [
+            7,
+            81
+          ],
+          "curve": [
+            7,
+            83
+          ],
+          "ball_control": [
+            10,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/touchline-magic/2753",
+        "https://www.futbin.com/27/evolutions/48/touchline-magic"
+      ]
+    },
+    {
+      "key": "technical_obj",
+      "name": "Technical",
+      "cost": "gratis (oppdrag)",
+      "until": "2026-10-20T17:00Z",
+      "req": {
+        "max_ovr": 80,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Technical",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/47/technical"
+      ]
+    },
+    {
+      "key": "future_stars_academy_1",
+      "name": "Future Stars Academy I",
+      "cost": "gratis",
+      "until": "2026-10-26T18:00Z",
+      "unchecked": "spilleren må være født 9. oktober 2003 eller senere",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "positions": [
+          "CAM",
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          34,
+          81
+        ],
+        "rarity_after": "Future Stars Academy",
+        "stats": {
+          "finishing": [
+            20,
+            79
+          ],
+          "vision": [
+            30,
+            82
+          ],
+          "long_passing": [
+            35,
+            76
+          ],
+          "reactions": [
+            25,
+            80
+          ],
+          "heading_accuracy": [
+            20,
+            73
+          ],
+          "acceleration": [
+            20,
+            81
+          ],
+          "shot_power": [
+            20,
+            80
+          ],
+          "crossing": [
+            35,
+            76
+          ],
+          "curve": [
+            35,
+            76
+          ],
+          "ball_control": [
+            20,
+            80
+          ],
+          "stamina": [
+            25,
+            82
+          ],
+          "sprint_speed": [
+            20,
+            81
+          ],
+          "long_shots": [
+            20,
+            77
+          ],
+          "fk_accuracy": [
+            30,
+            72
+          ],
+          "agility": [
+            20,
+            80
+          ],
+          "dribbling": [
+            20,
+            80
+          ],
+          "strength": [
+            15,
+            73
+          ],
+          "positioning": [
+            25,
+            80
+          ],
+          "volleys": [
+            20,
+            75
+          ],
+          "short_passing": [
+            35,
+            82
+          ],
+          "balance": [
+            25,
+            77
+          ],
+          "composure": [
+            20,
+            78
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: fart og avslutning, svakfot +2",
+            "wf": [
+              2,
+              4
+            ],
+            "stats": {
+              "acceleration": [
+                12,
+                84
+              ],
+              "sprint_speed": [
+                12,
+                84
+              ],
+              "positioning": [
+                10,
+                83
+              ],
+              "finishing": [
+                10,
+                82
+              ],
+              "agility": [
+                10,
+                82
+              ]
+            }
+          },
+          {
+            "label": "Valg B: skudd, svakfot +2",
+            "wf": [
+              2,
+              4
+            ],
+            "stats": {
+              "finishing": [
+                12,
+                86
+              ],
+              "shot_power": [
+                12,
+                87
+              ],
+              "long_shots": [
+                10,
+                83
+              ],
+              "volleys": [
+                10,
+                84
+              ],
+              "composure": [
+                10,
+                83
+              ]
+            }
+          },
+          {
+            "label": "Valg C: dribling, skill moves +2",
+            "sm": [
+              2,
+              4
+            ],
+            "stats": {
+              "agility": [
+                12,
+                87
+              ],
+              "balance": [
+                10,
+                84
+              ],
+              "ball_control": [
+                12,
+                87
+              ],
+              "dribbling": [
+                12,
+                87
+              ],
+              "composure": [
+                10,
+                84
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2541-future-stars-academy-i/",
+        "https://www.futnext.com/evolutions/future-stars-academy-i/2749"
+      ]
+    },
+    {
+      "key": "future_stars_academy_2",
+      "name": "Future Stars Academy II",
+      "cost": "gratis",
+      "until": "2026-10-26T18:00Z",
+      "req": {
+        "min_ovr": 81,
+        "max_ovr": 81,
+        "requires_evo": "future_stars_academy_1"
+      },
+      "up": {
+        "ovr": [
+          1,
+          82
+        ],
+        "stats": {
+          "finishing": [
+            1,
+            80
+          ],
+          "long_shots": [
+            1,
+            78
+          ],
+          "reactions": [
+            2,
+            82
+          ],
+          "dribbling": [
+            1,
+            81
+          ],
+          "heading_accuracy": [
+            2,
+            75
+          ],
+          "positioning": [
+            1,
+            81
+          ],
+          "shot_power": [
+            1,
+            81
+          ],
+          "balance": [
+            1,
+            78
+          ],
+          "ball_control": [
+            2,
+            81
+          ],
+          "composure": [
+            2,
+            80
+          ],
+          "stamina": [
+            1,
+            83
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: pasning",
+            "stats": {
+              "vision": [
+                10,
+                86
+              ],
+              "crossing": [
+                12,
+                82
+              ],
+              "fk_accuracy": [
+                15,
+                80
+              ],
+              "short_passing": [
+                8,
+                86
+              ],
+              "long_passing": [
+                12,
+                82
+              ],
+              "curve": [
+                12,
+                84
+              ]
+            }
+          },
+          {
+            "label": "Valg B: hodespill og fysikk",
+            "stats": {
+              "reactions": [
+                1,
+                83
+              ],
+              "heading_accuracy": [
+                8,
+                79
+              ],
+              "jumping": [
+                20,
+                80
+              ],
+              "stamina": [
+                5,
+                85
+              ],
+              "strength": [
+                8,
+                76
+              ],
+              "aggression": [
+                20,
+                74
+              ]
+            }
+          },
+          {
+            "label": "Valg C: litt pasning og fysikk",
+            "stats": {
+              "vision": [
+                4,
+                84
+              ],
+              "short_passing": [
+                4,
+                84
+              ],
+              "long_passing": [
+                6,
+                79
+              ],
+              "jumping": [
+                8,
+                77
+              ],
+              "stamina": [
+                3,
+                84
+              ],
+              "strength": [
+                5,
+                75
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2549-future-stars-academy-ii/",
+        "https://www.futnext.com/evolutions/future-stars-academy-ii/2750"
+      ]
+    },
+    {
+      "key": "playmaker_reborn",
+      "name": "Playmaker Reborn",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-10-22T07:00Z",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 85,
+        "max_ps": 7,
+        "positions": [
+          "CAM",
+          "CM"
+        ],
+        "not_positions": [
+          "CDM",
+          "CB",
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          40,
+          80
+        ],
+        "ps": [
+          [
+            "Long Ball Pass",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            40,
+            77
+          ],
+          "volleys": [
+            40,
+            76
+          ],
+          "fk_accuracy": [
+            50,
+            79
+          ],
+          "agility": [
+            40,
+            78
+          ],
+          "dribbling": [
+            40,
+            77
+          ],
+          "finishing": [
+            40,
+            76
+          ],
+          "penalties": [
+            40,
+            77
+          ],
+          "short_passing": [
+            50,
+            80
+          ],
+          "balance": [
+            40,
+            76
+          ],
+          "composure": [
+            40,
+            77
+          ],
+          "acceleration": [
+            40,
+            76
+          ],
+          "shot_power": [
+            40,
+            75
+          ],
+          "vision": [
+            50,
+            80
+          ],
+          "long_passing": [
+            50,
+            81
+          ],
+          "reactions": [
+            40,
+            74
+          ],
+          "stamina": [
+            40,
+            79
+          ],
+          "sprint_speed": [
+            40,
+            75
+          ],
+          "long_shots": [
+            40,
+            77
+          ],
+          "crossing": [
+            50,
+            79
+          ],
+          "curve": [
+            50,
+            79
+          ],
+          "ball_control": [
+            40,
+            77
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2548-playmaker-reborn/",
+        "https://www.futnext.com/evolutions/playmaker-reborn/2754"
+      ]
+    },
+    {
+      "key": "batigol_precision",
+      "name": "Batigol Precision",
+      "cost": "gratis",
+      "until": "2026-10-17T17:00Z",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 85,
+        "max_ps": 7,
+        "positions": [
+          "ST"
+        ],
+        "not_positions": [
+          "CB",
+          "CM",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          6,
+          83
+        ],
+        "stats": {
+          "sprint_speed": [
+            7,
+            83
+          ],
+          "finishing": [
+            7,
+            83
+          ],
+          "long_shots": [
+            7,
+            83
+          ],
+          "penalties": [
+            7,
+            83
+          ],
+          "acceleration": [
+            7,
+            83
+          ],
+          "positioning": [
+            7,
+            84
+          ],
+          "shot_power": [
+            7,
+            84
+          ],
+          "volleys": [
+            7,
+            84
+          ],
+          "stamina": [
+            7,
+            78
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: pasning + Tiki Taka",
+            "ps": [
+              [
+                "Tiki Taka",
+                3
+              ]
+            ],
+            "stats": {
+              "vision": [
+                7,
+                82
+              ],
+              "fk_accuracy": [
+                7,
+                83
+              ],
+              "short_passing": [
+                7,
+                82
+              ],
+              "long_passing": [
+                7,
+                81
+              ],
+              "curve": [
+                7,
+                81
+              ]
+            }
+          },
+          {
+            "label": "Valg B: dribling + Press Proven",
+            "ps": [
+              [
+                "Press Proven",
+                3
+              ]
+            ],
+            "stats": {
+              "agility": [
+                7,
+                82
+              ],
+              "balance": [
+                7,
+                81
+              ],
+              "reactions": [
+                7,
+                82
+              ],
+              "ball_control": [
+                7,
+                80
+              ],
+              "dribbling": [
+                7,
+                81
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2540-batigol-precision/",
+        "https://www.futnext.com/evolutions/batigol-precision/2743"
+      ]
+    },
+    {
+      "key": "nine_duty",
+      "name": "Nine Duty",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-10-22T17:00Z",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 85,
+        "max_ps": 7,
+        "positions": [
+          "ST"
+        ],
+        "not_positions": [
+          "CB",
+          "CM",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          40,
+          79
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Gamechanger",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            50,
+            80
+          ],
+          "volleys": [
+            50,
+            79
+          ],
+          "fk_accuracy": [
+            40,
+            77
+          ],
+          "agility": [
+            40,
+            78
+          ],
+          "dribbling": [
+            40,
+            78
+          ],
+          "finishing": [
+            50,
+            79
+          ],
+          "penalties": [
+            50,
+            81
+          ],
+          "short_passing": [
+            40,
+            75
+          ],
+          "balance": [
+            40,
+            78
+          ],
+          "composure": [
+            40,
+            76
+          ],
+          "acceleration": [
+            40,
+            78
+          ],
+          "shot_power": [
+            50,
+            79
+          ],
+          "vision": [
+            40,
+            75
+          ],
+          "long_passing": [
+            40,
+            75
+          ],
+          "reactions": [
+            40,
+            78
+          ],
+          "sprint_speed": [
+            40,
+            78
+          ],
+          "long_shots": [
+            50,
+            78
+          ],
+          "crossing": [
+            40,
+            75
+          ],
+          "curve": [
+            40,
+            77
+          ],
+          "ball_control": [
+            40,
+            78
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2539-nine-duty/",
+        "https://www.futnext.com/evolutions/nine-duty/2742"
+      ]
+    },
+    {
+      "key": "goal_guardian",
+      "name": "Goal Guardian",
+      "cost": "gratis",
+      "until": "2026-10-15T17:00Z",
+      "req": {
+        "max_ovr": 79,
+        "max_ps": 7,
+        "positions": [
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          5,
+          80
+        ],
+        "ps": [
+          [
+            "1v1 Close Down",
+            3
+          ]
+        ],
+        "stats": {
+          "gk_diving": [
+            5,
+            81
+          ],
+          "gk_kicking": [
+            5,
+            76
+          ],
+          "gk_handling": [
+            5,
+            80
+          ],
+          "gk_positioning": [
+            5,
+            77
+          ],
+          "reactions": [
+            5,
+            78
+          ],
+          "gk_reflexes": [
+            5,
+            77
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/goal-guardian/2740",
+        "https://www.fut.gg/evolutions/2538-goal-guardian/"
+      ]
+    },
+    {
+      "key": "midfield_glow_up",
+      "name": "Midfield Glow Up",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-10-22T17:00Z",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 85,
+        "max_ps": 7,
+        "positions": [
+          "CDM"
+        ],
+        "not_positions": [
+          "CAM",
+          "CB",
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          40,
+          79
+        ],
+        "ps": [
+          [
+            "Tiki Taka",
+            3
+          ]
+        ],
+        "roles": [
+          [
+            "CDM",
+            "Deep-Lying Playmaker",
+            1
+          ],
+          [
+            "CDM",
+            "Box Crasher",
+            1
+          ]
+        ],
+        "stats": {
+          "vision": [
+            50,
+            77
+          ],
+          "long_passing": [
+            50,
+            79
+          ],
+          "standing_tackle": [
+            40,
+            80
+          ],
+          "strength": [
+            40,
+            77
+          ],
+          "crossing": [
+            50,
+            75
+          ],
+          "curve": [
+            50,
+            75
+          ],
+          "sliding_tackle": [
+            40,
+            75
+          ],
+          "aggression": [
+            40,
+            75
+          ],
+          "acceleration": [
+            40,
+            75
+          ],
+          "fk_accuracy": [
+            50,
+            74
+          ],
+          "interceptions": [
+            40,
+            75
+          ],
+          "jumping": [
+            40,
+            76
+          ],
+          "sprint_speed": [
+            40,
+            75
+          ],
+          "short_passing": [
+            50,
+            80
+          ],
+          "def_awareness": [
+            40,
+            80
+          ],
+          "stamina": [
+            40,
+            76
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2507-midfield-glow-up/",
+        "https://www.futnext.com/evolutions/midfield-glow-up/2715"
+      ]
+    },
+    {
+      "key": "repeat_delivery",
+      "name": "Repeat Delivery",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-10-22T07:00Z",
+      "repeat": 2,
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 83,
+        "max_ps": 7,
+        "positions": [
+          "LM",
+          "RM"
+        ],
+        "not_positions": [
+          "LB",
+          "RB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          78
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Pinged Pass",
+            3
+          ],
+          [
+            "First Touch",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            5,
+            80
+          ],
+          "short_passing": [
+            15,
+            76
+          ],
+          "balance": [
+            12,
+            75
+          ],
+          "composure": [
+            10,
+            75
+          ],
+          "vision": [
+            15,
+            84
+          ],
+          "long_passing": [
+            12,
+            76
+          ],
+          "reactions": [
+            12,
+            73
+          ],
+          "stamina": [
+            15,
+            78
+          ],
+          "crossing": [
+            10,
+            78
+          ],
+          "curve": [
+            12,
+            78
+          ],
+          "ball_control": [
+            8,
+            74
+          ],
+          "acceleration": [
+            5,
+            80
+          ],
+          "fk_accuracy": [
+            4,
+            80
+          ],
+          "agility": [
+            8,
+            78
+          ],
+          "dribbling": [
+            8,
+            74
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/repeat-delivery/2707",
+        "https://www.futbin.com/27/evolutions/3/repeat-delivery"
+      ]
+    },
+    {
+      "key": "frontline_flair",
+      "name": "Frontline Flair",
+      "cost": "100 Champions-tokens",
+      "until": "2026-10-22T17:00Z",
+      "repeat": 2,
+      "req": {
+        "max_ovr": 83,
+        "max_pace": 84,
+        "max_ps": 7,
+        "positions": [
+          "LW",
+          "RW",
+          "ST"
+        ],
+        "not_positions": [
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          1,
+          84
+        ],
+        "ps": [
+          [
+            "Technical",
+            3
+          ]
+        ],
+        "face": {
+          "pace": [
+            2,
+            84
+          ],
+          "shooting": [
+            1,
+            82
+          ],
+          "dribbling": [
+            2,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/frontline-flair/2702",
+        "https://realsport101.com/article/fc-27-frontline-flair-evolution-best-players-upgrades-how-to-unlock"
+      ]
+    },
+    {
+      "key": "believe",
+      "name": "Believe",
+      "cost": "gratis (oppdrag)",
+      "until": "2027-09-29T17:00Z",
+      "req": {
+        "max_ovr": 82,
+        "positions": [
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          1,
+          83
+        ],
+        "stats": {
+          "short_passing": [
+            4,
+            83
+          ],
+          "composure": [
+            3,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/believe/2708",
+        "https://www.futbin.com/27/evolutions/15/believe"
+      ]
+    },
+    {
+      "key": "pinged_pass_obj",
+      "name": "Pinged Pass",
+      "cost": "gratis (oppdrag)",
+      "until": "2026-10-22T07:00Z",
+      "req": {
+        "max_ovr": 79,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Pinged Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/pinged-pass/2696",
+        "https://www.futbin.com/27/evolutions/14/pinged-pass"
+      ]
+    },
+    {
+      "key": "striker_glow_up",
+      "name": "Striker Glow Up",
+      "cost": "sesongpass, gratis (nivå 7)",
+      "until": "2026-10-22T07:00Z",
+      "req": {
+        "max_ovr": 79,
+        "max_pace": 84,
+        "max_ps": 7,
+        "max_positions": 3,
+        "positions": [
+          "ST"
+        ],
+        "not_positions": [
+          "CAM",
+          "CM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          80
+        ],
+        "ps": [
+          [
+            "Gamechanger",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            15,
+            82
+          ],
+          "volleys": [
+            15,
+            78
+          ],
+          "long_passing": [
+            8,
+            62
+          ],
+          "reactions": [
+            10,
+            76
+          ],
+          "jumping": [
+            10,
+            78
+          ],
+          "finishing": [
+            15,
+            83
+          ],
+          "penalties": [
+            10,
+            75
+          ],
+          "curve": [
+            15,
+            77
+          ],
+          "ball_control": [
+            10,
+            76
+          ],
+          "stamina": [
+            10,
+            67
+          ],
+          "acceleration": [
+            10,
+            80
+          ],
+          "shot_power": [
+            15,
+            82
+          ],
+          "vision": [
+            8,
+            70
+          ],
+          "agility": [
+            15,
+            78
+          ],
+          "dribbling": [
+            10,
+            76
+          ],
+          "sprint_speed": [
+            10,
+            78
+          ],
+          "long_shots": [
+            15,
+            78
+          ],
+          "short_passing": [
+            8,
+            72
+          ],
+          "balance": [
+            15,
+            77
+          ],
+          "composure": [
+            8,
+            80
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2494-striker-glow-up-sp-7/",
+        "https://www.futnext.com/evolutions/striker-glow-up/2704"
+      ]
+    },
+    {
+      "key": "relentless",
+      "name": "Relentless",
+      "cost": "sesongpass, gratis (nivå 11)",
+      "until": "2026-10-22T07:00Z",
+      "req": {
+        "max_ovr": 79,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Relentless",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/relentless/2670",
+        "https://www.fut.gg/season-pass/"
+      ]
+    },
+    {
+      "key": "creative_or_composed",
+      "name": "Creative or Composed?",
+      "cost": "sesongpass, gratis (nivå 27)",
+      "until": "2026-10-22T07:00Z",
+      "req": {
+        "max_ovr": 79,
+        "max_ps": 2
+      },
+      "up": {
+        "paths": [
+          {
+            "label": "Incisive Pass + Press Proven",
+            "ps": [
+              [
+                "Incisive Pass",
+                3
+              ],
+              [
+                "Press Proven",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Incisive Pass + First Touch",
+            "ps": [
+              [
+                "Incisive Pass",
+                3
+              ],
+              [
+                "First Touch",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Tiki Taka + Press Proven",
+            "ps": [
+              [
+                "Tiki Taka",
+                3
+              ],
+              [
+                "Press Proven",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Tiki Taka + First Touch",
+            "ps": [
+              [
+                "Tiki Taka",
+                3
+              ],
+              [
+                "First Touch",
+                3
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2498-creative-or-composed-sp-27/",
+        "https://www.futbin.com/27/evolutions/12/creative-or-composed",
+        "https://realsport101.com/article/fc-27-season-1-evolutions-guide-best-players-for-every-free-and-premium-upgrade"
+      ]
+    },
+    {
+      "key": "midfield_polish",
+      "name": "Midfield Polish",
+      "cost": "sesongpass, premium (nivå 1)",
+      "until": "2026-10-22T07:00Z",
+      "premium": true,
+      "req": {
+        "max_ovr": 79,
+        "positions": [
+          "CM",
+          "CDM"
+        ],
+        "not_positions": [
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          1,
+          80
+        ],
+        "face": {
+          "passing": [
+            1,
+            79
+          ],
+          "defending": [
+            1,
+            79
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/midfield-polish/2706",
+        "https://www.fut.gg/season-pass/"
+      ]
+    },
+    {
+      "key": "tactical_ascent",
+      "name": "Tactical Ascent",
+      "cost": "sesongpass, premium (nivå 14)",
+      "until": "2026-10-22T07:00Z",
+      "premium": true,
+      "req": {
+        "max_ovr": 79,
+        "max_ps": 2
+      },
+      "up": {
+        "paths": [
+          {
+            "label": "Anticipate + Quick Step",
+            "ps": [
+              [
+                "Anticipate",
+                3
+              ],
+              [
+                "Quick Step",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Anticipate + Rapid",
+            "ps": [
+              [
+                "Anticipate",
+                3
+              ],
+              [
+                "Rapid",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Intercept + Quick Step",
+            "ps": [
+              [
+                "Intercept",
+                3
+              ],
+              [
+                "Quick Step",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Intercept + Rapid",
+            "ps": [
+              [
+                "Intercept",
+                3
+              ],
+              [
+                "Rapid",
+                3
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2496-tactical-ascent-sp-14/",
+        "https://realsport101.com/article/fc-27-season-1-evolutions-guide-best-players-for-every-free-and-premium-upgrade"
+      ]
+    },
+    {
+      "key": "winger_glow_up",
+      "name": "Winger Glow Up",
+      "cost": "sesongpass, premium (nivå 26)",
+      "until": "2026-10-22T07:00Z",
+      "premium": true,
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "max_positions": 3,
+        "positions": [
+          "LW"
+        ],
+        "not_positions": [
+          "LB",
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          83
+        ],
+        "sm": [
+          1,
+          3
+        ],
+        "ps": [
+          [
+            "Rapid",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            10,
+            80
+          ],
+          "volleys": [
+            10,
+            74
+          ],
+          "fk_accuracy": [
+            10,
+            73
+          ],
+          "agility": [
+            15,
+            86
+          ],
+          "dribbling": [
+            15,
+            84
+          ],
+          "finishing": [
+            10,
+            78
+          ],
+          "penalties": [
+            10,
+            74
+          ],
+          "short_passing": [
+            10,
+            76
+          ],
+          "balance": [
+            15,
+            85
+          ],
+          "composure": [
+            15,
+            80
+          ],
+          "acceleration": [
+            15,
+            85
+          ],
+          "shot_power": [
+            10,
+            77
+          ],
+          "vision": [
+            10,
+            81
+          ],
+          "long_passing": [
+            10,
+            80
+          ],
+          "reactions": [
+            15,
+            78
+          ],
+          "stamina": [
+            10,
+            72
+          ],
+          "sprint_speed": [
+            15,
+            85
+          ],
+          "long_shots": [
+            10,
+            80
+          ],
+          "crossing": [
+            10,
+            82
+          ],
+          "curve": [
+            10,
+            78
+          ],
+          "ball_control": [
+            15,
+            85
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/winger-glow-up/2705",
+        "https://www.futbin.com/27/evolutions/11/winger-glow-up"
+      ]
+    },
+    {
+      "key": "shooting_practice",
+      "name": "Shooting Practice",
+      "cost": "sesongpass, premium (nivå 28)",
+      "until": "2026-10-22T07:00Z",
+      "premium": true,
+      "req": {
+        "max_ovr": 81,
+        "max_ps": 3,
+        "max_psp": 0,
+        "positions": [
+          "LW",
+          "RW",
+          "ST"
+        ]
+      },
+      "up": {
+        "paths": [
+          {
+            "label": "Low Driven Shot + Power Shot",
+            "ps": [
+              [
+                "Low Driven Shot",
+                4
+              ],
+              [
+                "Power Shot",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Low Driven Shot + Chip Shot",
+            "ps": [
+              [
+                "Low Driven Shot",
+                4
+              ],
+              [
+                "Chip Shot",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Finesse Shot + Power Shot",
+            "ps": [
+              [
+                "Finesse Shot",
+                4
+              ],
+              [
+                "Power Shot",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Finesse Shot + Chip Shot",
+            "ps": [
+              [
+                "Finesse Shot",
+                4
+              ],
+              [
+                "Chip Shot",
+                4
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2499-shooting-practice-sp-28/",
+        "https://www.futbin.com/27/evolutions/13/shooting-practice",
+        "https://realsport101.com/article/fc-27-season-1-evolutions-guide-best-players-for-every-free-and-premium-upgrade"
+      ]
+    },
+    {
+      "key": "intro_repeatable",
+      "name": "Intro to Repeatable Evolutions",
+      "cost": "gratis",
+      "until": "2027-09-29T17:00Z",
+      "repeat": 2,
+      "req": {
+        "max_ovr": 79,
+        "max_pace": 81,
+        "positions": [
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          1,
+          80
+        ],
+        "stats": {
+          "long_shots": [
+            4,
+            77
+          ],
+          "vision": [
+            3,
+            79
+          ],
+          "short_passing": [
+            3,
+            78
+          ],
+          "reactions": [
+            4,
+            80
+          ],
+          "shot_power": [
+            3,
+            78
+          ],
+          "volleys": [
+            3,
+            78
+          ],
+          "fk_accuracy": [
+            4,
+            80
+          ],
+          "long_passing": [
+            4,
+            77
+          ],
+          "dribbling": [
+            4,
+            80
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/intro-to-repeatable-evolutions/2697",
+        "https://www.fut.gg/evolutions/2492-intro-to-repeatable-evolutions/"
+      ]
+    },
+    {
+      "key": "intro_evolutions",
+      "name": "Intro to Evolutions",
+      "cost": "gratis",
+      "until": "2027-09-29T17:00Z",
+      "req": {
+        "max_ovr": 75,
+        "max_pace": 80,
+        "max_ps": 7,
+        "max_positions": 2,
+        "positions": [
+          "RB"
+        ],
+        "not_positions": [
+          "CB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          34,
+          79
+        ],
+        "ps": [
+          [
+            "Slide Tackle",
+            3
+          ]
+        ],
+        "roles": [
+          [
+            "RB",
+            "Wingback",
+            1
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            40,
+            80
+          ],
+          "short_passing": [
+            40,
+            76
+          ],
+          "balance": [
+            40,
+            77
+          ],
+          "interceptions": [
+            40,
+            76
+          ],
+          "sliding_tackle": [
+            40,
+            75
+          ],
+          "vision": [
+            40,
+            75
+          ],
+          "curve": [
+            40,
+            80
+          ],
+          "ball_control": [
+            40,
+            80
+          ],
+          "def_awareness": [
+            40,
+            77
+          ],
+          "stamina": [
+            40,
+            80
+          ],
+          "acceleration": [
+            40,
+            80
+          ],
+          "crossing": [
+            40,
+            78
+          ],
+          "agility": [
+            40,
+            78
+          ],
+          "dribbling": [
+            40,
+            80
+          ],
+          "standing_tackle": [
+            40,
+            78
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/intro-to-evolutions/2695",
+        "https://www.fut.gg/evolutions/2491-intro-to-evolutions/"
+      ]
+    },
+    {
+      "key": "intro_training_camp",
+      "name": "Intro to Training Camp EVOs",
+      "cost": "gratis (treningsleir)",
+      "until": "2027-09-29T17:00Z",
+      "req": {
+        "max_ovr": 80,
+        "positions": [
+          "RB"
+        ]
+      },
+      "up": {
+        "roles": [
+          [
+            "RB",
+            "Fullback",
+            1
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/intro-to-training-camp-evos/2699",
+        "https://www.fut.gg/evolutions/2490-intro-to-training-camp-evos/"
+      ]
+    },
+    {
+      "key": "intro_pathway",
+      "name": "Intro to Pathway Evolutions",
+      "cost": "gratis",
+      "until": "2027-09-29T17:00Z",
+      "unchecked_note": "Har to valg i spillet. Bare valget med Gamechanger er kjent her, så det andre er ikke regnet med.",
+      "req": {
+        "max_ovr": 80,
+        "max_ps": 3
+      },
+      "up": {
+        "ps": [
+          [
+            "Gamechanger",
+            4
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/intro-to-pathway-evolutions/2698",
+        "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/"
+      ]
+    },
+    {
+      "key": "quick_step_fc26",
+      "name": "Quick Step [FC 26-oppdrag]",
+      "cost": "gratis",
+      "until": "2027-09-25T17:00Z",
+      "unchecked": "bare hvis du fullførte sesong 9-passet i FC 26",
+      "req": {
+        "max_ovr": 83,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2547-quick-step-fc-26-obj/"
+      ]
+    }
+  ],
+  "future": {
+    "_info": "Antatte evoer resten av året. Hver horisont trekker evoer per posisjon fra intervallene under, i mange parallelle fremtider (universes). Tallene er satt ut fra evoene i FC 27 sesong 1 (maks OVR 74-83, oppgraderinger +5 til +15 opp til omtrent maks OVR + 0-5) og mønsteret fra FC 25/26 der grensene stiger utover året, men nedskalert fordi EA sier oppgraderingene er mindre i FC 27. Endre fritt.",
+    "universes": 8,
+    "seed": 27,
+    "workers": "auto",
+    "_workers_info": "Antall prosesser som simulerer samtidig. auto = antall kjerner minus én (maks 8). Sett 1 hvis noe henger.",
+    "stage2_per_bucket": 10,
+    "_stage2_info": "Full simulering (alle fremtider) for de beste kortene per posisjon og OVR etter et første, raskt anslag. Resten får bare det raske anslaget (merket «grovt anslag»).",
+    "waves": [
+      {
+        "key": "s2",
+        "name": "Sesong 2",
+        "when": "okt.-nov.",
+        "evos": 3,
+        "max_ovr": [
+          76,
+          84
+        ],
+        "ovr_gain": [
+          2,
+          7
+        ],
+        "ovr_cap_add": [
+          1,
+          5
+        ],
+        "stat_boost": [
+          4,
+          10
+        ],
+        "stat_cap_add": [
+          -2,
+          3
+        ],
+        "stats": [
+          8,
+          15
+        ],
+        "fill_below": 77,
+        "fill_share": 0.5,
+        "pace_req_share": 0.6,
+        "pace_req_add": [
+          2,
+          7
+        ],
+        "excl_share": 0.5,
+        "ps": 0.75,
+        "ps_plus": 0.08,
+        "wf": 0.15,
+        "sm": 0.15,
+        "ps_evo_max_ovr": [
+          79,
+          83
+        ]
+      },
+      {
+        "key": "s4",
+        "name": "Sesong 3-4",
+        "when": "des.-feb.",
+        "evos": 3,
+        "max_ovr": [
+          80,
+          86
+        ],
+        "ovr_gain": [
+          2,
+          6
+        ],
+        "ovr_cap_add": [
+          1,
+          4
+        ],
+        "stat_boost": [
+          3,
+          8
+        ],
+        "stat_cap_add": [
+          -1,
+          3
+        ],
+        "stats": [
+          8,
+          14
+        ],
+        "fill_below": 0,
+        "fill_share": 0.0,
+        "pace_req_share": 0.5,
+        "pace_req_add": [
+          1,
+          6
+        ],
+        "excl_share": 0.5,
+        "ps": 0.7,
+        "ps_plus": 0.12,
+        "wf": 0.12,
+        "sm": 0.12,
+        "ps_evo_max_ovr": [
+          82,
+          86
+        ]
+      },
+      {
+        "key": "aar",
+        "name": "Resten av året",
+        "when": "mars-mai",
+        "evos": 3,
+        "max_ovr": [
+          83,
+          88
+        ],
+        "ovr_gain": [
+          1,
+          4
+        ],
+        "ovr_cap_add": [
+          1,
+          3
+        ],
+        "stat_boost": [
+          2,
+          6
+        ],
+        "stat_cap_add": [
+          0,
+          3
+        ],
+        "stats": [
+          7,
+          12
+        ],
+        "fill_below": 0,
+        "fill_share": 0.0,
+        "pace_req_share": 0.4,
+        "pace_req_add": [
+          1,
+          5
+        ],
+        "excl_share": 0.4,
+        "ps": 0.65,
+        "ps_plus": 0.15,
+        "wf": 0.1,
+        "sm": 0.1,
+        "ps_evo_max_ovr": [
+          85,
+          88
+        ]
+      }
+    ],
+    "positions": {
+      "ST": {
+        "positions": [
+          "ST",
+          "CF"
+        ],
+        "exclude": [
+          "CAM",
+          "CM",
+          "CB"
+        ]
+      },
+      "W": {
+        "positions": [
+          "LW",
+          "RW",
+          "LM",
+          "RM"
+        ],
+        "sides": [
+          [
+            "LW",
+            "LM"
+          ],
+          [
+            "RW",
+            "RM"
+          ]
+        ],
+        "exclude": [
+          "ST",
+          "CDM",
+          "LB",
+          "RB"
+        ]
+      },
+      "CAM": {
+        "positions": [
+          "CAM"
+        ],
+        "exclude": [
+          "ST",
+          "CDM",
+          "CB"
+        ]
+      },
+      "CM": {
+        "positions": [
+          "CM"
+        ],
+        "exclude": [
+          "CB",
+          "ST",
+          "CAM"
+        ]
+      },
+      "CDM": {
+        "positions": [
+          "CDM"
+        ],
+        "exclude": [
+          "CAM",
+          "ST",
+          "CB"
+        ]
+      },
+      "FB": {
+        "positions": [
+          "LB",
+          "RB",
+          "LWB",
+          "RWB"
+        ],
+        "sides": [
+          [
+            "LB",
+            "LWB"
+          ],
+          [
+            "RB",
+            "RWB"
+          ]
+        ],
+        "exclude": [
+          "CB",
+          "LM",
+          "RM"
+        ]
+      },
+      "CB": {
+        "positions": [
+          "CB"
+        ],
+        "exclude": [
+          "LB",
+          "RB",
+          "CM",
+          "CDM"
+        ]
+      },
+      "GK": {
+        "positions": [
+          "GK"
+        ],
+        "exclude": []
+      }
+    },
+    "pools": {
+      "_info": "Hvor ofte evoer for posisjonen løfter hver attributt (1 = nesten alltid) og hvilke PlayStyles de gir. Satt ut fra FC 27-evoene så langt.",
+      "ST": {
+        "stats": {
+          "positioning": 1,
+          "finishing": 1,
+          "shot_power": 0.9,
+          "acceleration": 0.85,
+          "sprint_speed": 0.85,
+          "reactions": 0.8,
+          "ball_control": 0.75,
+          "dribbling": 0.75,
+          "agility": 0.7,
+          "composure": 0.7,
+          "volleys": 0.7,
+          "long_shots": 0.7,
+          "balance": 0.65,
+          "penalties": 0.5,
+          "curve": 0.4,
+          "short_passing": 0.35,
+          "stamina": 0.35,
+          "vision": 0.3,
+          "strength": 0.25,
+          "jumping": 0.25,
+          "heading_accuracy": 0.25,
+          "fk_accuracy": 0.25,
+          "long_passing": 0.2,
+          "crossing": 0.2
+        },
+        "playstyles": {
+          "Finesse Shot": 1,
+          "Power Shot": 0.8,
+          "Low Driven Shot": 0.8,
+          "Gamechanger": 0.8,
+          "Quick Step": 0.7,
+          "First Touch": 0.7,
+          "Technical": 0.7,
+          "Rapid": 0.6,
+          "Acrobatic": 0.4,
+          "Precision Header": 0.4,
+          "Chip Shot": 0.4,
+          "Trickster": 0.3,
+          "Press Proven": 0.3
+        }
+      },
+      "W": {
+        "stats": {
+          "acceleration": 1,
+          "sprint_speed": 1,
+          "agility": 0.85,
+          "dribbling": 0.85,
+          "ball_control": 0.85,
+          "balance": 0.75,
+          "positioning": 0.7,
+          "reactions": 0.7,
+          "finishing": 0.65,
+          "composure": 0.65,
+          "crossing": 0.6,
+          "curve": 0.6,
+          "shot_power": 0.55,
+          "stamina": 0.5,
+          "vision": 0.5,
+          "short_passing": 0.5,
+          "long_shots": 0.5,
+          "long_passing": 0.3,
+          "volleys": 0.3,
+          "penalties": 0.2,
+          "fk_accuracy": 0.2
+        },
+        "playstyles": {
+          "Rapid": 1,
+          "Technical": 0.9,
+          "Quick Step": 0.8,
+          "Finesse Shot": 0.8,
+          "Trickster": 0.6,
+          "Whipped Pass": 0.6,
+          "First Touch": 0.6,
+          "Gamechanger": 0.6,
+          "Low Driven Shot": 0.5,
+          "Incisive Pass": 0.4
+        }
+      },
+      "CAM": {
+        "stats": {
+          "vision": 1,
+          "short_passing": 1,
+          "ball_control": 0.9,
+          "dribbling": 0.85,
+          "long_passing": 0.8,
+          "composure": 0.75,
+          "reactions": 0.75,
+          "agility": 0.7,
+          "positioning": 0.7,
+          "balance": 0.65,
+          "finishing": 0.65,
+          "long_shots": 0.65,
+          "curve": 0.6,
+          "acceleration": 0.55,
+          "crossing": 0.5,
+          "sprint_speed": 0.5,
+          "shot_power": 0.5,
+          "volleys": 0.4,
+          "fk_accuracy": 0.4,
+          "stamina": 0.4,
+          "penalties": 0.3
+        },
+        "playstyles": {
+          "Incisive Pass": 1,
+          "Technical": 0.9,
+          "First Touch": 0.8,
+          "Tiki Taka": 0.7,
+          "Finesse Shot": 0.7,
+          "Pinged Pass": 0.6,
+          "Inventive": 0.6,
+          "Press Proven": 0.5,
+          "Gamechanger": 0.5,
+          "Trickster": 0.4
+        }
+      },
+      "CM": {
+        "stats": {
+          "short_passing": 1,
+          "long_passing": 0.9,
+          "vision": 0.9,
+          "ball_control": 0.8,
+          "stamina": 0.7,
+          "composure": 0.7,
+          "reactions": 0.7,
+          "dribbling": 0.6,
+          "interceptions": 0.6,
+          "standing_tackle": 0.55,
+          "def_awareness": 0.5,
+          "long_shots": 0.5,
+          "acceleration": 0.5,
+          "sprint_speed": 0.5,
+          "crossing": 0.45,
+          "curve": 0.45,
+          "strength": 0.4,
+          "agility": 0.4,
+          "balance": 0.4,
+          "fk_accuracy": 0.35,
+          "aggression": 0.3
+        },
+        "playstyles": {
+          "Pinged Pass": 1,
+          "Incisive Pass": 0.9,
+          "Tiki Taka": 0.8,
+          "Press Proven": 0.7,
+          "Long Ball Pass": 0.7,
+          "Intercept": 0.6,
+          "Relentless": 0.6,
+          "Technical": 0.6,
+          "Inventive": 0.5,
+          "Anticipate": 0.4
+        }
+      },
+      "CDM": {
+        "stats": {
+          "interceptions": 1,
+          "def_awareness": 1,
+          "standing_tackle": 1,
+          "short_passing": 0.75,
+          "long_passing": 0.75,
+          "sliding_tackle": 0.7,
+          "strength": 0.7,
+          "stamina": 0.7,
+          "aggression": 0.6,
+          "vision": 0.6,
+          "composure": 0.55,
+          "acceleration": 0.55,
+          "sprint_speed": 0.55,
+          "jumping": 0.5,
+          "reactions": 0.5,
+          "heading_accuracy": 0.4,
+          "ball_control": 0.4,
+          "crossing": 0.3,
+          "curve": 0.3,
+          "fk_accuracy": 0.25
+        },
+        "playstyles": {
+          "Intercept": 1,
+          "Anticipate": 0.9,
+          "Jockey": 0.8,
+          "Block": 0.7,
+          "Bruiser": 0.6,
+          "Relentless": 0.6,
+          "Long Ball Pass": 0.6,
+          "Tiki Taka": 0.6,
+          "Pinged Pass": 0.5,
+          "Aerial Fortress": 0.5,
+          "Press Proven": 0.5,
+          "Slide Tackle": 0.4
+        }
+      },
+      "FB": {
+        "stats": {
+          "acceleration": 1,
+          "sprint_speed": 1,
+          "stamina": 0.85,
+          "interceptions": 0.75,
+          "def_awareness": 0.75,
+          "standing_tackle": 0.75,
+          "crossing": 0.7,
+          "sliding_tackle": 0.65,
+          "agility": 0.6,
+          "balance": 0.55,
+          "ball_control": 0.55,
+          "dribbling": 0.55,
+          "short_passing": 0.5,
+          "curve": 0.5,
+          "reactions": 0.5,
+          "vision": 0.35,
+          "strength": 0.35,
+          "composure": 0.35,
+          "aggression": 0.3
+        },
+        "playstyles": {
+          "Jockey": 1,
+          "Intercept": 0.9,
+          "Anticipate": 0.8,
+          "Whipped Pass": 0.7,
+          "Rapid": 0.7,
+          "Relentless": 0.7,
+          "Quick Step": 0.6,
+          "Slide Tackle": 0.5,
+          "Incisive Pass": 0.4,
+          "Block": 0.4
+        }
+      },
+      "CB": {
+        "stats": {
+          "def_awareness": 1,
+          "standing_tackle": 1,
+          "interceptions": 0.9,
+          "sliding_tackle": 0.85,
+          "strength": 0.85,
+          "heading_accuracy": 0.75,
+          "jumping": 0.7,
+          "aggression": 0.7,
+          "short_passing": 0.5,
+          "acceleration": 0.5,
+          "sprint_speed": 0.5,
+          "long_passing": 0.45,
+          "stamina": 0.45,
+          "composure": 0.45,
+          "reactions": 0.45,
+          "vision": 0.35,
+          "ball_control": 0.3
+        },
+        "playstyles": {
+          "Anticipate": 1,
+          "Jockey": 0.9,
+          "Block": 0.8,
+          "Intercept": 0.8,
+          "Aerial Fortress": 0.8,
+          "Bruiser": 0.7,
+          "Slide Tackle": 0.6,
+          "Enforcer": 0.5,
+          "Long Ball Pass": 0.4
+        }
+      },
+      "GK": {
+        "stats": {
+          "gk_diving": 1,
+          "gk_handling": 1,
+          "gk_reflexes": 1,
+          "gk_positioning": 1,
+          "gk_kicking": 0.8,
+          "reactions": 0.8
+        },
+        "playstyles": {
+          "Far Reach": 1,
+          "Footwork": 0.8,
+          "Deflector": 0.8,
+          "Rush Out": 0.7,
+          "Cross Claimer": 0.6,
+          "Far Throw": 0.5
+        }
+      }
+    }
+  }
+}

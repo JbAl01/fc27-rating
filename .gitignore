@@ -1,0 +1,24 @@
+# Lages på nytt hver gang
+output/
+site/
+__pycache__/
+*.pyc
+
+# Hentede data (GitHub Actions tar vare på dem i sin egen cache)
+data/ea_players.json
+data/spesialkort.json
+data/cache/
+data/raw/
+data/evolab_cache.pkl
+
+# Bare dine egne: brukte evoer, blinde tester og talte løp
+data/brukte_evoer.json
+data/tester.csv
+data/loep.csv
+
+# data/mine_evoer.json og data/mine_spillere.json skal være med,
+# så nye evoer og kort du legger inn kommer med på siden.
+
+# Lages av wrangler
+.wrangler/
+node_modules/

@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="no"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Evo Lab</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#15191e" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+__CSS__
+.evos{margin:0 0 16px}
+.evos table{margin-top:10px;background:var(--surface)}
+.evos th,.evos td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
+.evos th{font-weight:600;color:var(--muted);font-size:13px;border-bottom-color:var(--line2)}
+.evos td.when{white-space:nowrap}
+.evos tr.closed td{color:var(--faint)}
+.evos .src a{margin-right:8px}
+.cmp{margin:0 0 18px;background:var(--surface);padding:14px 16px;border-left:3px solid var(--link)}
+.cmp h2{margin:0 0 8px;font:700 20px var(--num)}
+.cmp table{width:auto;min-width:min(440px,100%)}
+.cmp table th,.cmp table td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:right;font:600 15px var(--num);white-space:nowrap}
+.cmp table th{font:500 14px var(--text);color:var(--muted);text-align:left}
+.cmp table thead th{font:700 15px var(--num);color:var(--ink);text-align:right}
+.sbx{margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.sbx ul{list-style:none;margin:8px 0;padding:0;columns:2 300px;column-gap:28px}
+.sbx li{break-inside:avoid;padding:4px 0}
+.sbx li .why{display:block;color:var(--down);font-size:13px;margin-left:23px}
+.sbx li select{margin:4px 0 0 23px;max-width:290px;font-size:13px;min-height:30px;padding:4px 6px}
+.sbx .add{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin:10px 0}
+.sbx .mine{margin:6px 0}
+.closedtag{color:var(--down);font-weight:600}
+</style></head><body>
+<div class="page">
+<header class="top"><div><h1>Evo Lab</h1>
+<p>Hva kortene blir med evoene som er ute nå. Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</p></div>
+<nav><a href="rapport.html">Rangering</a></nav></header>
+
+<section class="controls" aria-label="Filtre">
+<label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
+<label class="f">Posisjon<select id="g"></select></label>
+<label class="f">OVR i dag<select id="ovr"><option value="74">74 eller lavere</option><option value="79">79 eller lavere</option><option value="81">81 eller lavere</option><option value="83">83 eller lavere</option><option value="">Alle</option></select></label>
+<label class="f">Sorter etter<select id="sort"></select></label>
+<label class="f">Vis<select id="h"></select></label>
+<span class="count" id="count"></span>
+<details class="more" id="more"><summary>Flere valg</summary><div>
+<label class="f">Korttype<select id="kind"><option value="">Alle</option><option value="base">Basekort</option><option value="special">Spesialkort</option></select></label>
+<label class="f">Kjønn<select id="gender"><option value="">Alle</option><option value="M">Menn</option><option value="F">Kvinner</option></select></label>
+<label class="f">OVR fra<input id="ovrMin" class="small" type="number" inputmode="numeric" placeholder="–"></label>
+<label class="f wide">Ligner på (løper og beveger seg likt som)<input id="twin" list="twinlist" placeholder="Skriv et kort, f.eks. Pichon" autocomplete="off"><datalist id="twinlist"></datalist></label>
+<label class="check"><input type="checkbox" id="live"> Bare kort som kan ta en evo nå</label>
+<button type="button" class="link" id="reset">Nullstill</button>
+</div></details>
+</section>
+
+<div id="stale"></div><div id="usedinfo"></div>
+<details class="evos" id="evos"><summary id="evosum">Evoene som er ute nå</summary><div id="evobody"></div></details>
+<section class="cmp" id="cmp" hidden></section>
+
+<div class="tw"><table class="data" id="tbl"><thead><tr id="thead"></tr></thead><tbody id="rows"></tbody></table></div>
+<button type="button" class="more-rows" id="morerows" hidden></button>
+
+<footer class="foot">
+<details><summary>Hva tallene betyr</summary>
+<p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen i dag, også spesialkort.</p>
+<p><b>Følelse</b>: hvor kvikt og responsivt kortet føles med ball (Agility, Reactions, Balance, Acceleration, Ball Control og høyde). <b>Løps-AI</b>: hvor godt kortet beveger seg uten ball, delt i <b>Løps-IQ</b> (hvor og når det løper) og <b>Effekt</b> (om løpet gir avstand). <b>Stopp</b>: hvor vanskelig kortet er å stoppe med ball og på løp.</p>
+<p><b>Med evoene som er ute nå</b> viser den beste rekkefølgen av evoene du kan ta i dag. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
+<p>Ny evo i spillet? Kopier teksten fra evoens side på FUTBIN eller FUT.GG og kjør <code>py -m fcrating evo-import fil.txt</code>, så kommer den med neste gang du kjører rate.</p>
+</details>
+<p id="footnote"></p>
+<p class="legal">Denne siden er ikke godkjent av eller tilknyttet EA eller deres lisensgivere. <a href="om.html">Om siden, kilder og personvern</a></p>
+</footer>
+</div>
+<script>
+const RAW=__DATA__,META=__META__,STR=META.strings,H=META.hz,R=META.rate,RU=META.rules,EV=META.evos,CATS=META.cats,PAGE=100;
+let shown=PAGE;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt=(v,dg=1)=>v===null||v===undefined||v===""||Number.isNaN(v)?"–":(typeof v==="number"?v.toFixed(dg):esc(v));
+const sg=(v,dg=1)=>v==null||Number.isNaN(v)?"":(v>=0?"+":"−")+Math.abs(v).toFixed(dg);
+const pctT=p=>p==null?"–":(p<1?"topp <1 %":"topp "+Math.round(p)+" %");
+const S=i=>STR[i]??"";
+const AI={};META.akeys.forEach((k,i)=>AI[k]=i);
+const CI={};CATS.forEach((c,i)=>CI[c.k]=i);
+/* ---------- the same maths as Python (evolab.FastRater, evolab.apply) ---------- */
+function psum(xs){if(!R.pysum){let s=0;for(const x of xs)s+=x;return s}let f=0,c=0;for(const x of xs){const t=f+x;if(Math.abs(f)>=Math.abs(x))c+=(f-t)+x;else c+=(x-t)+f;f=t}if(c&&isFinite(c))f+=c;return f}
+/* Python round(): fast when the value is clearly not on a .5 boundary, exact decimal check otherwise */
+function pyRound(x,n){if(x==null||!isFinite(x))return x;const m=10**n,y=Math.abs(x)*m,f=Math.floor(y),r=y-f;if(Math.abs(r-0.5)>1e-7){const v=(r<0.5?f:f+1)/m;return x<0?-v:v}return pyRoundExact(x,n)}
+function pyRoundExact(x,n){if(x==null||!isFinite(x))return x;const neg=x<0,s=Math.abs(x).toFixed(60),dot=s.indexOf("."),ip=s.slice(0,dot),fp=s.slice(dot+1),keep=fp.slice(0,n),rest=fp.slice(n);
+let up=false;if(rest[0]>"5")up=true;else if(rest[0]==="5"){if(/[1-9]/.test(rest.slice(1)))up=true;else{const last=n>0?+keep[n-1]:+ip[ip.length-1];up=last%2===1}}
+let v=Number(ip+(n>0?"."+keep:""));if(up)v=Number((v+Math.pow(10,-n)).toFixed(n));return neg?-v:v}
+function classify(a,h,gender){const r=R.acc,agi=a[AI.agility],str=a[AI.strength],acc=a[AI.acceleration];if(agi==null||str==null||acc==null)return null;
+const sex=gender==="F"?"female":"male",ex=r.explosive,le=r.lengthy;
+const xs=agi>=ex.min_agility&&agi-str>=ex.min_agility_minus_strength&&acc>=ex.min_acceleration;
+const ls=str>=le.min_strength&&str-agi>=le.min_strength_minus_agility&&acc>=le.min_acceleration;
+if(h==null){if(!xs&&!ls)return"Controlled";return null}if(xs&&h<=ex.max_height_cm[sex])return"Explosive";if(ls&&h>=le.min_height_cm[sex])return"Lengthy";return"Controlled"}
+function weighted(a,wts){const pr=[];for(const[i,v]of wts){if(a[i]!=null)pr.push([a[i],v])}const got=psum(pr.map(x=>x[1]));return got>0?psum(pr.map(x=>x[0]*x[1]))/got:null}
+function obdF(a){let t=0;for(const[i,w]of R.obdW){if(a[i]==null)return null;t+=a[i]*w}const ws=psum(R.obdW.map(x=>x[1]));return ws?pyRound(t/ws,1):null}
+function runScore(a,f,ws){const use=ws.filter(([k])=>typeof k==="string"?f[k]!=null:(a[k]!=null&&a[k]!==0));const tot=psum(use.map(x=>x[1]));
+if(!use.length||tot<0.5*psum(ws.map(x=>x[1])))return null;const parts=use.map(([k,v])=>pyRound((typeof k==="string"?f[k]:a[k])*v/tot,2)).sort((x,y)=>y-x);return pyRound(psum(parts),1)}
+const RUN_DEC=R.runW.filter(x=>x[2]),RUN_EXE=R.runW.filter(x=>!x[2]);
+/* Vanskelig å stoppe (stop.scores): med ball, uten ball, and the blend of the two */
+function psBonus(list,ps,psp,cap){let t=0;for(const[n,b,p]of list){if(psp.includes(n))t+=p;else if(ps.includes(n))t+=b}return Math.min(t,cap)}
+function stopOf(a,acc,ps,psp){const Hs=R.hs;if(!Hs)return[null,null,null];const f={},sp=a[AI.sprint_speed],sr=a[AI.strength];if(sp&&sr)f.rask_sterk=Math.min(sp,sr);
+const b0=runScore(a,f,Hs.ball),r0=runScore(a,f,Hs.run);if(b0==null||r0==null)return[null,null,null];
+const ball=pyRound(b0+psBonus(Hs.psBall,ps,psp,Hs.capBall),1),run=pyRound(r0+(Hs.acc[acc||""]??0)+psBonus(Hs.psRun,ps,psp,Hs.capRun),1);
+return[pyRound(Hs.share*ball+(1-Hs.share)*run,1),ball,run]}
+function rater(d){if(d._rt)return d._rt;const c=d.c,G=R.G[c.g];
+d._rt=function(st){const a=st.a;let acc=classify(a,c.h,c.gender);if(acc==null&&c.accSrc)acc=c.accSrc;
+const skill=weighted(a,G.sk);let feel=null,pace=null,run=null,vil=null,eff=null;
+const base=weighted(a,R.feelW);if(base!=null)feel=base+c.feelH+(R.feelAcc[acc||""]??0)+c.feelB;
+if(c.g!=="GK"){let ac=a[AI.acceleration],sp=a[AI.sprint_speed];if(ac!=null||sp!=null){if(ac==null)ac=sp;if(sp==null)sp=ac;pace=G.sh*ac+(1-G.sh)*sp+(R.paceAcc[acc||""]??0)}}
+if(R.runW.length){const f={};if(c.hb!=null)f.kort_kropp=c.hb;if(c.wrv!=null)f.arbeidsrate=c.wrv;const ag=a[AI.agility],sr=a[AI.strength],ba=a[AI.balance];
+if(ag!=null&&sr!=null&&ag&&sr)f.kvikk_sterk=Math.min(ag,sr);if(ba!=null&&sr!=null&&ba&&sr)f.balanse_sterk=Math.min(ba,sr);
+run=runScore(a,f,R.runW);vil=RUN_DEC.length?runScore(a,f,RUN_DEC):null;eff=RUN_EXE.length?runScore(a,f,RUN_EXE):null}
+let obd;if(c.obdData!=null){const after=obdF(a);obd=c.obdBefore!=null&&after!=null?pyRound(c.obdData+after-c.obdBefore,1):c.obdData}else obd=obdF(a);
+const [stp,stb,stl]=c.g!=="GK"&&c.prim!=="GK"?stopOf(a,acc,st.ps,st.psp):[null,null,null];
+const out={acc,feel:feel==null?null:pyRound(feel,1),pace:pace==null?null:pyRound(pace,1),run,vil,eff,obd,stp,stb,stl,igr:0};
+if(skill==null)return out;let core=G.b[0]*skill,used=G.b[0];
+if(G.b[1]&&feel!=null){core+=G.b[1]*feel;used+=G.b[1]}if(G.b[2]&&pace!=null){core+=G.b[2]*pace;used+=G.b[2]}if(G.b[3]&&run!=null){core+=G.b[3]*run;used+=G.b[3]}if(G.b[4]&&stp!=null){core+=G.b[4]*stp;used+=G.b[4]}core/=used;
+const items=[];for(const[names,plus]of[[st.psp,true],[st.ps,false]]){for(const n of names){const e=R.ps[n];if(!e)continue;const vals=[];for(const k of e[2]){if(a[k]!=null)vals.push(a[k])}
+let syn=0.6;if(vals.length){const s=R.syn;syn=Math.max(s.min,Math.min(s.max,(psum(vals)/vals.length-s.floor)/s.span))}
+let damp=1;const dm=e[3];if(dm&&a[dm[0]]!=null){const t=Math.max(0,Math.min(1,(a[dm[0]]-dm[1])/(dm[2]-dm[1])));damp=1-(1-dm[3])*t}
+const rel=e[4][c.g]??0;items.push((plus?e[1]*rel:e[0]*rel)*syn*damp)}}
+items.sort((x,y)=>y-x);let pst=0;items.forEach((x,i)=>{pst+=x*(i<R.fac.length?R.fac[i]:R.fac[R.fac.length-1])});
+let igr=core+Math.min(pst,R.psMax);if(st.role>=0)igr+=R.rolePts[String(st.role)]??0;
+if(st.wf!=null)igr+=(R.wfPts[String(st.wf)]??0)*G.wf;if(st.sm!=null)igr+=(R.smPts[String(st.sm)]??0)*G.sm;igr+=c.gk;
+if(R.ob&&G.ob&&obd!=null)igr+=Math.max(0,Math.min(R.ob.max,(obd-R.ob.start)*R.ob.per_point))*G.ob;
+if(G.st){const v=a[AI.standing_tackle];if(v!=null){let p=0;for(const[t,val]of R.stT){if(v>=t)p=val}igr+=p*G.st}}
+out.igr=pyRound(igr,1);return out};return d._rt}
+function faceVal(a,w){const xs=[];for(const[i,v]of RU.face[w]){if(a[i]==null)return null;xs.push(a[i]*v)}return pyRound(psum(xs),0)}
+function psCount(st){const n=st.ps.length+st.psp.length;return st.psu&&n===0?Math.max(n,RU.assume):n}
+function stateOf(d){return{a:d.base.slice(),ovr:d.ovr||0,ps:d.ps.slice(),psp:d.psp.slice(),wf:d.wf,sm:d.sm,role:d.c.role,done:[],psu:!!d.c.psu,pos:d.positions,g:d.c.g}}
+function check(e,st){const r=e[7],pos=r[6],np=r[7];
+if(pos.length&&!st.pos.some(p=>pos.includes(p)))return["pos","feil posisjon"];const bad=st.pos.filter(p=>np.includes(p));if(bad.length)return["pos","har posisjonen "+bad[0]];
+if(r[5]!=null&&st.pos.length>r[5])return["pos",`${st.pos.length} posisjoner (maks ${r[5]})`];if(r[8]&&!st.done.includes(r[8]))return["pre","krever forrige evo i kjeden"];
+if(st.done.filter(k=>k===e[0]).length>=e[6])return["done","allerede tatt"];
+if(r[0]!=null&&st.ovr<r[0])return["ovr",`OVR ${st.ovr} (minst ${r[0]})`];if(r[1]!=null&&st.ovr>r[1])return["ovr",`OVR ${st.ovr} (maks ${r[1]})`];
+if(r[2]!=null){const pac=faceVal(st.a,"pace");if(pac!=null&&pac>r[2])return["pace",`PAC ${pac} (maks ${r[2]})`]}
+if(r[3]!=null){const n=psCount(st);if(n>r[3])return["ps",`${n} PlayStyles (maks ${r[3]})`]}if(r[4]!=null&&st.psp.length>r[4])return["psp",`${st.psp.length} PlayStyle+ (maks ${r[4]})`];return null}
+const raise=(cur,g,c)=>Math.max(cur,Math.min(cur+g,c));
+function apply(e,st,path){const u=e[8],s={...st,a:st.a.slice(),ps:st.ps.slice(),psp:st.psp.slice(),done:st.done.slice()};
+/* the levels everyone gets first, then the chosen option, like the game (evolab._apply_core) */
+const parts=path?[u,path.slice(1)]:[u];
+for(const p of parts)for(const[i,g,c]of p[3]){if(s.a[i]!=null&&s.a[i]<c)s.a[i]=Math.min(s.a[i]+g,c)}
+for(const p of parts)for(const[w,g,c]of p[4]){const now=faceVal(s.a,w);if(now==null||now>=c)continue;const add=Math.min(g,c-now);for(const[i]of RU.face[w])s.a[i]=Math.min(99,s.a[i]+add)}
+for(const p of parts){if(p[0]&&s.ovr<p[0][1])s.ovr=Math.trunc(Math.min(s.ovr+p[0][0],p[0][1]));if(p[1]&&s.wf!=null&&s.wf<p[1][1])s.wf=Math.trunc(Math.min(s.wf+p[1][0],p[1][1]));if(p[2]&&s.sm!=null&&s.sm<p[2][1])s.sm=Math.trunc(Math.min(s.sm+p[2][0],p[2][1]))}
+for(const p of parts)for(const[n,cap]of p[5]){const k=s.ps.length+s.psp.length;if(!s.ps.includes(n)&&!s.psp.includes(n)&&k<RU.psCap&&(!cap||k<cap))s.ps.push(n)}
+for(const p of parts)for(const[n,cap]of p[6]){if(s.psp.includes(n)||s.psp.length>=RU.pspCap||(cap&&s.psp.length>=cap))continue;const j=s.ps.indexOf(n);if(j>=0)s.ps.splice(j,1);s.psp.push(n)}
+const rp=R.G[s.g].rp;for(const p of parts)for(const[pos,,lv]of p[7]){if(rp.includes(pos))s.role=Math.max(s.role,lv)}s.done.push(e[0]);return s}
+function rolesPP(st){return{...st,role:Math.max(st.role,2)}}
+/* game thresholds an upgrade crosses (same rules as evolab.gates in Python) */
+const ACCR={Explosive:2,Controlled:1,Lengthy:0};
+function gates(d0,d1,a0,a1,g){const out=[];if(d0.acc!==d1.acc&&d1.acc){out.push(["acc",`AcceleRATE ${d0.acc||"?"} → ${d1.acc}`,(ACCR[d1.acc]??1)>(ACCR[d0.acc||""]??1)])}
+const s=R.ob?R.ob.start:null;if(s!=null&&d0.obd!=null&&d1.obd!=null&&d0.obd<s&&d1.obd>=s)out.push(["obd",`Off-balance dribbling ${Math.round(d0.obd)} → ${Math.round(d1.obd)} (kommer inn fra ${s})`,true]);
+if(R.G[g]&&R.G[g].st){const s0=a0[AI.standing_tackle],s1=a1[AI.standing_tackle];for(const[t]of R.stT){if(t&&s0!=null&&s1!=null&&s0<t&&s1>=t)out.push(["st",`Standing Tackle ${Math.round(s0)} → ${Math.round(s1)} (flere taklingsanimasjoner fra ${t})`,true])}}return out}
+const gateChips=gs=>gs.map(([k,t,good])=>`<span class="chip ${good?"ok":"bad"}" title="${good?"Krysser en terskel i spillet":"Felle: blir dårligere i spillet"}">${good?"✓":"!"} ${esc(t)}</span>`).join("");
+function obdOf(d,a){if(d.c.obdData!=null){const after=obdF(a);return d.c.obdBefore!=null&&after!=null?pyRound(d.c.obdData+after-d.c.obdBefore,1):d.c.obdData}return obdF(a)}
+function chemCheck(d,a){return Object.entries(META.chem||{}).map(([name,bs])=>{const b=a.slice();for(const[i,v]of bs){if(b[i]!=null)b[i]=Math.min(99,b[i]+v)}
+let acc=classify(b,d.c.h,d.c.gender);if(acc==null&&d.c.accSrc)acc=d.c.accSrc;return{name,acc,obd:obdF(b)}})}
+function runPlan(d,plan){const rt=rater(d);let st=stateOf(d),det=rt(st);const steps=[];
+for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(e,st,path),nd=rt(nx);steps.push({e,path,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}
+if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
+/* ---------- data ---------- */
+const D=RAW.map((r,i)=>({i,name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
+h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
+like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
+lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
+med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],ovr:r[20][5],acc:r[20][6],feel:r[20][7],pace:r[20][8]},
+nowx:{acc:r[21][0],feel:r[21][1],pace:r[21][2]},runs:{now:r[22][0],live:r[22][1],end:r[22][2]},cats:r[23]||null,pse:r[24],base:r[25],
+c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14]},
+ps:r[27].map(S),psp:r[28].map(S),wf:r[29],sm:r[30],off:r[31],runcard:r[32],lv:{feel:r[33][0],acc:r[33][1],pace:r[33][2]},stops:r[34]?{now:r[34][0]||[],live:r[34][1]||[],end:r[34][2]||[]}:null}));
+/* ---------- time and evo helpers ---------- */
+const DAY=86400000;
+const untilMs=u=>u?Date.parse(u.length===10?u+"T17:00:00Z":u):null;
+function daysLeft(until){const t=untilMs(until);return t==null?null:Math.floor((t-Date.now())/DAY)}
+const isClosed=e=>{const t=untilMs(e[3]);return t!=null&&t<=Date.now()};
+const TF=new Intl.DateTimeFormat("nb-NO",{hour:"2-digit",minute:"2-digit"});
+const DF=new Intl.DateTimeFormat("nb-NO",{weekday:"short",day:"numeric",month:"short"});
+function closeText(u){const t=untilMs(u);if(t==null)return"ingen sluttdato";const left=t-Date.now();if(left<=0)return"stengt";
+if(left>150*DAY)return"hele sesongen";const d=new Date(t),now=new Date();
+const day=d.toDateString()===now.toDateString()?"i dag":(new Date(now.getTime()+DAY).toDateString()===d.toDateString()?"i morgen":DF.format(d));
+return`${day} kl. ${TF.format(d)}`}
+const GKEY=META.gkey||{};
+const posClass=g=>({ST:"att",W:"att",CAM:"mid",CM:"mid",CDM:"mid",FB:"def",CB:"def",GK:"gk"})[GKEY[g]||g]||"";
+const plural=g=>META.plural[g]||g;
+const n0=v=>v==null?"–":Number(v).toLocaleString("no");
+const delta=(v,dg=1)=>v==null||Number.isNaN(v)||Math.abs(v)<0.05?"":`<small class="${v>0?"up":"down"}">${sg(v,dg)}</small>`;
+function list(items){return items.length<2?items.join(""):items.slice(0,-1).join(", ")+" og "+items[items.length-1]}
+const SRCNAME=u=>/fut\.gg/.test(u)?"FUT.GG":/futnext/.test(u)?"futnext":/futbin/.test(u)?"FUTBIN":/realsport/.test(u)?"RealSport101":/moddingway/.test(u)?"ModdingWay":"kilde";
+function reqText(e){const r=e[7],out=[];
+if(r[6].length)out.push(r[6].join(", "));if(r[1]!=null)out.push(r[0]!=null&&r[0]===r[1]?`OVR ${r[1]}`:`maks ${r[1]} OVR`);else if(r[0]!=null)out.push(`minst ${r[0]} OVR`);
+if(r[2]!=null)out.push(`maks ${r[2]} PAC`);if(r[3]!=null)out.push(`maks ${r[3]} PlayStyles`);if(r[4]!=null)out.push(r[4]===0?"ingen PlayStyle+":`maks ${r[4]} PlayStyle+`);
+if(r[5]!=null)out.push(`maks ${r[5]} posisjoner`);if(r[7].length)out.push("ikke "+r[7].join(", "));
+if(r[8]){const pre=EV.find(x=>x[0]===r[8]);out.push("etter "+(pre?pre[1]:r[8]))}return out.join(", ")||"alle"}
+
+/* ---------- what the table shows for the chosen view ---------- */
+const isNow=()=>F.h===0;
+const hv=d=>d.h[F.h];
+const runAt=d=>d.runcard?(isNow()?d.runs.live:d.runs.end):null;
+const feelAt=d=>isNow()?d.lv.feel:d.med.feel;
+const stopAt=d=>d.stops?(isNow()?d.stops.live:d.stops.end):null;
+function buildEnd(d){if(!d._end){const a=d.base.slice(),m=d.med.d;for(let j=0;j<m.length;j+=2)a[m[j]]=m[j+1];d._end=a}return d._end}
+function liveRun(d){if(!d._lr)d._lr=runPlan(d,d.plans[0]);return d._lr}
+const buildLive=d=>liveRun(d).st.a;
+const buildAt=d=>isNow()?buildLive(d):buildEnd(d);
+const catsAt=d=>d.cats?(isNow()?d.cats[1]:d.cats[2]):null;
+function pctOf(g,ci,v){const q=(META.catq[g]||[])[ci];if(!q||v==null)return null;if(v>=q[0])return 0.5;for(let p=1;p<=100;p++){if(q[p]<=v)return p}return 100}
+function soonest(d){let m=null;for(const[ei]of d.plans[0][0]){const t=untilMs(EV[ei][3]);if(t!=null&&(m==null||t<m))m=t}return m}
+const hasLive=d=>d.plans[0][0].length>0;
+
+/* "ligner på": movement profile distance, as in runs.distance */
+const SK=META.sim.keys||[],SST=META.sim.st||[],SW=META.sim.sumw||SST.reduce((s,x)=>s+x[2],0);
+function simVal(d,a,k){if(k==="height_cm")return d.c.h;if(k==="arbeidsrate")return d.c.wrv;if(k==="kort_kropp")return d.c.hb;
+if(k==="kvikk_sterk")return a[AI.agility]!=null&&a[AI.strength]!=null?Math.min(a[AI.agility],a[AI.strength]):null;return a[AI[k]]??null}
+let TWIN=null;const TWC=new Map();
+function twinSim(d){if(!TWIN||!d.runcard)return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);const a=buildAt(d);
+let tot=0,used=0;SK.forEach((key,j)=>{const va=simVal(d,a,key),vb=TWIN[3][j];if(va==null||vb==null)return;const[m,sd,w]=SST[j];tot+=w*((va-vb)/sd)**2;used+=w});
+const v=used<0.5*SW?null:Math.round(100*Math.exp(-Math.sqrt(tot/used)/1.2));TWC.set(k,v);return v}
+const twinName=t=>t[0]+" ("+(t[1]||t[2])+")";
+
+/* ---------- state ---------- */
+const F0={g:"",ovrMax:"79",ovrMin:"",h:0,sort:"rel",kind:"",gender:"",live:false,twin:""};
+let F={...F0};try{const s=JSON.parse(localStorage.getItem("fc27-evolab3")||"null");if(s)F={...F0,...s}}catch(e){}
+if(!(F.h>=0&&F.h<H.length))F.h=0;
+let PINS=[];try{PINS=JSON.parse(localStorage.getItem("fc27-evolab-pins")||"[]")}catch(e){}
+const save=()=>{try{localStorage.setItem("fc27-evolab3",JSON.stringify(F));localStorage.setItem("fc27-evolab-pins",JSON.stringify(PINS))}catch(e){}};
+
+const SORT={rel:d=>1-hv(d).rank/hv(d).of,p50:d=>hv(d).p50,gain:d=>hv(d).p50-d.now,feel:feelAt,
+run:d=>{const r=runAt(d);return r?r[0]:null},stop:d=>{const s=stopAt(d);return s?s[0]:null},now:d=>d.now,ovr:d=>d.ovr,name:d=>d.name,
+twin:twinSim,soon:d=>{const t=soonest(d);return t==null?null:-t}};
+CATS.forEach((c,i)=>{SORT["c_"+c.k]=d=>{const cs=catsAt(d);return cs?cs[i]:null}});
+function sortOptions(){const o=[["rel","Plass etter evo"],["p50","IGR etter evo"],["gain","Mest økning"],["feel","Følelse etter evo"],
+["run","Løps-AI etter evo"],["stop","Vanskelig å stoppe etter evo"]];
+for(const c of CATS)if(!["feel","run","stopp"].includes(c.k))o.push(["c_"+c.k,c.l+" etter evo"]);
+o.push(["soon","Evoen stenger snart"],["now","IGR i dag"],["ovr","OVR i dag"]);if(TWIN)o.unshift(["twin","Likhet med "+TWIN[0]]);return o}
+let dir=-1;
+
+/* ---------- evos you have used up on other cards ---------- */
+let USED=new Set();try{USED=new Set(JSON.parse(localStorage.getItem("fc27-evolab-used")||"[]"))}catch(e){}
+const saveUsed=()=>{try{localStorage.setItem("fc27-evolab-used",JSON.stringify([...USED]))}catch(e){}};
+const isUsed=ei=>USED.has(EV[ei][0]);
+for(const d of D)d._orig={h0:{...d.h[0]},lv:{...d.lv},rl:d.runs.live.slice(),sl:d.stops?d.stops.live.slice():null,c1:d.cats?d.cats[1]:null,plans:d.plans.slice(),tips:d.lm.tips};
+/* category values on the attribute scale, as profile.categories in Python */
+function catVals(d,a,det){if(!d.cats)return null;return CATS.map(c=>{if(c.src==="feel")return det.feel;if(c.src==="run")return d.runcard?det.run:null;
+if(c.src==="run_decision")return d.runcard?det.vil:null;if(c.src==="run_execution")return d.runcard?det.eff:null;if(c.src==="stop")return det.stp;
+const pr=c.w.filter(([i])=>a[i]!=null);const tot=psum(pr.map(x=>x[1]));if(!pr.length||tot<0.5*c.wall)return null;return pyRound(psum(pr.map(([i,w])=>a[i]*w))/tot,1)})}
+function canEnterEver(d,e){const r=e[7],pos=d.positions;if(r[6].length&&!pos.some(p=>r[6].includes(p)))return false;if(pos.some(p=>r[7].includes(p)))return false;if(r[5]!=null&&pos.length>r[5])return false;return true}
+function bestStep(rt,st,ei){const e=EV[ei];if(check(e,st))return null;const paths=e[8][8];let best=null;
+for(const pi of(paths.length?paths.map((p,j)=>j):[-1])){const nx=apply(e,st,pi>=0?paths[pi]:null),v=rt(nx).igr;if(!best||v>best.v)best={ei,pi,st:nx,v}}return best}
+/* a new live plan without the used evos: the old order without them, strictest OVR limit first, and greedy; the best wins */
+function replan(d){const rt=rater(d),st0=stateOf(d),rpp=d._orig.plans[0][1];
+const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&canEnterEver(d,EV[i]));
+const rep=i=>Array(Math.max(1,EV[i][6])).fill(i);
+const runSeq=order=>{let st=st0;const seq=[];for(const ei of order){const b=bestStep(rt,st,ei);if(b){st=b.st;seq.push([b.ei,b.pi])}}return{st,seq}};
+const old=d._orig.plans[0][0].map(([ei])=>ei).filter(i=>C.includes(i));
+const tries=[runSeq(old.concat(C.filter(i=>!old.includes(i))).flatMap(rep)),runSeq(C.slice().sort((a,b)=>(EV[a][7][1]??99)-(EV[b][7][1]??99)).flatMap(rep))];
+let st=st0,seq=[];for(let k=0;k<12;k++){let best=null;for(const ei of C){const b=bestStep(rt,st,ei);if(b&&(!best||b.v>best.v))best=b}if(!best||best.v<=rt(st).igr+1e-9)break;st=best.st;seq.push([best.ei,best.pi])}
+tries.push({st,seq});
+let win=null,wv=-1e9;for(const t of tries){const fin=rpp&&!d.c.primPP?rolesPP(t.st):t.st,v=rt(fin).igr;if(v>wv+1e-9){wv=v;win=t}}return[win.seq,rpp]}
+function setLive(d,plan){const res=runPlan(d,plan),det=res.det,p50=pyRound(det.igr+d.off,1),pool=META.pools[d.g]||[];
+d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};d.lv={feel:det.feel,acc:det.acc,pace:det.pace};
+if(d.runcard)d.runs.live=[det.run,det.vil,det.eff];if(d.stops)d.stops.live=[det.stp,det.stb,det.stl];if(d.cats)d.cats[1]=catVals(d,res.st.a,det)}
+function restore(d){const o=d._orig;d.h[0]={...o.h0};d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false}
+let usedJob=0;
+function applyUsed(){const job=++usedJob,todo=D.filter(d=>d._re||d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));let k=0;
+const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40){const d=todo[k++];restore(d);
+if(USED.size&&d.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))){const touched=d.plans[0][0].some(([ei])=>isUsed(ei));
+d.plans=d.plans.map((p,i)=>i>0&&p&&p[0].some(([ei])=>isUsed(ei))?0:p);if(touched){d.plans[0]=replan(d);d.lm.tips=[];setLive(d,d.plans[0])}d._re=true}d._lr=null}
+usedInfo(k<todo.length?Math.round(100*k/todo.length):null);if(k<todo.length)setTimeout(step,0);else{TWC.clear();render()}};step()}
+function usedInfo(progress){const names=EV.filter(e=>USED.has(e[0])).map(e=>e[1]);let h="";
+if(META.usedfile&&META.usedfile.length)h+=`<p class="muted">Tatt ut av beregningen fordi de står i brukte_evoer.json: ${esc(list(META.usedfile))}.</p>`;
+if(names.length)h+=`<p class="warn">Planene regnes uten evoene du har brukt: ${esc(list(names))}.${progress!=null?` Regner … ${progress} %`:""} <button type="button" class="link" id="clearused">Ta med alle igjen</button></p>`;
+$("usedinfo").innerHTML=h;const b=$("clearused");if(b)b.onclick=()=>{USED.clear();saveUsed();renderEvos();applyUsed()}}
+
+/* ---------- controls ---------- */
+$("g").innerHTML='<option value="">Alle utespillere</option>'+META.groups.map(g=>`<option>${esc(g)}</option>`).join("");
+$("h").innerHTML=H.map((h,i)=>`<option value="${i}">${i===0?"Med evoene som er ute nå":"Anslag: "+esc(h.name.toLowerCase())}</option>`).join("");
+$("twinlist").innerHTML=META.targets.map(t=>`<option value="${esc(twinName(t))}">`).join("");
+function fillSort(){$("sort").innerHTML=sortOptions().map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join("");if(!SORT[F.sort]||(F.sort==="twin"&&!TWIN))F.sort="rel";$("sort").value=F.sort}
+function sync(){$("g").value=F.g;$("ovr").value=F.ovrMax;$("ovrMin").value=F.ovrMin;$("h").value=String(F.h);$("kind").value=F.kind;$("gender").value=F.gender;
+$("live").checked=!!F.live;$("twin").value=F.twin||"";fillSort();save()}
+function setTwin(v){const t=META.targets.find(t=>twinName(t)===v);TWIN=t||null;TWC.clear();F.twin=TWIN?v:"";if(TWIN){F.sort="twin";dir=-1}else if(F.sort==="twin")F.sort="rel"}
+for(const[id,k]of[["g","g"],["ovr","ovrMax"],["kind","kind"],["gender","gender"]])$(id).onchange=e=>{F[k]=e.target.value;sync();reset()};
+$("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset()};
+$("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset()};
+$("ovrMin").oninput=e=>{F.ovrMin=e.target.value;save();reset()};
+$("live").onchange=e=>{F.live=e.target.checked;save();reset()};
+$("twin").onchange=e=>{setTwin(e.target.value);sync();reset()};
+$("q").oninput=()=>reset();
+$("reset").onclick=()=>{F={...F0};TWIN=null;TWC.clear();$("q").value="";dir=-1;sync();reset()};
+$("morerows").onclick=()=>{shown+=PAGE;render()};
+
+/* ---------- table ---------- */
+function pass(d,q){if(F.ovrMin!==""&&d.ovr<+F.ovrMin)return false;if(F.ovrMax!==""&&d.ovr>+F.ovrMax)return false;if(F.g&&d.g!==F.g)return false;
+if(F.kind&&(F.kind==="base"?d.kind!=="base":d.kind==="base"))return false;if(F.gender&&d.gender!==F.gender)return false;if(F.live&&!hasLive(d))return false;
+if(q&&!(d.name+" "+d.ver).toLowerCase().includes(q))return false;return true}
+function rowsNow(){const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase(),r=[];for(const d of D){if(pass(d,q))r.push([f(d),d])}
+r.sort((x,y)=>{const a=x[0],b=y[0];if(a===b)return 0;if(a==null)return 1;if(b==null)return -1;return(a>b?1:-1)*dir});return r.map(x=>x[1])}
+const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","IGR i dag"],["p50",isNow()?"Etter evo":"Anslag"],["rel","Plass"],
+["feel","Følelse"],["run","Løps-AI"],["stop","Stopp"]].concat(TWIN?[["twin","Likhet"]]:[]);
+function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
+$("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset()})}
+function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
+return`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></td>
+<td class="l"><span class="pos ${posClass(d.g)}">${esc(d.positions[0]||d.g)}</span></td>
+<td class="num">${d.ovr}<small>til ${h.ovr}</small></td>
+<td class="num">${fmt(d.now)}</td>
+<td class="num">${fmt(h.p50)}${isNow()?delta(h.p50-d.now):`<small>${fmt(h.p10)}–${fmt(h.p90)}</small>`}</td>
+<td class="num">${n0(h.rank)}<small>av ${n0(h.of)}</small></td>
+<td class="num">${fmt(f)}${f!=null&&d.nowx.feel!=null?delta(f-d.nowx.feel):""}</td>
+<td class="num">${r&&r[0]!=null?fmt(r[0])+delta(r[0]-(d.runs.now[0]??r[0])):"–"}</td>
+<td class="num">${s&&s[0]!=null?fmt(s[0])+delta(s[0]-(d.stops.now[0]??s[0])):"–"}</td>
+${TWIN?`<td class="num">${(()=>{const t=twinSim(d);return t!=null?t+" %":"–"})()}</td>`:""}`}
+let open=null;
+function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
+$("count").textContent=`${n0(rows.length)} av ${n0(D.length)} kort`;
+const ncol=COLS().length;
+rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.i?" open":"");tr.tabIndex=0;tr.innerHTML=rowHtml(d);
+const tog=()=>{open=open===d.i?null:d.i;render()};tr.onclick=tog;tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};tb.appendChild(tr);
+if(open===d.i){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${detail(d)}</td>`;tb.appendChild(dt);wireDetail(dt,d)}});
+if(!rows.length)tb.innerHTML=`<tr><td colspan="${ncol}" class="l" style="padding:18px">Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».</td></tr>`;
+const m=$("morerows");m.hidden=rows.length<=shown;m.textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til`;renderCompare()}
+function reset(){shown=PAGE;render()}
+
+/* ---------- detail ---------- */
+function diffs(a0,a1,n){const out=[];a1.forEach((v,i)=>{if(v!=null&&a0[i]!=null&&Math.round(v)!==Math.round(a0[i]))out.push([i,a0[i],v])});out.sort((x,y)=>(y[2]-y[1])-(x[2]-x[1]));return n?out.slice(0,n):out}
+const chg=([i,b,a])=>`${esc(META.attrs[i]||"?")} ${Math.round(b)} → ${Math.round(a)}`;
+function gainsText(a,b){const parts=diffs(a.a,b.a).map(chg);
+if(b.ovr!==a.ovr)parts.unshift(`OVR ${a.ovr} → ${b.ovr}`);if(b.wf!=null&&a.wf!=null&&b.wf!==a.wf)parts.push(`svakfot ${a.wf} → ${b.wf}`);if(b.sm!=null&&a.sm!=null&&b.sm!==a.sm)parts.push(`skill moves ${a.sm} → ${b.sm}`);
+const ps=b.ps.filter(p=>!a.ps.includes(p)&&!a.psp.includes(p)),psp=b.psp.filter(p=>!a.psp.includes(p));
+return{stats:parts,ps:ps.concat(psp.map(p=>p+"+"))}}
+function effectText(s){const out=[],add=(l,a,b)=>{if(a!=null&&b!=null&&Math.abs(b-a)>=0.05)out.push(`${l} ${sg(b-a)}`)};
+add("IGR",s.d0.igr,s.d1.igr);add("følelse",s.d0.feel,s.d1.feel);add("Løps-AI",s.d0.run,s.d1.run);add("stopp",s.d0.stp,s.d1.stp);return out.join(", ")}
+function gateText(s,g){return gates(s.d0,s.d1,s.a.a,s.b.a,g).map(([k,t,good])=>{
+if(k==="acc")return good?`Blir ${s.d1.acc}.`:`Mister ${s.d0.acc} og blir ${s.d1.acc}, fordi Strength går opp.`;
+if(k==="obd")return`Off-balance går fra ${Math.round(s.d0.obd)} til ${Math.round(s.d1.obd)}, og kortet er med i off-balance-mekanikken (fra ${R.ob.start}).`;
+if(k==="st")return t.replace(/\(.*\)/,"")+": flere taklingsanimasjoner.";return t}).join(" ")}
+function choiceText(e,path){if(!path)return"";const l=path[0];const multi=e[8][8].length>1&&e[8][8].every(p=>/ \+ /.test(p[0])&&!/^Valg/.test(p[0]));
+if(multi){const ps=l.split(" + ");return`Velg ${esc(ps[0])} på nivå 1 og ${esc(ps[1])} på nivå 2.`}
+const m=/^Valg (\w+): (.*)$/.exec(l);if(m)return`På siste nivå: velg ${esc(m[1])} (${esc(m[2])}).`;return`Velg ${esc(l)}.`}
+function stepHtml(d,s){if(!s.e){return`<li><div class="hd">Roles++ ${esc(d.c.prim||"")}</div><p class="muted">${esc(RU.rppCost)}. Gir ++ i alle roller i hovedposisjonen.</p>
+${d.runcard?"<p>Med ++ tar spilleren løpene rollen ber om med full iver og bedre timing (EA).</p>":""}${(()=>{const t=effectText(s);return t?`<p>${t}.</p>`:""})()}</li>`}
+const e=s.e,closed=isClosed(e),g=gainsText(s.a,s.b),eff=effectText(s),gt=gateText(s,d.c.g);
+return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}</div>
+<p class="muted">${esc(e[2]||"gratis")}. ${closed?"Har stengt.":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Kan startes hele sesongen.":"Kan startes til "+esc(c)+"."})()}</p>
+${s.path?`<p>${choiceText(e,s.path)}</p>`:""}
+${g.stats.length||g.ps.length?`<p>Gir ${esc(list(g.stats.slice(0,8)))}${g.stats.length>8?` og ${g.stats.length-8} til`:""}${g.ps.length?(g.stats.length?", og ":"")+"PlayStyle "+esc(list(g.ps)):""}.</p>`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
+${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</li>`}
+const PLANSEL={};
+function planHtml(d){const mi=PLANSEL[d.i]||0,plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
+const alts=[0,1,2].filter(i=>i===0||d.plans[i]);
+if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Mest Løps-AI","Best følelse"][i]}</option>`).join("")}</select></label>`;
+if(d._re&&mi===0)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
+if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
+else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
+if(lm.tips.length)h+=`<p><b>Rekkefølgen betyr noe.</b> Ta ${esc(list(lm.tips.map(S)))}.</p>`;
+const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"stengt ute etter planen, "))}</li>`).join("")}</ul>`:"";
+h+=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten inne:",lm.near,"muted")+ul("Kan ikke tas:",lm.skip.slice(0,6),"muted");
+return h}
+function kvRow(label,vals,dg=1,better=1){const cells=vals.map((v,j)=>{if(v==null||v==="")return"<td>–</td>";if(typeof v==="string")return`<td>${esc(v)}</td>`;
+const imp=j>0&&vals[0]!=null&&typeof vals[0]==="number"&&(v-vals[0])*better>0.05;return`<td${imp?' class="ch"':""}>${dg===0?Math.round(v):fmt(v,dg)}</td>`}).join("");
+return`<tr><th>${label}</th>${cells}</tr>`}
+function beforeAfter(d){const last=d.h.length-1,cols=isNow()?[0]:[0,F.h],h0=d.h[0];
+const A=[d.base,buildLive(d)].concat(isNow()?[]:[buildEnd(d)]);
+const pick=(now,live,end)=>[now,live].concat(isNow()?[]:[end]);
+let t=`<table class="kv"><thead><tr><th></th><th>I dag</th><th>Evoene nå</th>${isNow()?"":"<th>Anslag</th>"}</tr></thead><tbody>`;
+t+=kvRow("IGR",pick(d.now,h0.p50,hv(d).p50));
+t+=kvRow(`Plass blant ${plural(d.g)}`,pick(d.rnow,h0.rank,hv(d).rank),0,-1);
+t+=kvRow("OVR",pick(d.ovr,h0.ovr,hv(d).ovr),0);
+t+=kvRow("Følelse",pick(d.nowx.feel,d.lv.feel,d.med.feel));
+t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
+t+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);
+if(d.runcard){t+=kvRow("Løps-AI",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));t+=kvRow("Løps-IQ",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));t+=kvRow("Effekt",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
+if(d.stops){t+=kvRow("Stopp med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));t+=kvRow("Stopp på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
+t+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
+return t+"</tbody></table>"}
+function extrasHtml(d){let h="";const st0=stateOf(d),lr=liveRun(d),g=gainsText(st0,lr.st);
+if(g.stats.length||g.ps.length)h+=`<p><b>Alt som endres med evoene nå:</b> ${esc(list(g.stats))}${g.ps.length?`${g.stats.length?". ":""}Nye PlayStyles: ${esc(list(g.ps))}`:""}.</p>`;
+if(!isNow()){const ge=diffs(d.base,buildEnd(d),10).map(chg);if(ge.length)h+=`<p class="muted">I anslaget for resten av året: ${esc(list(ge))}${d.med.ps.length||d.med.psp.length?`, og ${esc(list(d.med.ps.concat(d.med.psp.map(p=>p+"+"))))}`:""}.</p>`}
+const s=R.ob?R.ob.start:75,o=obdOf(d,buildAt(d));if(o!=null)h+=`<p class="muted">Off-balance er snittet av Agility, Balance og Dribbling, slik EasySBC viser det. ${o>=s?"Kortet er med i mekanikken (75 eller mer).":"Kortet må opp i "+s+" for å være med."}</p>`;
+const cc=chemCheck(d,buildAt(d));if(cc.length)h+=`<p class="muted">Med ${esc(list(cc.map(c=>`${c.name}-kjemi: off-balance ${c.obd==null?"–":Math.round(c.obd)}, ${c.acc||"ukjent AcceleRATE"}`)))}.</p>`;
+if(d.dna.cap)h+=`<p class="muted">Beste AcceleRATE kortet kan få med evoer: ${esc(d.dna.cap)}. Høyden kan ikke endres.</p>`;
+if(d.pse)h+=`<p class="muted">Vi vet ikke hvilke PlayStyles kortet har, så PlayStyle-krav kan slå annerledes ut.</p>`;
+return h}
+function forecastHtml(d){let t=`<h3 style="margin-top:22px">Anslag for resten av året</h3><table class="kv"><thead><tr><th></th><th>Typisk</th><th>Spenn</th><th>OVR</th><th>Plass</th></tr></thead><tbody>`;
+t+=`<tr><th>I dag</th><td>${fmt(d.now)}</td><td>–</td><td>${d.ovr}</td><td>${n0(d.rnow)}</td></tr>`;
+d.h.forEach((h,i)=>{t+=`<tr><th>${i===0?"Evoene nå":esc(H[i].name)}</th><td>${fmt(h.p50)}</td><td>${i===0?"–":fmt(h.p10)+"–"+fmt(h.p90)}</td><td>${h.ovr}</td><td>${n0(h.rank)}</td></tr>`});
+return t+`</tbody></table><p class="muted">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}</p>`}
+function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
+const stale=d.plans[0][0].some(([ei])=>isClosed(EV[ei]));
+return`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>
+<p>IGR ${fmt(d.now)} i dag og ${fmt(h0.p50)} med evoene som er ute nå. Det er plass ${n0(h0.rank)} av ${n0(h0.of)} ${esc(plural(d.g))}${d.rnow?`, opp fra ${n0(d.rnow)}`:""}. OVR ${d.ovr} til ${h0.ovr}.</p>
+${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
+<div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern fra sammenligning":"Legg til i sammenligning"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk «prøv selv»":"Prøv andre evoer selv"}</button></div>
+<div class="cols"><section><h3>Slik gjør du det</h3>${planHtml(d)}</section>
+<section><h3>Før og etter</h3>${beforeAfter(d)}${extrasHtml(d)}${isNow()?"":forecastHtml(d)}</section></div>
+<div class="sbxwrap"></div></div>`}
+function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
+dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
+dt.querySelector("[data-act=sbx]").onclick=ev=>{ev.stopPropagation();if(SBX[d.i]&&SBX[d.i].open)SBX[d.i].open=false;else{if(!SBX[d.i])SBX[d.i]={items:d.plans[0][0].map(([ei,pi])=>({ei,pi})),rpp:!!d.plans[0][1],open:true};SBX[d.i].open=true}render()};
+dt.onclick=ev=>ev.stopPropagation();
+if(SBX[d.i]&&SBX[d.i].open)sandbox(dt.querySelector(".sbxwrap"),d)}
+
+/* ---------- try it yourself ---------- */
+const SBX={};let CUSTOM=0;
+const PSN=Object.keys(R.ps).sort((a,b)=>a.localeCompare(b,"no"));
+function relevant(d){const st=stateOf(d);return EV.map((e,i)=>[e,i]).filter(([e])=>{const r=e[7];return(!r[6].length||st.pos.some(p=>r[6].includes(p)))})}
+function sbxCompute(d){const s=SBX[d.i],rt=rater(d);let st=stateOf(d);const d0=rt(st),status=[];
+for(const it of s.items){const e=it.ei>=0?EV[it.ei]:it.e;const why=check(e,st);if(why){status.push([it,why[1]]);continue}st=apply(e,st,it.pi>=0?e[8][8][it.pi]:null);status.push([it,null])}
+if(s.rpp&&!d.c.primPP)st=rolesPP(st);return{st,d0,d1:rt(st),status}}
+function rankIn(arr,v){let lo=0,hi=arr.length;while(lo<hi){const m=(lo+hi)>>1;if(arr[m]<=v)lo=m+1;else hi=m}return arr.length-lo+1}
+function sbxResult(d){const r=sbxCompute(d),pool=META.pools[d.g]||[],g=r.d1.igr+d.off,g0=r.d0.igr+d.off,st0=stateOf(d);
+let t=`<table class="kv"><thead><tr><th></th><th>I dag</th><th>Etter</th></tr></thead><tbody>`;
+t+=kvRow("IGR",[g0,g]);t+=kvRow(`Plass blant ${plural(d.g)}`,[d.rnow||rankIn(pool,g0),rankIn(pool,g)],0,-1);t+=kvRow("OVR",[d.ovr,r.st.ovr],0);
+t+=kvRow("Følelse",[r.d0.feel,r.d1.feel]);t+=kvRow("Fart",[r.d0.pace,r.d1.pace]);t+=kvRow("Off-balance",[r.d0.obd,r.d1.obd],0);
+if(d.runcard){t+=kvRow("Løps-AI",[r.d0.run,r.d1.run]);t+=kvRow("Løps-IQ",[r.d0.vil,r.d1.vil]);t+=kvRow("Effekt",[r.d0.eff,r.d1.eff])}
+if(r.d1.stp!=null){t+=kvRow("Stopp med ball",[r.d0.stb,r.d1.stb]);t+=kvRow("Stopp på løp",[r.d0.stl,r.d1.stl])}
+t+=kvRow("AcceleRATE",[r.d0.acc||"–",r.d1.acc||"–"]);t+="</tbody></table>";
+const gx=gainsText(st0,r.st);if(gx.stats.length||gx.ps.length)t+=`<p class="muted">${esc(list(gx.stats))}${gx.ps.length?`${gx.stats.length?". ":""}PlayStyles: ${esc(list(gx.ps))}`:""}.</p>`;
+return t}
+function sandbox(w,d){const s=SBX[d.i],rel=relevant(d),opts=META.attrs.map((l,i)=>i<29?`<option value="${i}">${esc(l)}</option>`:"").join(""),pso=PSN.map(p=>`<option>${esc(p)}</option>`).join("");
+w.innerHTML=`<section class="sbx"><h3>Prøv andre evoer selv</h3><p class="muted">Huk av evoene i rekkefølgen du vil ta dem. Tallene regnes på nytt med en gang, med samme regler som planen over.</p>
+<ul class="sbxlist"></ul><label class="check"><input type="checkbox" data-rpp${s.rpp?" checked":""}${d.c.primPP?" disabled":""}> Roles++ til slutt${d.c.primPP?" (har allerede ++)":""}</label>
+<div class="add"><label class="f">Egen oppgradering<select data-cs>${opts}</select></label><label class="f">pluss<input data-cg class="small" type="number" value="5"></label><label class="f">maks<input data-cc class="small" type="number" value="85"></label><button type="button" data-add>Legg til</button>
+<label class="f">PlayStyle<select data-cps><option value="">Legg til …</option>${pso}</select></label><label class="f">PlayStyle+<select data-cpp><option value="">Legg til …</option>${pso}</select></label></div>
+<div class="mine"></div><p><button type="button" data-rec>Start fra planen over</button> <button type="button" data-clear>Tøm</button></p><div class="sbxres"></div></section>`;
+const draw=()=>{const r=sbxCompute(d),stat=new Map(r.status.map(([it,why])=>[it,why]));
+w.querySelector(".sbxlist").innerHTML=rel.map(([e,i])=>{const it=s.items.find(x=>x.ei===i),on=!!it,why=on?stat.get(it):null,pth=e[8][8],ord=on?s.items.indexOf(it)+1:0;
+return`<li><label class="check"><input type="checkbox" data-ei="${i}"${on?" checked":""}> ${on?ord+". ":""}${esc(e[1])}${isClosed(e)?' <span class="closedtag">stengt</span>':""}${USED.has(e[0])?' <span class="muted">(brukt)</span>':""}</label>
+${pth.length?`<select data-pi="${i}"${on?"":" disabled"}>${pth.map((p,j)=>`<option value="${j}"${it&&it.pi===j?" selected":""}>${esc(p[0])}</option>`).join("")}</select>`:""}${why?`<span class="why">Kan ikke tas: ${esc(why)}</span>`:""}</li>`}).join("");
+w.querySelector(".mine").innerHTML=s.items.filter(x=>x.ei<0).map(x=>`<p>${esc(x.e[1])}${stat.get(x)?` <span class="down">(${esc(stat.get(x))})</span>`:""} <button type="button" class="link" data-del="${x.id}">fjern</button></p>`).join("");
+w.querySelector(".sbxres").innerHTML=sbxResult(d)};
+w.onchange=ev=>{const t=ev.target;
+if(t.dataset.ei!==undefined){const i=+t.dataset.ei;if(t.checked)s.items.push({ei:i,pi:EV[i][8][8].length?0:-1});else s.items=s.items.filter(x=>x.ei!==i);draw()}
+else if(t.dataset.pi!==undefined){const it=s.items.find(x=>x.ei===+t.dataset.pi);if(it){it.pi=+t.value;draw()}}
+else if(t.hasAttribute("data-rpp")){s.rpp=t.checked;draw()}
+else if(t.hasAttribute("data-cps")||t.hasAttribute("data-cpp")){if(!t.value)return;const plus=t.hasAttribute("data-cpp"),id=++CUSTOM;
+s.items.push({ei:-1,pi:-1,id,e:["egen"+id,(plus?"PlayStyle+ ":"PlayStyle ")+t.value,"","",0,"",1,[null,null,null,null,null,null,[],[],""],[0,0,0,[],[],plus?[]:[[t.value,0]],plus?[[t.value,0]]:[],[],[]],"",[]]});t.value="";draw()}};
+w.onclick=ev=>{const t=ev.target;ev.stopPropagation();
+if(t.hasAttribute("data-add")){const i=+w.querySelector("[data-cs]").value,g=+w.querySelector("[data-cg]").value||0,c=+w.querySelector("[data-cc]").value||99,id=++CUSTOM;
+s.items.push({ei:-1,pi:-1,id,e:["egen"+id,`${META.attrs[i]} +${g} (maks ${c})`,"","",0,"",1,[null,null,null,null,null,null,[],[],""],[0,0,0,[[i,g,c]],[],[],[],[],[]],"",[]]});draw()}
+else if(t.dataset.del){s.items=s.items.filter(x=>x.id!==+t.dataset.del);draw()}
+else if(t.hasAttribute("data-rec")){s.items=d.plans[0][0].map(([ei,pi])=>({ei,pi}));s.rpp=!!d.plans[0][1];w.querySelector("[data-rpp]").checked=s.rpp;draw()}
+else if(t.hasAttribute("data-clear")){s.items=[];s.rpp=false;w.querySelector("[data-rpp]").checked=false;draw()}};
+draw()}
+
+/* ---------- compare ---------- */
+function renderCompare(){const box=$("cmp"),cards=PINS.map(k=>D.find(d=>d.name+"|"+d.ver===k)).filter(Boolean);box.hidden=!cards.length;if(!cards.length){box.innerHTML="";return}
+const rows=[["Posisjon",d=>esc(d.positions[0]||d.g)],["OVR",d=>`${d.ovr} til ${hv(d).ovr}`],["IGR i dag",d=>fmt(d.now)],[isNow()?"Etter evo":"Anslag",d=>fmt(hv(d).p50)],
+["Plass",d=>`${n0(hv(d).rank)} av ${n0(hv(d).of)}`],["Følelse",d=>fmt(feelAt(d))],["Løps-AI",d=>{const r=runAt(d);return r?fmt(r[0]):"–"}],
+["Løps-IQ",d=>{const r=runAt(d);return r?fmt(r[1]):"–"}],["Effekt",d=>{const r=runAt(d);return r?fmt(r[2]):"–"}],["Stopp",d=>{const s=stopAt(d);return s?fmt(s[0]):"–"}],
+["AcceleRATE",d=>esc((isNow()?d.lv.acc:d.med.acc)||"–")],["Evoer",d=>esc(d.plans[0][0].map(([ei])=>EV[ei][1]).join(", ")||"ingen")]];
+box.innerHTML=`<h2>Sammenligning</h2><div class="tw" style="border:0"><table><thead><tr><th></th>${cards.map(d=>`<th>${esc(d.name)}<br><span class="muted" style="font:500 13px var(--text)">${esc(d.ver)}</span></th>`).join("")}</tr></thead>
+<tbody>${rows.map(([l,f])=>`<tr><th>${l}</th>${cards.map(d=>`<td${l==="Evoer"?' style="white-space:normal;font:500 13px var(--text);max-width:220px"':""}>${f(d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
+<p>${cards.map(d=>`<button type="button" class="link" data-unpin="${esc(d.name+"|"+d.ver)}">Fjern ${esc(d.name)}</button>`).join(" &nbsp; ")}</p>`;
+box.querySelectorAll("[data-unpin]").forEach(b=>b.onclick=()=>{PINS=PINS.filter(x=>x!==b.dataset.unpin);save();render()})}
+
+/* ---------- the evos ---------- */
+function renderEvos(){const evs=EV.map((e,i)=>[e,i]).sort((a,b)=>(untilMs(a[0][3])??9e15)-(untilMs(b[0][3])??9e15));const open=evs.filter(([e])=>!isClosed(e));
+$("evosum").textContent=`Evoene som er ute nå (${open.length})`;
+let t=`<p class="muted" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
+for(const[e]of evs){const c=isClosed(e);t+=`<tr${c?' class="closed"':""}><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas ${e[6]} ganger)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
+<td>${esc(reqText(e))}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
+t+=`</tbody></table></div>`;
+if(META.expired.length)t+=`<p class="muted">Stengt og ikke med i planene: ${esc(list(META.expired))}.</p>`;
+$("evobody").innerHTML=t;
+$("evobody").querySelectorAll("[data-used]").forEach(cb=>cb.onchange=()=>{if(cb.checked)USED.add(cb.dataset.used);else USED.delete(cb.dataset.used);saveUsed();renderEvos();applyUsed()});
+const nu=EV.filter(e=>USED.has(e[0])).length;$("evosum").textContent=`Evoene som er ute nå (${EV.filter(e=>!isClosed(e)).length}${nu?`, ${nu} brukt`:""})`;
+const shut=EV.filter(isClosed);$("stale").innerHTML=shut.length?`<p class="warn">${esc(list(shut.map(e=>e[1])))} har stengt siden siden ble laget, men er fortsatt med i planene. Kjør rate på nytt for å få dem ut.</p>`:""}
+
+/* ---------- start ---------- */
+if(META.checked){const t=Date.parse(META.checked);if(!isNaN(t))$("checked").textContent=new Intl.DateTimeFormat("nb-NO",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"}).format(new Date(t)).replace(" kl.",", kl.")}
+$("footnote").textContent=`Laget ${META.stamp}.`;
+if(F.twin){TWIN=META.targets.find(t=>twinName(t)===F.twin)||null;if(!TWIN)F.twin=""}
+dir=F.sort==="name"?1:-1;sync();renderEvos();render();usedInfo(null);if(USED.size)applyUsed();
+window.__lab={D,rater,stateOf,runPlan,check,apply,pyRound,psum};
+</script></body></html>

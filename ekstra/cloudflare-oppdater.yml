@@ -1,0 +1,113 @@
+# Variant med innlogging: legger siden ut på Cloudflare Pages i stedet for GitHub Pages.
+# Bruk: flytt denne filen til .github/workflows/ og slett .github/workflows/oppdater.yml.
+# Oppsett: se «Vil du ha innlogging?» i README.md.
+name: Oppdater siden (Cloudflare)
+
+on:
+  schedule:
+    - cron: "25 */6 * * *"   # hver 6. time (00:25, 06:25, 12:25, 18:25 UTC). 18:25 fanger kveldens nye innhold i FUT.
+  workflow_dispatch:          # knappen «Run workflow» under Actions: oppdater nå
+  push:
+    branches: [main]
+    paths:
+      - "config/**"
+      - "fcrating/**"
+      - "functions/**"
+      - "data/mine_evoer.json"
+      - "data/mine_spillere.json"
+      - "data/side.json"
+      - ".github/workflows/oppdater.yml"
+
+concurrency:
+  group: oppdater-siden
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  TZ: Europe/Oslo             # klokkeslettet «Laget ...» på sidene vises i norsk tid
+  PYTHONUTF8: "1"
+
+jobs:
+  oppdater:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90       # første kjøring og ukesgjennomgangen av FIFA Rosters tar lengst tid
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Hent data fra forrige kjøring
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            data/ea_players.json
+            data/spesialkort.json
+            data/cache
+            data/evolab_cache.pkl
+          key: fcdata-${{ github.run_id }}
+          restore-keys: fcdata-
+
+      - name: Hent EA-basekort (bare hvis de mangler)
+        if: hashFiles('data/ea_players.json') == ''
+        run: python -m fcrating fetch-ea
+        continue-on-error: true
+
+      - name: Hent spesialkort og lekkasjer
+        run: python -m fcrating fetch-specials
+        continue-on-error: true     # nettsiden nede eller blokkert: siden lages av dataene fra forrige gang
+
+      - name: Rate og lag siden
+        run: |
+          files=""
+          for f in data/ea_players.json data/spesialkort.json data/mine_spillere.json; do
+            [ -f "$f" ] && files="$files $f"
+          done
+          if [ -z "$files" ]; then echo "Ingen kortdata. Se loggen over for hva som feilet."; exit 1; fi
+          python -m fcrating rate $files --ignorer-brukte --top 5
+          python -m fcrating publiser
+
+      - name: Lagre data til neste kjøring
+        if: always()
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            data/ea_players.json
+            data/spesialkort.json
+            data/cache
+            data/evolab_cache.pkl
+          key: fcdata-${{ github.run_id }}
+
+      - name: Les prosjektnavnet
+        id: cf
+        run: python -c "from fcrating.site import site_config; print('prosjekt=' + (site_config().get('cloudflare_prosjekt') or 'fc27-rating'))" >> "$GITHUB_OUTPUT"
+
+      - name: Last opp til Cloudflare Pages
+        id: deploy
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=${{ steps.cf.outputs.prosjekt }} --branch=main --commit-dirty=true
+
+      - name: Lag Cloudflare-prosjektet (bare første gang)
+        if: steps.deploy.outcome == 'failure'
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create ${{ steps.cf.outputs.prosjekt }} --production-branch=main
+
+      - name: Last opp igjen
+        if: steps.deploy.outcome == 'failure'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=${{ steps.cf.outputs.prosjekt }} --branch=main --commit-dirty=true

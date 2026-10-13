@@ -1,0 +1,45 @@
+{
+  "_info": "Datakilder. {offset}, {limit} og {page} byttes ut automatisk for hver side.",
+  "ea_ratings": {
+    "url_template": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit={limit}&offset={offset}",
+    "_url_info": "Adressen EAs ratingside henter spillerlisten fra. Funnet i et offentlig FC 25-verktøy (github.com/sauravhiremath/ea-fc25-scraper). Kjør 'fetch-ea --dump-sample' for å sjekke at den gir FC 27-data. Gir den feil, finner du riktig adresse i nettleserens Network-fane (se README).",
+    "items_path": "items",
+    "page_size": 100,
+    "delay_seconds": 1.5,
+    "user_agent": "fc27-rating/0.2 (personlig bruk)",
+    "field_overrides": {}
+  },
+  "specials": {
+    "_info": "Spesialkort: FIFA Rosters (utgitte kort, inkl. Icons og TOTW) og RealSport101 (lekkasjer). Programmet følger robots.txt og venter mellom hver forespørsel.",
+    "user_agent": "fc27-rating/0.2 (personlig bruk)",
+    "delay_seconds": 2.0,
+    "fifarosters": {
+      "full_list_url": "https://www.fifarosters.com/futplayerslist.php?&pageNum={page}",
+      "totw_list_url": "https://www.fifarosters.com/totw.php?&pageNum={page}",
+      "full_scan_days": 7,
+      "_full_info": "Hele FC 27-listen (ca. 920 sider) gjennomgås én gang i uka. TOTW-listen sjekkes hver gang.",
+      "max_pages": null,
+      "detail_limit_per_run": 300,
+      "_detail_info": "Hvor mange kortsider (med alle attributter) som hentes per kjøring. Kort uten kortside får estimerte attributter fra basekortet til siden er hentet.",
+      "promo_list_urls": [
+        "fut-future-stars"
+      ],
+      "promo_max_pages": 20,
+      "_promo_info": "Kampanjesider som sjekkes ved hver kjøring, slik TOTW gjøres. Skriv navnet fra adressen på FIFA Rosters, f.eks. 'fut-future-stars' for fifarosters.com/fut-future-stars. Når en ny kampanje starter, legg den til her eller kjør fetch-specials --promo navn. Andre nye kort kommer med ved ukesgjennomgangen (eller --full).",
+      "use_base_cards": true,
+      "_base_cards_info": "EAs ratingadresse (drop-api) gir FC 25-kort. Med true bygges FC 27-basekortene fra FIFA Rosters' liste (riktig OVR, posisjon, hovedtall, svakfot og skill moves), og attributtene anslås fra det eldre EA-kortet. EA-kortene rangeres da ikke selv."
+    },
+    "realsport101": {
+      "category_url": "https://realsport101.com/ea-sports-fc",
+      "pages": 1
+    },
+    "output": "data/spesialkort.json"
+  },
+  "watch": {
+    "interval_minutes": 360,
+    "specials": true,
+    "extra_files": [
+      "data/mine_spillere.json"
+    ]
+  }
+}

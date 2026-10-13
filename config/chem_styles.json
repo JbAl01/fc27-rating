@@ -1,0 +1,31 @@
+{
+  "_info": "Kjemistil-boosts per attributt ved 3 chem. Ved 2 chem blir 9/6/3 til 6/4/2, ved 1 chem til 3/2/1 (FUT.GG). Bare stiler med 'verified': true er sjekket mot et ekte kort. Fyll inn resten fra FUT.GG eller spillet.",
+  "styles": {
+    "Finisher": {
+      "verified": true,
+      "_source": "Nagasato-kortet ditt (EasySBC-skjermbilde med Finisher)",
+      "boosts": {
+        "positioning": 6, "finishing": 9, "shot_power": 3, "volleys": 3, "penalties": 3,
+        "agility": 6, "balance": 3, "reactions": 3, "dribbling": 9
+      }
+    },
+    "Basic": {"verified": false, "boosts": null},
+    "Sniper": {"verified": false, "boosts": null},
+    "Deadeye": {"verified": false, "boosts": null},
+    "Marksman": {"verified": false, "boosts": null},
+    "Hawk": {"verified": false, "boosts": null},
+    "Artist": {"verified": false, "boosts": null},
+    "Architect": {"verified": false, "boosts": null},
+    "Powerhouse": {"verified": false, "boosts": null},
+    "Maestro": {"verified": false, "boosts": null},
+    "Engine": {"verified": false, "boosts": null},
+    "Sentinel": {"verified": false, "boosts": null},
+    "Guardian": {"verified": false, "boosts": null},
+    "Gladiator": {"verified": false, "boosts": null},
+    "Backbone": {"verified": false, "boosts": null},
+    "Anchor": {"verified": false, "boosts": null},
+    "Hunter": {"verified": false, "boosts": null},
+    "Catalyst": {"verified": false, "boosts": null},
+    "Shadow": {"verified": false, "boosts": null}
+  }
+}

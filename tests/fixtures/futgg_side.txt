@@ -1,0 +1,158 @@
+Player Information
+
+- NameHugo Ekitiké
+- PositionST
+- Height190cm (6'3")
+- Weight76kg (167lbs)
+- FootRight
+- Skill Moves4
+- Weak Foot3
+- AcceleRATEControlled
+- Body TypeLean Tall
+- Real FaceYes
+
+Attributes
+
+Pace
+
+86
+
+Acceleration
+
+85
+
+Sprint Speed
+
+87
+
+AcceleRATE
+
+Controlled
+
+Shooting
+
+83
+
+Att. Pos.
+
+86
+
+Finishing
+
+86
+
+Shot Power
+
+84
+
+Long Shots
+
+78
+
+Volleys
+
+80
+
+Penalties
+
+68
+
+Passing
+
+72
+
+Vision
+
+79
+
+Crossing
+
+63
+
+Fk Acc.
+
+54
+
+Short Pass
+
+81
+
+Long Pass
+
+62
+
+Curve
+
+73
+
+Dribbling
+
+84
+
+Agility
+
+70
+
+Balance
+
+68
+
+Reactions
+
+85
+
+Ball Control
+
+86
+
+Dribbling
+
+87
+
+Composure
+
+84
+
+Defending
+
+33
+
+Interceptions
+
+23
+
+Heading Acc.
+
+79
+
+Def. Aware.
+
+28
+
+Stand Tackle
+
+35
+
+Slide Tackle
+
+19
+
+Physical
+
+73
+
+Jumping
+
+85
+
+Stamina
+
+78
+
+Strength
+
+70
+
+Aggression
+
+70

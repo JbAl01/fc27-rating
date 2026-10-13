@@ -1,0 +1,11 @@
+{
+  "_info": "Mal. Første gang du kjører publiser, kopieres denne til data/side.json. Fyll inn der, så overskrives det ikke når du oppdaterer programmet. Teksten havner på om.html.",
+  "eier": "",
+  "_eier_info": "Navnet ditt (eller kallenavn). Vises som den som har ansvaret for siden.",
+  "kontakt": "",
+  "_kontakt_info": "E-post eller annen måte å nå deg på, for rettighetshavere som vil ha noe fjernet og for personvernspørsmål.",
+  "innlogging": "åpen",
+  "_innlogging_info": "åpen = siden ligger åpent på GitHub Pages, og du deler lenken med vennene dine (enklest). cloudflare-access = låst med Cloudflare Access og engangskode på e-post. passord = låst med felles passord (SIDE_PASSORD). Se README. Skriv egen tekst her hvis du låser den på en annen måte, eller la den stå tom hvis siden bare ligger på din egen PC.",
+  "cloudflare_prosjekt": "fc27-rating",
+  "_cloudflare_info": "Bare hvis du bruker Cloudflare: navnet på Pages-prosjektet. Siden får adressen https://<navn>.pages.dev."
+}
