@@ -16,6 +16,8 @@ Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PRO
 - Hent listene med WebFetch på **nøyaktig** disse adressene (de står her i instruksen): https://www.fut.gg/evolutions/ , https://www.futnext.com/evolutions og https://www.futnext.com/evolutions?page=2 , https://www.futbin.com/27/evolutions . Prøv alle, og prøv en som feilet én gang til.
 - FUTBIN viser også evoer som ikke er åpnet ennå («Unlock» i uker). Lister og detaljsider (f.eks. https://www.futbin.com/27/evolutions/50/side-step) går bra via WebFetch. Evoer som ikke er åpne ennå, kan nevnes i `_hoppet_over` til en andre kilde har dem.
 - Får du ikke hentet **noen** av listene, send varsel om at jobben ikke kunne kjøre, og si hvilken feil du fikk.
+- Destructoid har guider per evo (https://www.destructoid.com/best-players-for-fc-27-<evo-navn>-evolution/) som gjelder som egen kilde, men de oppgir ofte ikke fristen. Frister finner du best på futnext (nedtelling) og FUT.GG; FUTBINs «Expires 2 weeks» er ikke en dato og kan ikke brukes alene.
+- Evoer som gir et bestemt ferdig kort (f.eks. «Ones to Watch Retro 18/19/20») øker ikke tall og hoppes over.
 - Sammenlign alltid med alle tre listene. En evo som bare står på én, er en kandidat som må bekreftes hos en annen kilde, ikke noe du kan se bort fra.
 
 ## Fremgangsmåte

@@ -1,6 +1,6 @@
 {
  "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
- "_sjekket": "2026-10-14T20:30:00Z",
+ "_sjekket": "2026-10-14T20:10:00Z",
  "evos": [
   {
    "key": "future_stars_academy_3",
@@ -111,12 +111,12 @@
  "_hoppet_over": [
   {
    "navn": "Side Step Evolutions",
-   "grunn": "Bare FUTBIN viser den (LB/RB, maks 80 OVR, gratis, åpner om ca. 1 uke). Ikke på FUT.GG eller futnext ennå, og ingen guide funnet. Ta den når en andre kilde har den.",
+   "grunn": "Krav og nivåer er bekreftet av to kilder (FUTBIN, Destructoid): LB/RB, maks 80 OVR, maks 85 Pace, maks 7 PlayStyles, gratis, 3 nivåer, repeterbar. Men ingen kilde oppgir fristen for å starte (FUTBIN: «utløper om 2 uker», ikke dato). Legges inn så snart FUT.GG eller futnext viser en frist.",
    "dato": "2026-10-14"
   },
   {
-   "navn": "Ones to Watch Retro 18/19/20 (betalt, 25K mynter/200 poeng)",
-   "grunn": "Bare futnext og FUTBIN lister dem, ingen FUT.GG-side eller guide med fulle krav og tall; futnext viser kun ett nivå uten detaljer. Venter på en tredje kilde med tall.",
+   "navn": "Ones to Watch Retro 18/19/20",
+   "grunn": "Gir et bestemt ferdig kort (f.eks. Retro 20 = Alexia Putellas 92), ikke økte tall på spillerens eget kort. Passer ikke i Evo Lab.",
    "dato": "2026-10-14"
   },
   {
