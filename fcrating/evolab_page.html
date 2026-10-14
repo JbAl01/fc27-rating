@@ -62,9 +62,9 @@ __CSS__
 <footer class="foot">
 <details><summary>Hva tallene betyr</summary>
 <p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen i dag, også spesialkort.</p>
-<p><b>Følelse</b>: hvor kvikt og responsivt kortet føles med ball (Agility, Reactions, Balance, Acceleration, Ball Control og høyde). <b>Løps-AI</b>: hvor godt kortet beveger seg uten ball, delt i <b>Løps-IQ</b> (hvor og når det løper) og <b>Effekt</b> (om løpet gir avstand). <b>Stopp</b>: hvor vanskelig kortet er å stoppe med ball og på løp.</p>
+<p><b>Følelse</b>: hvor kvikk og lett kortet er å styre med ball. <b>Løp uten ball</b>: hvor smart og nyttig kortet løper når laget har ballen, delt i <b>smarte løp</b> (hvor og når det løper) og <b>får avstand</b> (om løpet faktisk gir rom). <b>Vanskelig å stoppe</b>: hvor vanskelig kortet er å stoppe, med ball og på løp.</p>
 <p><b>Med evoene som er ute nå</b> viser den beste rekkefølgen av evoene du kan ta i dag. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
-<p>Ny evo i spillet? Kopier teksten fra evoens side på FUTBIN eller FUT.GG og kjør <code>py -m fcrating evo-import fil.txt</code>, så kommer den med neste gang du kjører rate.</p>
+<p>Nye evoer legges inn hver kveld like etter at EA slipper dem kl. 19.</p>
 </details>
 <p id="footnote"></p>
 <p class="legal">Denne siden er ikke godkjent av eller tilknyttet EA eller deres lisensgivere. <a href="om.html">Om siden, kilder og personvern</a></p>
@@ -73,6 +73,7 @@ __CSS__
 <script>
 const RAW=__DATA__,META=__META__,STR=META.strings,H=META.hz,R=META.rate,RU=META.rules,EV=META.evos,CATS=META.cats,PAGE=100;
 let shown=PAGE;
+const FRONTL={"Løp":"Løp uten ball","Løps-IQ":"Smarte løp","Løpseffekt":"Får avstand","Vanskelig å stoppe":"Vanskelig å stoppe"};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=(v,dg=1)=>v===null||v===undefined||v===""||Number.isNaN(v)?"–":(typeof v==="number"?v.toFixed(dg):esc(v));
@@ -230,8 +231,8 @@ run:d=>{const r=runAt(d);return r?r[0]:null},stop:d=>{const s=stopAt(d);return s
 twin:twinSim,soon:d=>{const t=soonest(d);return t==null?null:-t}};
 CATS.forEach((c,i)=>{SORT["c_"+c.k]=d=>{const cs=catsAt(d);return cs?cs[i]:null}});
 function sortOptions(){const o=[["rel","Plass etter evo"],["p50","IGR etter evo"],["gain","Mest økning"],["feel","Følelse etter evo"],
-["run","Løps-AI etter evo"],["stop","Vanskelig å stoppe etter evo"]];
-for(const c of CATS)if(!["feel","run","stopp"].includes(c.k))o.push(["c_"+c.k,c.l+" etter evo"]);
+["run","Løp uten ball etter evo"],["stop","Vanskelig å stoppe etter evo"]];
+for(const c of CATS)if(!["feel","run","stopp"].includes(c.k))o.push(["c_"+c.k,(FRONTL[c.l]||c.l)+" etter evo"]);
 o.push(["soon","Evoen stenger snart"],["now","IGR i dag"],["ovr","OVR i dag"]);if(TWIN)o.unshift(["twin","Likhet med "+TWIN[0]]);return o}
 let dir=-1;
 
@@ -297,7 +298,7 @@ if(q&&!(d.name+" "+d.ver).toLowerCase().includes(q))return false;return true}
 function rowsNow(){const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase(),r=[];for(const d of D){if(pass(d,q))r.push([f(d),d])}
 r.sort((x,y)=>{const a=x[0],b=y[0];if(a===b)return 0;if(a==null)return 1;if(b==null)return -1;return(a>b?1:-1)*dir});return r.map(x=>x[1])}
 const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","IGR i dag"],["p50",isNow()?"Etter evo":"Anslag"],["rel","Plass"],
-["feel","Følelse"],["run","Løps-AI"],["stop","Stopp"]].concat(TWIN?[["twin","Likhet"]]:[]);
+["feel","Følelse"],["run","Løp uten ball"],["stop","Vanskelig å stoppe"]].concat(TWIN?[["twin","Likhet"]]:[]);
 function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
 $("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset()})}
 function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
@@ -330,7 +331,7 @@ if(b.ovr!==a.ovr)parts.unshift(`OVR ${a.ovr} → ${b.ovr}`);if(b.wf!=null&&a.wf!
 const ps=b.ps.filter(p=>!a.ps.includes(p)&&!a.psp.includes(p)),psp=b.psp.filter(p=>!a.psp.includes(p));
 return{stats:parts,ps:ps.concat(psp.map(p=>p+"+"))}}
 function effectText(s){const out=[],add=(l,a,b)=>{if(a!=null&&b!=null&&Math.abs(b-a)>=0.05)out.push(`${l} ${sg(b-a)}`)};
-add("IGR",s.d0.igr,s.d1.igr);add("følelse",s.d0.feel,s.d1.feel);add("Løps-AI",s.d0.run,s.d1.run);add("stopp",s.d0.stp,s.d1.stp);return out.join(", ")}
+add("IGR",s.d0.igr,s.d1.igr);add("følelse",s.d0.feel,s.d1.feel);add("løp uten ball",s.d0.run,s.d1.run);add("vanskelig å stoppe",s.d0.stp,s.d1.stp);return out.join(", ")}
 function gateText(s,g){return gates(s.d0,s.d1,s.a.a,s.b.a,g).map(([k,t,good])=>{
 if(k==="acc")return good?`Blir ${s.d1.acc}.`:`Mister ${s.d0.acc} og blir ${s.d1.acc}, fordi Strength går opp.`;
 if(k==="obd")return`Off-balance går fra ${Math.round(s.d0.obd)} til ${Math.round(s.d1.obd)}, og kortet er med i off-balance-mekanikken (fra ${R.ob.start}).`;
@@ -349,13 +350,13 @@ ${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]||0,plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
 const alts=[0,1,2].filter(i=>i===0||d.plans[i]);
-if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Mest Løps-AI","Best følelse"][i]}</option>`).join("")}</select></label>`;
+if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse"][i]}</option>`).join("")}</select></label>`;
 if(d._re&&mi===0)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
-if(lm.tips.length)h+=`<p><b>Rekkefølgen betyr noe.</b> Ta ${esc(list(lm.tips.map(S)))}.</p>`;
-const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"stengt ute etter planen, "))}</li>`).join("")}</ul>`:"";
-h+=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten inne:",lm.near,"muted")+ul("Kan ikke tas:",lm.skip.slice(0,6),"muted");
+if(lm.tips.length)h+=`<p><b>Ta evoene i denne rekkefølgen.</b> Ellers blir OVR-en for høy til de neste.</p>`;
+const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"går ikke etter planen, "))}</li>`).join("")}</ul>`:"";
+h+=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+ul("Kan ikke tas:",lm.skip.slice(0,6),"muted");
 return h}
 function kvRow(label,vals,dg=1,better=1){const cells=vals.map((v,j)=>{if(v==null||v==="")return"<td>–</td>";if(typeof v==="string")return`<td>${esc(v)}</td>`;
 const imp=j>0&&vals[0]!=null&&typeof vals[0]==="number"&&(v-vals[0])*better>0.05;return`<td${imp?' class="ch"':""}>${dg===0?Math.round(v):fmt(v,dg)}</td>`}).join("");
@@ -370,8 +371,8 @@ t+=kvRow("OVR",pick(d.ovr,h0.ovr,hv(d).ovr),0);
 t+=kvRow("Følelse",pick(d.nowx.feel,d.lv.feel,d.med.feel));
 t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
 t+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);
-if(d.runcard){t+=kvRow("Løps-AI",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));t+=kvRow("Løps-IQ",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));t+=kvRow("Effekt",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
-if(d.stops){t+=kvRow("Stopp med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));t+=kvRow("Stopp på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
+if(d.runcard){t+=kvRow("Løp uten ball",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));t+=kvRow("Smarte løp",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));t+=kvRow("Får avstand",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
+if(d.stops){t+=kvRow("Vanskelig å stoppe med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));t+=kvRow("Vanskelig å stoppe på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
 t+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
 return t+"</tbody></table>"}
 function extrasHtml(d){let h="";const st0=stateOf(d),lr=liveRun(d),g=gainsText(st0,lr.st);
@@ -413,8 +414,8 @@ function sbxResult(d){const r=sbxCompute(d),pool=META.pools[d.g]||[],g=r.d1.igr+
 let t=`<table class="kv"><thead><tr><th></th><th>I dag</th><th>Etter</th></tr></thead><tbody>`;
 t+=kvRow("IGR",[g0,g]);t+=kvRow(`Plass blant ${plural(d.g)}`,[d.rnow||rankIn(pool,g0),rankIn(pool,g)],0,-1);t+=kvRow("OVR",[d.ovr,r.st.ovr],0);
 t+=kvRow("Følelse",[r.d0.feel,r.d1.feel]);t+=kvRow("Fart",[r.d0.pace,r.d1.pace]);t+=kvRow("Off-balance",[r.d0.obd,r.d1.obd],0);
-if(d.runcard){t+=kvRow("Løps-AI",[r.d0.run,r.d1.run]);t+=kvRow("Løps-IQ",[r.d0.vil,r.d1.vil]);t+=kvRow("Effekt",[r.d0.eff,r.d1.eff])}
-if(r.d1.stp!=null){t+=kvRow("Stopp med ball",[r.d0.stb,r.d1.stb]);t+=kvRow("Stopp på løp",[r.d0.stl,r.d1.stl])}
+if(d.runcard){t+=kvRow("Løp uten ball",[r.d0.run,r.d1.run]);t+=kvRow("Smarte løp",[r.d0.vil,r.d1.vil]);t+=kvRow("Får avstand",[r.d0.eff,r.d1.eff])}
+if(r.d1.stp!=null){t+=kvRow("Vanskelig å stoppe med ball",[r.d0.stb,r.d1.stb]);t+=kvRow("Vanskelig å stoppe på løp",[r.d0.stl,r.d1.stl])}
 t+=kvRow("AcceleRATE",[r.d0.acc||"–",r.d1.acc||"–"]);t+="</tbody></table>";
 const gx=gainsText(st0,r.st);if(gx.stats.length||gx.ps.length)t+=`<p class="muted">${esc(list(gx.stats))}${gx.ps.length?`${gx.stats.length?". ":""}PlayStyles: ${esc(list(gx.ps))}`:""}.</p>`;
 return t}
@@ -447,8 +448,8 @@ draw()}
 /* ---------- compare ---------- */
 function renderCompare(){const box=$("cmp"),cards=PINS.map(k=>D.find(d=>d.name+"|"+d.ver===k)).filter(Boolean);box.hidden=!cards.length;if(!cards.length){box.innerHTML="";return}
 const rows=[["Posisjon",d=>esc(d.positions[0]||d.g)],["OVR",d=>`${d.ovr} til ${hv(d).ovr}`],["IGR i dag",d=>fmt(d.now)],[isNow()?"Etter evo":"Anslag",d=>fmt(hv(d).p50)],
-["Plass",d=>`${n0(hv(d).rank)} av ${n0(hv(d).of)}`],["Følelse",d=>fmt(feelAt(d))],["Løps-AI",d=>{const r=runAt(d);return r?fmt(r[0]):"–"}],
-["Løps-IQ",d=>{const r=runAt(d);return r?fmt(r[1]):"–"}],["Effekt",d=>{const r=runAt(d);return r?fmt(r[2]):"–"}],["Stopp",d=>{const s=stopAt(d);return s?fmt(s[0]):"–"}],
+["Plass",d=>`${n0(hv(d).rank)} av ${n0(hv(d).of)}`],["Følelse",d=>fmt(feelAt(d))],["Løp uten ball",d=>{const r=runAt(d);return r?fmt(r[0]):"–"}],
+["Smarte løp",d=>{const r=runAt(d);return r?fmt(r[1]):"–"}],["Får avstand",d=>{const r=runAt(d);return r?fmt(r[2]):"–"}],["Vanskelig å stoppe",d=>{const s=stopAt(d);return s?fmt(s[0]):"–"}],
 ["AcceleRATE",d=>esc((isNow()?d.lv.acc:d.med.acc)||"–")],["Evoer",d=>esc(d.plans[0][0].map(([ei])=>EV[ei][1]).join(", ")||"ingen")]];
 box.innerHTML=`<h2>Sammenligning</h2><div class="tw" style="border:0"><table><thead><tr><th></th>${cards.map(d=>`<th>${esc(d.name)}<br><span class="muted" style="font:500 13px var(--text)">${esc(d.ver)}</span></th>`).join("")}</tr></thead>
 <tbody>${rows.map(([l,f])=>`<tr><th>${l}</th>${cards.map(d=>`<td${l==="Evoer"?' style="white-space:normal;font:500 13px var(--text);max-width:220px"':""}>${f(d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>

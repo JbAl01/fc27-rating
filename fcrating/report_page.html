@@ -15,6 +15,9 @@ __CSS__
 #combohint{color:var(--muted);font-size:13px}
 td.cmb{color:var(--link)}
 table:not(.combo) .cmb{display:none}
+.noprice .price{display:none}
+table.data th.wrap{white-space:normal;line-height:1.15;min-width:72px}
+table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--faint);margin-top:2px;max-width:34ch}
 </style></head><body>
 <div class="page">
 <header class="top"><div><h1>FC 27-rating</h1>
@@ -26,9 +29,9 @@ table:not(.combo) .cmb{display:none}
 <label class="f">Posisjon<select id="g"><option value="">Alle, i sin egen posisjon</option></select></label>
 <label class="f">Sorter etter<select id="sort">
 <option value="top_pct">Plass i posisjonen</option><option value="meta">Meta (mot kortene som finnes nå)</option><option value="igr">IGR</option><option value="feel">Følelse</option><option value="obd">Off-balance</option>
-<option value="run_ai">Løps-AI</option><option value="dec">Løps-IQ</option><option value="exe">Løpseffekt</option><option value="stop">Vanskelig å stoppe</option>
+<option value="run_ai">Løp uten ball</option><option value="dec">Smarte løp</option><option value="exe">Får avstand på løp</option><option value="stop">Vanskelig å stoppe</option>
 <option value="run_vs">Løper best for OVR-en</option><option value="evo_after">Beste evo-kandidater</option><option value="evo_gain">Størst evo-økning</option>
-<option value="combo">Kombinasjon (velg i filtrene)</option><option value="ovr">OVR</option><option value="price">Pris</option></select></label>
+<option value="combo">Kombinasjon (velg i filtrene)</option><option value="ovr">OVR</option><option class="price" value="price">Pris</option></select></label>
 <span class="count" id="count"></span>
 <details class="more" id="fp"><summary id="fsum">Filtre</summary>
 <div class="filters">
@@ -42,13 +45,13 @@ table:not(.combo) .cmb{display:none}
 <fieldset><legend>Med ball, minst</legend>
 <label class="f">Følelse<input class="small" type="number" data-f="feelMin" placeholder="85"></label>
 <label class="f">Off-balance<input class="small" type="number" data-f="obMin" placeholder="75"></label>
-<label class="f">Stopp<input class="small" type="number" data-f="stopMin" placeholder="80"></label>
+<label class="f">Vanskelig å stoppe<input class="small" type="number" data-f="stopMin" placeholder="80"></label>
 <label class="f">AcceleRATE<select data-f="acc"><option value="">Alle</option><option>Explosive</option><option>Controlled</option><option>Lengthy</option></select></label>
 </fieldset>
 <fieldset><legend>Uten ball, minst (spiss, kant, CAM)</legend>
-<label class="f">Løps-AI<input class="small" type="number" data-f="runMin" placeholder="80"></label>
-<label class="f">Løps-IQ<input class="small" type="number" data-f="vilMin" placeholder="85"></label>
-<label class="f">Effekt<input class="small" type="number" data-f="effMin" placeholder="85"></label>
+<label class="f">Løp uten ball<input class="small" type="number" data-f="runMin" placeholder="80"></label>
+<label class="f">Smarte løp<input class="small" type="number" data-f="vilMin" placeholder="85"></label>
+<label class="f">Får avstand<input class="small" type="number" data-f="effMin" placeholder="85"></label>
 </fieldset>
 <fieldset><legend>PlayStyle</legend>
 <label class="f">Har<select data-f="ps" id="pssel"><option value="">Alle</option></select></label>
@@ -68,15 +71,14 @@ table:not(.combo) .cmb{display:none}
 
 <div class="tw"><table class="data" id="tbl"><thead><tr>
 <th data-k="name">Spiller</th><th class="cmb" data-k="combo" title="Snittet av plassen i kategoriene du valgte (100 = best i posisjonen)">Kombo</th><th class="l" data-k="group">Pos</th><th data-k="ovr">OVR</th><th data-k="igr">IGR</th><th data-k="meta" title="IGR målt mot kortene som finnes nå. Synker når bedre kort kommer i posisjonen.">Meta</th><th data-k="top_pct">Plass</th>
-<th data-k="feel">Følelse</th><th data-k="pace">Fart</th><th data-k="skill">Ferdighet</th><th data-k="run_ai">Løps-AI</th><th data-k="stop">Stopp</th>
-<th data-k="playstyles" title="Hvor mye PlayStyles gir i IGR">PS</th><th class="l" data-k="accelerate">AcceleRATE</th><th data-k="evo_after" title="IGR med evoene som er ute nå (fra Evo Lab)">Etter evo</th><th data-k="price">Pris</th></tr></thead><tbody id="rows"></tbody></table></div>
+<th data-k="feel" title="Hvor kvikk og lett kortet er å styre med ball">Følelse</th><th data-k="pace" title="Acceleration og Sprint Speed">Fart</th><th data-k="skill" title="Tallene som betyr mest for posisjonen">Ferdigheter</th><th class="wrap" data-k="run_ai" title="Hvor smart og nyttig kortet løper når laget har ballen (spiss, kant og CAM)">Løp uten<br>ball</th><th class="wrap" data-k="stop" title="Hvor vanskelig kortet er å stoppe, med ball og på løp">Vanskelig<br>å stoppe</th>
+<th class="l" data-k="accelerate" title="Hvordan kortet kommer opp i fart">AcceleRATE</th><th data-k="evo_after" title="IGR med evoene som er ute nå (fra Evo Lab)">Etter evo</th><th class="price" data-k="price">Pris</th></tr></thead><tbody id="rows"></tbody></table></div>
 <button type="button" class="more-rows" id="more" hidden></button>
 
 <footer class="foot"><details><summary>Hva tallene betyr</summary>
-<p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. Den er satt sammen av følelse, fart, posisjonsferdighet og, for spiss, kant og CAM, Løps-AI og Stopp. PlayStyles, rolle, svakfot og skill moves kommer på toppen.</p>
-<p><b>Følelse</b>: hvor kvikt og responsivt kortet føles med ball. <b>Off-balance</b>: snittet av Agility, Balance og Dribbling, som EasySBC viser; fra 75 er kortet med i mekanikken. <b>Løps-AI</b>: hvor godt kortet beveger seg uten ball, delt i <b>Løps-IQ</b> (hvor og når det løper) og <b>Effekt</b> (om løpet gir avstand). <b>Stopp</b>: hvor vanskelig kortet er å stoppe med ball og på løp.</p>
-<p><b>Meta</b> er IGR målt mot kortene som finnes nå, slik GG-rating på FUT.GG fungerer. For hver posisjon følger vi snittet av de 50 beste kortene. Når bedre promokort kommer og det snittet stiger, synker Meta like mye for alle kortene i posisjonen. IGR er fast, fordi den bare kommer fra kortets egne tall. Det røde tallet under Meta er hvor mye posisjonen har steget.</p>
-<p><b>Plass</b> er plassen blant alle kort som kan spille posisjonen. «Alle, i sin egen posisjon» viser hvert kort i posisjonen det står i.</p>
+<p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. <b>Meta</b> er IGR målt mot kortene som finnes nå: den synker når bedre kort kommer, slik GG-rating på FUT.GG gjør. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen.</p>
+<p><b>Følelse</b>: hvor kvikk og lett kortet er å styre med ball. <b>Fart</b>: Acceleration og Sprint Speed. <b>Ferdigheter</b>: tallene som betyr mest for posisjonen, for eksempel Finishing for en spiss.</p>
+<p><b>Løp uten ball</b> (spiss, kant og CAM): hvor smart og nyttig kortet løper når laget har ballen. <b>Vanskelig å stoppe</b>: hvor vanskelig kortet er å stoppe, både med ball og på løp, ut fra fart, styrke og balanse. <b>AcceleRATE</b>: hvordan kortet kommer opp i fart. Åpne et kort for å se hva hvert tall bygger på.</p>
 </details>
 <p class="legal">Denne siden er ikke godkjent av eller tilknyttet EA eller deres lisensgivere. <a href="om.html">Om siden, kilder og personvern</a></p></footer>
 </div>
@@ -90,6 +92,7 @@ const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
 return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null}});
 const $=id=>document.getElementById(id);
+const HASPRICE=DATA.some(d=>d.price);if(!HASPRICE){document.documentElement.classList.add("noprice");const po=document.querySelector('#sort option[value="price"]');if(po)po.remove()}
 const present=new Set(DATA.flatMap(d=>Object.keys(d.groups)));
 const gs=$("g");META.order.filter(g=>present.has(g)).forEach(g=>{const o=document.createElement("option");o.value=g;o.textContent=g;gs.appendChild(o)});
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -141,49 +144,66 @@ function bar(label,val,p,title){if(val==null)return"";const w=p!=null?Math.max(3
 return`<div class="bar"${title?` title="${esc(title)}"`:""}><span>${esc(label)}</span><span class="tr"><i style="width:${w.toFixed(1)}%"></i></span><span class="v">${fmt(val)}</span><span class="p">${p!=null?pct(p):""}</span></div>`}
 const kvr=(label,val,extra)=>`<tr><th>${label}</th><td>${val}</td><td class="note">${extra||""}</td></tr>`;
 const attrList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}${x.length>2&&x[1]!==x[2]?` (${x[1]>x[2]?"+":"−"}${Math.abs(x[1]-x[2])} mot snittet)`:""}`));
-function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g);
-const share=k=>B[k]?`${Math.round(B[k]*100)} %`:"";
-const bon=[];if(e.role)bon.push(`rolle ${"+".repeat(e.role)} ${sg(e.role,0)}`);if(d.wf&&e.wfp)bon.push(`svakfot ${d.wf} ${sg(e.wfp)}`);if(d.sm&&e.smp)bon.push(`skill moves ${d.sm} ${sg(e.smp)}`);
-if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);
-const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0);
-const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet":"",d.estimated?"attributtene er anslått":"",e.pse?"PlayStyles anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
+const FRONT={"Løp":"Løp uten ball","Løps-IQ":"Smarte løp","Løpseffekt":"Får avstand","Følelse":"Følelse med ball"};
+const plab=i=>FRONT[PROF.labels[i]]||PROF.labels[i];
+const ACCTXT={Explosive:"kommer raskest opp i fart på korte avstander",Controlled:"en mellomting: grei start og grei toppfart",Lengthy:"tregere i starten, men tar igjen de fleste over lang avstand"};
+const skillTop=g=>(META.skill[g]||[]).slice().sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>lab(x[0]));
+const kvd=(label,desc,val,extra)=>`<tr><th>${label}${desc?`<small>${desc}</small>`:""}</th><td>${val}</td><td class="note">${extra||""}</td></tr>`;
+const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
+function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
+const dr=mdrift(g),since=META.meta&&META.meta.since;
+const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
 let h=`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>
-<p>IGR ${fmt(e.igr)} som ${esc(g.toLowerCase())}, plass ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${metaText(e,g,pl)}${d.style?` ${esc(d.style)}.`:""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>
-${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}
-<div class="cols"><section><h3>Ratingen</h3><table class="kv"><thead><tr><th></th><th>Verdi</th><th style="text-align:left">I posisjonen</th></tr></thead><tbody>
-${g!==META.gk?kvr("Følelse",fmt(d.feel),[pct(w.fp),share("feel")&&"teller "+share("feel")].filter(Boolean).join(", ")):""}
-${kvr("Fart",fmt(e.pace),[pct(w.pp),share("pace")&&"teller "+share("pace")].filter(Boolean).join(", "))}
-${kvr("Ferdighet",fmt(e.skill),[pct(w.sp),"teller "+share("skill")].filter(Boolean).join(", "))}
-${B.run&&e.rs!=null?kvr("Løps-AI",fmt(e.rs),[pct(w.rp),"teller "+share("run")].filter(Boolean).join(", ")):""}
-${B.stop&&e.ss!=null?kvr("Stopp",fmt(e.ss),[pct(w.ssp),"teller "+share("stop")].filter(Boolean).join(", ")):""}
-${kvr("PlayStyles",sg(e.playstyles||0),e.pse?"anslått":"")}
-${kvr("Bonuser",sg(bonus),esc(bon.join(", ")))}
+<p>IGR ${fmt(e.igr)} som ${gl}: nr. ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${e.meta!=null&&since&&dr>0.05?` Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.`:""}</p>
+${d.style||d.likes.length?`<p>${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
+${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;
+/* what the rating is built from */
+const extra=[];if(e.role>0)extra.push(e.role_name?`rollen ${esc(e.role_name)}`:"rolle");if(d.wf&&e.wfp>0)extra.push(`svakfot ${d.wf}`);if(d.sm&&e.smp>0)extra.push(`skill moves ${d.sm}`);
+if(e.obb>0)extra.push("off-balance");if(e.stb>0)extra.push("Standing Tackle");if(e.gkh>0)extra.push("høyde");
+const psn=d.ps||[];
+h+=`<div class="cols"><section><h3>Ratingen</h3><table class="kv"><thead><tr><th></th><th></th><th style="text-align:left">I posisjonen</th></tr></thead><tbody>
+${!gk?kvd("Følelse med ball","hvor kvikk og lett han er å styre",fmt(d.feel),pct(w.fp)):""}
+${kvd("Fart","Acceleration og Sprint Speed",fmt(e.pace),pct(w.pp))}
+${kvd("Ferdigheter",`det som betyr mest for en ${gl}: ${esc(list(skillTop(g)))}`,fmt(e.skill),pct(w.sp))}
+${B.run&&e.rs!=null?kvd("Løp uten ball","hvor smart og nyttig han løper når laget har ballen",fmt(e.rs),pct(w.rp)):""}
+${B.stop&&e.ss!=null?kvd("Vanskelig å stoppe","med ball og på løp: fart, styrke og balanse",fmt(e.ss),pct(w.ssp)):""}
+${kvd("PlayStyles",e.pse?"ikke kjent for dette kortet ennå":esc(list(psn.slice(0,8))),e.pse?"?":String(psn.length),"")}
+${extra.length?kvd("Gir også ekstra",esc(list(extra)),"",""):""}
 </tbody></table></section>
-<section><h3>Med og uten ball</h3><table class="kv"><tbody>
-${g!==META.gk&&d.obd!=null?kvr("Off-balance",Math.round(d.obd),obIn(d.obd)?"med i mekanikken (75 eller mer)":`under ${OB.start}, ikke med`):""}
-${d.hs?kvr("Stopp med ball",fmt(d.hs.ball),"Strength, Balance, fart, Ball Control, Dribbling"):""}
-${rg&&d.ra?kvr("Løps-AI",fmt(d.ra.score),`plass ${n0(d.groups[rg].run.rank)} av ${n0(d.groups[rg].run.of)} ${esc(META.plural[rg]||rg)}, ${sg(d.groups[rg].run.res)} mot samme OVR`):""}
-${rg&&d.ra&&d.ra.dec!=null?kvr("Løps-IQ",fmt(d.ra.dec),"hvor og når spilleren løper (Att. Position, Reactions)"):""}
-${rg&&d.ra&&d.ra.exe!=null?kvr("Effekt",fmt(d.ra.exe),"om løpet gir avstand (fart, smidighet, kropp, Stamina)"):""}
-${d.hs?kvr("Stopp på løp",fmt(d.hs.run),d.accelerate==="Lengthy"?"Lengthy: tar igjen alle over lang avstand":"Sprint Speed, Strength, Acceleration, Balance"):""}
-${kvr("AcceleRATE",esc(d.accelerate||"–"),d.fpa?`${sg(d.fpa)} på følelsen`:"")}
-${d.h?kvr("Høyde",Math.round(d.h)+" cm",(d.ra&&d.ra.body?esc(d.ra.body.toLowerCase())+", ":"")+(d.fph?`${sg(d.fph)} på følelsen`:"")):""}
+<section><h3>Mer om kortet</h3><table class="kv"><tbody>
+${!gk&&d.obd!=null?kvd("Off-balance",`snittet av Agility, Balance og Dribbling. ${obIn(d.obd)?`${OB.start} eller mer: kan drible seg ut av ubalanse`:`Under ${OB.start}: mister lettere balansen`}`,Math.round(d.obd),""):""}
+${d.hs?kvd("Vanskelig å stoppe med ball","Strength, Balance, fart, Ball Control og Dribbling",fmt(d.hs.ball),""):""}
+${d.hs?kvd("Vanskelig å stoppe på løp",d.accelerate==="Lengthy"?"Lengthy: tar igjen de fleste over lang avstand":"Sprint Speed, Strength, Acceleration og Balance",fmt(d.hs.run),""):""}
+${rg&&d.ra&&d.ra.dec!=null?kvd("Smarte løp","hvor og når han løper (Att. Position og Reactions)",fmt(d.ra.dec),""):""}
+${rg&&d.ra&&d.ra.exe!=null?kvd("Får avstand","om løpet faktisk gir rom (fart, smidighet, kropp og Stamina)",fmt(d.ra.exe),""):""}
+${d.accelerate?kvd("AcceleRATE",ACCTXT[d.accelerate]||"",esc(d.accelerate),""):""}
+${d.h?kvd("Høyde",d.ra&&d.ra.body?esc(d.ra.body.toLowerCase()):"",Math.round(d.h)+" cm",""):""}
 </tbody></table>`;
-if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Løper likt som: ${sims.map(([o,dist])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a> <span class="muted">${Math.round(100*Math.exp(-dist/1.2))} %</span>`).join(", ")}</p>`}
+if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Løper på samme måte som ${list(sims.map(([o])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a>`))}.</p>`}
 h+=`</section></div>`;
-const profBars=PROF.order.map((k,i)=>d.prof[i]==null||!(PROF.panel||PROF.order).includes(k)?"":bar(PROF.labels[i],d.prof[i],profPct(d,g,i),"Plass blant alle som kan spille posisjonen")).join("");
+const profBars=PROF.order.map((k,i)=>d.prof[i]==null||!(PROF.panel||PROF.order).includes(k)?"":bar(plab(i),d.prof[i],profPct(d,g,i),"Plass blant alle som kan spille posisjonen")).join("");
 if(profBars)h+=`<h3 style="margin-top:20px">Profil</h3><div class="bars">${profBars}</div>`;
 const strong=[];const seen=new Set();for(const x of [...w.tf,...w.ts,...w.s]){if(!seen.has(x[0])){seen.add(x[0]);strong.push(x)}}
 strong.sort((a,b)=>(b[1]-(b[2]??b[1]))-(a[1]-(a[2]??a[1])));
-h+=`<p style="margin-top:14px"><b>Sterkest:</b> ${strong.length?attrList(strong.slice(0,5)):"–"}.</p>`;
-if(w.w.length)h+=`<p><b>Svakest:</b> ${attrList(w.w)}.</p>`;
-const ps=e.pse?["ukjent (anslått "+sg(e.playstyles||0)+")"]:e.ps.slice(0,8).map(p=>`${p[0]} (${sg(p[1])})`);if(ps.length)h+=`<p><b>PlayStyles:</b> ${esc(list(ps))}.</p>`;
-const v=d.evo;if(v){h+=v.x!==undefined?`<p class="muted">Evo: ikke med (${esc(v.x)}).</p>`:`<p><b>Med evoene som er ute nå:</b> IGR ${fmt(v.n)} til ${fmt(v.a)} (${sg(v.g)}), plass ${n0(v.rn)} til ${n0(v.r)}, OVR ${d.ovr} til ${v.o}.${META.evolab?' <a href="evolab.html">Se planen i Evo Lab</a>.':""}</p>`}
-const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${Math.round(B.feel*100)} %`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${Math.round(B.pace*100)} %`);core.push(`ferdighet ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løps-AI ${fmt(e.rs)} × ${Math.round(B.run*100)} %`);if(B.stop&&e.ss!=null)core.push(`stopp ${fmt(e.ss)} × ${Math.round(B.stop*100)} %`);
+h+=`<p style="margin-top:14px"><b>Sterkest:</b> ${strong.length?nameList(strong.slice(0,5)):"–"}.</p>`;
+if(w.w.length)h+=`<p><b>Svakest:</b> ${nameList(w.w)}.</p>`;
+const v=d.evo;if(v){h+=v.x!==undefined?`<p class="muted">Kan ikke evolueres: ${esc(v.x)}.</p>`:`<p><b>Med evoene som er ute nå</b> kan kortet nå IGR ${fmt(v.a)} (fra ${fmt(v.n)}) og OVR ${v.o}.${META.evolab?' <a href="evolab.html">Se planen i Evo Lab</a>.':""}</p>`}
+/* the numbers behind it */
+const share=k=>B[k]?Math.round(B[k]*100)+" %":"";
+const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${share("feel")}`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${share("pace")}`);core.push(`ferdigheter ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løp uten ball ${fmt(e.rs)} × ${share("run")}`);if(B.stop&&e.ss!=null)core.push(`vanskelig å stoppe ${fmt(e.ss)} × ${share("stop")}`);
+const bon=[];if(e.role)bon.push(`rolle${e.role_name?" "+e.role_name:""} ${sg(e.role)}`);if(d.wf&&e.wfp)bon.push(`svakfot ${d.wf} ${sg(e.wfp)}`);if(d.sm&&e.smp)bon.push(`skill moves ${d.sm} ${sg(e.smp)}`);
+if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);
+const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0);
 const per=Object.entries(d.groups).sort((a,b)=>b[1].igr-a[1].igr).map(([k,x])=>`${esc(k)} ${x.igr.toFixed(1)} (plass ${x.rank} av ${x.of})`).join(", ");
+const mg=META.meta&&META.meta.groups&&META.meta.groups[g];
 h+=`<details style="margin-top:12px"><summary>Utregning og kilde</summary><p class="muted">IGR ${fmt(e.igr)} = kjerne ${fmt(e.core)} (${core.join(" + ")}) ${sg(e.playstyles||0)} PlayStyles ${sg(bonus)} bonuser.</p>
+${bon.length?`<p class="muted">Bonuser: ${esc(bon.join(", "))}.</p>`:""}
+${!e.pse&&e.ps.length?`<p class="muted">PlayStyles i IGR: ${esc(e.ps.slice(0,8).map(p=>`${p[0]} ${sg(p[1])}`).join(", "))}.</p>`:e.pse?`<p class="muted">PlayStyles anslått: ${sg(e.playstyles||0)}.</p>`:""}
+${(()=>{const a=[];if(Math.abs(d.fpa||0)>=0.05)a.push(`AcceleRATE ${sg(d.fpa)}`);if(Math.abs(d.fph||0)>=0.05)a.push(`høyde ${sg(d.fph)}`);return a.length?`<p class="muted">Følelsen er justert for ${a.join(" og ")}.</p>`:""})()}
+${rg&&d.groups[rg].run?`<p class="muted">Løp uten ball: plass ${n0(d.groups[rg].run.rank)} av ${n0(d.groups[rg].run.of)} ${esc(META.plural[rg]||rg)}, ${sg(d.groups[rg].run.res)} mot kort med samme OVR.</p>`:""}
+${mg&&mg[1]!=null&&since?`<p class="muted">Meta: snittet av de ${META.meta.top} beste ${esc(pl)} var ${mg[1].toFixed(1)} den ${dno(since)} og er ${mg[0].toFixed(1)} nå.</p>`:""}
 <p class="muted">Posisjoner (${esc(d.positions)}): ${per}.</p>${d.chem?`<p class="muted">Kjemistil: ${esc(d.chem)}.</p>`:""}${d.src?`<p class="muted">Kilde: ${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.src)}</a>`:esc(d.src)}.</p>`:""}${d.warn?`<p class="muted">Merk: ${esc(d.warn)}.</p>`:""}
-${META.run&&META.run.calibrated?`<p class="muted">Løps-AI er kalibrert mot ${META.run.calibrated.cards} kort du har testet.</p>`:""}</details></div>`;
+${META.run&&META.run.calibrated?`<p class="muted">Løp uten ball er kalibrert mot ${META.run.calibrated.cards} kort du har testet.</p>`:""}</details></div>`;
 return h}
 /* --- filters --- */
 const kind=d=>d.status==="lekket"?"leak":/icon/i.test(d.version)?"icon":/hero/i.test(d.version)?"hero":d.status?"special":"base";
@@ -220,19 +240,19 @@ rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return 0;if(x===null||x===und
 function head(){document.querySelectorAll("#tbl th").forEach(th=>{if(th.dataset.k===key)th.setAttribute("aria-sort",dir<0?"descending":"ascending");else th.removeAttribute("aria-sort")})}
 function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
 $("count").textContent=rows.length===DATA.length?`${n0(DATA.length)} kort`:`${n0(rows.length)} av ${n0(DATA.length)} kort`;
-const ncol=F.combo.length?16:15;
+const ncol=13+(F.combo.length?1:0)+(HASPRICE?1:0);
 rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
 const sub=[d.version,d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
 tr.innerHTML=`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(sub)}</div></td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
-<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}${d.mdrift>0.05?`<small class="down">−${d.mdrift.toFixed(1)}</small>`:""}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
-<td class="num">${fmt(d.feel)}${d.obd!=null&&obUsed(d.group)?`<small>OB ${Math.round(d.obd)}</small>`:""}</td>
+<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
+<td class="num">${fmt(d.feel)}</td>
 <td class="num">${fmt(d.pace)}</td><td class="num">${fmt(d.skill)}</td>
-<td class="num">${d.run_ai!=null?fmt(d.run_ai)+(d.dec!=null?`<small>IQ ${fmt(d.dec,0)}, eff. ${fmt(d.exe,0)}</small>`:""):"–"}</td>
-<td class="num">${d.stop!=null?fmt(d.stop)+`<small>${fmt(d.hs.ball,0)} med, ${fmt(d.hs.run,0)} uten</small>`:"–"}</td>
-<td class="num">${fmt(d.playstyles)}</td><td class="l">${esc(d.accelerate||"–")}</td>
-<td class="num">${d.evo_after!=null?fmt(d.evo_after)+`<small class="${d.evo_gain>0?"up":""}">${sg(d.evo_gain)}</small>`:'<span class="faint">–</span>'}</td><td class="num">${d.price?fmt(d.price,0):"–"}</td>`;
+<td class="num">${d.run_ai!=null?fmt(d.run_ai):"–"}</td>
+<td class="num">${d.stop!=null?fmt(d.stop):"–"}</td>
+<td class="l">${esc(d.accelerate||"–")}</td>
+<td class="num">${d.evo_after!=null?fmt(d.evo_after)+`<small class="${d.evo_gain>0?"up":""}">${sg(d.evo_gain)}</small>`:'<span class="faint">–</span>'}</td><td class="num price">${d.price?fmt(d.price,0):"–"}</td>`;
 const tog=()=>{open=open===d.uid?null:d.uid;render()};tr.onclick=tog;tr.onkeydown=ev=>{if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();tog()}};tb.appendChild(tr);
 if(open===d.uid){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${detail(d,d.group)}</td>`;tb.appendChild(dt)}});
 if(!rows.length)tb.innerHTML=`<tr><td colspan="${ncol}" style="padding:18px">Ingen kort passer. Prøv å nullstille filtrene.</td></tr>`;
