@@ -4,7 +4,15 @@ name: Oppdater siden
 
 on:
   schedule:
-    - cron: "25 */6 * * *"   # hver 6. time (00:25, 06:25, 12:25, 18:25 UTC). 18:25 fanger kveldens nye innhold i FUT.
+    # Kveldsrunden skal treffe kl. 19:25 norsk tid, like etter at EA bytter innhold kl. 19:00 (18:00 britisk tid).
+    # GitHub bruker UTC, og norsk tid flytter seg to ganger i året, så den står to ganger (17:25 og 18:25 UTC).
+    # Steget «Er det kveldsrunden?» under slipper bare gjennom den som faller på kl. 19 norsk tid.
+    - cron: "25 17 * * *"
+    - cron: "25 18 * * *"
+    # Tre runder til i døgnet, ca. 03:25, 09:25 og 15:25 norsk tid (sommertid; én time tidligere om vinteren).
+    - cron: "25 1 * * *"
+    - cron: "25 7 * * *"
+    - cron: "25 13 * * *"
   workflow_dispatch:          # knappen «Run workflow» under Actions: oppdater nå
   push:
     branches: [main]
@@ -31,7 +39,28 @@ env:
   PYTHONUTF8: "1"
 
 jobs:
+  kveld:
+    name: Er det kveldsrunden?
+    runs-on: ubuntu-latest
+    outputs:
+      kjor: ${{ steps.gate.outputs.kjor }}
+    steps:
+      - id: gate
+        env:
+          HENDELSE: ${{ github.event_name }}
+          PLAN: ${{ github.event.schedule }}
+        run: |
+          kjor=ja
+          if [ "$HENDELSE" = "schedule" ] && { [ "$PLAN" = "25 17 * * *" ] || [ "$PLAN" = "25 18 * * *" ]; }; then
+            time=$(TZ=Europe/Oslo date +%H)
+            echo "Norsk klokketime nå: $time"
+            if [ "$time" != "19" ]; then kjor=nei; fi
+          fi
+          echo "kjor=$kjor" >> "$GITHUB_OUTPUT"
+
   oppdater:
+    needs: kveld
+    if: needs.kveld.outputs.kjor == 'ja'
     runs-on: ubuntu-latest
     timeout-minutes: 90       # første kjøring og ukesgjennomgangen av FIFA Rosters tar lengst tid
     environment:

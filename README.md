@@ -64,10 +64,10 @@ py -m fcrating rate data/ea_players.json data/spesialkort.json
 
 ## Legge ut siden for vennene dine
 
-Det enkleste er GitHub Pages. Det er gratis, siden oppdateres av seg selv hver 6. time, og PC-en din trenger ikke stå på. Du trenger bare en GitHub-konto. Siden er åpen for alle som har lenken, men søkemotorer får ikke ta den med, så i praksis ser bare de du sender lenken til den.
+Det enkleste er GitHub Pages. Det er gratis, siden oppdateres av seg selv fire ganger i døgnet, og PC-en din trenger ikke stå på. Du trenger bare en GitHub-konto. Siden er åpen for alle som har lenken, men søkemotorer får ikke ta den med, så i praksis ser bare de du sender lenken til den.
 
 ```
-GitHub: hver 6. time hentes nye kort, alt rates og siden legges ut  →  https://BRUKERNAVN.github.io/fc27-rating/  →  du deler lenken
+GitHub: fire ganger i døgnet hentes nye kort, alt rates og siden legges ut  →  https://BRUKERNAVN.github.io/fc27-rating/  →  du deler lenken
 ```
 
 ### Slik gjør du det
@@ -84,7 +84,8 @@ Når du publiserer i punkt 4, starter en kjøring av seg selv. Rekker den å bli
 
 ### Hva som oppdateres, og når
 
-- **Hver 6. time** (kl. 00:25, 06:25, 12:25 og 18:25 UTC, ofte noen minutter senere) kommer nye spesialkort, TOTW, kampanjer og lekkasjer, og rangeringen og evo-planene regnes ut på nytt. Runden kl. 18:25 fanger det EA slipper kl. 18 britisk tid. Vil du oppdatere med en gang, trykk Run workflow.
+- **Fire ganger i døgnet** kommer nye spesialkort, TOTW, kampanjer og lekkasjer, og rangeringen og evo-planene regnes ut på nytt. **Kveldsrunden starter kl. 19:25 norsk tid**, 25 minutter etter at EA bytter innhold kl. 19:00 (18:00 britisk tid), og er ferdig ca. 19:35–19:50. De tre andre er ca. 03:25, 09:25 og 15:25 (sommertid; om vinteren en time tidligere. Kveldsrunden holder seg på 19:25 hele året). GitHub kan være 5–20 minutter sen. Vil du oppdatere med en gang, trykk Run workflow.
+- **Evo-sjekken** går kl. 19:08 og 19:45 norsk tid hver dag. Den første er rett etter at nye evoer er ute i spillet, og den bygger siden på nytt hvis den fant noe.
 - **Evoer som stenger**, forsvinner fra planene neste runde. Siden viser i tillegg «stengt» ut fra klokka til den som ser på.
 - **Nye evoer** legges inn av en daglig sjekk som Claude kjører (se «Daglig evo-sjekk» under). Den skriver til `data/auto_evoer.json`, og siden bygges på nytt etterpå. Vil du legge inn en evo selv, bruk `evo-import` (se «Holde evoene oppdatert»), og trykk Fetch/Pull før du trykker Commit og Push i GitHub Desktop, siden sjekken også pusher til repoet.
 - **Ny versjon av programmet:** pakk ut zip-filen oppå mappen, og trykk Commit og Push.
