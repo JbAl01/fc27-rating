@@ -43,7 +43,7 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 11
+CACHE_VERSION = 12
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -1118,6 +1118,13 @@ def simulate_card(p: Player, cfg: dict, lab: dict, live: List[dict], universes: 
         igrs, ovrs, _ = simulate_universe(live_state, card_waves(universes, u, st0.positions), ev, rules, tally)
         entry["mc"][str(u)] = [igrs, ovrs]
     entry["tally"] = dict(tally)
+    # the same futures without today's evos: the page uses it to adjust the forecast when you mark evos as used
+    entry.setdefault("mc0", {})
+    if entry["live"].get("steps"):
+        for u in want:
+            if str(u) not in entry["mc0"]:
+                igrs0, ovrs0, _ = simulate_universe(st0, card_waves(universes, u, st0.positions), ev, rules)
+                entry["mc0"][str(u)] = [igrs0, ovrs0]
     # median build over the universes done so far (final wave), rebuilt from that universe
     us = sorted(entry["mc"], key=lambda k: entry["mc"][k][0][-1])
     mid = us[len(us) // 2]
@@ -1432,6 +1439,13 @@ def summarize(lab_run: dict, players: List[Player], results: List[dict], cfg: di
             hs.append({"p10": round(_q(vals, 0.1), 1), "p50": round(p50, 1), "p90": round(_q(vals, 0.9), 1),
                        "op": round(100.0 * sum(1 for v in vals if v >= t) / len(vals)), "thr": round(t, 1),
                        "ovr": int(round(statistics.median(ovrs))), "rank": better + 1, "of": len(asc[g])})
+            # the same horizon if the card took none of today's evos (for the page's used-evo filter)
+            mc0 = [e["mc0"][u] for u in e["mc"] if u in (e.get("mc0") or {})]
+            if h["key"] != "live" and mc0 and len(mc0) == len(e["mc"]):
+                v0 = [v[0][hi - 1] + off for v in mc0]
+                hs[-1]["z"] = [round(_q(v0, 0.1), 1), round(_q(v0, 0.5), 1), round(_q(v0, 0.9), 1),
+                               round(100.0 * sum(1 for v in v0 if v >= t) / len(v0)),
+                               int(round(statistics.median(v[1][hi - 1] for v in mc0)))]
             if when is None and p50 >= t:
                 when = hi
         final = hs[-1]["p50"]

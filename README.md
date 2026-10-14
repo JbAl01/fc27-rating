@@ -355,7 +355,7 @@ Med `--lagre` lagres vektene i `config/run_ai_kalibrert.json`, og rapporten bruk
 - **Prøv andre evoer selv:** huk av evoene i den rekkefølgen du vil, velg pathway, legg til egne oppgraderinger og PlayStyles. Tallene regnes på nytt med en gang, med samme regler som Python (det er testet at de gir like tall).
 - **Legg til i sammenligning:** opptil tre kort side om side.
 
-**Evoer du har brukt opp:** åpne «Evoene som er ute nå» og huk av «Brukt» ved evoene du allerede har brukt på andre kort. Planene for kortene som brukte dem, regnes på nytt i nettleseren med en gang (tar noen sekunder), og tabellen sorteres på nytt. Nettleseren husker valget. Vil du at rapporten og `rate` også skal regne uten dem, kjør for eksempel:
+**Evoer du har brukt opp:** åpne «Evoene som er ute nå» og huk av «Brukt» ved evoene du allerede har brukt på andre kort. Planene for kortene som brukte dem, regnes på nytt i nettleseren, og rangeringen følger med: kortene som er best med evoene som er igjen, kommer øverst. Kortene som står øverst i visningen din regnes først, og tabellen oppdateres mens det regnes, så toppen er riktig etter et øyeblikk. Anslaget for resten av året justeres også: Python regner hvert kort både med og uten dagens evoer, og siden legger anslaget mellom de to etter hvor mye av evo-gevinsten kortet beholder. Nettleseren husker valget. Vil du at rapporten og `rate` også skal regne uten dem, kjør for eksempel:
 
 ```
 py -m fcrating brukt "Batigol Precision" "Nine Duty"

@@ -230,6 +230,22 @@ class RunTests(unittest.TestCase):
         self.assertNotIn(names["Yuki Nagasato"], self.summary)       # Icon
         self.assertIn(names["Test Spiss 0"], self.summary)
 
+    def test_forecast_without_todays_evos(self):
+        """Cards with a live plan also get the forecast from today's card (z), so the page can adjust the
+        forecast when evos are marked as used. Cards without a live plan do not need it."""
+        with_plan = [s for s in self.summary.values() if s["live"]["steps"]]
+        self.assertTrue(with_plan)
+        for s in with_plan:
+            for h in s["h"][1:]:
+                p10, p50, p90, op, ovr = h["z"]
+                self.assertLessEqual(p10, p50 + 1e-9)
+                self.assertLessEqual(p50, p90 + 1e-9)
+                self.assertTrue(0 <= op <= 100)
+            self.assertNotIn("z", s["h"][0])
+        for s in self.summary.values():
+            if not s["live"]["steps"]:
+                self.assertTrue(all("z" not in h for h in s["h"]))
+
     def test_summary_numbers(self):
         hz = evolab.horizons(LAB)
         for uid, s in self.summary.items():

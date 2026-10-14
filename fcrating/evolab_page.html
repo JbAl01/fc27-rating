@@ -163,7 +163,7 @@ for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(
 if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
 /* ---------- data ---------- */
 const D=RAW.map((r,i)=>({i,name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
-h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
+h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
 med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],ovr:r[20][5],acc:r[20][6],feel:r[20][7],pace:r[20][8]},
@@ -240,7 +240,7 @@ let dir=-1;
 let USED=new Set();try{USED=new Set(JSON.parse(localStorage.getItem("fc27-evolab-used")||"[]"))}catch(e){}
 const saveUsed=()=>{try{localStorage.setItem("fc27-evolab-used",JSON.stringify([...USED]))}catch(e){}};
 const isUsed=ei=>USED.has(EV[ei][0]);
-for(const d of D)d._orig={h0:{...d.h[0]},lv:{...d.lv},rl:d.runs.live.slice(),sl:d.stops?d.stops.live.slice():null,c1:d.cats?d.cats[1]:null,plans:d.plans.slice(),tips:d.lm.tips};
+for(const d of D)d._orig={h0:{...d.h[0]},hs:d.h.map(x=>({...x})),lv:{...d.lv},rl:d.runs.live.slice(),sl:d.stops?d.stops.live.slice():null,c1:d.cats?d.cats[1]:null,plans:d.plans.slice(),tips:d.lm.tips};
 /* category values on the attribute scale, as profile.categories in Python */
 function catVals(d,a,det){if(!d.cats)return null;return CATS.map(c=>{if(c.src==="feel")return det.feel;if(c.src==="run")return d.runcard?det.run:null;
 if(c.src==="run_decision")return d.runcard?det.vil:null;if(c.src==="run_execution")return d.runcard?det.eff:null;if(c.src==="stop")return det.stp;
@@ -259,18 +259,37 @@ let st=st0,seq=[];for(let k=0;k<12;k++){let best=null;for(const ei of C){const b
 tries.push({st,seq});
 let win=null,wv=-1e9;for(const t of tries){const fin=rpp&&!d.c.primPP?rolesPP(t.st):t.st,v=rt(fin).igr;if(v>wv+1e-9){wv=v;win=t}}return[win.seq,rpp]}
 function setLive(d,plan){const res=runPlan(d,plan),det=res.det,p50=pyRound(det.igr+d.off,1),pool=META.pools[d.g]||[];
-d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};d.lv={feel:det.feel,acc:det.acc,pace:det.pace};
+d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};
+/* The forecast for later in the year is simulated twice in Python: from the live plan (all of today's evos) and
+   from today's card (none of them). With some evos used, the card keeps a share of the live gain, and the
+   forecast is placed the same share of the way between the two. */
+const o0=d._orig.hs[0],gain0=o0.p50-d.now,keep=gain0>0.05?Math.max(0,Math.min(1,(p50-d.now)/gain0)):1;
+for(let j=1;j<d.h.length;j++){const o=d._orig.hs[j];if(keep>=0.999){d.h[j]={...o};continue}
+let p10,m,p90,op=o.op,ovr=o.ovr;
+if(o.z){const mix=(a,b)=>pyRound(b+keep*(a-b),1);p10=mix(o.p10,o.z[0]);m=mix(o.p50,o.z[1]);p90=mix(o.p90,o.z[2]);op=Math.round(o.z[3]+keep*(o.op-o.z[3]));ovr=Math.round(o.z[4]+keep*(o.ovr-o.z[4]))}
+else{const drop=o0.p50-p50;p10=pyRound(o.p10-drop,1);m=pyRound(o.p50-drop,1);p90=pyRound(o.p90-drop,1)}
+m=Math.max(p50,m);p10=Math.min(m,Math.max(p50,p10));p90=Math.max(m,p90);
+d.h[j]={...o,p10,p50:m,p90,op,ovr,rank:rankIn(pool,m),adj:pyRound(o.p50-m,1)}}
 if(d.runcard)d.runs.live=[det.run,det.vil,det.eff];if(d.stops)d.stops.live=[det.stp,det.stb,det.stl];if(d.cats)d.cats[1]=catVals(d,res.st.a,det)}
-function restore(d){const o=d._orig;d.h[0]={...o.h0};d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false}
+function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false}
 let usedJob=0;
-function applyUsed(){const job=++usedJob,todo=D.filter(d=>d._re||d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));let k=0;
+/* Replans every card whose plan used an evo you have marked as used. Cards that are in the current view and
+   high in the current sort come first, and the table is redrawn while it works, so the top settles quickly
+   (removing evos can only lower a card, so the cards first in line are the ones that can change the top). */
+function applyUsed(){const job=++usedJob,f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
+const todo=D.filter(d=>d._re||d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));
+const key=d=>{const v=f(d);return[pass(d,q)?0:1,v==null?Infinity:-v*dir]};
+const ks=new Map(todo.map(d=>[d,key(d)]));todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);return x[0]-y[0]||x[1]-y[1]});
+let k=0,drawn=performance.now();
 const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40){const d=todo[k++];restore(d);
 if(USED.size&&d.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))){const touched=d.plans[0][0].some(([ei])=>isUsed(ei));
 d.plans=d.plans.map((p,i)=>i>0&&p&&p[0].some(([ei])=>isUsed(ei))?0:p);if(touched){d.plans[0]=replan(d);d.lm.tips=[];setLive(d,d.plans[0])}d._re=true}d._lr=null}
-usedInfo(k<todo.length?Math.round(100*k/todo.length):null);if(k<todo.length)setTimeout(step,0);else{TWC.clear();render()}};step()}
+const busy=k<todo.length;usedInfo(busy?Math.round(100*k/todo.length):null);
+if(!busy||performance.now()-drawn>400){drawn=performance.now();TWC.clear();render()}
+if(busy)setTimeout(step,0)};step()}
 function usedInfo(progress){const names=EV.filter(e=>USED.has(e[0])).map(e=>e[1]);let h="";
 if(META.usedfile&&META.usedfile.length)h+=`<p class="muted">Tatt ut av beregningen fordi de står i brukte_evoer.json: ${esc(list(META.usedfile))}.</p>`;
-if(names.length)h+=`<p class="warn">Planene regnes uten evoene du har brukt: ${esc(list(names))}.${progress!=null?` Regner … ${progress} %`:""} <button type="button" class="link" id="clearused">Ta med alle igjen</button></p>`;
+if(names.length)h+=`<p class="warn">Planene og rangeringen regnes uten evoene du har brukt: ${esc(list(names))}.${progress!=null?` Regner nye planer … ${progress} %`:""}${!isNow()?" Anslaget for resten av året er justert for det samme.":""} <button type="button" class="link" id="clearused">Ta med alle igjen</button></p>`;
 $("usedinfo").innerHTML=h;const b=$("clearused");if(b)b.onclick=()=>{USED.clear();saveUsed();renderEvos();applyUsed()}}
 
 /* ---------- controls ---------- */
@@ -282,7 +301,7 @@ function sync(){$("g").value=F.g;$("ovr").value=F.ovrMax;$("ovrMin").value=F.ovr
 $("live").checked=!!F.live;$("twin").value=F.twin||"";fillSort();save()}
 function setTwin(v){const t=META.targets.find(t=>twinName(t)===v);TWIN=t||null;TWC.clear();F.twin=TWIN?v:"";if(TWIN){F.sort="twin";dir=-1}else if(F.sort==="twin")F.sort="rel"}
 for(const[id,k]of[["g","g"],["ovr","ovrMax"],["kind","kind"],["gender","gender"]])$(id).onchange=e=>{F[k]=e.target.value;sync();reset()};
-$("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset()};
+$("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset();usedInfo(null)};
 $("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset()};
 $("ovrMin").oninput=e=>{F.ovrMin=e.target.value;save();reset()};
 $("live").onchange=e=>{F.live=e.target.checked;save();reset()};
@@ -386,7 +405,7 @@ return h}
 function forecastHtml(d){let t=`<h3 style="margin-top:22px">Anslag for resten av året</h3><table class="kv"><thead><tr><th></th><th>Typisk</th><th>Spenn</th><th>OVR</th><th>Plass</th></tr></thead><tbody>`;
 t+=`<tr><th>I dag</th><td>${fmt(d.now)}</td><td>–</td><td>${d.ovr}</td><td>${n0(d.rnow)}</td></tr>`;
 d.h.forEach((h,i)=>{t+=`<tr><th>${i===0?"Evoene nå":esc(H[i].name)}</th><td>${fmt(h.p50)}</td><td>${i===0?"–":fmt(h.p10)+"–"+fmt(h.p90)}</td><td>${h.ovr}</td><td>${n0(h.rank)}</td></tr>`});
-return t+`</tbody></table><p class="muted">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}</p>`}
+return t+`</tbody></table><p class="muted">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}${d.h.some(h=>Math.abs(h.adj||0)>=0.05)?" Justert for evoene du har brukt opp.":""}</p>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=d.plans[0][0].some(([ei])=>isClosed(EV[ei]));
 return`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>

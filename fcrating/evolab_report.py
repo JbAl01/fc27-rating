@@ -214,7 +214,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
     return [
         r["name"], intern(r.get("rarity") or ""), r.get("ovr"), intern("/".join(r.get("positions") or [])), group_label(g),
         r.get("gender") or "M", _kind(r), s["now"], s["rank_now"],
-        [[h["p10"], h["p50"], h["p90"], h["op"], h["ovr"], h["rank"]] for h in s["h"]],
+        [[h["p10"], h["p50"], h["p90"], h["op"], h["ovr"], h["rank"]] + ([h["z"]] if h.get("z") else []) for h in s["h"]],
         -1 if s["when"] is None else s["when"], s["gain"], 1 if s["coarse"] else 0,
         intern(s["like"][0] + "|" + s["like"][1]) if s.get("like") else -1,
         s.get("access"), [[intern(BLOCK_WORDS.get(k, k)), pc] for k, pc in s.get("block", [])],
