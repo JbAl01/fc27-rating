@@ -1,0 +1,15 @@
+{
+ "_info": "Startnivået for Meta: snitt-IGR for de beste kortene i hver posisjon den dagen det ble lagret. Meta = IGR minus hvor mye nivået har steget siden. Slett filen for å starte på nytt.",
+ "since": "2026-10-14",
+ "top": 50,
+ "levels": {
+  "ST": 95.32,
+  "W": 94.9,
+  "CM": 90.71,
+  "CAM": 94.72,
+  "CDM": 86.87,
+  "GK": 87.95,
+  "CB": 87.31,
+  "FB": 87.84
+ }
+}
