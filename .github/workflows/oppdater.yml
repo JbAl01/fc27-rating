@@ -62,6 +62,10 @@ jobs:
     needs: kveld
     if: needs.kveld.outputs.kjor == 'ja'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write          # for å lagre data/meta_start.json første gang
+      pages: write
+      id-token: write
     timeout-minutes: 90       # første kjøring og ukesgjennomgangen av FIFA Rosters tar lengst tid
     environment:
       name: github-pages
@@ -100,8 +104,19 @@ jobs:
             [ -f "$f" ] && files="$files $f"
           done
           if [ -z "$files" ]; then echo "Ingen kortdata. Se loggen over for hva som feilet."; exit 1; fi
-          python -m fcrating rate $files --ignorer-brukte --top 5
+          python -m fcrating rate $files --ignorer-brukte --lagre-meta-start --top 5
           python -m fcrating publiser
+
+      - name: Lagre startnivået for Meta (bare første gang)
+        continue-on-error: true
+        run: |
+          if [ -f data/meta_start.json ] && [ -n "$(git status --porcelain -- data/meta_start.json)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/meta_start.json
+            git commit -m "Meta: lagret startnivå for posisjonene"
+            git push origin HEAD:main || echo "Fikk ikke lagret nå (noen andre pushet samtidig). Prøver igjen neste runde."
+          fi
 
       - name: Lagre data til neste kjøring
         if: always()

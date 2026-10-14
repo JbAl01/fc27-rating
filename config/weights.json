@@ -445,5 +445,11 @@
     "ovr_window": 3,
     "min_known": 20,
     "_min_known_info": "Er det færre enn så mange kort med kjente PlayStyles innenfor ±ovr_window, utvides vinduet til det er nok (maks ±12)."
+  },
+
+  "meta": {
+    "_info": "Meta = IGR målt mot kortene som finnes nå (som GG-rating på FUT.GG). For hver posisjon tas snittet av de 'top' beste IGR-ene. Meta = IGR minus hvor mye det snittet har steget siden startnivået i data/meta_start.json. Lekkede kort telles ikke.",
+    "top": 50,
+    "min_pool": 30
   }
 }

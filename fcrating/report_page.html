@@ -25,7 +25,7 @@ table:not(.combo) .cmb{display:none}
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
 <label class="f">Posisjon<select id="g"><option value="">Alle, i sin egen posisjon</option></select></label>
 <label class="f">Sorter etter<select id="sort">
-<option value="top_pct">Plass i posisjonen</option><option value="igr">IGR</option><option value="feel">Følelse</option><option value="obd">Off-balance</option>
+<option value="top_pct">Plass i posisjonen</option><option value="meta">Meta (mot kortene som finnes nå)</option><option value="igr">IGR</option><option value="feel">Følelse</option><option value="obd">Off-balance</option>
 <option value="run_ai">Løps-AI</option><option value="dec">Løps-IQ</option><option value="exe">Løpseffekt</option><option value="stop">Vanskelig å stoppe</option>
 <option value="run_vs">Løper best for OVR-en</option><option value="evo_after">Beste evo-kandidater</option><option value="evo_gain">Størst evo-økning</option>
 <option value="combo">Kombinasjon (velg i filtrene)</option><option value="ovr">OVR</option><option value="price">Pris</option></select></label>
@@ -67,7 +67,7 @@ table:not(.combo) .cmb{display:none}
 </section>
 
 <div class="tw"><table class="data" id="tbl"><thead><tr>
-<th data-k="name">Spiller</th><th class="cmb" data-k="combo" title="Snittet av plassen i kategoriene du valgte (100 = best i posisjonen)">Kombo</th><th class="l" data-k="group">Pos</th><th data-k="ovr">OVR</th><th data-k="igr">IGR</th><th data-k="top_pct">Plass</th>
+<th data-k="name">Spiller</th><th class="cmb" data-k="combo" title="Snittet av plassen i kategoriene du valgte (100 = best i posisjonen)">Kombo</th><th class="l" data-k="group">Pos</th><th data-k="ovr">OVR</th><th data-k="igr">IGR</th><th data-k="meta" title="IGR målt mot kortene som finnes nå. Synker når bedre kort kommer i posisjonen.">Meta</th><th data-k="top_pct">Plass</th>
 <th data-k="feel">Følelse</th><th data-k="pace">Fart</th><th data-k="skill">Ferdighet</th><th data-k="run_ai">Løps-AI</th><th data-k="stop">Stopp</th>
 <th data-k="playstyles" title="Hvor mye PlayStyles gir i IGR">PS</th><th class="l" data-k="accelerate">AcceleRATE</th><th data-k="evo_after" title="IGR med evoene som er ute nå (fra Evo Lab)">Etter evo</th><th data-k="price">Pris</th></tr></thead><tbody id="rows"></tbody></table></div>
 <button type="button" class="more-rows" id="more" hidden></button>
@@ -75,6 +75,7 @@ table:not(.combo) .cmb{display:none}
 <footer class="foot"><details><summary>Hva tallene betyr</summary>
 <p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. Den er satt sammen av følelse, fart, posisjonsferdighet og, for spiss, kant og CAM, Løps-AI og Stopp. PlayStyles, rolle, svakfot og skill moves kommer på toppen.</p>
 <p><b>Følelse</b>: hvor kvikt og responsivt kortet føles med ball. <b>Off-balance</b>: snittet av Agility, Balance og Dribbling, som EasySBC viser; fra 75 er kortet med i mekanikken. <b>Løps-AI</b>: hvor godt kortet beveger seg uten ball, delt i <b>Løps-IQ</b> (hvor og når det løper) og <b>Effekt</b> (om løpet gir avstand). <b>Stopp</b>: hvor vanskelig kortet er å stoppe med ball og på løp.</p>
+<p><b>Meta</b> er IGR målt mot kortene som finnes nå, slik GG-rating på FUT.GG fungerer. For hver posisjon følger vi snittet av de 50 beste kortene. Når bedre promokort kommer og det snittet stiger, synker Meta like mye for alle kortene i posisjonen. IGR er fast, fordi den bare kommer fra kortets egne tall. Det røde tallet under Meta er hvor mye posisjonen har steget.</p>
 <p><b>Plass</b> er plassen blant alle kort som kan spille posisjonen. «Alle, i sin egen posisjon» viser hvert kort i posisjonen det står i.</p>
 </details>
 <p class="legal">Denne siden er ikke godkjent av eller tilknyttet EA eller deres lisensgivere. <a href="om.html">Om siden, kilder og personvern</a></p></footer>
@@ -84,7 +85,7 @@ const RAW=__DATA__,META=__META__,PAGE=200,STR=META.strings;let key="top_pct",dir
 const DATA=RAW.map((r,i)=>{const groups={};for(const g in r[22]){const a=r[22][g],ps=[];for(let j=0;j<a[14].length;j+=2)ps.push([STR[a[14][j]],a[14][j+1]]);
 const ru=a[16],tri=x=>{const o=[];for(let j=0;j<x.length;j+=3)o.push([STR[x[j]],x[j+1],x[j+2]]);return o};
 groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6],core:a[7],playstyles:a[8],role:a[9],role_name:STR[a[10]],wfp:a[11],smp:a[12],gkh:a[13],ps,pse:a[15],
-run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null}}
+run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
 return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null}});
@@ -95,7 +96,10 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const fmt=(v,dg=1)=>v===null||v===undefined||v===""?"–":(typeof v==="number"?(dg===0?Math.round(v).toLocaleString("no"):v.toFixed(dg)):esc(v));
 const sg=(v,dg=1)=>(v>=0?"+":"−")+Math.abs(v).toFixed(dg);
 const pct=p=>p===null||p===undefined?"":(p<1?"topp 1 %":"topp "+Math.round(p)+" %");
+const mdrift=g=>{const m=META.meta&&META.meta.groups&&META.meta.groups[g];return m?m[2]:0};
+const dno=s=>{if(!s)return"";const[y,m,d]=s.split("-");return `${+d}.${+m}.${y}`};
 const n0=v=>v==null?"–":Number(v).toLocaleString("no");
+function metaText(e,g,pl){if(e.meta==null)return"";const dr=mdrift(g),since=META.meta&&META.meta.since;if(!since)return"";return dr>0.05?` Meta ${fmt(e.meta)}: snittet for topp ${META.meta.top} blant ${esc(pl)} har steget ${dr.toFixed(1)} siden ${dno(since)}, så kortet teller ${dr.toFixed(1)} mindre nå.`:` Meta ${fmt(e.meta)}, likt IGR: toppen blant ${esc(pl)} har ikke steget siden ${dno(since)}.`}
 function list(items){return items.length<2?items.join(""):items.slice(0,-1).join(", ")+" og "+items[items.length-1]}
 const GCODE={"Spiss":"ST","Kant":"W","CAM":"CAM","CM":"CM","CDM":"CDM","Back":"FB","Midtstopper":"CB","Keeper":"GK"};
 const posClass=g=>({ST:"att",W:"att",CAM:"mid",CM:"mid",CDM:"mid",FB:"def",CB:"def",GK:"gk"})[GCODE[g]||g]||"";
@@ -144,7 +148,7 @@ if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle
 const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0);
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet":"",d.estimated?"attributtene er anslått":"",e.pse?"PlayStyles anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
 let h=`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>
-<p>IGR ${fmt(e.igr)} som ${esc(g.toLowerCase())}, plass ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${d.style?` ${esc(d.style)}.`:""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>
+<p>IGR ${fmt(e.igr)} som ${esc(g.toLowerCase())}, plass ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${metaText(e,g,pl)}${d.style?` ${esc(d.style)}.`:""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}
 <div class="cols"><section><h3>Ratingen</h3><table class="kv"><thead><tr><th></th><th>Verdi</th><th style="text-align:left">I posisjonen</th></tr></thead><tbody>
 ${g!==META.gk?kvr("Følelse",fmt(d.feel),[pct(w.fp),share("feel")&&"teller "+share("feel")].filter(Boolean).join(", ")):""}
@@ -209,20 +213,20 @@ if(F.ps&&!d.ps.some(n=>F.psPlus?n===F.ps+"+":(n===F.ps||n===F.ps+"+")))return fa
 if(F.gem&&!(g?v.gem:anyGem(d)))return false;if(F.evo&&d.evo_after==null)return false;if(F.wf4&&!(d.wf>=4))return false;if(F.sm4&&!(d.sm>=4))return false;return true}
 /* --- table --- */
 function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null;
-return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:!!(ru&&ru.gem),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,playstyles:e.playstyles,role:e.role}}
+return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:!!(ru&&ru.gem),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,playstyles:e.playstyles,role:e.role}}
 function rowsNow(){const q=$("q").value.trim().toLowerCase(),g=gs.value;
 let rows=DATA.filter(d=>(d.name+" "+d.version).toLowerCase().includes(q)&&(!g||g in d.groups)).map(d=>view(d,g)).filter(v=>pass(v,v,g));
 rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return 0;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}
 function head(){document.querySelectorAll("#tbl th").forEach(th=>{if(th.dataset.k===key)th.setAttribute("aria-sort",dir<0?"descending":"ascending");else th.removeAttribute("aria-sort")})}
 function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
 $("count").textContent=rows.length===DATA.length?`${n0(DATA.length)} kort`:`${n0(rows.length)} av ${n0(DATA.length)} kort`;
-const ncol=F.combo.length?15:14;
+const ncol=F.combo.length?16:15;
 rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
 const sub=[d.version,d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
 tr.innerHTML=`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(sub)}</div></td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
-<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
+<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}${d.mdrift>0.05?`<small class="down">−${d.mdrift.toFixed(1)}</small>`:""}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
 <td class="num">${fmt(d.feel)}${d.obd!=null&&obUsed(d.group)?`<small>OB ${Math.round(d.obd)}</small>`:""}</td>
 <td class="num">${fmt(d.pace)}</td><td class="num">${fmt(d.skill)}</td>
 <td class="num">${d.run_ai!=null?fmt(d.run_ai)+(d.dec!=null?`<small>IQ ${fmt(d.dec,0)}, eff. ${fmt(d.exe,0)}</small>`:""):"–"}</td>

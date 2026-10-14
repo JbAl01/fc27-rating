@@ -24,7 +24,7 @@ ATTR_KEYS = list(ATTRIBUTE_LABELS)
 ATTR_INDEX = {k: i for i, k in enumerate(ATTR_KEYS)}
 
 CSV_COLUMNS = [
-    "name", "version", "status", "estimated", "ovr", "positions", "position_group", "pos_igr", "pos_tier", "pos_rank", "pos_of",
+    "name", "version", "status", "estimated", "ovr", "positions", "position_group", "pos_igr", "pos_meta", "pos_tier", "pos_rank", "pos_of",
     "pos_top_pct", "best_group", "best_igr", "feel", "pace", "skill", "playstyles", "playstyles_estimated", "role",
     "role_name", "accelerate", "off_balance_dribbling", "evo_eligible", "evo_after", "evo_gain", "evo_rank_after",
     "evo_of", "evo_reason", "run_ai", "run_decision", "run_execution", "run_vs_ovr", "run_rank", "run_of",
@@ -61,6 +61,7 @@ def flat_row(r: dict, evo: Optional[dict] = None) -> dict:
         "positions": "/".join(r["positions"]),
         "position_group": group_label(pg),
         "pos_igr": r.get("pos_igr", g.get("igr")),
+        "pos_meta": r.get("pos_meta", g.get("meta")),
         "pos_tier": r.get("pos_tier") or g.get("tier"),
         "pos_rank": r.get("pos_rank"),
         "pos_of": r.get("pos_of"),
@@ -103,7 +104,8 @@ def _sort_key(row: dict):
     return (pos, row["pos_rank"] or 10**9)
 
 
-def write_outputs(results: List[dict], evos: Dict[str, dict], out_dir: str, evolab: bool = False) -> Dict[str, str]:
+def write_outputs(results: List[dict], evos: Dict[str, dict], out_dir: str, evolab: bool = False,
+                  meta_info: Optional[dict] = None) -> Dict[str, str]:
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     rows = sorted((flat_row(r, evos.get(r["uid"])) for r in results), key=_sort_key)
@@ -120,7 +122,7 @@ def write_outputs(results: List[dict], evos: Dict[str, dict], out_dir: str, evol
                    "players": results, "evo": evos}, f, ensure_ascii=False, separators=(",", ":"))
 
     html_path = out / "rapport.html"
-    html_path.write_text(render_html(results, evos, evolab=evolab), encoding="utf-8")
+    html_path.write_text(render_html(results, evos, evolab=evolab, meta_info=meta_info), encoding="utf-8")
     from .site import write_assets  # fonts, icons and om.html, so the page looks the same opened from disk
     write_assets(out)
     return {"csv": str(csv_path), "json": str(json_path), "html": str(html_path)}
@@ -159,7 +161,8 @@ def _group_array(gr: dict, intern: _Interner) -> list:
             gr.get("pace"), gr.get("skill"), gr.get("core"), gr.get("playstyles"), gr.get("role"),
             intern(gr.get("role_name") or ""), _r1(gr.get("weak_foot")), _r1(gr.get("skill_moves")),
             _r1(gr.get("gk_height")), ps, 1 if gr.get("ps_estimated") else 0, _run_array(gr.get("run"), intern),
-            _r1(gr.get("off_balance")), _r1(gr.get("stand_tackle")), gr.get("run_score"), gr.get("stop_score")]
+            _r1(gr.get("off_balance")), _r1(gr.get("stand_tackle")), gr.get("run_score"), gr.get("stop_score"),
+            gr.get("meta")]
 
 
 def _run_array(run: Optional[dict], intern: "_Interner"):
@@ -281,7 +284,8 @@ def _run_meta(results: List[dict], cfg: dict) -> Optional[dict]:
     }
 
 
-def render_html(results: List[dict], evos: Dict[str, dict], cfg: Optional[dict] = None, evolab: bool = False) -> str:
+def render_html(results: List[dict], evos: Dict[str, dict], cfg: Optional[dict] = None, evolab: bool = False,
+                meta_info: Optional[dict] = None) -> str:
     cfg = cfg or load_config()
     intern = _Interner()
     data = [html_row(r, evos.get(r["uid"]), intern) for r in results]
@@ -292,6 +296,9 @@ def render_html(results: List[dict], evos: Dict[str, dict], cfg: Optional[dict] 
         return json.dumps(obj, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
 
     meta["evolab"] = bool(evolab)
+    mi = meta_info or {}
+    meta["meta"] = {"since": mi.get("since"), "top": mi.get("top"),
+                    "groups": {group_label(g): [v["now"], v["start"], v["drift"]] for g, v in (mi.get("groups") or {}).items()}}
     meta["pg"] = {p: g for p, g in POSITION_GROUPS.items()}
     stamp = html.escape(datetime.now().strftime("%d.%m.%Y kl. %H:%M"))
     link = '<a href="evolab.html">Evo Lab</a>' if evolab else ""

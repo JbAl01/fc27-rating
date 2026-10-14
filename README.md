@@ -149,7 +149,7 @@ Er en side over 20 MiB, legges kortdataene i egne filer (`evolab-data-1.js` osv.
 
 | Kommando | Hva den gjør |
 |---|---|
-| `rate FILER... [--chem none/best/Finisher] [--group ST] [--uten-evolab] [--ignorer-brukte]` | Rater spillere fra JSON eller CSV, rangerer dem per posisjon og skriver `output/ratings.csv`, `ratings.json`, `rapport.html`, `evolab.html` og `om.html`. `--ignorer-brukte` regner som om ingen evoer er brukt opp (for siden du deler) |
+| `rate FILER... [--chem none/best/Finisher] [--group ST] [--uten-evolab] [--ignorer-brukte]` | Rater spillere fra JSON eller CSV, rangerer dem per posisjon og skriver `output/ratings.csv`, `ratings.json`, `rapport.html`, `evolab.html` og `om.html`. `--ignorer-brukte` regner som om ingen evoer er brukt opp (for siden du deler). `--lagre-meta-start` lagrer startnivået for Meta hvis det mangler |
 | `explain FILER... --name NAVN` | Forklarer hvorfor spilleren ligger der han ligger, viser evo-potensialet og hele utregningen |
 | `evo FILER... [--group W] [--sort etter/gevinst]` | Rangerer kortene som kan evolueres: IGR nå og etter, gevinst og plass før og etter |
 | `perler FILER... [--group ST] [--alle] [--sorter iq\|effekt\|stopp] [--min-iq N] [--min-effekt N]` | Skjulte perler: spisser, kanter og CAM-er som løper mye bedre enn kort med samme OVR |
@@ -182,6 +182,17 @@ Hver posisjonsgruppe (spiss, kant, CAM, CM, CDM, back, midtstopper, keeper) har 
 - **Filtre** (åpnes under søket): OVR fra–til, maks høyde, korttype, kjønn, minste følelse, off-balance og stopp, AcceleRATE, minste Løps-AI, Løps-IQ og effekt, PlayStyle (eventuelt bare PS+), skjulte perler, evo-kandidater, svakfot og skill moves 4 eller 5, og «Ranger etter snittet av» kategorier du liker. «Nullstill filtre» fjerner alle. Nettleseren husker filtrene.
 - **Spesialkort** står i samme rangering som basekortene, med versjon under navnet og «lekket» eller «estimert» når det gjelder.
 - **Tier** (S–D) brukes fortsatt i `explain` og CSV: S = topp 1 %, A = topp 5 %, B = topp 15 %, C = topp 35 %, D = resten.
+
+### Meta: når bedre kort kommer
+
+IGR er fast. Den kommer bare fra kortets egne tall, så et kort har samme IGR hele året. **Meta** er IGR målt mot kortene som finnes nå, slik GG-rating på FUT.GG fungerer:
+
+- For hver posisjon følger vi snittet av de 50 beste kortene (lekkasjer telles ikke).
+- Første gang GitHub-jobben kjører, lagres det snittet som startnivå i `data/meta_start.json`.
+- Etterpå er Meta = IGR minus hvor mye snittet har steget siden start. Har de beste spissene blitt 3 bedre, har alle spisser 3 lavere Meta. En gull-spiss med IGR 91 viser da Meta 88.
+- Meta blir aldri høyere enn IGR. Plass og bokstav synker også av seg selv, fordi de måles mot alle kortene som finnes.
+
+Vil du starte Meta på nytt (for eksempel ved et nytt spill), slett `data/meta_start.json` i repoet. Antallet kort i snittet endrer du under `meta` i `config/weights.json`.
 
 ### Spillerprofil: hvordan kortet spiller
 

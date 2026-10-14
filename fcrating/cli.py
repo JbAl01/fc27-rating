@@ -145,12 +145,16 @@ def cmd_rate(args) -> int:
     chem = _chem_arg(args.chem)
     results = [rate(p, cfg, chem=chem) for p in players]
     rank_by_position(results, cfg)
+    from . import meta as meta_mod
+    meta_info = meta_mod.apply(results, cfg, save=getattr(args, "lagre_meta_start", False))
+    if meta_info.get("saved"):
+        print(f"Lagret startnivået for Meta i {meta_mod.start_path()}")
     evos = {p.uid: evo_potential(p, cfg, chem=None if chem == "best" else chem) for p in players}
     rank_evos(evos, results)
     group = args.group.upper() if args.group else None
     lab_paths = None if getattr(args, "uten_evolab", False) else _run_evolab(
         players, results, evos, cfg, args.out, ignore_used=getattr(args, "ignorer_brukte", False))
-    paths = write_outputs(results, evos, args.out, evolab=bool(lab_paths))  # write first, so output is saved even if printing fails
+    paths = write_outputs(results, evos, args.out, evolab=bool(lab_paths), meta_info=meta_info)  # write first, so output is saved even if printing fails
     print_tables(results, group, args.top if group else min(args.top, 10))
     print(f"\nSkrev {len(results)} spillere til {paths['html']}, {paths['csv']} og {paths['json']}")
     if lab_paths:
@@ -990,6 +994,8 @@ def build_parser() -> argparse.ArgumentParser:
     r.add_argument("--top", type=int, default=50)
     r.add_argument("--out", default=str(ROOT / "output"))
     r.add_argument("--uten-evolab", action="store_true", help="hopp over Evo Lab (raskere)")
+    r.add_argument("--lagre-meta-start", action="store_true",
+                   help="lagre startnivået for Meta hvis det mangler (gjøres av GitHub-jobben første gang)")
     r.add_argument("--ignorer-brukte", action="store_true",
                    help="regn som om ingen evoer er brukt opp (for siden du deler; hver venn huker av sine egne)")
     r.set_defaults(func=cmd_rate)
