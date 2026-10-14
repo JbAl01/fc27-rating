@@ -132,6 +132,11 @@ def user_evos_path() -> Path:
     return ROOT / "data" / "mine_evoer.json"
 
 
+def auto_evos_path() -> Path:
+    """Evos added by the daily check (data/auto_evoer.json). Your own file overrides it."""
+    return ROOT / "data" / "auto_evoer.json"
+
+
 def used_evos_path() -> Path:
     return ROOT / "data" / "brukte_evoer.json"
 
@@ -156,14 +161,102 @@ def save_used(items: List[str], path: Optional[Path] = None) -> Path:
     return p
 
 
-def load_user_evos(path: Optional[Path] = None) -> List[dict]:
-    p = Path(path) if path else user_evos_path()
+def _read_evos(p: Path, source: str) -> List[dict]:
     if not p.exists():
         return []
     with open(p, encoding="utf-8") as f:
         data = json.load(f)
     items = data.get("evos", data) if isinstance(data, dict) else data
-    return [dict(e, source="egen") for e in items]
+    return [dict(e, source=source) for e in items]
+
+
+def load_user_evos(path: Optional[Path] = None) -> List[dict]:
+    """Evos from your own file (data/mine_evoer.json) and the daily check (data/auto_evoer.json).
+    With a path, only that file is read. The same key in your own file wins over the daily check."""
+    if path:
+        return _read_evos(Path(path), "egen")
+    own = _read_evos(user_evos_path(), "egen")
+    keys = {e["key"] for e in own}
+    return own + [e for e in _read_evos(auto_evos_path(), "auto") if e["key"] not in keys]
+
+
+def check_evo(d: dict, min_sources: int = 0, playstyles: Optional[set] = None) -> List[str]:
+    """Problems with one evo definition (an empty list means it is fine). Used by evo-sjekk, so a
+    wrong entry in data/auto_evoer.json is caught before it reaches the page."""
+    from .evo_import import POSITIONS
+    out: List[str] = []
+    key = d.get("key")
+    if not isinstance(key, str) or not key.strip():
+        return ["mangler key"]
+    if not isinstance(d.get("name"), str) or not d["name"].strip():
+        out.append("mangler name")
+    try:
+        end = until_utc(d.get("until"))
+        if end is None:
+            out.append("mangler until (siste tidspunkt evoen kan startes, f.eks. 2026-10-26T17:00Z)")
+    except (ValueError, TypeError):
+        out.append(f"until kan ikke leses: {d.get('until')!r}")
+    if not str(d.get("cost", "")).strip():
+        out.append("mangler cost")
+    urls = [u for u in d.get("sources") or [] if isinstance(u, str) and u.startswith("http")]
+    if len(set(urls)) < min_sources:
+        out.append(f"trenger minst {min_sources} ulike kilde-lenker i sources, har {len(set(urls))}")
+    req, up = d.get("req") or {}, d.get("up") or {}
+    if not req and not up:
+        out.append("har verken req eller up")
+    for k in ("min_ovr", "max_ovr", "max_pace", "max_ps", "max_psp", "max_positions"):
+        v = req.get(k)
+        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or not 0 <= v <= 99):
+            out.append(f"req.{k} må være et helt tall 0-99, er {v!r}")
+    for k in ("positions", "not_positions"):
+        for p in req.get(k) or []:
+            if str(p).upper() not in POSITIONS:
+                out.append(f"req.{k}: ukjent posisjon {p!r}")
+    if req.get("min_ovr") is not None and req.get("max_ovr") is not None and req["min_ovr"] > req["max_ovr"]:
+        out.append("req.min_ovr er større enn req.max_ovr")
+
+    def pair(label, v, hi):
+        if v is None:
+            return
+        if (not isinstance(v, (list, tuple)) or len(v) != 2 or not all(isinstance(x, int) and not isinstance(x, bool) for x in v)
+                or v[0] < 0 or not 0 <= v[1] <= hi):
+            out.append(f"{label} må være [økning, maks], er {v!r}")
+
+    def block(prefix, u):
+        pair(f"{prefix}ovr", u.get("ovr"), 99)
+        pair(f"{prefix}wf", u.get("wf"), 5)
+        pair(f"{prefix}sm", u.get("sm"), 5)
+        for a, v in (u.get("stats") or {}).items():
+            if a not in ATTRIBUTE_LABELS:
+                out.append(f"{prefix}stats: ukjent attributt {a!r}")
+            pair(f"{prefix}stats.{a}", v, 99)
+        for f_, v in (u.get("face") or {}).items():
+            if f_ not in ("pace", "shooting", "passing", "defending", "physical", "dribbling"):
+                out.append(f"{prefix}face: ukjent hovedtall {f_!r}")
+            pair(f"{prefix}face.{f_}", v, 99)
+        for kind in ("ps", "psp"):
+            for name, cap in _ps_list(u.get(kind)):
+                if playstyles is not None and name not in playstyles:
+                    out.append(f"{prefix}{kind}: ukjent PlayStyle {name!r}")
+                if cap is not None and not 1 <= cap <= 12:
+                    out.append(f"{prefix}{kind}: tak {cap} for {name} ser feil ut")
+        try:
+            for pos, role, lv in _roles_list(u.get("roles")):
+                if pos not in POSITIONS or lv not in (1, 2):
+                    out.append(f"{prefix}roles: {pos}/{role}/{lv} ser feil ut")
+        except (TypeError, ValueError, IndexError):
+            out.append(f"{prefix}roles kan ikke leses")
+
+    try:
+        block("up.", up)
+        for i, p in enumerate(up.get("paths") or []):
+            if not str(p.get("label", "")).strip():
+                out.append(f"up.paths[{i}] mangler label")
+            block(f"up.paths[{i}].", p)
+        parse_evo(d)
+    except (TypeError, ValueError, KeyError, IndexError) as exc:
+        out.append(f"kan ikke leses: {exc}")
+    return out
 
 
 def active_live(lab: dict, today: Optional[date] = None, user_file: Optional[Path] = None,

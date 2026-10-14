@@ -1,9 +1,11 @@
 """Evo Lab: evo rules, live plan, simulations, cache, page and evo import."""
 import copy
+import json
 import random
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from datetime import date, datetime, timezone
 from pathlib import Path
 
@@ -403,3 +405,56 @@ class PageMathTests(unittest.TestCase):
         st0 = next(s for s in summ.values() if s.get("runcard"))
         self.assertEqual(len(st0["runs"]["end"]), 3)
         self.assertEqual(len(st0["cats"]["end"]), len(meta["cats"]))
+
+
+class AutoEvoFileTests(unittest.TestCase):
+    """data/auto_evoer.json (daily check) is read next to your own file, and evo-sjekk catches mistakes."""
+
+    def evo(self, **kw):
+        d = {"key": "x", "name": "X", "cost": "gratis", "until": "2026-12-01T17:00Z", "req": {"max_ovr": 80},
+             "up": {"ovr": [3, 80], "stats": {"finishing": [3, 80]}},
+             "sources": ["https://a.example/x", "https://b.example/x"]}
+        d.update(kw)
+        return d
+
+    def test_valid_evo_has_no_problems(self):
+        self.assertEqual(evolab.check_evo(self.evo(), min_sources=2), [])
+
+    def test_catches_common_mistakes(self):
+        cases = [
+            (self.evo(until=None), "until"),
+            (self.evo(until="i morgen"), "until"),
+            (self.evo(sources=["https://a.example/x"]), "kilde"),
+            (self.evo(up={"stats": {"finishin": [3, 80]}}), "ukjent attributt"),
+            (self.evo(up={"stats": {"finishing": [3, 180]}}), "økning"),
+            (self.evo(up={"ps": ["Rapidd"]}), "ukjent PlayStyle"),
+            (self.evo(req={"positions": ["XX"]}), "posisjon"),
+            (self.evo(req={"min_ovr": 82, "max_ovr": 80}), "min_ovr"),
+            (self.evo(up={"paths": [{"ovr": [1, 83]}]}), "label"),
+            ({"name": "X"}, "key"),
+        ]
+        names = {"Rapid", "Technical"}
+        for evo, word in cases:
+            probs = evolab.check_evo(evo, min_sources=2, playstyles=names)
+            self.assertTrue(any(word in p for p in probs), (word, probs))
+
+    def test_auto_file_is_loaded_and_own_file_wins(self):
+        with tempfile.TemporaryDirectory() as d:
+            auto, mine = Path(d) / "auto.json", Path(d) / "mine.json"
+            auto.write_text(json.dumps({"evos": [self.evo(key="a", name="Auto A"), self.evo(key="b", name="Auto B")]}))
+            mine.write_text(json.dumps({"evos": [self.evo(key="b", name="Min B")]}))
+            with mock.patch.object(evolab, "auto_evos_path", return_value=auto), \
+                 mock.patch.object(evolab, "user_evos_path", return_value=mine):
+                got = {e["key"]: (e["name"], e["source"]) for e in evolab.load_user_evos()}
+                self.assertEqual(got, {"b": ("Min B", "egen"), "a": ("Auto A", "auto")})
+                only = evolab.load_user_evos(auto)
+                self.assertEqual({e["key"] for e in only}, {"a", "b"})
+
+    def test_shipped_auto_file_is_valid(self):
+        import json as _json
+        p = evolab.auto_evos_path()
+        if not p.exists():
+            self.skipTest("ingen auto-fil")
+        names = set(_json.load(open(evolab.ROOT / "config" / "playstyles.json", encoding="utf-8"))["playstyles"])
+        for e in _json.load(open(p, encoding="utf-8"))["evos"]:
+            self.assertEqual(evolab.check_evo(e, min_sources=2, playstyles=names), [], e["key"])

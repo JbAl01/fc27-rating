@@ -12,6 +12,7 @@ on:
       - "config/**"
       - "fcrating/**"
       - "data/mine_evoer.json"
+      - "data/auto_evoer.json"
       - "data/mine_spillere.json"
       - "data/side.json"
       - ".github/workflows/oppdater.yml"

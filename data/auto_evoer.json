@@ -1,0 +1,111 @@
+{
+ "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
+ "_sjekket": "2026-10-14T03:00:00Z",
+ "evos": [
+  {
+   "key": "future_stars_academy_3",
+   "name": "Future Stars Academy III",
+   "cost": "gratis",
+   "until": "2026-10-26T17:00Z",
+   "note": "Kommer etter Future Stars Academy II (krever 82 OVR og Future Stars-kort). PlayStyle i hvert valg (Rapid, Power Shot, Technical) står bare hos én kilde (Futmind), og taket på dem er ukjent. Tallene i parentes er regnet som maks, som i de andre evoene. Fristen er fra Futmind, og 1 time tidligere enn Academy I og II for å være på den trygge siden.",
+   "req": {
+    "min_ovr": 82,
+    "max_ovr": 82,
+    "max_ps": 7,
+    "requires_evo": "future_stars_academy_2"
+   },
+   "up": {
+    "paths": [
+     {
+      "label": "Valg A: Rapid, fart",
+      "ovr": [
+       1,
+       83
+      ],
+      "stats": {
+       "sprint_speed": [
+        3,
+        87
+       ],
+       "acceleration": [
+        3,
+        87
+       ]
+      },
+      "ps": [
+       "Rapid"
+      ]
+     },
+     {
+      "label": "Valg B: Power Shot, skudd",
+      "ovr": [
+       1,
+       83
+      ],
+      "stats": {
+       "finishing": [
+        4,
+        88
+       ],
+       "shot_power": [
+        3,
+        88
+       ],
+       "long_shots": [
+        3,
+        84
+       ],
+       "volleys": [
+        5,
+        82
+       ],
+       "composure": [
+        3,
+        85
+       ]
+      },
+      "ps": [
+       "Power Shot"
+      ]
+     },
+     {
+      "label": "Valg C: Technical, dribling",
+      "ovr": [
+       1,
+       83
+      ],
+      "stats": {
+       "agility": [
+        4,
+        89
+       ],
+       "balance": [
+        2,
+        85
+       ],
+       "reactions": [
+        3,
+        86
+       ],
+       "ball_control": [
+        5,
+        89
+       ],
+       "dribbling": [
+        5,
+        89
+       ]
+      },
+      "ps": [
+       "Technical"
+      ]
+     }
+    ]
+   },
+   "sources": [
+    "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
+    "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
+   ]
+  }
+ ]
+}

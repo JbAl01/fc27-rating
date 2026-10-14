@@ -22,7 +22,7 @@ import argparse
 import json
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
 
@@ -467,6 +467,46 @@ def cmd_evo_import(args) -> int:
     n = evo_import.save(evo, user_evos_path(), until=args.til, cost=args.kostnad)
     print(f"Lagret i {user_evos_path()} ({n} egne evoer). Kjør rate på nytt for å oppdatere Evo Lab.")
     return 0
+
+
+def cmd_evo_sjekk(args) -> int:
+    """Check an evo file (default data/auto_evoer.json) for mistakes before it is committed."""
+    from . import evolab
+    path = Path(args.fil) if args.fil else evolab.auto_evos_path()
+    if not path.exists():
+        print(f"{path} finnes ikke. Ingenting å sjekke.")
+        return 0
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except ValueError as exc:
+        print(f"{path} er ikke gyldig JSON: {exc}")
+        return 1
+    items = data.get("evos", data) if isinstance(data, dict) else data
+    if not isinstance(items, list):
+        print("Filen må ha formatet {\"evos\": [ ... ]}.")
+        return 1
+    with open(ROOT / "config" / "playstyles.json", encoding="utf-8") as f:
+        names = set(json.load(f)["playstyles"]) | {"1v1 Close Down"}
+    seen, bad, now = set(), 0, datetime.now(timezone.utc)
+    for e in items:
+        probs = evolab.check_evo(e, min_sources=args.min_kilder, playstyles=names) if isinstance(e, dict) else ["er ikke et objekt"]
+        key = e.get("key", "?") if isinstance(e, dict) else "?"
+        if key in seen:
+            probs.append("samme key finnes to ganger")
+        seen.add(key)
+        end = None
+        try:
+            end = evolab.until_utc(e.get("until")) if isinstance(e, dict) else None
+        except (ValueError, TypeError):
+            pass
+        state = "stengt" if end and end <= now else "åpen"
+        print(f"{'FEIL' if probs else 'ok  '} {key} ({state}, til {e.get('until') if isinstance(e, dict) else '?'})")
+        for p in probs:
+            print(f"      {p}")
+        bad += bool(probs)
+    print(f"{len(items)} evoer, {bad} med feil.")
+    return 1 if bad else 0
 
 
 def cmd_brukt(args) -> int:
@@ -983,6 +1023,11 @@ def build_parser() -> argparse.ArgumentParser:
     ev.add_argument("files", nargs="+")
     ev.add_argument("--fil", help="testfil (standard data/tester.csv)")
     ev.set_defaults(func=cmd_evaluer)
+
+    sj = sub.add_parser("evo-sjekk", help="sjekk evo-filen (data/auto_evoer.json) for feil før den lagres")
+    sj.add_argument("fil", nargs="?", help="standard data/auto_evoer.json")
+    sj.add_argument("--min-kilder", type=int, default=2, help="minst så mange ulike kilde-lenker per evo (standard 2)")
+    sj.set_defaults(func=cmd_evo_sjekk)
 
     br = sub.add_parser("brukt", help="evoer du har brukt opp på andre kort (Evo Lab regner uten dem)")
     br.add_argument("evoer", nargs="*", help="navn på evoer du har brukt, f.eks. \"Batigol Precision\"")

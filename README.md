@@ -86,9 +86,18 @@ Når du publiserer i punkt 4, starter en kjøring av seg selv. Rekker den å bli
 
 - **Hver 6. time** (kl. 00:25, 06:25, 12:25 og 18:25 UTC, ofte noen minutter senere) kommer nye spesialkort, TOTW, kampanjer og lekkasjer, og rangeringen og evo-planene regnes ut på nytt. Runden kl. 18:25 fanger det EA slipper kl. 18 britisk tid. Vil du oppdatere med en gang, trykk Run workflow.
 - **Evoer som stenger**, forsvinner fra planene neste runde. Siden viser i tillegg «stengt» ut fra klokka til den som ser på.
-- **Nye evoer** legger du inn på PC-en med `evo-import` (se «Holde evoene oppdatert»). Trykk så Commit og Push i GitHub Desktop. Siden oppdateres av seg selv etter 5–10 minutter.
+- **Nye evoer** legges inn av en daglig sjekk som Claude kjører (se «Daglig evo-sjekk» under). Den skriver til `data/auto_evoer.json`, og siden bygges på nytt etterpå. Vil du legge inn en evo selv, bruk `evo-import` (se «Holde evoene oppdatert»), og trykk Fetch/Pull før du trykker Commit og Push i GitHub Desktop, siden sjekken også pusher til repoet.
 - **Ny versjon av programmet:** pakk ut zip-filen oppå mappen, og trykk Commit og Push.
 - **Brukte evoer:** siden regner som om ingen evoer er brukt opp. Hver venn huker av sine egne under «Brukt» i Evo Lab, og det lagres bare i nettleseren deres.
+
+### Daglig evo-sjekk
+
+Programmet kan ikke lese evo-sider selv (FUTBIN blokkerer det, og HTML-en endrer seg). Derfor sjekker en planlagt oppgave hos Claude nye evoer hver dag. Instruksen står i `EVO-JOBB.md`. Kort fortalt:
+- Den leser evolistene på FUT.GG, futnext og FUTBIN, og finner evoer som ikke er med ennå.
+- Den legger bare inn en evo hvis **to kilder er enige** om krav, tall og frist. Er de uenige, eller finnes bare én kilde, hoppes evoen over og står i `_hoppet_over` i `data/auto_evoer.json`.
+- Den sjekker filen (`py -m fcrating evo-sjekk`) og kjører testene før den pusher. Er ingenting nytt, gjør den ingenting.
+- Evoer fra sjekken vises i Evo Lab på lik linje med de andre, med lenker til kildene. Din egen `data/mine_evoer.json` overstyrer evoer med samme key.
+- Den kan ta feil eller gå glipp av en evo. Står noe som ikke stemmer, så si fra, eller rett det i `data/auto_evoer.json` og push.
 
 ### Gratis, og hvor lenge
 
@@ -144,6 +153,7 @@ Er en side over 20 MiB, legges kortdataene i egne filer (`evolab-data-1.js` osv.
 | `evo FILER... [--group W] [--sort etter/gevinst]` | Rangerer kortene som kan evolueres: IGR nå og etter, gevinst og plass før og etter |
 | `perler FILER... [--group ST] [--alle] [--sorter iq\|effekt\|stopp] [--min-iq N] [--min-effekt N]` | Skjulte perler: spisser, kanter og CAM-er som løper mye bedre enn kort med samme OVR |
 | `evolab FILER... [--maks-ovr 79] [--group ST] [--horisont nå/s2/s4/aar] [--sorter forventet/tak/op/gevinst/dna/sikker] [--name NAVN]` | Evo Lab: evo-plan med evoene som er ute nå, og et anslag for resten av året |
+| `evo-sjekk [FIL] [--min-kilder 2]` | Sjekker evo-filen (standard `data/auto_evoer.json`) for feil: ukjente attributter og PlayStyles, ugyldige tall og datoer, for få kilder |
 | `brukt [NAVN...] [--fjern NAVN] [--tom]` | Evoer du har brukt opp på andre kort. Evo Lab og rapporten regner uten dem (lagres i `data/brukte_evoer.json`) |
 | `evo-import tekst.txt [--til DATO] [--kostnad ...]` | Legger inn en ny evo fra tekst kopiert fra FUTBIN/FUT.GG (lagres i data/mine_evoer.json) |
 | `kombo FILER... --kat følelse løp dribling [--group ST] [--min-ovr N] [--min-iq N] [--min-effekt N]` | Rangerer etter en kombinasjon av kategorier, også Løps-IQ, løpseffekt og stopp |
