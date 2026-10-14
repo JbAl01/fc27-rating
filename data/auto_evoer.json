@@ -1,6 +1,6 @@
 {
  "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
- "_sjekket": "2026-10-14T03:00:00Z",
+ "_sjekket": "2026-10-14T20:30:00Z",
  "evos": [
   {
    "key": "future_stars_academy_3",
@@ -106,6 +106,23 @@
     "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
     "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
    ]
+  }
+ ],
+ "_hoppet_over": [
+  {
+   "navn": "Side Step Evolutions",
+   "grunn": "Bare FUTBIN viser den (LB/RB, maks 80 OVR, gratis, åpner om ca. 1 uke). Ikke på FUT.GG eller futnext ennå, og ingen guide funnet. Ta den når en andre kilde har den.",
+   "dato": "2026-10-14"
+  },
+  {
+   "navn": "Ones to Watch Retro 18/19/20 (betalt, 25K mynter/200 poeng)",
+   "grunn": "Bare futnext og FUTBIN lister dem, ingen FUT.GG-side eller guide med fulle krav og tall; futnext viser kun ett nivå uten detaljer. Venter på en tredje kilde med tall.",
+   "dato": "2026-10-14"
+  },
+  {
+   "navn": "Season Ladder Excellence",
+   "grunn": "Bare futnext, ingen detaljer funnet.",
+   "dato": "2026-10-14"
   }
  ]
 }

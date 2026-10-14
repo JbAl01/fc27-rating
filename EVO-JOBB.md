@@ -10,6 +10,14 @@ Finn nye evoer i FC 27 Ultimate Team og legg dem inn i `data/auto_evoer.json`, r
 
 Repoet er `JbAl01/fc27-rating`. Er det ikke med i økten, kall `add_repo` med owner `JbAl01`, repo `fc27-rating`, access `push`. Lag **én** grunn klone (`git clone --depth 1`) i en egen mappe, ikke i arbeidsmappen. Du skal bare endre `data/auto_evoer.json`. Ikke rør kode, config eller andre filer.
 
+## Viktig om nettilgang (lærdom 14.10.2026)
+
+Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PROVENANCE_REQUIRED` fordi tillatelsen for URL-en ikke blir besvart. Da får du ingen evoliste, og jobben svikter uten å finne noe. Derfor:
+- Hent listene med WebFetch på **nøyaktig** disse adressene (de står her i instruksen): https://www.fut.gg/evolutions/ , https://www.futnext.com/evolutions og https://www.futnext.com/evolutions?page=2 , https://www.futbin.com/27/evolutions . Prøv alle, og prøv en som feilet én gang til.
+- FUTBIN viser også evoer som ikke er åpnet ennå («Unlock» i uker). Lister og detaljsider (f.eks. https://www.futbin.com/27/evolutions/50/side-step) går bra via WebFetch. Evoer som ikke er åpne ennå, kan nevnes i `_hoppet_over` til en andre kilde har dem.
+- Får du ikke hentet **noen** av listene, send varsel om at jobben ikke kunne kjøre, og si hvilken feil du fikk.
+- Sammenlign alltid med alle tre listene. En evo som bare står på én, er en kandidat som må bekreftes hos en annen kilde, ikke noe du kan se bort fra.
+
 ## Fremgangsmåte
 
 1. **Hent listen over evoer som er åpne nå**, helst fra to kilder:
