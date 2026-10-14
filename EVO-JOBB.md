@@ -2,6 +2,10 @@
 
 Dette er instruksen til den planlagte jobben som holder Evo Lab oppdatert. Eieren kan lese og endre den. Jobben starter uten noe minne fra tidligere samtaler, så alt den trenger å vite står her.
 
+## Ukjent frist (regel fra eieren, 14.10.2026)
+
+Mangler **alle** kilder fristen for å starte en evo, men to kilder er enige om krav og oppgraderinger: **legg evoen inn likevel**. Sett `"until_ukjent": true` (i stedet for `until`) og skriv i `note` at fristen er ukjent og hva kildene faktisk sier. Finn aldri på en dato. Evoer med `until_ukjent` fjernes ikke av opprydding på dato; fjern dem når ingen av listene (FUT.GG, futnext, FUTBIN) viser dem som åpne lenger, og sett inn `until` så snart en kilde oppgir fristen. Denne regelen går foran punkt 5 under når det bare gjelder fristen.
+
 ## Mål
 
 Finn nye evoer i FC 27 Ultimate Team og legg dem inn i `data/auto_evoer.json`, riktig og kontrollert, slik at Evo Lab planlegger med dem. Eieren vil ha **riktige data eller ingenting**. En evo som mangler, er bedre enn en evo med feil tall.

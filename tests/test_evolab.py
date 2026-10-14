@@ -420,6 +420,12 @@ class AutoEvoFileTests(unittest.TestCase):
     def test_valid_evo_has_no_problems(self):
         self.assertEqual(evolab.check_evo(self.evo(), min_sources=2), [])
 
+    def test_unknown_deadline_allowed_only_with_flag_and_note(self):
+        ok = self.evo(until=None, until_ukjent=True, note="Frist ukjent i kildene.")
+        self.assertEqual(evolab.check_evo(ok, min_sources=2), [])
+        self.assertTrue(evolab.check_evo(self.evo(until=None, until_ukjent=True), min_sources=2))
+        self.assertTrue(evolab.check_evo(self.evo(until=None), min_sources=2))
+
     def test_catches_common_mistakes(self):
         cases = [
             (self.evo(until=None), "until"),

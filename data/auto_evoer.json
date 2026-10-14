@@ -1,6 +1,6 @@
 {
  "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
- "_sjekket": "2026-10-14T20:10:00Z",
+ "_sjekket": "2026-10-14T20:30:00Z",
  "evos": [
   {
    "key": "future_stars_academy_3",
@@ -106,14 +106,115 @@
     "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
     "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
    ]
+  },
+  {
+   "key": "side_step",
+   "name": "Side Step",
+   "cost": "gratis",
+   "until_ukjent": true,
+   "note": "Fristen for å starte er ukjent: ingen kilde oppgir dato (FUTBIN viser bare «utløper om 2 uker», åpnet 14.10.2026). Evoen er merket repeterbar hos FUTBIN, men hvor mange ganger står ikke. Roller og skill moves er ikke nevnt. Fordeler på nivå: nivå 1 OVR/Crossing/Long Passing/Long Shots/Def. Awareness/Sprint Speed/svakfot, nivå 2 Curve/Finishing/FK/Stand Tackle/Volleys/Tiki Taka, nivå 3 Acceleration/Interceptions/Short Passing/Shot Power/Slide Tackle/Vision. Tallene her er summen etter alle tre nivåer.",
+   "req": {
+    "max_ovr": 80,
+    "max_pace": 85,
+    "max_ps": 7,
+    "positions": [
+     "LB",
+     "RB"
+    ],
+    "not_positions": [
+     "CB",
+     "CM"
+    ]
+   },
+   "up": {
+    "ovr": [
+     7,
+     81
+    ],
+    "wf": [
+     2,
+     3
+    ],
+    "ps": [
+     [
+      "Tiki Taka",
+      3
+     ]
+    ],
+    "stats": {
+     "acceleration": [
+      5,
+      83
+     ],
+     "sprint_speed": [
+      5,
+      83
+     ],
+     "crossing": [
+      7,
+      81
+     ],
+     "curve": [
+      7,
+      77
+     ],
+     "finishing": [
+      7,
+      78
+     ],
+     "interceptions": [
+      7,
+      78
+     ],
+     "long_passing": [
+      7,
+      76
+     ],
+     "long_shots": [
+      7,
+      78
+     ],
+     "def_awareness": [
+      7,
+      78
+     ],
+     "short_passing": [
+      7,
+      80
+     ],
+     "fk_accuracy": [
+      7,
+      78
+     ],
+     "shot_power": [
+      7,
+      77
+     ],
+     "sliding_tackle": [
+      7,
+      81
+     ],
+     "standing_tackle": [
+      7,
+      81
+     ],
+     "vision": [
+      7,
+      78
+     ],
+     "volleys": [
+      7,
+      76
+     ]
+    }
+   },
+   "sources": [
+    "https://www.futbin.com/27/evolutions/50/side-step",
+    "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/"
+   ]
   }
  ],
  "_hoppet_over": [
-  {
-   "navn": "Side Step Evolutions",
-   "grunn": "Krav og nivåer er bekreftet av to kilder (FUTBIN, Destructoid): LB/RB, maks 80 OVR, maks 85 Pace, maks 7 PlayStyles, gratis, 3 nivåer, repeterbar. Men ingen kilde oppgir fristen for å starte (FUTBIN: «utløper om 2 uker», ikke dato). Legges inn så snart FUT.GG eller futnext viser en frist.",
-   "dato": "2026-10-14"
-  },
   {
    "navn": "Ones to Watch Retro 18/19/20",
    "grunn": "Gir et bestemt ferdig kort (f.eks. Retro 20 = Alexia Putellas 92), ikke økte tall på spillerens eget kort. Passer ikke i Evo Lab.",

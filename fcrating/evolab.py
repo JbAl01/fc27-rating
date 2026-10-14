@@ -192,8 +192,9 @@ def check_evo(d: dict, min_sources: int = 0, playstyles: Optional[set] = None) -
         out.append("mangler name")
     try:
         end = until_utc(d.get("until"))
-        if end is None:
-            out.append("mangler until (siste tidspunkt evoen kan startes, f.eks. 2026-10-26T17:00Z)")
+        if end is None and not (d.get("until_ukjent") is True and str(d.get("note", "")).strip()):
+            out.append("mangler until (siste tidspunkt evoen kan startes, f.eks. 2026-10-26T17:00Z). "
+                       "Er fristen ukjent i alle kilder: sett \"until_ukjent\": true og forklar i note")
     except (ValueError, TypeError):
         out.append(f"until kan ikke leses: {d.get('until')!r}")
     if not str(d.get("cost", "")).strip():
