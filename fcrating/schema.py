@@ -181,6 +181,8 @@ def position_group(position: Optional[str]) -> Optional[str]:
 
 
 # The ten leagues shown first in the league filter (the rest follow alphabetically). Names as on EA's ratings pages.
+CARD_IMAGE_HOSTS = ("https://game-assets.fut.gg/",)
+
 TOP_LEAGUES = ["Premier League", "LALIGA EA SPORTS", "Serie A Enilive", "Bundesliga", "Ligue 1 McDonald's",
                "ROSHN Saudi League", "Trendyol Süper Lig", "Liga Portugal", "Eredivisie", "MLS"]
 
@@ -256,6 +258,10 @@ class Player:
     # Club, league and nation (from EA's ratings pages; special cards inherit them from the base card)
     club: Optional[str] = None
     image: Optional[str] = None  # portrait URL (EA), shown on the pages, never downloaded
+    club_image: Optional[str] = None  # club and nation badges (EA), shown on the cards
+    nation_image: Optional[str] = None
+    league_image: Optional[str] = None
+    card_image: Optional[str] = None  # the card's background (rarity picture) from FUT.GG, special cards only
     league: Optional[str] = None
     nation: Optional[str] = None
     # Date of birth as YYYY-MM-DD (EA's ratings pages; for evos with an age requirement)
@@ -363,6 +369,10 @@ class Player:
             url=data.get("url"),
             club=data.get("club") or None,
             image=(data.get("image") if str(data.get("image") or "").startswith("https://") else None),
+            club_image=(data.get("club_image") if str(data.get("club_image") or "").startswith("https://") else None),
+            league_image=(data.get("league_image") if str(data.get("league_image") or "").startswith("https://") else None),
+            nation_image=(data.get("nation_image") if str(data.get("nation_image") or "").startswith("https://") else None),
+            card_image=(data.get("card_image") if str(data.get("card_image") or "").startswith(CARD_IMAGE_HOSTS) else None),
             league=data.get("league") or None,
             nation=data.get("nation") or None,
             birthdate=parse_birthdate(data.get("birthdate")),

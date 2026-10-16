@@ -98,3 +98,39 @@ class RoleTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CardBackgroundTests(unittest.TestCase):
+    BG = "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-0-large/22.%s.png" % ("a1" * 32)
+
+    def test_background_after_own_player_item(self):
+        html = ('<img src="https://game-assets.fut.gg/x/2027/player-item/27-111.%s.webp">' % ("b2" * 32)
+                + '<img src="%s">' % self.BG)
+        out = futgg.card_image(html, "111")
+        self.assertIn("rarities-level-0-large/22.", out)
+        self.assertIn("width=200", out)
+
+    def test_none_without_page_match(self):
+        self.assertIsNone(futgg.card_image("<html></html>", "111"))
+        self.assertIsNone(futgg.card_image("x", None))
+
+    def test_player_validates_host(self):
+        ok = Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "card_image": self.BG})
+        bad = Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "card_image": "https://evil.example/a.png"})
+        self.assertEqual(ok.card_image, self.BG)
+        self.assertIsNone(bad.card_image)
+
+    def test_badges_need_https(self):
+        p = Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "club_image": "https://x/c.png", "nation_image": "javascript:1"})
+        self.assertEqual(p.club_image, "https://x/c.png")
+        self.assertIsNone(p.nation_image)
+
+
+class CardFaceTests(unittest.TestCase):
+    def test_face_is_this_cards_own_picture(self):
+        u = "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=400,format=auto/2027/player-item/27-%s.%s.webp"
+        html = '<img src="%s"><img src="%s">' % (u % ("999", "c3" * 32), u % ("111", "d4" * 32))
+        out = futgg.face_image(html, "111")
+        self.assertIn("27-111.", out)
+        self.assertIn("width=200", out)
+        self.assertIsNone(futgg.face_image("<html></html>", "111"))

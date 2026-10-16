@@ -176,7 +176,7 @@ function runPlan(d,plan){const rt=rater(d);let st=stateOf(d),det=rt(st);const st
 for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(e,st,path),nd=rt(nx);steps.push({e,path,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}
 if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
 /* ---------- data ---------- */
-const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",club:S(r[39])||"",img:r[40]||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
+const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",club:S(r[39])||"",img:r[40]||"",bg:r[41]||"",cl:r[42]||"",ni:r[43]||"",li:r[44]||"",fo:r[45]||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
 h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
@@ -447,12 +447,12 @@ function choiceText(e,path){if(!path)return"";const l=path[0];const multi=e[8][8
 if(multi){const ps=l.split(" + ");return`Velg ${esc(ps[0])} på nivå 1 og ${esc(ps[1])} på nivå 2.`}
 const m=/^Valg (\w+): (.*)$/.exec(l);if(m)return`På siste nivå: velg ${esc(m[1])} (${esc(m[2])}).`;return`Velg ${esc(l)}.`}
 function stepHtml(d,s){if(!s.e){return`<li><div class="hd">Roles++ ${esc(d.c.prim||"")}<span class="cost">${esc(RU.rppCost)}</span></div>
-${(()=>{const t=effectText(s);return t?`<p>${t}.</p>`:""})()}</li>`}
+</li>`}
 const e=s.e,closed=isClosed(e),g=gainsText(s.a,s.b),eff=effectText(s),gt=gateText(s,d.c.g);
 return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}<span class="cost">${esc(e[2]||"gratis")}</span></div>
 <div class="meta2">${closed?"Har stengt":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Hele sesongen":"Til "+esc(c)})()}</div>
 ${s.path?`<p class="muted">${choiceText(e,s.path)}</p>`:""}
-${g.stats.length||g.ps.length?`<div class="gains">${gainChips(g)}${g.ps.length?psChips(g.ps,new Set(g.ps)):""}</div>`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
+${g.ps.length?`<div class="gains">${psChips(g.ps,new Set(g.ps))}</div>`:""}
 ${eff||gt||e[9]?`<details class="why"><summary>Hvorfor</summary>${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</details>`:""}</li>`}
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
@@ -507,18 +507,25 @@ return t+`</tbody></table><p class="muted x">Dette er en gjetning. Kortet tar ev
 const FK=[["PAC","pace"],["SHO","shooting"],["PAS","passing"],["DRI","dribbling"],["DEF","defending"],["PHY","physical"]];
 const tierOf=v=>/icon/i.test(v)?"icon":/hero/i.test(v)?"hero":/bronze/i.test(v)?"bronze":/silver/i.test(v)?"silver":/gold/i.test(v)?"gold":"special";
 const cardName=n=>{const w=String(n).split(" ");let s=w[w.length-1];if(s.length<=3&&w.length>1)s=w.slice(-2).join(" ");return s};
-const picImg=d=>d.img&&d.img.startsWith("https://")?`<img class="pic" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
-const cardHtml=(d,pos,ovr,stats,mini)=>`<div class="fcard ${tierOf(d.ver||d.version)} ${posClass(d.g)}${mini?" mini":""}${picImg(d)?"":" nopic"}"><b class="o">${ovr}</b>${mini?"":`<span class="p">${esc(pos)}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${stats.map(([l,v,u])=>`<span${u?' class="up"':""}><i>${l}</i>${v==null?"–":v}</span>`).join("")}</div>`}</div>`;
-function detCards(d,h0){const live=buildLive(d),b=d.base;const w=(a,o)=>FK.map(([l,k])=>{const v=d.c.g==="GK"?null:faceVal(a,k),was=o?faceVal(o,k):null;return[l,v,o&&v!=null&&was!=null&&v>was]});
-return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,w(b))}</figure><span class="arr" aria-hidden="true"></span><figure>${cardHtml(d,d.positions[0]||d.g,h0.ovr,w(live,b))}</figure></div>`}
+const picImg=d=>d.img&&d.img.startsWith("https://")?`<img class="pic" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="if(this.naturalHeight>this.naturalWidth*1.2)this.classList.add('tall')" onerror="this.remove()">`:"";
+const BGS={"gold": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff2003606fe684cdf8f9de7138063ea96999d762785.png", "silver": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322bf982152ec613f327934236667fb1.png", "bronze": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-1-large/0.79b2a5aa3902a8b057f4acb6326065a1ec863510cce00fc702328e28451cb6c7.png", "icon": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-0-large/12.bfcdcd3305884da938cffb054b615c8c8f06c4e80160180dc1671a423bf24969.png"};
+const bgUrl=(d,t)=>(d.bg&&d.bg.startsWith("https://game-assets.fut.gg/")?d.bg:BGS[t]||"");
+const bgImg=(d,t)=>{const u=bgUrl(d,t);return u?`<img class="bgi" src="${esc(u)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove('real');this.remove()">`:""};
+const badge=(u,c)=>u&&u.startsWith("https://")?`<img class="bd ${c}" src="${esc(u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
+const tierD=d=>{const v=String(d.ver||d.version||"");return/^(fc \d+ )?(rare|common)?$/i.test(v.trim())?(d.ovr<65?"bronze":d.ovr<75?"silver":"gold"):tierOf(v)};
+const cardHtml=(d,pos,ovr,stats,mini)=>`<div class="fcard${bgUrl(d,tierD(d))?" real":""} ${tierD(d)} ${posClass(d.g)}${mini?" mini":""}${picImg(d)?"":" nopic"}">${bgImg(d,tierD(d))}<b class="o">${ovr}</b>${mini?"":`<span class="p">${esc(pos)}</span>${(d.positions||[]).slice(1,4).map(x=>`<i class="alt">${esc(x)}</i>`).join("")}${d.fo?`<span class="ft">${d.fo}</span>`:""}${d.sm&&d.wf?`<span class="sw">${d.sm}<em>★</em>${d.wf}</span>`:""}<span class="bds">${badge(d.ni,"ni")}${badge(d.li,"li")}${badge(d.cl,"cl")}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${stats.map(([l,v,u])=>`<span${u?' class="up"':""}><i>${l}</i>${v==null?"–":v}</span>`).join("")}</div>`}</div>`;
+const cardStats=(d,a,o)=>FK.map(([l,k])=>{const v=d.c.g==="GK"?null:faceVal(a,k),was=o?faceVal(o,k):null;return[l,v,o&&v!=null&&was!=null&&v>was]});
+const afterCard=(d,ovr,a)=>cardHtml(d,d.positions[0]||d.g,ovr,cardStats(d,a,d.base));
+function detCards(d,h0){const live=buildLive(d),b=d.base;
+return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,cardStats(d,b))}</figure><span class="arr" aria-hidden="true"></span><figure class="aft">${afterCard(d,h0.ovr,live)}</figure></div>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
-return`<div class="det"><div class="dethead">${detCards(d,h0)}<div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
+return`<div class="det"><div class="dethead"><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div><div class="top">${detCards(d,h0)}<div class="kvbox">${beforeAfter(d,extrasHtml(d))}</div></div></div>
 
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
 <div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern":"Sammenlign"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk":"Prøv selv"}</button></div>
 <div class="cols"><section>${planHtml(d)}</section>
-<section>${beforeAfter(d,extrasHtml(d))}${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
+<section>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
 function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
@@ -554,7 +561,7 @@ w.querySelector(".sbxlist").innerHTML=rel.map(([e,i])=>{const it=s.items.find(x=
 return`<li><label class="check"><input type="checkbox" data-ei="${i}"${on?" checked":""}> ${on?ord+". ":""}${esc(e[1])}${isClosed(e)?' <span class="closedtag">stengt</span>':""}${USED.has(e[0])?' <span class="muted">(brukt)</span>':""}</label>
 ${pth.length?`<select data-pi="${i}"${on?"":" disabled"}>${pth.map((p,j)=>`<option value="${j}"${it&&it.pi===j?" selected":""}>${esc(p[0])}</option>`).join("")}</select>`:""}${why?`<span class="why">Kan ikke tas: ${esc(why)}</span>`:""}</li>`}).join("");
 w.querySelector(".mine").innerHTML=s.items.filter(x=>x.ei<0).map(x=>`<p>${esc(x.e[1])}${stat.get(x)?` <span class="down">(${esc(stat.get(x))})</span>`:""} <button type="button" class="link" data-del="${x.id}">fjern</button></p>`).join("");
-w.querySelector(".sbxres").innerHTML=sbxResult(d)};
+w.querySelector(".sbxres").innerHTML=sbxResult(d);const af=w.closest(".det").querySelector(".cards .aft");if(af)af.innerHTML=afterCard(d,r.st.ovr,r.st.a)};
 w.onchange=ev=>{const t=ev.target;
 if(t.dataset.ei!==undefined){const i=+t.dataset.ei;if(t.checked)s.items.push({ei:i,pi:EV[i][8][8].length?0:-1});else s.items=s.items.filter(x=>x.ei!==i);draw()}
 else if(t.dataset.pi!==undefined){const it=s.items.find(x=>x.ei===+t.dataset.pi);if(it){it.pi=+t.value;draw()}}
