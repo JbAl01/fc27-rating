@@ -268,3 +268,8 @@ table.data table.kv{max-width:600px}
 .dethead .kvbox{flex:1 1 320px;max-width:460px}
 .dethead{flex-wrap:nowrap}.dethead .info{min-width:0}
 .dethead .kvbox{flex:0 1 400px}.dethead .top{gap:40px}
+.fcard.real.mini{width:46px;height:62px;margin:-8px -6px -7px -4px}
+.fcard.real.mini .o{left:11px;top:13px;font-size:12px}
+.fcard.real.mini .pic{right:7px;bottom:17px;width:28px;height:30px}
+.fcard.real.mini .o{display:none}
+.fcard.real.mini .pic{right:7px;left:7px;width:auto;bottom:14px;height:36px}
