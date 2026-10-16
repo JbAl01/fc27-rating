@@ -273,3 +273,6 @@ table.data table.kv{max-width:600px}
 .fcard.real.mini .pic{right:7px;bottom:17px;width:28px;height:30px}
 .fcard.real.mini .o{display:none}
 .fcard.real.mini .pic{right:7px;left:7px;width:auto;bottom:14px;height:36px}
+.fcard.real .pic{right:16px;bottom:70px;width:112px;height:122px;object-position:50% 100%}
+@media (max-width:600px){.fcard.real:not(.mini) .pic{right:13px;bottom:62px;width:96px;height:104px}}
+.fcard.real .pic.tall{left:0;right:0;top:0;bottom:auto;width:100%;height:100%;object-fit:contain;object-position:50% 100%}
