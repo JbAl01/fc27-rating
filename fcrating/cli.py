@@ -54,9 +54,9 @@ def _load_players(files: List[str]) -> List[Player]:
         apply_work_rates(players, table)
     _fill_club_info(players)
     from .sources import futgg
-    n = futgg.apply(players, futgg.load_cards(str(ROOT / "data" / "cache" / "futgg")))
+    n = futgg.apply(players, futgg.load_cards(str(ROOT / "data" / "cache" / "futgg")), futgg.load_role_positions())
     if n:
-        print(f"PlayStyles fra FUT.GG brukt på {n} kort.")
+        print(f"FUT.GG (PlayStyles, roller, høyde) brukt på {n} kort.")
     return players
 
 

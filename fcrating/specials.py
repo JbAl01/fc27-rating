@@ -262,10 +262,16 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                                        delay_seconds=float(gcfg.get("delay_seconds", 3.0)), log=log)
                 todo = [(str(e.get("player_id") or ""), fid) for fid, e in
                         sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if not fr.is_base_version(e["version"])]
+                # base cards: roles (+/++), which EA's data does not have. Best cards first, each once.
+                base = [(str(e.get("player_id") or fid), fid) for fid, e in
+                        sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if fr.is_base_version(e["version"])]
                 try:
                     ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log)
                     left = sum(1 for _, c in todo if c not in fg.cards)
                     log(f"FUT.GG: leste PlayStyles for {ng} spesialkort, {left} gjenstår")
+                    nb = futgg.fetch_cards(gfetch, fg, base, int(gcfg.get("base_limit_per_run", 250)), log=log, kind="base")
+                    left = sum(1 for _, c in base if c not in fg.cards)
+                    log(f"FUT.GG: leste roller for {nb} basekort, {left} gjenstår")
                 except Blocked as exc:
                     log(f"FUT.GG stoppet: {exc}")
                 except Exception as exc:  # FUT.GG down or changed: the rest of the run goes on

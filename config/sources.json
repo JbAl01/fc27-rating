@@ -39,6 +39,22 @@
       "enabled": true,
       "limit_per_run": 150,
       "delay_seconds": 3.0,
+      "base_limit_per_run": 250,
+      "_base_info": "Basekort (EA-dataene har ikke roller): så mange kortsider per kjøring, beste kort først. Gir roller (+ og ++) og høyde. Hvert kort hentes én gang.",
+      "role_positions": {
+        "_info": "FUT.GG oppgir roller som tall. Hvilken posisjon hvert tall hører til, er funnet fra kort med kjente posisjoner (16.10.2026). Keepere har bare listene for + og ++. Ukjente tall (f.eks. CF og wingback) hoppes over.",
+        "CB": [3, 4, 5, 72],
+        "RB": [6, 7, 8, 9, 74],
+        "LB": [10, 11, 12, 13, 73],
+        "CDM": [14, 15, 16, 17, 75],
+        "CM": [23, 24, 25, 26, 27],
+        "CAM": [37, 38, 39, 40],
+        "RM": [45, 46, 47, 48],
+        "LM": [49, 50, 51, 52],
+        "RW": [53, 54, 55],
+        "LW": [56, 57, 58],
+        "ST": [63, 64, 65, 66]
+      },
       "_info": "PlayStyles og PlayStyle+ for spesialkort (TOTW, promo) fra kortets side på FUT.GG, siden FIFA Rosters ikke har dem. Bare de offentlige spillersidene leses (robots.txt forbyr /api/), ett kort om gangen med pause, og hvert kort bare én gang (lagres i data/cache/futgg)."
     },
     "realsport101": {

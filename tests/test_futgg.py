@@ -53,10 +53,6 @@ class FutggTests(unittest.TestCase):
             self.assertEqual(card.height_cm, 176)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class PlayerPageTests(unittest.TestCase):
     def test_link_to_the_card_on_futgg(self):
         base = Player(name="Bruno Fernandes", position="CAM", attributes={}, id="212198")
@@ -68,3 +64,37 @@ class PlayerPageTests(unittest.TestCase):
         self.assertEqual(futgg.player_page(special), "https://www.fut.gg/players/212198/27-50544966/")
         self.assertEqual(futgg.player_page(icon), "https://www.fut.gg/players/237067/27-67345931/")
         self.assertIsNone(futgg.player_page(leak))
+
+
+ROLE_PAGE = ('<html>position:25,alternativePositionIds:$R[24]=[27],rolesPlus:$R[27]=[43],rolesPlusPlus:$R[28]=[139,141],'
+             'scores:$R[103]=[$R[104]={role:63,chemistryStyle:1,score:90.1,rank:2,isPlus:!1,isPlusPlus:!0},'
+             '$R[105]={role:66,chemistryStyle:1,score:88,rank:9,isPlus:!0,isPlusPlus:!1},'
+             '$R[106]={role:56,chemistryStyle:1,score:87,rank:4,isPlus:!1,isPlusPlus:!0},'
+             '$R[107]={role:99,chemistryStyle:1,score:80,rank:40,isPlus:!1,isPlusPlus:!1},'
+             '$R[108]={role:63,chemistryStyle:2,score:89,rank:3,isPlus:!1,isPlusPlus:!1}]</html>')
+
+
+class RoleTests(unittest.TestCase):
+    def test_roles_on_base_card(self):
+        from fcrating.model import load_config, rate
+        rec = futgg.parse_card_page(ROLE_PAGE)
+        self.assertEqual(rec["roles"]["r"], {"63": 2, "66": 1, "56": 2, "99": 0})
+        self.assertTrue(rec["no_ps"])
+        rec["kind"] = "base"
+        rp = futgg.load_role_positions()
+        self.assertEqual(futgg.roles_from(rec, rp, "ST"), {"ST": {"": 2}, "LW": {"": 2}})
+        card = Player(name="Mbappé", position="ST", alt_positions=["LW"], attributes={"finishing": 90}, id="231747",
+                      playstyles=["Rapid"], roles_complete=False)
+        self.assertEqual(futgg.apply([card], {"231747": rec}, rp), 1)
+        self.assertEqual(card.playstyles, ["Rapid"])          # EA's PlayStyles are kept for base cards
+        self.assertTrue(card.roles_complete)
+        r = rate(card, load_config(), groups=["ST"])
+        self.assertEqual(r["by_group"]["ST"]["role"], load_config()["weights"]["roles"]["points"]["2"])
+
+    def test_keeper_roles_from_the_lists(self):
+        rec = {"roles": {"r": {}, "p": [], "pp": [145], "pos": 0}, "kind": "base"}
+        self.assertEqual(futgg.roles_from(rec, futgg.load_role_positions(), "GK"), {"GK": {"": 2}})
+
+
+if __name__ == "__main__":
+    unittest.main()
