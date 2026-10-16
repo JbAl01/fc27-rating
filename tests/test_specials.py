@@ -283,14 +283,20 @@ class RealSportTests(unittest.TestCase):
 
 class PoliteFetcherTests(unittest.TestCase):
     def test_robots_rules_are_respected(self):
-        import urllib.robotparser
+        from fcrating.net import Robots
         f = PoliteFetcher()
-        rp = urllib.robotparser.RobotFileParser()
-        rp.parse(["User-agent: *", "Disallow: /private"])
-        f._robots["https://example.com"] = rp
+        f._robots["https://example.com"] = Robots("User-agent: *\nDisallow: /private")
         self.assertTrue(f.allowed("https://example.com/totw.php?pageNum=1"))
         self.assertFalse(f.allowed("https://example.com/private/x"))
 
+    def test_robots_wildcards(self):
+        from fcrating.net import Robots
+        r = Robots("User-agent: Other\nDisallow:\n\nUser-agent: *\nDisallow: /api/*\nAllow: /club/$\nDisallow: /club/")
+        ua = "fc27-rating/0.3 (personlig bruk)"
+        self.assertFalse(r.can_fetch(ua, "https://x.com/api/fut/1/"))
+        self.assertTrue(r.can_fetch(ua, "https://x.com/players/1/27-2/"))
+        self.assertTrue(r.can_fetch(ua, "https://x.com/club/"))
+        self.assertFalse(r.can_fetch(ua, "https://x.com/club/7"))
 
 if __name__ == "__main__":
     unittest.main()

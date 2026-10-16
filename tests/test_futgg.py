@@ -1,16 +1,23 @@
-"""PlayStyles and height from FUT.GG's card data."""
-import json
+"""PlayStyles for special cards from the card's page on FUT.GG."""
 import tempfile
 import unittest
 
 from fcrating.schema import Player
 from fcrating.sources import futgg
 
-PS = {"data": [{"eaId": 37, "name": "Gamechanger", "isPlayStylePlus": False},
-               {"eaId": 9, "name": "Whipped Pass", "isPlayStylePlus": False},
-               {"eaId": 16, "name": "Technical", "isPlayStylePlus": False}]}
-TOTW = {"data": {"overall": 80, "playstyles": [37, 9], "playstylesPlus": [16], "height": 176, "weight": 75,
-                 "accelerateType": "CONTROLLED", "skillMoves": 3, "weakFoot": 5}}
+D = "M128,12.808L243.192,128,128,243.192,12.808,128Z"
+O = "M12.813,104.953L68.157,21.862H188.143l55.045,83.091L128,235.138Z"
+
+
+def icon(name, path=D, h=42, cls=None):
+    c = f' class="{cls}"' if cls is not None else ""
+    return f'<div{c} title="{name}"><svg viewBox="0 0 256 256" role="img" height="{h}" width="{h}"><path d="{path}" fill-opacity="1"></path></svg></div>'
+
+
+PAGE = ("<html>" + icon("Low Driven", O) + icon("Gamechanger") + icon("Pinged Pass") + icon("Whipped Pass")
+        + "<p>other</p>" + icon("Finesse Shot", h=36, cls="opacity-30") + icon("Gamechanger", h=36, cls="")
+        + icon("Technical", h=36, cls="opacity-30")
+        + '<div><span>Height</span><span>176cm (5\'9")</span></div></html>')
 
 
 class Fetcher:
@@ -19,29 +26,31 @@ class Fetcher:
 
     def get(self, url):
         self.urls.append(url)
-        return json.dumps(PS if "playstyles" in url else TOTW)
+        return PAGE
 
 
 class FutggTests(unittest.TestCase):
+    def test_parse_card_page(self):
+        rec = futgg.parse_card_page(PAGE)
+        self.assertEqual(rec["ps"], ["Gamechanger", "Pinged Pass", "Whipped Pass"])
+        self.assertEqual(rec["psp"], ["Low Driven Shot"])
+        self.assertEqual(rec["height"], 176)
+        self.assertIsNone(futgg.parse_card_page("<html>no icons</html>"))
+
     def test_fetch_once_and_apply_to_special_card(self):
         with tempfile.TemporaryDirectory() as d:
             cache = futgg.FutggCache(d)
             f = Fetcher()
-            self.assertEqual(futgg.fetch_items(f, cache, ["50600001", "50600001"], 10, log=lambda *a: None), 1)
-            self.assertEqual(futgg.fetch_items(f, cache, ["50600001"], 10, log=lambda *a: None), 0)
-            self.assertEqual(len([u for u in f.urls if "item-definitions" in u]), 1)
-            card = Player(name="Nicolò Cambiaghi", position="CAM", attributes={}, id="50600001", ovr=80,
+            self.assertEqual(futgg.fetch_cards(f, cache, [("268703", "50600351")] * 2, 10, log=lambda *a: None), 1)
+            self.assertEqual(futgg.fetch_cards(f, cache, [("268703", "50600351")], 10, log=lambda *a: None), 0)
+            self.assertEqual(f.urls, ["https://www.fut.gg/players/268703/27-50600351/"])
+            card = Player(name="Nicolò Cambiaghi", position="CAM", attributes={}, id="50600351", ovr=80,
                           playstyles=["Gamechanger", "Whipped Pass"], ps_from_base=True)
             self.assertEqual(futgg.apply([card], futgg.load_cards(d)), 1)
-            self.assertEqual(card.playstyles, ["Gamechanger", "Whipped Pass"])
-            self.assertEqual(card.playstyles_plus, ["Technical"])
+            self.assertEqual(card.playstyles, ["Gamechanger", "Pinged Pass", "Whipped Pass"])
+            self.assertEqual(card.playstyles_plus, ["Low Driven Shot"])
             self.assertFalse(card.ps_from_base)
             self.assertEqual(card.height_cm, 176)
-
-    def test_other_card_version_is_not_used(self):
-        card = Player(name="X", position="CAM", attributes={}, id="1", ovr=76, playstyles=["Gamechanger"])
-        self.assertEqual(futgg.apply([card], {"1": {"ovr": 80, "ps": ["Technical"], "psp": []}}), 0)
-        self.assertEqual(card.playstyles, ["Gamechanger"])
 
 
 if __name__ == "__main__":

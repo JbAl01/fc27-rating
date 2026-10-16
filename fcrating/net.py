@@ -2,11 +2,11 @@
 identifies itself, and stops on HTTP 429/403 instead of hammering a site."""
 from __future__ import annotations
 
+import re
 import time
 import urllib.error
 import urllib.request
-import urllib.robotparser
-from typing import Dict, Optional
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import urlparse
 
 DEFAULT_UA = "fc27-rating/0.2 (personlig bruk)"
@@ -14,6 +14,58 @@ DEFAULT_UA = "fc27-rating/0.2 (personlig bruk)"
 
 class Blocked(RuntimeError):
     pass
+
+
+class Robots:
+    """robots.txt with the wildcards Python's robotparser ignores ("Disallow: /api/*", "$").
+    The group for our user agent is used if there is one, otherwise "*". Longest matching rule
+    wins; Allow wins a tie (as Google and RFC 9309 do)."""
+
+    def __init__(self, text: str):
+        self.groups: List[Tuple[List[str], List[Tuple[bool, str]]]] = []
+        agents: List[str] = []
+        rules: List[Tuple[bool, str]] = []
+        last_was_agent = False
+        for raw in text.splitlines():
+            line = raw.split("#", 1)[0].strip()
+            if ":" not in line:
+                continue
+            key, val = (x.strip() for x in line.split(":", 1))
+            key = key.lower()
+            if key == "user-agent":
+                if not last_was_agent and (agents or rules):
+                    self.groups.append((agents, rules))
+                    agents, rules = [], []
+                agents.append(val.lower())
+                last_was_agent = True
+            elif key in ("allow", "disallow"):
+                last_was_agent = False
+                if val or key == "allow":
+                    rules.append((key == "allow", val))
+        if agents or rules:
+            self.groups.append((agents, rules))
+
+    @staticmethod
+    def _match(pattern: str, path: str) -> bool:
+        rx = "^" + re.escape(pattern).replace(r"\*", ".*")
+        if rx.endswith(r"\$"):
+            rx = rx[:-2] + "$"
+        return re.match(rx, path) is not None
+
+    def can_fetch(self, user_agent: str, url: str) -> bool:
+        ua = user_agent.lower()
+        token = ua.split("/")[0].split()[0] if ua else ""
+        mine = [r for a, r in self.groups if any(x != "*" and x in ua for x in a) or (token and token in a)]
+        rules = [x for r in mine for x in r] or [x for a, r in self.groups if "*" in a for x in r]
+        parts = urlparse(url)
+        path = (parts.path or "/") + (f"?{parts.query}" if parts.query else "")
+        best: Optional[Tuple[int, bool]] = None
+        for allow, pat in rules:
+            if pat and self._match(pat, path):
+                cand = (len(pat), allow)
+                if best is None or cand > best:
+                    best = cand
+        return True if best is None else best[1]
 
 
 class PoliteFetcher:
@@ -24,23 +76,20 @@ class PoliteFetcher:
         self.timeout = timeout
         self.respect_robots = respect_robots
         self.log = log
-        self._robots: Dict[str, Optional[urllib.robotparser.RobotFileParser]] = {}
+        self._robots: Dict[str, Optional[Robots]] = {}
         self._last: Dict[str, float] = {}
 
-    def _robots_for(self, url: str) -> Optional[urllib.robotparser.RobotFileParser]:
+    def _robots_for(self, url: str) -> Optional["Robots"]:
         parts = urlparse(url)
         host = f"{parts.scheme}://{parts.netloc}"
         if host not in self._robots:
-            rp = urllib.robotparser.RobotFileParser()
+            rp: Optional[Robots]
             try:
                 req = urllib.request.Request(host + "/robots.txt", headers={"User-Agent": self.ua})
                 with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-                    rp.parse(resp.read().decode("utf-8", "replace").splitlines())
+                    rp = Robots(resp.read().decode("utf-8", "replace"))
             except urllib.error.HTTPError as exc:
-                if exc.code in (401, 403):
-                    rp.parse(["User-agent: *", "Disallow: /"])
-                else:  # 404 etc.: no robots.txt means no restrictions
-                    rp.parse([])
+                rp = Robots("User-agent: *\nDisallow: /") if exc.code in (401, 403) else Robots("")
             except Exception:
                 rp = None  # network trouble: decide per request below
             self._robots[host] = rp

@@ -251,29 +251,24 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
             missing = sum(1 for fid in specials if fid not in fr_cache.details)
             log(f"FIFA Rosters: {len(specials)} spesialkort, hentet {n} nye kortsider, {missing} gjenstår")
             gcfg = sc.get("futgg") or {}
-            fg_heights = set()
             if gcfg.get("enabled", True):
-                # PlayStyles for special cards (FIFA Rosters has none) and height for base cards (EA has none)
+                # The special cards' own PlayStyles (FIFA Rosters has none; promo cards often have one more)
                 fg = futgg.FutggCache(str(Path(cache_dir) / "futgg"))
                 gfetch = PoliteFetcher(user_agent=gcfg.get("user_agent") or sc.get("user_agent") or "fc27-rating",
-                                       delay_seconds=float(gcfg.get("delay_seconds", 0.8)), log=log)
-                ents = unique_entries(fr_cache)
-                spec_ids = [fid for fid, e in sorted(ents, key=lambda t: -t[1]["ovr"]) if not fr.is_base_version(e["version"])]
-                base_ids = [str(e.get("player_id")) for fid, e in sorted(ents, key=lambda t: -t[1]["ovr"])
-                            if fr.is_base_version(e["version"]) and e.get("player_id")]
+                                       delay_seconds=float(gcfg.get("delay_seconds", 3.0)), log=log)
+                todo = [(str(e.get("player_id") or ""), fid) for fid, e in
+                        sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if not fr.is_base_version(e["version"])]
                 try:
-                    ng = futgg.fetch_items(gfetch, fg, spec_ids + base_ids, int(gcfg.get("limit_per_run", 600)), log=log)
-                    left = sum(1 for i in spec_ids + base_ids if i not in fg.cards)
-                    log(f"FUT.GG: hentet {ng} kort (PlayStyles og høyde), {left} gjenstår")
+                    ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log)
+                    left = sum(1 for _, c in todo if c not in fg.cards)
+                    log(f"FUT.GG: leste PlayStyles for {ng} spesialkort, {left} gjenstår")
                 except Blocked as exc:
                     log(f"FUT.GG stoppet: {exc}")
                 except Exception as exc:  # FUT.GG down or changed: the rest of the run goes on
                     log(f"FUT.GG feilet: {exc}")
                 finally:
                     fg.save()
-                fg_heights = {k for k, v in fg.cards.items() if v.get("height")}
             if height_known is not None:
-                height_known = set(height_known) | fg_heights
                 # EA's FC 27 pages have no height. Base cards whose EA card lacks it (often new players)
                 # get the FIFA Rosters card page, which has height and the real attributes. Best cards first.
                 need = [fid for fid, e in unique_entries(fr_cache) if fr.is_base_version(e["version"])

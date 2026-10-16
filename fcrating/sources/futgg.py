@@ -1,119 +1,98 @@
-"""PlayStyles, PlayStyle+, height and weight per card from FUT.GG's card data.
+"""PlayStyles and PlayStyle+ for special cards, read from the card's page on FUT.GG.
 
-FIFA Rosters has no PlayStyles and EA's FC 27 pages have no height, so special cards
-(TOTW, promos) only knew the base card's PlayStyles and many cards had no height.
-FUT.GG's card endpoint has both, for every card version:
+FIFA Rosters has no PlayStyles, so special cards (TOTW, promos) only knew the base card's,
+and promo cards often have one more. FUT.GG's card page shows the card's own PlayStyles:
 
-    https://www.fut.gg/api/fut/player-item-definitions/27/<id>/
+    https://www.fut.gg/players/<player id>/27-<card id>/
 
-<id> is EA's item id: the player id for base cards, the card's own id (the same id
-FIFA Rosters calls futid) for special cards. Names for PlayStyle ids come from
-https://www.fut.gg/api/fut/playstyles/.
+(<card id> is EA's item id, the same id FIFA Rosters calls futid; FUT.GG redirects to the full
+address.) FUT.GG's robots.txt forbids /api/, so only the public pages are read: one at a time,
+with a pause, and each card once (saved in data/cache/futgg/). Special cards only; base cards
+already have PlayStyles from EA.
 
-Fetched politely (one request at a time, with a pause, robots.txt respected) and saved in
-data/cache/futgg/, so each card is fetched once. Special cards first, then base cards by OVR.
+On the page, the card's PlayStyles are the large icons (height 42) at the top, each in a
+<div title="Name">. PlayStyle+ has another icon shape than a plain PlayStyle.
 """
 from __future__ import annotations
 
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Tuple
 
 from ..schema import Player, canonical_playstyle
 
-ITEM_URL = "https://www.fut.gg/api/fut/player-item-definitions/{game}/{id}/"
-PS_URL = "https://www.fut.gg/api/fut/playstyles/"
+CARD_URL = "https://www.fut.gg/players/{player}/{game}-{card}/"
+_ICON = re.compile(r'<div(?: class="([^"]*)")? title="([^"]+)"><svg[^>]*?height="(\d+)"[^>]*>\s*<path d="([^"]+)"')
+_PLAIN = "M128,12.808L243.192,128,128,243.192,12.808,128Z"   # diamond = PlayStyle; other shape = PlayStyle+
+_HEIGHT = re.compile(r"Height</[^>]+>\s*<[^>]+>\s*(\d{3})\s*cm", re.I)
 
 
 class FutggCache:
     def __init__(self, folder: str):
         self.dir = Path(folder)
-        self.cards: Dict[str, dict] = self._load("kort.json")
-        self.meta: dict = self._load("meta.json")
-
-    def _load(self, name: str) -> dict:
-        p = self.dir / name
+        self.cards: Dict[str, dict] = {}
+        p = self.dir / "kort.json"
         if p.exists():
             with open(p, encoding="utf-8") as f:
-                return json.load(f)
-        return {}
+                self.cards = json.load(f)
 
     def save(self) -> None:
         self.dir.mkdir(parents=True, exist_ok=True)
-        for name, data in (("kort.json", self.cards), ("meta.json", self.meta)):
-            with open(self.dir / name, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False)
+        with open(self.dir / "kort.json", "w", encoding="utf-8") as f:
+            json.dump(self.cards, f, ensure_ascii=False)
 
 
-def parse_ps_names(data: dict) -> Dict[str, str]:
-    """{"<eaId>": "Finesse Shot"} from the playstyles endpoint."""
-    out: Dict[str, str] = {}
-    for e in data.get("data") or []:
-        if e.get("eaId") is None or not e.get("name") or e.get("isPlayStylePlus"):
+def parse_card_page(html: str) -> Optional[dict]:
+    """The card's own PlayStyles: the first unbroken run of large icons. None if the page has none
+    (layout changed, or not a card page) so nothing wrong is saved."""
+    ps: List[str] = []
+    psp: List[str] = []
+    started = False
+    for m in _ICON.finditer(html):
+        cls, name, height, path = m.group(1), m.group(2), int(m.group(3)), m.group(4)
+        big = height >= 40 and not cls
+        if not big:
+            if started:
+                break
             continue
-        out.setdefault(str(e["eaId"]), canonical_playstyle(e["name"]) or e["name"])
-    return out
-
-
-def parse_item(data: dict, names: Dict[str, str]) -> Optional[dict]:
-    d = data.get("data") if isinstance(data, dict) else None
-    if not isinstance(d, dict):
+        started = True
+        canon = canonical_playstyle(name) or name
+        (ps if path.startswith(_PLAIN) else psp).append(canon)
+    if not started:
         return None
-
-    def ps(ids) -> List[str]:
-        return [names[str(i)] for i in ids or [] if str(i) in names]
-
-    psp = ps(d.get("playstylesPlus"))
-    rec = {
-        "ps": [x for x in ps(d.get("playstyles")) if x not in psp],
-        "psp": psp,
-        "unknown_ids": [i for i in (d.get("playstyles") or []) + (d.get("playstylesPlus") or []) if str(i) not in names],
-        "height": d.get("height") or None,
-        "weight": d.get("weight") or None,
-        "acc": (d.get("accelerateType") or "").capitalize() or None,
-        "sm": d.get("skillMoves") or None,
-        "wf": d.get("weakFoot") or None,
-        "ovr": d.get("overall"),
-        "t": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-    }
-    return rec
+    h = _HEIGHT.search(html)
+    return {"ps": [x for x in ps if x not in psp], "psp": psp,
+            "height": int(h.group(1)) if h else None,
+            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
 
 
-def ensure_names(fetcher, cache: FutggCache, log=print) -> Dict[str, str]:
-    names = cache.meta.get("ps_names") or {}
-    if not names:
-        names = parse_ps_names(json.loads(fetcher.get(PS_URL)))
-        cache.meta["ps_names"] = names
-        log(f"FUT.GG: {len(names)} PlayStyle-navn hentet")
-    return names
-
-
-def fetch_items(fetcher, cache: FutggCache, ids: Iterable[str], limit: int, game: str = "27", log=print) -> int:
-    """Fetch card data for ids not in the cache yet (in the given order). Returns how many were fetched.
-    A card FUT.GG doesn't know (404) is remembered as missing, so it isn't asked for again every run."""
+def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], limit: int, game: str = "27",
+                log=print) -> int:
+    """cards: (player id, card id) pairs in the order to fetch. Each card is fetched once.
+    A page without PlayStyles is remembered as missing; a network error is tried again next run."""
     import urllib.error
-    names = ensure_names(fetcher, cache, log)
     done = 0
-    for cid in ids:
-        cid = str(cid)
+    for player, card in cards:
+        card = str(card)
         if done >= limit:
             break
-        if not cid or cid == "None" or cid in cache.cards:
+        if not player or not card or card in cache.cards:
             continue
         try:
-            rec = parse_item(json.loads(fetcher.get(ITEM_URL.format(game=game, id=cid))), names)
+            rec = parse_card_page(fetcher.get(CARD_URL.format(player=player, game=game, card=card)))
         except urllib.error.HTTPError as exc:
             if exc.code != 404:
                 raise
             rec = None
-        except (ValueError, TimeoutError, OSError) as exc:  # one slow or broken answer: try again next run
-            log(f"  FUT.GG: {cid} feilet ({exc}), prøver igjen neste gang")
+        except (TimeoutError, OSError) as exc:
+            log(f"  FUT.GG: {card} feilet ({exc}), prøver igjen neste gang")
             continue
-        cache.cards[cid] = rec or {"missing": True, "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
+        cache.cards[card] = rec or {"missing": True, "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
         done += 1
-        if done % 50 == 0:
-            log(f"  FUT.GG: {done} kort hentet")
+        if done % 25 == 0:
+            log(f"  FUT.GG: {done} kortsider lest")
             cache.save()
     cache.save()
     return done
@@ -128,27 +107,17 @@ def load_cards(folder: str) -> Dict[str, dict]:
 
 
 def apply(players: List[Player], cards: Dict[str, dict]) -> int:
-    """Use FUT.GG's PlayStyles (and height/weight where missing) on cards it knows. Returns how many."""
+    """Use FUT.GG's PlayStyles (and height where missing) on the cards it has. Returns how many."""
     n = 0
     for p in players:
         rec = cards.get(str(p.id)) if p.id else None
         if not rec or rec.get("missing"):
             continue
-        if rec.get("unknown_ids"):
-            continue
-        if rec.get("ovr") and p.ovr and int(rec["ovr"]) != int(p.ovr):
-            continue  # not the same card version (id mix-up): don't trust it  # a PlayStyle we can't name: keep what we have rather than drop one
         p.playstyles_plus = list(rec.get("psp") or [])
         p.playstyles = [x for x in rec.get("ps") or [] if x not in p.playstyles_plus]
         p.playstyles_complete = True
         p.ps_from_base = False
         if rec.get("height") and not p.height_cm:
             p.height_cm = float(rec["height"])
-        if rec.get("weight") and not p.weight_kg:
-            p.weight_kg = float(rec["weight"])
-        if rec.get("sm") and not p.skill_moves:
-            p.skill_moves = int(rec["sm"])
-        if rec.get("wf") and not p.weak_foot:
-            p.weak_foot = int(rec["wf"])
         n += 1
     return n

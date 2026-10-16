@@ -37,9 +37,9 @@
     },
     "futgg": {
       "enabled": true,
-      "limit_per_run": 600,
-      "delay_seconds": 0.8,
-      "_info": "PlayStyles, PlayStyle+ og høyde per kort fra FUT.GG (fut.gg/api/fut/player-item-definitions/27/<id>/). Spesialkort først, så basekort etter OVR. Hvert kort hentes én gang og lagres i data/cache/futgg."
+      "limit_per_run": 150,
+      "delay_seconds": 3.0,
+      "_info": "PlayStyles og PlayStyle+ for spesialkort (TOTW, promo) fra kortets side på FUT.GG, siden FIFA Rosters ikke har dem. Bare de offentlige spillersidene leses (robots.txt forbyr /api/), ett kort om gangen med pause, og hvert kort bare én gang (lagres i data/cache/futgg)."
     },
     "realsport101": {
       "category_url": "https://realsport101.com/ea-sports-fc",
