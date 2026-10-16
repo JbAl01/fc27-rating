@@ -244,6 +244,8 @@ def _meta(results: List[dict], cfg: dict, intern: _Interner) -> dict:
         "order": [group_label(g) for g in GROUP_ORDER],
         "labels": [ATTRIBUTE_LABELS[k] for k in ATTR_KEYS],
         "idx": ATTR_INDEX,
+        "face": {k.upper(): [[a, w] for a, w in wcfg["face_stats"][k].items() if not a.startswith("_")]
+                 for k in ("pac", "sho", "pas", "dri", "def", "phy")},
         "plural": {group_label(g): GROUP_PLURAL_NO[g] for g in GROUP_ORDER},
         "blend": {group_label(g): v for g, v in wcfg["blend"].items() if not g.startswith("_")},
         "evo": {k: ecfg.get(k) for k in ("max_ovr", "target_ovr", "points_per_ovr", "max_boost", "excluded_versions")},
