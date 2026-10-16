@@ -92,3 +92,9 @@ class ClubInfoTests(unittest.TestCase):
         self.assertEqual((special.league, special.nation), ("1A Pro League", "Norway"))
         self.assertEqual(special.birthdate, "2000-06-04")
         self.assertEqual(icon.league, "Icons")
+
+    def test_birthdate_with_time_as_ea_sends_it(self):
+        from fcrating.schema import parse_birthdate
+        self.assertEqual(parse_birthdate("12/20/1998 0:00"), "1998-12-20")
+        self.assertEqual(parse_birthdate("6/4/2000 00:00:00"), "2000-06-04")
+        self.assertIsNone(parse_birthdate("12/20/1998 noe"))

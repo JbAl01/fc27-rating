@@ -914,7 +914,7 @@ def cmd_fetch_ea(args) -> int:
         print(f"Lagret ett rått svar i {sample}")
         return 0
     meta_path = Path(args.out).with_name(Path(args.out).stem + ".meta.json")
-    source = "ea-ratingsider-3" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
+    source = "ea-ratingsider-4" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
     if args.hvis_gammel is not None and Path(args.out).exists() and meta_path.exists():
         try:
             meta = json.loads(meta_path.read_text(encoding="utf-8"))

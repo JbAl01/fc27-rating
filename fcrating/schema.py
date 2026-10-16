@@ -182,7 +182,7 @@ def position_group(position: Optional[str]) -> Optional[str]:
 
 def parse_birthdate(v) -> Optional[str]:
     """A date of birth as YYYY-MM-DD, from ISO text ('1994-09-08', '1994-09-08T00:00:00Z'),
-    '9/8/1994' (EA, month first), '08.09.1994' or a Unix time in seconds or milliseconds."""
+    '9/8/1994' or '12/20/1998 0:00' (EA, month first, sometimes with a time), '08.09.1994' or a Unix time in seconds or milliseconds."""
     import re as _re
     from datetime import datetime as _dt, timezone as _tz
     if v is None or v == "" or isinstance(v, bool):
@@ -198,7 +198,7 @@ def parse_birthdate(v) -> Optional[str]:
     if m:
         y, mo, d = map(int, m.groups())
     else:
-        m = _re.match(r"^(\d{1,2})([/.])(\d{1,2})\2(\d{4})$", s)
+        m = _re.match(r"^(\d{1,2})([/.])(\d{1,2})\2(\d{4})(?:[ T]\d{1,2}:\d{2}(?::\d{2})?)?$", s)
         if not m:
             return None
         a, sep, b, y = int(m.group(1)), m.group(2), int(m.group(3)), int(m.group(4))
