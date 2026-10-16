@@ -283,6 +283,7 @@ def _run_meta(results: List[dict], cfg: dict) -> Optional[dict]:
         "groups": [group_label(g) for g in rc["groups"]],
         "gem": {k: v for k, v in rc["gem"].items() if not k.startswith("_")},
         "wrv": {k: v for k, v in rc["work_rate_values"].items() if not k.startswith("_")},
+        "accv": {k: v for k, v in rc["similar"].get("accelerate_values", {}).items() if not k.startswith("_")},
         "sim": [[k, round(m, 4), round(sd, 4), fw[k]] for k, (m, sd) in stats.items()],
         "calibrated": rc.get("calibrated"),
         "dropped": list(rc.get("dropped", {}).values()),

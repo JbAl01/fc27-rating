@@ -196,7 +196,8 @@ def targets_meta(results: List[dict], lab: dict, cfg: dict):
         g = r.get("position_group") or r.get("best_group")
         out.append([r["name"], r.get("rarity") or "", group_label(g), feats, 1 if r["uid"] in favs else 0])
     return out, {"keys": keys, "st": [[round(m, 4), round(sd, 4), fw.get(k, 0.0)] for k, (m, sd) in stats.items()],
-                 "sumw": sum(fw.values())}
+                 "sumw": sum(fw.values()),
+                 "accv": _clean(rc["similar"].get("accelerate_values", {}))}
 
 
 # ---------------------------------------------------------------- rows

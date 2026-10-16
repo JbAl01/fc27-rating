@@ -239,8 +239,10 @@
       "_info": "Hvilke tall som teller når kort med lignende løpsprofil finnes, og hvor mye.",
       "features": {
         "positioning": 1.5, "acceleration": 1.2, "sprint_speed": 1.0, "reactions": 0.8, "agility": 1.0,
-        "balance": 0.8, "strength": 0.8, "ball_control": 0.6, "composure": 0.5, "height_cm": 0.8, "stamina": 0.4, "arbeidsrate": 0.5
-      }
+        "balance": 0.8, "strength": 0.8, "ball_control": 0.6, "composure": 0.5, "height_cm": 0.8, "stamina": 0.4, "arbeidsrate": 0.5, "accelerate": 1.2
+      },
+      "accelerate_values": {"Explosive": 100, "Controlled": 50, "Lengthy": 0},
+      "_accelerate_info": "AcceleRATE som tall (Explosive - Controlled - Lengthy i like steg), så kort som beveger seg likt ligger nær hverandre. Kroppstype er ikke med: ingen av kildene våre oppgir den."
     },
     "calibration": {
       "_info": "ridge demper store utslag. prior_cards: med så mange kort teller dine data og startvektene like mye.",

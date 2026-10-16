@@ -629,3 +629,19 @@ class PositionRankingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SimilarAccelerateTests(unittest.TestCase):
+    def test_accelerate_type_counts_in_similarity(self):
+        from fcrating.model import load_config
+        from fcrating.runs import _sim_value, distance
+        rc = load_config()["weights"]["run_ai"]
+        from fcrating.runs import _clean
+        attrs = {k: 70 for k in _clean(rc["similar"]["features"]) if k not in ("height_cm", "arbeidsrate", "kvikk_sterk", "kort_kropp", "accelerate")}
+        a = {"attributes": attrs, "height_cm": 180, "work_rate_att": "M", "accelerate": "Explosive"}
+        b = dict(a, accelerate="Lengthy")
+        c = dict(a, accelerate="Explosive")
+        self.assertEqual(_sim_value(a, "accelerate", rc), 100.0)
+        self.assertEqual(_sim_value(b, "accelerate", rc), 0.0)
+        stats = {k: (70.0, 10.0) for k in _clean(rc["similar"]["features"])}
+        self.assertGreater(distance(a, b, stats, rc), distance(a, c, stats, rc))

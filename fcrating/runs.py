@@ -270,6 +270,9 @@ def _sim_value(r: dict, key: str, rc: dict) -> Optional[float]:
         return min(a["agility"], a["strength"]) if "agility" in a and "strength" in a else None
     if key == "kort_kropp":
         return short_body_value(r.get("height_cm"), rc)
+    if key == "accelerate":
+        v = _clean(rc["similar"].get("accelerate_values", {})).get(r.get("accelerate") or "")
+        return float(v) if v is not None else None
     return (r.get("attributes") or {}).get(key)
 
 

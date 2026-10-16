@@ -126,7 +126,7 @@ const s=ks.filter(i=>z[i]>=X.sz&&!shown.has(i)).sort((a,b)=>z[b]-z[a]).slice(0,X
 const w=ks.filter(i=>z[i]<=X.wz&&(sk.includes(i)||META.feel.includes(i))).sort((a,b)=>z[a]-z[b]).slice(0,X.mw).map(T);
 const S=few?null:sortedFor(g),tp=(a,v)=>few?null:topPct(a,v);
 return {few,fp:gk||few?null:tp(S.f,d.feel),pp:few?null:tp(S.p,e.pace),sp:few?null:tp(S.s,e.skill),psp:few?null:tp(S.ps,e.playstyles),rp:few||e.rs==null?null:tp(S.rs,e.rs),ssp:few||e.ss==null?null:tp(S.ss,e.ss),tf:tfI.map(T),ts:tsI.map(T),s,w}}
-function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
+function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="accelerate")return META.run.accv[d.accelerate]??null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
 const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
 function similarTo(d,g,n){const S=META.run.sim,tot=S.reduce((a,x)=>a+x[3],0),ref=S.map(([k])=>simVal(d,k)),res=[];
 for(const o of DATA){if(o===d||!o.ra||!o.groups[g]||!o.groups[g].run||o.name===d.name)continue;let t=0,u=0;

@@ -225,7 +225,7 @@ const hasLive=d=>activePlan(d)[0].length>0;
 
 /* "ligner på": movement profile distance, as in runs.distance */
 const SK=META.sim.keys||[],SST=META.sim.st||[],SW=META.sim.sumw||SST.reduce((s,x)=>s+x[2],0);
-function simVal(d,a,k){if(k==="height_cm")return d.c.h;if(k==="arbeidsrate")return d.c.wrv;if(k==="kort_kropp")return d.c.hb;
+function simVal(d,a,k){if(k==="accelerate"){const t=classify(a,d.c.h,d.c.gender)||d.c.accSrc;return t?(META.sim.accv||{})[t]??null:null}if(k==="height_cm")return d.c.h;if(k==="arbeidsrate")return d.c.wrv;if(k==="kort_kropp")return d.c.hb;
 if(k==="kvikk_sterk")return a[AI.agility]!=null&&a[AI.strength]!=null?Math.min(a[AI.agility],a[AI.strength]):null;return a[AI[k]]??null}
 let TWIN=null;const TWC=new Map();
 /* Unrounded, so the sort is not decided by rounding. After the evos many cards end on the same capped values, so
@@ -569,10 +569,9 @@ box.querySelectorAll("[data-unpin]").forEach(b=>b.onclick=()=>{PINS=PINS.filter(
 function renderEvos(){const evs=EV.map((e,i)=>[e,i]).sort((a,b)=>(untilMs(a[0][3])??9e15)-(untilMs(b[0][3])??9e15));const open=evs.filter(([e])=>!isClosed(e));
 $("evosum").textContent=`Evoene som er ute nå (${open.length})`;
 let t=`<p class="muted" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
-for(const[e]of evs){const c=isClosed(e);t+=`<tr${c?' class="closed"':""}><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas ${e[6]} ganger)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
+for(const[e]of open){const c=false;t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas ${e[6]} ganger)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
 <td>${esc(reqText(e))}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
 t+=`</tbody></table></div>`;
-if(META.expired.length)t+=`<p class="muted">Stengt og ikke med i planene: ${esc(list(META.expired))}.</p>`;
 $("evobody").innerHTML=t;
 $("evobody").querySelectorAll("[data-used]").forEach(cb=>cb.onchange=()=>{if(cb.checked)USED.add(cb.dataset.used);else USED.delete(cb.dataset.used);saveUsed();renderEvos();applyUsed()});
 const nu=EV.filter(e=>USED.has(e[0])).length;$("evosum").textContent=`Evoene som er ute nå (${EV.filter(e=>!isClosed(e)).length}${nu?`, ${nu} brukt`:""})`;
