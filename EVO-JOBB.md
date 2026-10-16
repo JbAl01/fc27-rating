@@ -98,6 +98,7 @@ Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PRO
 - `until`: ISO-tid i UTC med Z. Står bare en dato, regnes den som kl. 17:00 UTC. EA bytter innhold kl. 18:00 britisk tid, som er 17:00 UTC om sommeren og 18:00 UTC om vinteren (klokkene i Storbritannia stilles tilbake siste søndag i oktober). Er du usikker, bruk den tidligste tiden.
 - Attributtnavn: `acceleration`, `sprint_speed`, `positioning`, `finishing`, `shot_power`, `long_shots`, `volleys`, `penalties`, `vision`, `crossing`, `fk_accuracy`, `short_passing`, `long_passing`, `curve`, `agility`, `balance`, `reactions`, `ball_control`, `dribbling`, `composure`, `interceptions`, `heading_accuracy`, `def_awareness`, `standing_tackle`, `sliding_tackle`, `jumping`, `stamina`, `strength`, `aggression`. Keepertallene begynner med `gk_`.
 - Hovedtall (som «+2 Pace») legges i `face` med `pace`, `shooting`, `passing`, `dribbling`, `defending` eller `physical`.
+- Alderskrav: `"born_from": "2003-10-09"` i `req` betyr født denne datoen eller senere, `"born_to"` født denne datoen eller tidligere (ISO-dato). Evo Lab sjekker det mot fødselsdatoen fra EA. Bruk ikke `unchecked` for alder.
 - Svakfot og skill moves: `wf: [økning, maks]` og `sm: [økning, maks]`.
 - Roller: `"roles": [["ST", "Advanced Forward", 2]]` (1 = +, 2 = ++).
 - Se `config/evolab.json` for ferdige eksempler på alle felt, og README under «Evoene og hvor de kommer fra».

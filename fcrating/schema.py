@@ -180,6 +180,35 @@ def position_group(position: Optional[str]) -> Optional[str]:
     return POSITION_GROUPS.get(str(position).upper().strip())
 
 
+def parse_birthdate(v) -> Optional[str]:
+    """A date of birth as YYYY-MM-DD, from ISO text ('1994-09-08', '1994-09-08T00:00:00Z'),
+    '9/8/1994' (EA, month first), '08.09.1994' or a Unix time in seconds or milliseconds."""
+    import re as _re
+    from datetime import datetime as _dt, timezone as _tz
+    if v is None or v == "" or isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        t = float(v) / (1000.0 if abs(v) > 1e11 else 1.0)
+        try:
+            return _dt.fromtimestamp(t, _tz.utc).strftime("%Y-%m-%d")
+        except (OverflowError, OSError, ValueError):
+            return None
+    s = str(v).strip()
+    m = _re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})", s)
+    if m:
+        y, mo, d = map(int, m.groups())
+    else:
+        m = _re.match(r"^(\d{1,2})([/.])(\d{1,2})\2(\d{4})$", s)
+        if not m:
+            return None
+        a, sep, b, y = int(m.group(1)), m.group(2), int(m.group(3)), int(m.group(4))
+        mo, d = (a, b) if sep == "/" and a <= 12 else (b, a)
+    try:
+        return _dt(y, mo, d).strftime("%Y-%m-%d")
+    except ValueError:
+        return None
+
+
 @dataclass
 class Player:
     name: str
@@ -223,6 +252,8 @@ class Player:
     club: Optional[str] = None
     league: Optional[str] = None
     nation: Optional[str] = None
+    # Date of birth as YYYY-MM-DD (EA's ratings pages; for evos with an age requirement)
+    birthdate: Optional[str] = None
     # True for special cards whose PlayStyles are copied from the base card (FIFA Rosters has none):
     # promo cards can have more PlayStyles in the game than we know of.
     ps_from_base: bool = False
@@ -327,6 +358,7 @@ class Player:
             club=data.get("club") or None,
             league=data.get("league") or None,
             nation=data.get("nation") or None,
+            birthdate=parse_birthdate(data.get("birthdate")),
             ps_from_base=bool(data.get("ps_from_base", False)),
             work_rate_att=wr_att,
             work_rate_def=wr_def,

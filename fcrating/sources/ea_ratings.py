@@ -209,6 +209,7 @@ def map_item(item: dict, overrides: Optional[dict] = None) -> Player:
         "club": club,
         "league": league if isinstance(league, str) else None,
         "nation": nation,
+        "birthdate": pick("birthdate", "birthDate", "dateOfBirth", "dob"),
         "face_stats": face,
         "id": pick("id", "playerId"),
         "name": name or "Ukjent",

@@ -137,10 +137,15 @@ if(G.st){const v=a[AI.standing_tackle];if(v!=null){let p=0;for(const[t,val]of R.
 out.igr=pyRound(igr,1);return out};return d._rt}
 function faceVal(a,w){const xs=[];for(const[i,v]of RU.face[w]){if(a[i]==null)return null;xs.push(a[i]*v)}return pyRound(psum(xs),0)}
 function psCount(st){const n=st.ps.length+st.psp.length;return st.psu&&n===0?Math.max(n,RU.assume):n}
-function stateOf(d){return{a:d.base.slice(),ovr:d.ovr||0,ps:d.ps.slice(),psp:d.psp.slice(),wf:d.wf,sm:d.sm,role:d.c.role,done:[],psu:!!d.c.psu,pos:d.positions,g:d.c.g}}
+function stateOf(d){return{a:d.base.slice(),ovr:d.ovr||0,ps:d.ps.slice(),psp:d.psp.slice(),wf:d.wf,sm:d.sm,role:d.c.role,done:[],psu:!!d.c.psu,pos:d.positions,g:d.c.g,born:d.born}}
+/* age requirement (evolab.birth_block): r[9] born on or after, r[10] born on or before, as YYYY-MM-DD */
+const MND=["januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember"];
+const dateNo=s=>{const[y,m,d]=s.split("-");return`${+d}. ${MND[+m-1]} ${y}`};
+function bornText(r){const a=r[9],b=r[10];return a&&b?`født mellom ${dateNo(a)} og ${dateNo(b)}`:a?`født ${dateNo(a)} eller senere`:b?`født ${dateNo(b)} eller tidligere`:""}
+function bornBlock(r,born){if(!(r[9]||r[10])||!born)return null;if((r[9]&&born<r[9])||(r[10]&&born>r[10]))return["age",`født ${dateNo(born)}, evoen krever ${bornText(r)}`];return null}
 function check(e,st){const r=e[7],pos=r[6],np=r[7];
 if(pos.length&&!st.pos.some(p=>pos.includes(p)))return["pos","feil posisjon"];const bad=st.pos.filter(p=>np.includes(p));if(bad.length)return["pos","har posisjonen "+bad[0]];
-if(r[5]!=null&&st.pos.length>r[5])return["pos",`${st.pos.length} posisjoner (maks ${r[5]})`];if(r[8]&&!st.done.includes(r[8]))return["pre","krever forrige evo i kjeden"];
+if(r[5]!=null&&st.pos.length>r[5])return["pos",`${st.pos.length} posisjoner (maks ${r[5]})`];{const ab=bornBlock(r,st.born);if(ab)return ab}if(r[8]&&!st.done.includes(r[8]))return["pre","krever forrige evo i kjeden"];
 if(st.done.filter(k=>k===e[0]).length>=e[6])return["done","allerede tatt"];
 if(r[0]!=null&&st.ovr<r[0])return["ovr",`OVR ${st.ovr} (minst ${r[0]})`];if(r[1]!=null&&st.ovr>r[1])return["ovr",`OVR ${st.ovr} (maks ${r[1]})`];
 if(r[2]!=null){const pac=faceVal(st.a,"pace");if(pac!=null&&pac>r[2])return["pace",`PAC ${pac} (maks ${r[2]})`]}
@@ -169,7 +174,7 @@ function runPlan(d,plan){const rt=rater(d);let st=stateOf(d),det=rt(st);const st
 for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(e,st,path),nd=rt(nx);steps.push({e,path,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}
 if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
 /* ---------- data ---------- */
-const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
+const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
 h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
@@ -198,7 +203,7 @@ const SRCNAME=u=>/fut\.gg/.test(u)?"FUT.GG":/futnext/.test(u)?"futnext":/futbin/
 function reqText(e){const r=e[7],out=[];
 if(r[6].length)out.push(r[6].join(", "));if(r[1]!=null)out.push(r[0]!=null&&r[0]===r[1]?`OVR ${r[1]}`:`maks ${r[1]} OVR`);else if(r[0]!=null)out.push(`minst ${r[0]} OVR`);
 if(r[2]!=null)out.push(`maks ${r[2]} PAC`);if(r[3]!=null)out.push(`maks ${r[3]} PlayStyles`);if(r[4]!=null)out.push(r[4]===0?"ingen PlayStyle+":`maks ${r[4]} PlayStyle+`);
-if(r[5]!=null)out.push(`maks ${r[5]} posisjoner`);if(r[7].length)out.push("ikke "+r[7].join(", "));
+if(r[5]!=null)out.push(`maks ${r[5]} posisjoner`);if(r[7].length)out.push("ikke "+r[7].join(", "));if(r[9]||r[10])out.push(bornText(r));
 if(r[8]){const pre=EV.find(x=>x[0]===r[8]);out.push("etter "+(pre?pre[1]:r[8]))}return out.join(", ")||"alle"}
 
 /* ---------- what the table shows for the chosen view ---------- */
@@ -252,7 +257,7 @@ for(const d of D)d._obj=0,d._orig={h0:{...d.h[0]},hs:d.h.map(x=>({...x})),lv:{..
 function catVals(d,a,det){if(!d.cats)return null;return CATS.map(c=>{if(c.src==="feel")return det.feel;if(c.src==="run")return d.runcard?det.run:null;
 if(c.src==="run_decision")return d.runcard?det.vil:null;if(c.src==="run_execution")return d.runcard?det.eff:null;if(c.src==="stop")return det.stp;
 const pr=c.w.filter(([i])=>a[i]!=null);const tot=psum(pr.map(x=>x[1]));if(!pr.length||tot<0.5*c.wall)return null;return pyRound(psum(pr.map(([i,w])=>a[i]*w))/tot,1)})}
-function canEnterEver(d,e){const r=e[7],pos=d.positions;if(r[6].length&&!pos.some(p=>r[6].includes(p)))return false;if(pos.some(p=>r[7].includes(p)))return false;if(r[5]!=null&&pos.length>r[5])return false;return true}
+function canEnterEver(d,e){const r=e[7],pos=d.positions;if(r[6].length&&!pos.some(p=>r[6].includes(p)))return false;if(pos.some(p=>r[7].includes(p)))return false;if(r[5]!=null&&pos.length>r[5])return false;if(bornBlock(r,d.born))return false;return true}
 /* ---------- the plan search: the same as evolab.search_ends and plan_live in Python ---------- */
 const PACEI=new Set((RU.face.pace||[]).map(x=>x[0])),LIMI={ovr:1,pace:2,ps:3,psp:4};
 const stKey=st=>st.a.join(",")+"|"+st.ovr+"|"+st.ps.slice().sort().join(",")+"|"+st.psp.slice().sort().join(",")+"|"+st.wf+"|"+st.sm+"|"+st.role;

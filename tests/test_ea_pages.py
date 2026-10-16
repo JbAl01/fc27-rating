@@ -82,11 +82,13 @@ class ClubInfoTests(unittest.TestCase):
         base = map_item({"id": 238235, "firstName": "Hugo", "lastName": "Vetlesen", "overallRating": 71,
                          "position": {"shortLabel": "CDM"}, "leagueName": "1A Pro League",
                          "team": {"id": 231, "label": "Club Brugge"}, "nationality": {"id": 36, "label": "Norway"},
-                         "stats": {"acceleration": {"value": 87}}})
+                         "birthdate": "6/4/2000", "stats": {"acceleration": {"value": 87}}})
         self.assertEqual((base.club, base.league, base.nation), ("Club Brugge", "1A Pro League", "Norway"))
+        self.assertEqual(base.birthdate, "2000-06-04")
         self.assertEqual(Player.from_dict(base.to_dict()).league, "1A Pro League")
         special = Player(name="Hugo Vetlesen", position="CDM", attributes={}, id="9", base_id="238235", rarity="TOTW")
         icon = Player(name="Legend", position="ST", attributes={}, rarity="Icon")
         _fill_club_info([base, special, icon])
         self.assertEqual((special.league, special.nation), ("1A Pro League", "Norway"))
+        self.assertEqual(special.birthdate, "2000-06-04")
         self.assertEqual(icon.league, "Icons")

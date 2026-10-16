@@ -40,7 +40,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 
 from . import accelerate as acc_mod
 from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
-from .schema import ATTRIBUTE_LABELS, Player, position_group
+from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE_VERSION = 14
@@ -123,6 +123,7 @@ def parse_evo(d: dict) -> dict:
             "positions": [str(x).upper() for x in req.get("positions") or []],
             "not_positions": [str(x).upper() for x in req.get("not_positions") or []],
             "requires_evo": req.get("requires_evo"),
+            "born_from": parse_birthdate(req.get("born_from")), "born_to": parse_birthdate(req.get("born_to")),
         },
         "up": dict(_upgrade(up), paths=paths, rarity_after=up.get("rarity_after")),
     }
@@ -215,6 +216,9 @@ def check_evo(d: dict, min_sources: int = 0, playstyles: Optional[set] = None) -
                 out.append(f"req.{k}: ukjent posisjon {p!r}")
     if req.get("min_ovr") is not None and req.get("max_ovr") is not None and req["min_ovr"] > req["max_ovr"]:
         out.append("req.min_ovr er større enn req.max_ovr")
+    for k in ("born_from", "born_to"):
+        if req.get(k) is not None and (not isinstance(req[k], str) or parse_birthdate(req[k]) != req[k]):
+            out.append(f"req.{k} må være en dato som 2003-10-09, er {req[k]!r}")
 
     def pair(label, v, hi):
         if v is None:
@@ -288,7 +292,7 @@ def active_live(lab: dict, today: Optional[date] = None, user_file: Optional[Pat
 # ---------------------------------------------------------------- card state
 
 class State:
-    __slots__ = ("attrs", "ovr", "ps", "psp", "wf", "sm", "roles", "positions", "done", "rarity", "ps_unknown")
+    __slots__ = ("attrs", "ovr", "ps", "psp", "wf", "sm", "roles", "positions", "done", "rarity", "ps_unknown", "born")
 
     def copy(self) -> "State":
         s = State.__new__(State)
@@ -297,6 +301,7 @@ class State:
         s.wf, s.sm = self.wf, self.sm
         s.roles = {k: dict(v) for k, v in self.roles.items()}
         s.positions, s.done, s.rarity, s.ps_unknown = self.positions, list(self.done), self.rarity, self.ps_unknown
+        s.born = self.born
         return s
 
     def key(self) -> tuple:
@@ -315,6 +320,7 @@ def state_from(p: Player) -> State:
     s.positions = tuple(x.upper() for x in [p.position] + list(p.alt_positions))
     s.done, s.rarity = [], p.rarity or ""
     s.ps_unknown = not (p.playstyles or p.playstyles_plus or p.playstyles_complete)
+    s.born = p.birthdate or None
     return s
 
 
@@ -330,6 +336,39 @@ def ps_count(st: State, rules: dict) -> int:
     return max(n, int(rules.get("assume_ps_count_unknown", 5))) if st.ps_unknown and n == 0 else n
 
 
+def norsk_dato(iso: str) -> str:
+    y, m, d = iso.split("-")
+    return f"{int(d)}. {MONTHS[int(m) - 1]} {y}"
+
+
+MONTHS = ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober",
+          "november", "desember"]
+
+
+def birth_text(r: dict) -> str:
+    """The age requirement in Norwegian, e.g. 'født 9. oktober 2003 eller senere'."""
+    a, b = r.get("born_from"), r.get("born_to")
+    if a and b:
+        return f"født mellom {norsk_dato(a)} og {norsk_dato(b)}"
+    if a:
+        return f"født {norsk_dato(a)} eller senere"
+    if b:
+        return f"født {norsk_dato(b)} eller tidligere"
+    return ""
+
+
+def birth_block(r: dict, born: Optional[str]) -> Optional[Tuple[str, str]]:
+    """('age', reason) when the card is outside the evo's age requirement. ('age?', ...) when the
+    date of birth is unknown (the evo is then shown as «sjekk selv»). None when it fits."""
+    if not (r.get("born_from") or r.get("born_to")):
+        return None
+    if not born:
+        return "age?", f"spilleren må være {birth_text(r)} (fødselsdato mangler)"
+    if (r.get("born_from") and born < r["born_from"]) or (r.get("born_to") and born > r["born_to"]):
+        return "age", f"født {norsk_dato(born)}, evoen krever {birth_text(r)}"
+    return None
+
+
 def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
     """None if the card can enter the evo now, else (category, Norwegian reason)."""
     r = evo["req"]
@@ -340,6 +379,9 @@ def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
         return "pos", f"har posisjonen {bad[0]}"
     if r["max_positions"] is not None and len(st.positions) > r["max_positions"]:
         return "pos", f"{len(st.positions)} posisjoner (maks {r['max_positions']})"
+    age = birth_block(r, st.born)
+    if age:
+        return age
     if r["requires_evo"] and r["requires_evo"] not in st.done:
         return "pre", "krever forrige evo i kjeden"
     if st.done.count(evo["key"]) >= evo["repeat"]:
@@ -905,7 +947,10 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         if r["positions"] and not any(x in r["positions"] for x in st0.positions):
             continue
         why = check(e, st0, rules)
-        if why and why[0] in ("pos",):
+        if why and why[0] in ("pos", "age"):
+            continue
+        if why and why[0] == "age?":
+            unchecked.append([e["name"], why[1]])
             continue
         if e["unchecked"] and not rules.get("include_unchecked", False):
             if why is None or why[0] in ("pre",):
@@ -1267,7 +1312,7 @@ def _fingerprint(obj) -> str:
 def card_fingerprint(p: Player) -> str:
     return _fingerprint([p.name, p.rarity, p.ovr, p.position, p.alt_positions, p.attributes, p.playstyles, p.playstyles_plus,
                          p.playstyles_complete, p.weak_foot, p.skill_moves, p.roles, p.height_cm, p.gender, p.body_type,
-                         p.status, p.accelerate_source, p.off_balance_dribbling, p.work_rate_att])
+                         p.status, p.accelerate_source, p.off_balance_dribbling, p.work_rate_att, p.birthdate])
 
 
 def config_fingerprint(cfg: dict, lab: dict, live: List[dict]) -> str:

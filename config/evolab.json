@@ -230,8 +230,8 @@
       "name": "Future Stars Academy I",
       "cost": "gratis",
       "until": "2026-10-26T18:00Z",
-      "unchecked": "spilleren må være født 9. oktober 2003 eller senere",
       "req": {
+        "born_from": "2003-10-09",
         "max_ovr": 80,
         "max_pace": 86,
         "max_ps": 7,

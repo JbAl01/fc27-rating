@@ -177,6 +177,31 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(plan["chk"], [["Y", "født etter 2003"]])
         self.assertEqual(plan["steps"], [])
 
+    def test_age_requirement_uses_birthdate(self):
+        req = {"max_ovr": 80, "positions": ["ST"], "born_from": "2003-10-09"}
+        y = evo("Y", req, {"ovr": [3, 80], "stats": {"finishing": [8, 90]}})
+        young = low_striker(ovr=76)
+        young.birthdate = "2005-02-01"
+        plan = self.plan(young, [y])
+        self.assertEqual([s["key"] for s in plan["steps"]], ["Y"])
+        old = low_striker(ovr=76)
+        old.birthdate = "2001-05-05"
+        plan = self.plan(old, [y])
+        self.assertEqual(plan["steps"], [])
+        self.assertEqual(plan["chk"], [])
+        why = evolab.check(y, evolab.state_from(old), RULES)
+        self.assertEqual(why[0], "age")
+        self.assertIn("9. oktober 2003", why[1])
+        unknown = low_striker(ovr=76)          # no date of birth: «sjekk selv», not in the plan
+        plan = self.plan(unknown, [y])
+        self.assertEqual(plan["steps"], [])
+        self.assertEqual(plan["chk"][0][0], "Y")
+        self.assertIn("fødselsdato mangler", plan["chk"][0][1])
+        # the next evo in the chain follows
+        y2 = evo("Y2", {"min_ovr": 79, "requires_evo": "Y"}, {"ovr": [1, 81]})
+        plan = self.plan(unknown, [y, y2])
+        self.assertEqual([c[0] for c in plan["chk"]], ["Y", "Y2"])
+
     def test_pathway_choice(self):
         p = low_striker(ovr=74, ps=())
         e = evo("P", {"max_ovr": 79}, {"paths": [{"label": "Jockey", "ps": ["Jockey"]}, {"label": "Finesse Shot", "ps": ["Finesse Shot"]}]})
@@ -414,7 +439,7 @@ class PageMathTests(unittest.TestCase):
         self.assertIn("ST", meta["rate"]["G"])
         self.assertTrue(meta["evos"])
         for r in rows:
-            self.assertEqual(len(r), 37)
+            self.assertEqual(len(r), 38)
             for ei, pi in r[19][0][0]:  # the plan points at live evos and their pathways
                 self.assertLess(ei, len(meta["evos"]))
                 self.assertLess(pi, max(1, len(meta["evos"][ei][8][8])))
@@ -452,6 +477,7 @@ class AutoEvoFileTests(unittest.TestCase):
             (self.evo(up={"ps": ["Rapidd"]}), "ukjent PlayStyle"),
             (self.evo(req={"positions": ["XX"]}), "posisjon"),
             (self.evo(req={"min_ovr": 82, "max_ovr": 80}), "min_ovr"),
+            (self.evo(req={"born_from": "9. okt 2003"}), "born_from"),
             (self.evo(up={"paths": [{"ovr": [1, 83]}]}), "label"),
             ({"name": "X"}, "key"),
         ]

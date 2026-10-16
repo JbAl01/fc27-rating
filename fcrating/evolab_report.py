@@ -132,7 +132,7 @@ def evos_meta(live: List[dict]):
             e["key"], e["name"], e.get("cost") or "", e.get("until") or "", 1 if e.get("premium") else 0, e.get("unchecked") or "",
             e.get("repeat", 1),
             [r["min_ovr"], r["max_ovr"], r["max_pace"], r["max_ps"], r["max_psp"], r["max_positions"], r["positions"],
-             r["not_positions"], r["requires_evo"] or ""],
+             r["not_positions"], r["requires_evo"] or "", r.get("born_from") or "", r.get("born_to") or ""],
             upg(u) + [[[pa["label"]] + upg(pa) for pa in u["paths"]]],
             e.get("note") or "", e.get("sources") or [],
         ])
@@ -239,6 +239,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         [st.get("now"), st.get("live"), st.get("end")] if st else 0,
         intern(r.get("league") or ""),
         intern(r.get("nation") or ""),
+        p.birthdate or "",
     ]
 
 
