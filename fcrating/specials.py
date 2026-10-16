@@ -218,7 +218,8 @@ def scan_promo(fetcher, fr_cache: fr.FifaRostersCache, value: str, max_pages: Op
 
 def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, detail_limit: Optional[int] = None,
               leaks: bool = True, fifarosters: bool = True, log=print,
-              extra_promos: Optional[List[str]] = None) -> Tuple[fr.FifaRostersCache, rs.LeakCache]:
+              extra_promos: Optional[List[str]] = None,
+              height_known: Optional[set] = None) -> Tuple[fr.FifaRostersCache, rs.LeakCache]:
     sc = cfg_sources["specials"]
     fetcher = PoliteFetcher(user_agent=sc.get("user_agent") or "fc27-rating/0.2 (personlig bruk)",
                             delay_seconds=float(sc.get("delay_seconds", 2.0)), log=log)
@@ -248,6 +249,15 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
             n = fr.fetch_details(fetcher, fr_cache, specials, limit, log)
             missing = sum(1 for fid in specials if fid not in fr_cache.details)
             log(f"FIFA Rosters: {len(specials)} spesialkort, hentet {n} nye kortsider, {missing} gjenstår")
+            if height_known is not None:
+                # EA's FC 27 pages have no height. Base cards whose EA card lacks it (often new players)
+                # get the FIFA Rosters card page, which has height and the real attributes. Best cards first.
+                need = [fid for fid, e in unique_entries(fr_cache) if fr.is_base_version(e["version"])
+                        and str(e.get("player_id")) not in height_known and fid not in fr_cache.details]
+                need.sort(key=lambda fid: fr_cache.entries[fid]["ovr"], reverse=True)
+                hl = int(frc.get("height_limit_per_run", 150))
+                n2 = fr.fetch_details(fetcher, fr_cache, need, hl, log)
+                log(f"FIFA Rosters: hentet {n2} kortsider for basekort uten høyde, {max(0, len(need) - n2)} gjenstår")
         except Blocked as exc:
             log(f"FIFA Rosters stoppet: {exc}")
         finally:

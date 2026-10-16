@@ -947,8 +947,11 @@ def _specials(cfg_src: dict, full=None, detail_limit=None, leaks=True, fifaroste
         fr_cache = fr.FifaRostersCache(str(Path(cache_dir) / "fifarosters")) if fifarosters else None
         leak_cache = rs.LeakCache(str(Path(cache_dir) / "realsport101")) if leaks else None
     else:
+        base_path0 = Path(base_file) if base_file else ROOT / "data" / "ea_players.json"
+        known = {str(p.id) for p in local_src.load_any(str(base_path0)) if p.height_cm} if base_path0.exists() else set()
         fr_cache, leak_cache = specials.run_fetch(cfg_src, cache_dir, full=full, detail_limit=detail_limit,
-                                                  leaks=leaks, fifarosters=fifarosters, extra_promos=promos)
+                                                  leaks=leaks, fifarosters=fifarosters, extra_promos=promos,
+                                                  height_known=known)
         fr_cache = fr_cache if fifarosters else None
         leak_cache = leak_cache if leaks else None
     base_path = Path(base_file) if base_file else ROOT / "data" / "ea_players.json"
