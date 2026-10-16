@@ -520,12 +520,12 @@ function detCards(d,h0){const live=buildLive(d),b=d.base;
 return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,cardStats(d,b))}</figure><span class="arr" aria-hidden="true"></span><figure class="aft">${afterCard(d,h0.ovr,live)}</figure></div>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
-return`<div class="det"><div class="dethead">${detCards(d,h0)}<div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
+return`<div class="det"><div class="dethead"><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div><div class="top">${detCards(d,h0)}<div class="kvbox">${beforeAfter(d,extrasHtml(d))}</div></div></div>
 
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
 <div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern":"Sammenlign"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk":"Prøv selv"}</button></div>
 <div class="cols"><section>${planHtml(d)}</section>
-<section><details class="why"><summary>Flere tall</summary>${beforeAfter(d,extrasHtml(d))}</details>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
+<section>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
 function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
