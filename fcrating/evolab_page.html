@@ -234,11 +234,11 @@ let PINS=[];try{PINS=JSON.parse(localStorage.getItem("fc27-evolab-pins")||"[]")}
 const save=()=>{try{localStorage.setItem("fc27-evolab3",JSON.stringify(F));localStorage.setItem("fc27-evolab-pins",JSON.stringify(PINS))}catch(e){}};
 
 const SORT={rel:d=>1-hv(d).rank/hv(d).of,p50:d=>hv(d).p50,gain:d=>hv(d).p50-d.now,feel:feelAt,
-run:d=>{const r=runAt(d);return r?r[0]:null},stop:d=>{const s=stopAt(d);return s?s[0]:null},now:d=>d.now,ovr:d=>d.ovr,name:d=>d.name,
+run:d=>{const r=runAt(d);return r?r[0]:null},stop:d=>{const s=stopAt(d);return s?s[0]:null},def:d=>DEFW[d.c.g]?defOf(liveRun(d).st.a,d.c.g):null,now:d=>d.now,ovr:d=>d.ovr,name:d=>d.name,
 twin:twinSim,soon:d=>{const t=soonest(d);return t==null?null:-t}};
 CATS.forEach((c,i)=>{SORT["c_"+c.k]=d=>{const cs=catsAt(d);return cs?cs[i]:null}});
 function sortOptions(){const o=[["rel","Plass etter evo"],["p50","IGR etter evo"],["gain","Mest økning"],["feel","Følelse etter evo"],
-["run","Løp uten ball etter evo"],["stop","Vanskelig å stoppe etter evo"]];
+["run","Løp uten ball etter evo"],["stop","Vanskelig å stoppe etter evo"],["def","Forsvar med evoene nå (CB, back, CDM)"]];
 for(const c of CATS)if(!["feel","run","stopp"].includes(c.k))o.push(["c_"+c.k,(FRONTL[c.l]||c.l)+" etter evo"]);
 o.push(["soon","Evoen stenger snart"],["now","IGR i dag"],["ovr","OVR i dag"]);if(TWIN)o.unshift(["twin","Likhet med "+TWIN[0]]);return o}
 let dir=-1;
