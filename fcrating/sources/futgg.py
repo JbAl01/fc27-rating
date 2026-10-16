@@ -114,6 +114,12 @@ def face_image(html: str, card: Optional[str], game: str = "27") -> Optional[str
     return re.sub(r"width=\d+", "width=200", m.group(0)) if m else None
 
 
+def league_image(html: str) -> Optional[str]:
+    """The card's league badge (the first league picture of this year's folder on the page)."""
+    m = re.search(r'https://game-assets\.fut\.gg/cdn-cgi/image/[^"\'\s\\<>]*?/20\d\d/league/\d+\.[0-9a-f]{16,}\.png', html)
+    return m.group(0) if m else None
+
+
 def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> Optional[dict]:
     """The card's own PlayStyles: the first unbroken run of large icons, and its roles. None if the page has
     neither (layout changed, or not a card page) so nothing wrong is saved."""
@@ -135,7 +141,7 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
         return None
     h = _HEIGHT.search(html)
     rec = {"ps": [x for x in ps if x not in psp], "psp": psp,
-           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game),
+           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html),
            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
     if not started:
         rec["no_ps"] = True   # the icons were not found: keep the card's own PlayStyles
@@ -158,7 +164,7 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
             break
         old = cache.cards.get(card)
         # special cards fetched before the card picture was read are fetched once more
-        again = bool(old) and "face" not in old and not old.get("missing") and old.get("kind") != "base" and kind != "base"
+        again = bool(old) and "lg" not in old and not old.get("missing") and old.get("kind") != "base" and kind != "base"
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -226,6 +232,8 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
         rec = cards.get(str(p.id)) if p.id else None
         if not rec or rec.get("missing"):
             continue
+        if rec.get("lg") and str(rec["lg"]).startswith(CARD_IMAGE_HOSTS):
+            p.league_image = rec["lg"]
         if rec.get("kind") == "base":
             roles = roles_from(rec, role_positions or {}, p.position)
             if roles:

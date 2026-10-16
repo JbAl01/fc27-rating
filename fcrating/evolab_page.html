@@ -184,6 +184,7 @@ med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],o
 nowx:{acc:r[21][0],feel:r[21][1],pace:r[21][2]},runs:{now:r[22][0],live:r[22][1],end:r[22][2]},cats:r[23]||null,pse:r[24],base:r[25],
 c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14]},
 ps:r[27].map(S),psp:r[28].map(S),wf:r[29],sm:r[30],off:r[31],runcard:r[32],lv:{feel:r[33][0],acc:r[33][1],pace:r[33][2]},stops:r[34]?{now:r[34][0]||[],live:r[34][1]||[],end:r[34][2]||[]}:null}));
+const LGI={};D.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});D.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 /* ---------- time and evo helpers ---------- */
 const DAY=86400000;
 const untilMs=u=>u?Date.parse(u.length===10?u+"T17:00:00Z":u):null;
