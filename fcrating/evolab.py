@@ -787,12 +787,14 @@ def _plan_orders(cands: List[dict]) -> List[List[dict]]:
 
 
 def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 20000,
-                best_path=None) -> Dict[tuple, Tuple[State, list]]:
+                best_path=None, key=None) -> Dict[tuple, Tuple[State, list]]:
     """Every combination of the live evos the card can take: for each evo in turn, take it (every pathway
     option) or skip it. Skipping matters: an evo that lifts OVR can shut the card out of a better one later.
     A skipped evo that the card can still enter at the end is taken then (skipping it gains nothing), so only
     end states where no evo is left are kept. Same card states are merged.
-    Returns {state key: (end state, steps)}."""
+    Returns {state key: (end state, steps)}. key(state) decides which states count as the same (by default
+    State.key; plan_live passes one that only looks at what the rating uses)."""
+    skey = key or (lambda x: x.key())
     ends: Dict[tuple, Tuple[State, list]] = {}
     nodes = 0
 
@@ -805,7 +807,7 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
                     continue
                 path = best_path(e, st) if (best_path and e["up"]["paths"]) else (e["up"]["paths"] or [None])[0]
                 nxt = apply(e, st, rules, path)
-                if nxt.key() == st.key():
+                if skey(nxt) == skey(st):
                     continue
                 chain = chain + [(e, path, st, nxt)]
                 st, moved = nxt, True
@@ -865,7 +867,7 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
                 nodes += 1
             if i == n:
                 st2, chain2 = finish(st, chain, skipped)
-                k2 = st2.key() if chain2 is not chain else sk
+                k2 = skey(st2) if chain2 is not chain else sk
                 old = ends.get(k2)
                 if old is None or len(chain2) < len(old[1]):
                     ends[k2] = (st2, chain2)
@@ -875,7 +877,7 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
                 nexts = []
                 for path in (e["up"]["paths"] or [None]):
                     nxt = apply(e, st, rules, path)
-                    nk = nxt.key()
+                    nk = skey(nxt)
                     if nk != sk:
                         nexts.append((path, nxt, nk))
                 if nexts:
@@ -889,9 +891,9 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
             else:
                 rec(i + 1, st, sk, done, chain, skipped)
 
-        rec(0, st0, st0.key(), tuple(sorted(st0.done)), [], ())
+        rec(0, st0, skey(st0), tuple(sorted(st0.done)), [], ())
     if not ends:
-        ends[st0.key()] = (st0, [])
+        ends[skey(st0)] = (st0, [])
     return ends
 
 
@@ -921,7 +923,12 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
             cands.remove(e)
             if any(u[0] == names.get(pre) for u in unchecked):
                 unchecked.append([e["name"], f"etter {names.get(pre, pre)}"])
-    ends = search_ends(st0, cands, rules, max_nodes, best_path=lambda e, st: _best_path(e, st, ev.g, ev.cfg))
+    role_pos = ev.fast.role_pos
+
+    def rating_key(st: State) -> tuple:  # the same card for the rating: other positions' roles do not count
+        lv = max((v for pos in role_pos for v in (st.roles.get(pos) or {}).values()), default=-1)
+        return (tuple(st.attrs.values()), st.ovr, tuple(sorted(st.ps)), tuple(sorted(st.psp)), st.wf, st.sm, lv)
+    ends = search_ends(st0, cands, rules, max_nodes, best_path=lambda e, st: _best_path(e, st, ev.g, ev.cfg), key=rating_key)
     primary = (p.position or "").upper()
     # the best end state for IGR, and also for Løps-AI and for feel (often the same plan)
     scored = []
