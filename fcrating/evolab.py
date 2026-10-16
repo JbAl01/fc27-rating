@@ -43,7 +43,7 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 13
+CACHE_VERSION = 14
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -910,6 +910,12 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         if e["unchecked"] and not rules.get("include_unchecked", False):
             if why is None or why[0] in ("pre",):
                 unchecked.append([e["name"], e["unchecked"]])
+            continue
+        if why is None and r["max_ps"] is not None and getattr(p, "ps_from_base", False) \
+                and ps_count(st0, rules) + 1 > r["max_ps"]:
+            # promo cards often get a PlayStyle more than the base card, and we only know the base card's
+            n = ps_count(st0, rules)
+            unchecked.append([e["name"], f"maks {r['max_ps']} PlayStyles. Basekortet har {n}, og spesialkortet kan ha flere"])
             continue
         if why is None or why[0] in ("pre",) or (why[0] == "ovr" and r["min_ovr"] is not None and st0.ovr < r["min_ovr"]):
             cands.append(e)

@@ -181,6 +181,7 @@ def build_special(base: Optional[Player], *, name: str, version: str, ovr: Optio
     p.status = status
     p.id = str(card_id) if card_id else None
     p.base_id = base.id if base else None
+    p.ps_from_base = bool(special and base)
     p.url = url
     p.source = source
     p.price = None

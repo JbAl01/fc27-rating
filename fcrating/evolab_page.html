@@ -285,7 +285,7 @@ else rec(i+1,st,sk,done,chain,skipped)}else rec(i+1,st,sk,done,chain,skipped)};
 rec(0,st0,stKey(st0),"",[],[])}
 if(!ends.size)ends.set(stKey(st0),[st0,[]]);return ends}
 /* the best plan for each goal: IGR, løp uten ball, følelse and vanskelig å stoppe (plans 0-3) */
-function searchPlans(d){const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&canEnterEver(d,EV[i]));
+function searchPlans(d){const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
 const rt=rater(d),rpp=d._orig.plans[0][1],scored=[];
 for(const[st,chain]of searchEnds(d,C).values()){const fin=rpp&&!d.c.primPP?rolesPP(st):st;scored.push({det:rt(fin),chain,len:chain.length,prem:chain.reduce((n,[ei])=>n+(EV[ei][4]?1:0),0)})}
 const val=(t,m)=>t.det[m]!=null?t.det[m]:-1;

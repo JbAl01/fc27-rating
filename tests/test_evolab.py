@@ -508,6 +508,16 @@ class PlanSearchTests(unittest.TestCase):
         self.assertIn("strong", keys)
         self.assertNotIn("blocker", keys)     # taking it first would shut out "strong" and "weak_lift"
 
+    def test_special_card_with_base_playstyles_is_not_planned_at_the_ps_limit(self):
+        p = low_striker(ovr=74)
+        p.playstyles = ["Rapid", "Finesse Shot"]
+        tech = evo("tech", {"max_ps": 2}, {"ps": ["Technical"]})
+        self.assertIn("tech", [s["key"] for s in self.plan(p, [tech])["steps"]])
+        p.ps_from_base = True   # promo card: may have one PlayStyle more than the base card
+        pl = self.plan(p, [tech])
+        self.assertNotIn("tech", [s["key"] for s in pl["steps"]])
+        self.assertTrue(any("PlayStyles" in c[1] for c in pl["chk"]))
+
     def test_search_never_worse_than_any_single_order(self):
         import itertools
         p = low_striker(ovr=72)

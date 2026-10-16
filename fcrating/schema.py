@@ -223,6 +223,9 @@ class Player:
     club: Optional[str] = None
     league: Optional[str] = None
     nation: Optional[str] = None
+    # True for special cards whose PlayStyles are copied from the base card (FIFA Rosters has none):
+    # promo cards can have more PlayStyles in the game than we know of.
+    ps_from_base: bool = False
 
     @property
     def uid(self) -> str:
@@ -324,6 +327,7 @@ class Player:
             club=data.get("club") or None,
             league=data.get("league") or None,
             nation=data.get("nation") or None,
+            ps_from_base=bool(data.get("ps_from_base", False)),
             work_rate_att=wr_att,
             work_rate_def=wr_def,
         )

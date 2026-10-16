@@ -24,7 +24,7 @@
       "_full_info": "Hele FC 27-listen (ca. 920 sider) gjennomgås én gang i uka. TOTW-listen sjekkes hver gang.",
       "max_pages": null,
       "detail_limit_per_run": 300,
-      "height_limit_per_run": 150,
+      "height_limit_per_run": 300,
       "_height_info": "EAs FC 27-sider oppgir ikke høyde. Basekort uten høyde (ofte nye spillere) får kortsiden fra FIFA Rosters, med høyde og ekte attributter, så mange per kjøring (høyest OVR først). Høyde trengs for AcceleRATE og følelse.",
       "_detail_info": "Hvor mange kortsider (med alle attributter) som hentes per kjøring. Kort uten kortside får estimerte attributter fra basekortet til siden er hentet.",
       "promo_list_urls": [
