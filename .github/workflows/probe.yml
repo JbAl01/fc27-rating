@@ -23,8 +23,12 @@ jobs:
             data/ea_players.meta.json
             data/spesialkort.json
             data/cache
+            data/evolab_cache.pkl
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
+      - run: |
+          curl -sL https://jbal01.github.io/fc27-rating/evolab.html -o /tmp/evolab_live.html || true
+          curl -sL https://jbal01.github.io/fc27-rating/ -o /tmp/index_live.html || true
       - run: PYTHONPATH=. python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
       - name: Lagre resultatet
         run: |
@@ -34,6 +38,7 @@ jobs:
           git rm -rfq . > /dev/null
           cp /tmp/probe_out.txt probe_out.txt
           cp /tmp/futgg_page.html futgg_page.html 2>/dev/null || true
-          git add probe_out.txt futgg_page.html 2>/dev/null || git add probe_out.txt
+          cp /tmp/evolab_live.html /tmp/index_live.html . 2>/dev/null || true
+          git add -A
           git commit -qm "probe output"
           git push -f origin probe-out
