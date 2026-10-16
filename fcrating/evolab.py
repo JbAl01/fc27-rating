@@ -828,15 +828,63 @@ def _plan_orders(cands: List[dict]) -> List[List[dict]]:
     return out
 
 
+def defense_cfg(rules: dict) -> dict:
+    return rules.get("defense") or {}
+
+
+def def_value(attrs: Dict[str, float], group: str, rules: dict) -> Optional[float]:
+    """Forsvar: weighted defensive attributes for CB, backs and CDM (the same as defOf on the page, unrounded).
+    None for other positions or when an attribute is missing."""
+    w = _clean((defense_cfg(rules).get("weights") or {}).get(group) or {})
+    if not w:
+        return None
+    tot = num = 0.0
+    for k, x in w.items():  # a plain loop in the file's order, like the page
+        if attrs.get(k) is None:
+            return None
+        num += attrs[k] * x
+        tot += x
+    return num / tot if tot else None
+
+
+def _attack_ps(u: dict, bad: set) -> bool:
+    return any(n in bad for n, _c in u.get("ps", [])) or any(n in bad for n, _c in u.get("psp", []))
+
+
+def _gives_more(u: dict, bad: set) -> bool:
+    """Does the upgrade give anything besides attacking PlayStyles?"""
+    return bool(u.get("ovr") or u.get("wf") or u.get("sm") or u.get("stats") or u.get("face") or u.get("roles")
+                or any(n not in bad for n, _c in u.get("ps", [])) or any(n not in bad for n, _c in u.get("psp", [])))
+
+
+def plan_paths(evo: dict, group: str, rules: dict) -> list:
+    """The pathway options the live plan may choose for a card in this position ([None] = no options).
+    CB, backs and CDM never choose an attacking PlayStyle such as Gamechanger: an option with one is dropped
+    when another option has none, and an evo that only gives attacking PlayStyles is not taken at all
+    (an empty list). If every option has one but also gives something else, the evo is still taken."""
+    paths = list(evo["up"]["paths"] or [None])
+    dc = defense_cfg(rules)
+    if group not in (dc.get("groups") or []):
+        return paths
+    bad = set(dc.get("attack_playstyles") or [])
+    up = evo["up"]
+    clean = [p for p in paths if not (p and _attack_ps(p, bad))]
+    if clean and not _attack_ps(up, bad):
+        return clean
+    return [p for p in (clean or paths) if _gives_more(up, bad) or (p is not None and _gives_more(p, bad))]
+
+
 def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 20000,
-                best_path=None, key=None) -> Dict[tuple, Tuple[State, list]]:
+                best_path=None, key=None, paths_of=None) -> Dict[tuple, Tuple[State, list]]:
     """Every combination of the live evos the card can take: for each evo in turn, take it (every pathway
     option) or skip it. Skipping matters: an evo that lifts OVR can shut the card out of a better one later.
     A skipped evo that the card can still enter at the end is taken then (skipping it gains nothing), so only
     end states where no evo is left are kept. Same card states are merged.
     Returns {state key: (end state, steps)}. key(state) decides which states count as the same (by default
-    State.key; plan_live passes one that only looks at what the rating uses)."""
+    State.key; plan_live passes one that only looks at what the rating uses). paths_of(evo) gives the
+    pathway options that may be chosen (plan_paths); an empty list means the evo is not taken."""
     skey = key or (lambda x: x.key())
+    paths_of = paths_of or (lambda e: list(e["up"]["paths"] or [None]))
     ends: Dict[tuple, Tuple[State, list]] = {}
     nodes = 0
 
@@ -845,9 +893,10 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
         while moved:
             moved = False
             for e in skipped:
-                if check(e, st, rules) is not None:
+                allowed = paths_of(e)
+                if not allowed or check(e, st, rules) is not None:
                     continue
-                path = best_path(e, st) if (best_path and e["up"]["paths"]) else (e["up"]["paths"] or [None])[0]
+                path = best_path(e, st, allowed) if (best_path and e["up"]["paths"]) else allowed[0]
                 nxt = apply(e, st, rules, path)
                 if skey(nxt) == skey(st):
                     continue
@@ -915,9 +964,10 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
                     ends[k2] = (st2, chain2)
                 return
             e = order[i]
-            if check(e, st, rules) is None:
+            allowed = paths_of(e)
+            if allowed and check(e, st, rules) is None:
                 nexts = []
-                for path in (e["up"]["paths"] or [None]):
+                for path in allowed:
                     nxt = apply(e, st, rules, path)
                     nk = skey(nxt)
                     if nk != sk:
@@ -979,7 +1029,9 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     def rating_key(st: State) -> tuple:  # the same card for the rating: other positions' roles do not count
         lv = max((v for pos in role_pos for v in (st.roles.get(pos) or {}).values()), default=-1)
         return (tuple(st.attrs.values()), st.ovr, tuple(sorted(st.ps)), tuple(sorted(st.psp)), st.wf, st.sm, lv)
-    ends = search_ends(st0, cands, rules, max_nodes, best_path=lambda e, st: _best_path(e, st, ev.g, ev.cfg), key=rating_key)
+    ends = search_ends(st0, cands, rules, max_nodes, key=rating_key,
+                       best_path=lambda e, st, allowed=None: _best_path(e, st, ev.g, ev.cfg, allowed),
+                       paths_of=lambda e: plan_paths(e, ev.g, rules))
     primary = (p.position or "").upper()
     # the best end state for IGR, and also for Løps-AI and for feel (often the same plan)
     scored = []
@@ -990,6 +1042,9 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         cost = (len(chain), sum(1 for c in chain if c[0]["premium"]))
         scored.append((d, fin, chain, cost, rpp, st))
 
+    for t in scored:  # Forsvar for CB, backs and CDM (the plan for «best forsvar»)
+        t[0]["def"] = def_value(t[1].attrs, ev.g, rules)
+
     def pick(metric):
         return max(scored, key=lambda t: ((t[0].get(metric) if t[0].get(metric) is not None else -1), t[0]["igr"],
                                           -t[3][0], -t[3][1]))
@@ -997,13 +1052,13 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     d_best, fin, chain, _, rpp, last = best
     v = d_best["igr"]
     alt = {}
-    for metric in ("run", "feel", "stp"):
+    for metric in ("run", "feel", "stp", "def"):
         o = pick(metric)
         seq = [[c[0]["key"], (c[1] or {}).get("label", "")] for c in o[2]]
         if seq != [[c[0]["key"], (c[1] or {}).get("label", "")] for c in chain] and o[0].get(metric) is not None \
                 and (d_best.get(metric) is None or o[0][metric] > d_best[metric] + 0.05):
             alt[metric] = {"seq": seq, "igr": o[0]["igr"], "run": o[0].get("run"), "feel": o[0].get("feel"),
-                           "stp": o[0].get("stp"), "roles": o[4]}
+                           "stp": o[0].get("stp"), "def": o[0].get("def"), "roles": o[4]}
     steps = []
     for e, path, a, b in chain:
         steps.append({"key": e["key"], "name": e["name"], "path": (path or {}).get("label", ""), "cost": e["cost"],
@@ -1013,6 +1068,9 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     skipped = []
     for e in cands:
         if e["key"] in used:
+            continue
+        if not plan_paths(e, ev.g, rules):
+            skipped.append([e["name"], "gir bare en angreps-PlayStyle, som ikke hjelper en forsvarer"])
             continue
         why = _first_block(e, last, rules)
         skipped.append([e["name"], f"blir stengt: {why}" if why else "gir ingenting for kortet"])
@@ -1036,7 +1094,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     return {"igr": round(v, 1), "ovr": fin.ovr, "steps": steps, "roles": rpp, "skip": skipped, "tips": tips[:3],
             "near": near[:4], "chk": unchecked, "acc": d_best["acc"], "feel": d_best["feel"], "run": d_best["run"],
             "vil": d_best.get("vil"), "eff": d_best.get("eff"), "pace": d_best.get("pace"), "alt": alt,
-            "stp": d_best.get("stp"), "stb": d_best.get("stb"), "stl": d_best.get("stl"),
+            "stp": d_best.get("stp"), "stb": d_best.get("stb"), "stl": d_best.get("stl"), "def": d_best.get("def"),
             "seq": [[c[0]["key"], (c[1] or {}).get("label", "")] for c in chain], "_state": fin}
 
 
@@ -1121,8 +1179,8 @@ def _ps_value(name: str, plus: bool, group: str, cfg: dict) -> float:
     return e["plus" if plus else "base"] * rel
 
 
-def _best_path(evo: dict, st: State, group: str, cfg: dict) -> Optional[dict]:
-    paths = evo["up"]["paths"]
+def _best_path(evo: dict, st: State, group: str, cfg: dict, allowed: Optional[list] = None) -> Optional[dict]:
+    paths = [p for p in (allowed if allowed is not None else evo["up"]["paths"]) if p]
     if not paths:
         return None
 
@@ -1206,8 +1264,11 @@ def simulate_universe(st0: State, waves: List[Tuple[List[dict], int]], ev: Evalu
             if why:
                 why_n[why] = why_n.get(why, 0) + 1
                 continue
+            allowed = plan_paths(e, ev.g, rules)
+            if not allowed:
+                continue
             applied += 1
-            _apply_inplace(e, st, rules, _best_path(e, st, ev.g, ev.cfg) if e["up"]["paths"] else None)
+            _apply_inplace(e, st, rules, _best_path(e, st, ev.g, ev.cfg, allowed) if e["up"]["paths"] else allowed[0])
         if rate_each:
             igrs.append(round(ev.igr(st), 2))
         ovrs.append(st.ovr)

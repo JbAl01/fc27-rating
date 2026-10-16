@@ -111,6 +111,9 @@ def rules_meta(lab: dict) -> dict:
     r = lab["rules"]
     return {"psCap": r.get("ps_cap", 8), "pspCap": r.get("ps_plus_cap", 3), "assume": r.get("assume_ps_count_unknown", 5),
             "rpp": bool(r.get("roles_plus_plus", True)), "rppCost": r.get("roles_plus_plus_cost", ""),
+            "dg": list((r.get("defense") or {}).get("groups") or []),
+            "atk": list((r.get("defense") or {}).get("attack_playstyles") or []),
+            "defw": {g: [[k, v] for k, v in _clean(w).items()] for g, w in _clean((r.get("defense") or {}).get("weights") or {}).items()},
             "face": {k: [[ATTR_INDEX[a], v] for a, v in _clean(wts).items()] for k, wts in _clean(r["face"]).items()}}
 
 
@@ -203,7 +206,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
     lv = s["live"]
     med = s.get("med") or {}
     plans = [[_seq(lv.get("seq", []), idx, live_by_key) or [], 1 if lv.get("roles") else 0]]
-    for metric in ("run", "feel", "stp"):
+    for metric in ("run", "feel", "stp", "def"):  # plans 1-4 on the page
         a = (lv.get("alt") or {}).get(metric)
         sq = _seq(a["seq"], idx, live_by_key) if a else None
         plans.append([sq, 1 if a.get("roles") else 0] if a and sq is not None else 0)

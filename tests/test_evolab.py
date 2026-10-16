@@ -590,3 +590,46 @@ class PlanSearchTests(unittest.TestCase):
         alt = pl["alt"]
         self.assertIn("run", alt)
         self.assertEqual([k for k, _ in alt["run"]["seq"]], ["run_evo"])
+
+class DefenderPlanTests(unittest.TestCase):
+    """CB, backs and CDM: a plan for best Forsvar, and never an attacking PlayStyle such as Gamechanger."""
+
+    def defender(self, pos="CB"):
+        p = card("Meza")
+        p.name, p.id, p.rarity, p.status, p.position, p.alt_positions, p.ovr = f"Test {pos}", "8800", "Rare", "", pos, [], 72
+        p.playstyles, p.playstyles_plus, p.playstyles_complete = [], [], True
+        return p
+
+    def plan(self, p, evos):
+        g = evolab.card_group(p)
+        return evolab.plan_live(p, evolab.state_from(p), evos, evolab.Evaluator(p, g, CFG, RULES), RULES)
+
+    def test_no_attacking_playstyle_for_a_centre_back(self):
+        p = self.defender()
+        choice = evo("choice", {"max_ovr": 80}, {"paths": [{"label": "Valg A: Gamechanger", "ps": [["Gamechanger", 4]]},
+                                                           {"label": "Valg B: Inventive", "ps": [["Inventive", 4]]}]})
+        only_gc = evo("only_gc", {"max_ovr": 80}, {"ps": ["Gamechanger"]})
+        pl = self.plan(p, [choice, only_gc])
+        self.assertEqual([[s["key"], s["path"]] for s in pl["steps"]], [["choice", "Valg B: Inventive"]])
+        self.assertIn(["only_gc", "gir bare en angreps-PlayStyle, som ikke hjelper en forsvarer"], pl["skip"])
+        st = pl["_state"]
+        self.assertNotIn("Gamechanger", st.ps + st.psp)
+        # a striker may still choose it
+        self.assertEqual(evolab.plan_paths(choice, "ST", RULES), choice["up"]["paths"])
+        self.assertEqual(evolab.plan_paths(only_gc, "CB", RULES), [])
+        self.assertEqual(evolab.plan_paths(only_gc, "ST", RULES), [None])
+
+    def test_forced_attacking_playstyle_is_kept_when_the_evo_gives_more(self):
+        both = evo("both", {"max_ovr": 80}, {"ps": ["Gamechanger"], "stats": {"standing_tackle": [8, 99]}})
+        self.assertEqual(evolab.plan_paths(both, "CB", RULES), [None])
+
+    def test_plan_for_best_defence(self):
+        p = self.defender()
+        pace_evo = evo("pace_evo", {"max_ovr": 72}, {"ovr": [3, 90], "stats": {
+            "acceleration": [25, 99], "sprint_speed": [25, 99], "short_passing": [20, 99], "composure": [20, 99]}})
+        def_evo = evo("def_evo", {"max_ovr": 72}, {"ovr": [1, 90], "stats": {"def_awareness": [4, 99], "interceptions": [4, 99]}})
+        pl = self.plan(p, [pace_evo, def_evo])   # both lift OVR past 72, so only one of them fits
+        self.assertEqual([s["key"] for s in pl["steps"]], ["pace_evo"])
+        self.assertEqual([k for k, _ in pl["alt"]["def"]["seq"]], ["def_evo"])
+        self.assertGreater(pl["alt"]["def"]["def"], pl["def"])
+        self.assertIsNone(evolab.def_value(p.attributes, "ST", RULES))

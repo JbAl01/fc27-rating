@@ -68,7 +68,7 @@ __CSS__
 <details><summary>Hva tallene betyr</summary>
 <p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen i dag, også spesialkort.</p>
 <p><b>Følelse</b>: hvor kvikk og lett kortet er å styre med ball. <b>Løp uten ball</b>: hvor smart og nyttig kortet løper når laget har ballen, delt i <b>smarte løp</b> (hvor og når det løper) og <b>får avstand</b> (om løpet faktisk gir rom). <b>Vanskelig å stoppe</b>: hvor vanskelig kortet er å stoppe, med ball og på løp.</p>
-<p><b>Med evoene som er ute nå</b> viser den beste kombinasjonen av evoene du kan ta i dag: alle kombinasjoner er prøvd, også å hoppe over en evo som ellers ville stengt kortet ute fra en bedre. Sorterer du etter løp uten ball, følelse eller vanskelig å stoppe, vises den beste kombinasjonen for det. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
+<p><b>Med evoene som er ute nå</b> viser den beste kombinasjonen av evoene du kan ta i dag: alle kombinasjoner er prøvd, også å hoppe over en evo som ellers ville stengt kortet ute fra en bedre. Sorterer du etter løp uten ball, følelse, vanskelig å stoppe eller forsvar, vises den beste kombinasjonen for det. For CB, back og CDM velger planen aldri angreps-PlayStyles som Gamechanger. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
 <p>Nye evoer legges inn hver kveld like etter at EA slipper dem kl. 19.</p>
 </details>
 <p id="footnote"></p>
@@ -86,11 +86,10 @@ const sg=(v,dg=1)=>v==null||Number.isNaN(v)?"":(v>=0?"+":"−")+Math.abs(v).toFi
 const pctT=p=>p==null?"–":(p<1?"topp <1 %":"topp "+Math.round(p)+" %");
 const S=i=>STR[i]??"";
 const AI={};META.akeys.forEach((k,i)=>AI[k]=i);
-/* Forsvar: weighted defensive attributes for CB/FB/CDM (shown in Før og etter) */
-const DEFW={CB:{def_awareness:.25,standing_tackle:.2,interceptions:.15,strength:.12,heading_accuracy:.08,sliding_tackle:.08,jumping:.07,reactions:.05},
-FB:{def_awareness:.22,standing_tackle:.2,interceptions:.15,acceleration:.1,sprint_speed:.1,reactions:.1,sliding_tackle:.08,strength:.05},
-CDM:{interceptions:.22,def_awareness:.2,standing_tackle:.2,strength:.12,reactions:.1,aggression:.06,sliding_tackle:.05,stamina:.05}};
-function defOf(a,g){const w=DEFW[g];if(!w||!a)return null;let s=0,t=0;for(const k in w){const v=a[AI[k]];if(v==null)return null;s+=v*w[k];t+=w[k]}return Math.round(s/t*10)/10}
+/* Forsvar: weighted defensive attributes for CB/FB/CDM (rules.defense in config/evolab.json, as evolab.def_value) */
+const DEFW={};for(const[g,l]of Object.entries((META.rules||{}).defw||{}))DEFW[g]=Object.fromEntries(l);
+function defRaw(a,g){const w=DEFW[g];if(!w||!a)return null;let s=0,t=0;for(const k in w){const v=a[AI[k]];if(v==null)return null;s+=v*w[k];t+=w[k]}return t?s/t:null}
+function defOf(a,g){const v=defRaw(a,g);return v==null?null:Math.round(v*10)/10}
 const CI={};CATS.forEach((c,i)=>CI[c.k]=i);
 /* ---------- the same maths as Python (evolab.FastRater, evolab.apply) ---------- */
 function psum(xs){if(!R.pysum){let s=0;for(const x of xs)s+=x;return s}let f=0,c=0;for(const x of xs){const t=f+x;if(Math.abs(f)>=Math.abs(x))c+=(f-t)+x;else c+=(x-t)+f;f=t}if(c&&isFinite(c))f+=c;return f}
@@ -268,8 +267,16 @@ function canEnterEver(d,e){const r=e[7],pos=d.positions;if(r[6].length&&!pos.som
 const PACEI=new Set((RU.face.pace||[]).map(x=>x[0])),LIMI={ovr:1,pace:2,ps:3,psp:4};
 const stKey=st=>st.a.join(",")+"|"+st.ovr+"|"+st.ps.slice().sort().join(",")+"|"+st.psp.slice().sort().join(",")+"|"+st.wf+"|"+st.sm+"|"+st.role;
 function psVal(n,plus,g){const e=R.ps[n];return e?(plus?e[1]:e[0])*(e[4][g]??0):0}
-function bestPathIdx(e,st){const paths=e[8][8];if(!paths.length)return -1;let bi=0,bv=-Infinity;
-paths.forEach((p,j)=>{let v=0;for(const[n]of p[6])if(!st.ps.includes(n)&&!st.psp.includes(n))v+=psVal(n,false,st.g);
+/* the options the plan may choose (evolab.plan_paths): CB, backs and CDM never choose an attacking PlayStyle such as
+   Gamechanger. [-1] = the evo has no options; [] = the evo is not taken. */
+function planPaths(e,g){const u=e[8],paths=u[8],all=paths.length?paths.map((p,j)=>j):[-1];
+if(!(RU.dg||[]).includes(g))return all;const bad=new Set(RU.atk||[]);
+const atk=x=>x[5].some(([n])=>bad.has(n))||x[6].some(([n])=>bad.has(n));
+const more=x=>!!(x[0]||x[1]||x[2]||x[3].length||x[4].length||x[7].length||x[5].some(([n])=>!bad.has(n))||x[6].some(([n])=>!bad.has(n)));
+const P=j=>paths[j].slice(1),clean=all.filter(j=>j<0||!atk(P(j)));
+if(clean.length&&!atk(u))return clean;return(clean.length?clean:all).filter(j=>more(u)||(j>=0&&more(P(j))))}
+function bestPathIdx(e,st,allowed){const paths=e[8][8];if(!paths.length)return -1;const ok=(allowed||paths.map((p,j)=>j)).filter(j=>j>=0);if(!ok.length)return -1;let bi=ok[0],bv=-Infinity;
+paths.forEach((p,j)=>{if(!ok.includes(j))return;let v=0;for(const[n]of p[6])if(!st.ps.includes(n)&&!st.psp.includes(n))v+=psVal(n,false,st.g);
 for(const[n]of p[7])if(!st.psp.includes(n))v+=psVal(n,true,st.g)-(st.ps.includes(n)?psVal(n,false,st.g):0);if(v>bv){bv=v;bi=j}});return bi}
 function planOrders(C){const lim=(ei,k)=>{const v=EV[ei][7][LIMI[k]];return v==null?99:v};
 const keys=[ei=>[lim(ei,"ovr"),lim(ei,"ps"),lim(ei,"pace")],ei=>[lim(ei,"ps"),lim(ei,"ovr"),lim(ei,"pace")],ei=>[lim(ei,"pace"),lim(ei,"ovr"),lim(ei,"ps")]];
@@ -280,8 +287,9 @@ const seq=order.flatMap(ei=>Array(Math.max(1,EV[ei][6]||1)).fill(ei)),sg=seq.joi
 function effectsOf(ei){const e=EV[ei],us=[e[8]].concat(e[8][8].map(p=>p.slice(1))),o=new Set();
 for(const u of us){if(u[0])o.add("ovr");if(u[3].some(([i])=>PACEI.has(i))||u[4].some(([w])=>w==="pace"))o.add("pace");if(u[5].length)o.add("ps");if(u[6].length){o.add("ps");o.add("psp")}}return o}
 function searchEnds(d,C,maxNodes=20000){const st0=stateOf(d),ends=new Map();let nodes=0;
-const finish=(st,chain,skipped)=>{let moved=skipped.length>0;while(moved){moved=false;for(const ei of skipped){const e=EV[ei];if(check(e,st))continue;
-const pi=e[8][8].length?bestPathIdx(e,st):-1,nx=apply(e,st,pi>=0?e[8][8][pi]:null);if(stKey(nx)===stKey(st))continue;chain=chain.concat([[ei,pi]]);st=nx;moved=true}}return[st,chain]};
+const PP=new Map(C.map(ei=>[ei,planPaths(EV[ei],st0.g)]));
+const finish=(st,chain,skipped)=>{let moved=skipped.length>0;while(moved){moved=false;for(const ei of skipped){const e=EV[ei],al=PP.get(ei);if(!al.length||check(e,st))continue;
+const pi=e[8][8].length?bestPathIdx(e,st,al):al[0],nx=apply(e,st,pi>=0?e[8][8][pi]:null);if(stKey(nx)===stKey(st))continue;chain=chain.concat([[ei,pi]]);st=nx;moved=true}}return[st,chain]};
 const LIM=new Set(["ovr","pace","ps","psp"]),orders=planOrders(C);
 /* two passes, as in Python: a quick one that skips an evo only when it would shut the card out of a later evo
    right away, then a wide one that may skip any evo that can lift OVR, pace or PlayStyles (with a node budget) */
@@ -292,26 +300,27 @@ if(now&&now[0]!=="pre"&&now[0]!=="done"&&!(now[0]==="ovr"&&ej[7][0]!=null&&st.ov
 for(const nx of nexts){const why=check(ej,nx);if(why&&LIM.has(why[0]))return true}}return false};
 const rec=(i,st,sk,done,chain,skipped)=>{const k=i+"#"+sk+"#"+done;if(seen.has(k)||(!strict&&nodes>=maxNodes)||(strict&&seen.size>=4*maxNodes))return;seen.add(k);if(!strict)nodes++;
 if(i===n){const[s2,c2]=finish(st,chain,skipped),kk=c2!==chain?stKey(s2):sk,old=ends.get(kk);if(!old||c2.length<old[1].length)ends.set(kk,[s2,c2]);return}
-const ei=order[i],e=EV[ei];if(!check(e,st)){const nexts=[];
-for(const pi of(e[8][8].length?e[8][8].map((p,j)=>j):[-1])){const nx=apply(e,st,pi>=0?e[8][8][pi]:null),nk=stKey(nx);if(nk!==sk)nexts.push([pi,nx,nk])}
+const ei=order[i],e=EV[ei],al=PP.get(ei);if(al.length&&!check(e,st)){const nexts=[];
+for(const pi of al){const nx=apply(e,st,pi>=0?e[8][8][pi]:null),nk=stKey(nx);if(nk!==sk)nexts.push([pi,nx,nk])}
 if(nexts.length){const d2=done?done.split(",").concat([e[0]]).sort().join(","):e[0];
 for(const[pi,nx,nk]of nexts)rec(i+1,nx,nk,d2,chain.concat([[ei,pi]]),skipped);
 if(ms[i]&&(!strict||blocksLater(i,st,nexts.map(x=>x[1]))))rec(i+1,st,sk,done,chain,skipped.concat([ei]))}
 else rec(i+1,st,sk,done,chain,skipped)}else rec(i+1,st,sk,done,chain,skipped)};
 rec(0,st0,stKey(st0),"",[],[])}
 if(!ends.size)ends.set(stKey(st0),[st0,[]]);return ends}
-/* the best plan for each goal: IGR, løp uten ball, følelse and vanskelig å stoppe (plans 0-3) */
+/* the best plan for each goal: IGR, løp uten ball, følelse, vanskelig å stoppe and forsvar (plans 0-4) */
 function searchPlans(d){const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
 const rt=rater(d),rpp=d._orig.plans[0][1],scored=[];
-for(const[st,chain]of searchEnds(d,C).values()){const fin=rpp&&!d.c.primPP?rolesPP(st):st;scored.push({det:rt(fin),chain,len:chain.length,prem:chain.reduce((n,[ei])=>n+(EV[ei][4]?1:0),0)})}
+for(const[st,chain]of searchEnds(d,C).values()){const fin=rpp&&!d.c.primPP?rolesPP(st):st;scored.push({det:{...rt(fin),def:defRaw(fin.a,d.c.g)},chain,len:chain.length,prem:chain.reduce((n,[ei])=>n+(EV[ei][4]?1:0),0)})}
 const val=(t,m)=>t.det[m]!=null?t.det[m]:-1;
 const pick=m=>{let best=null;for(const t of scored){if(!best){best=t;continue}const a=[val(t,m),t.det.igr,-t.len,-t.prem],b=[val(best,m),best.det.igr,-best.len,-best.prem];
 for(let i=0;i<4;i++){if(a[i]>b[i]){best=t;break}if(a[i]<b[i])break}}return best};
 const b=pick("igr"),sig=c=>c.map(x=>x.join(":")).join(","),plans=[[b.chain,rpp]];
-for(const m of["run","feel","stp"]){const o=pick(m);plans.push(sig(o.chain)!==sig(b.chain)&&o.det[m]!=null&&(b.det[m]==null||o.det[m]>b.det[m]+0.05)?[o.chain,rpp]:0)}
+for(const m of["run","feel","stp","def"]){const o=pick(m);plans.push(sig(o.chain)!==sig(b.chain)&&o.det[m]!=null&&(b.det[m]==null||o.det[m]>b.det[m]+0.05)?[o.chain,rpp]:0)}
 return plans}
 /* ---------- what the "evoene nå" view shows: the plan for the chosen goal ---------- */
-const GOAL={run:1,feel:2,stop:3};
+const GOAL={run:1,feel:2,stop:3,def:4};
+const GOALTXT=["","løp uten ball","følelse","vanskelig å stoppe","forsvar"];
 let OBJ=0;const objNow=()=>isNow()?(GOAL[F.sort]||0):0;
 const activePlan=d=>(OBJ&&d.plans[OBJ])||d.plans[0];
 /* live columns (IGR, plass, følelse, løp, stopp, kategorier) from one plan */
@@ -446,11 +455,11 @@ ${g.stats.length||g.ps.length?`${g.stats.length?`<p>Gir ${esc(list(g.stats.slice
 ${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</li>`}
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
-const alts=[0,1,2,3].filter(i=>i===0||d.plans[i]);
-if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe"][i]}</option>`).join("")}</select></label>`;
-else if(OBJ&&!d.plans[OBJ])h+=`<p class="muted">Planen for best IGR er også den beste for ${["","løp uten ball","følelse","vanskelig å stoppe"][OBJ]}.</p>`;
+const alts=[0,1,2,3,4].filter(i=>i===0||d.plans[i]);
+if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe","Best forsvar"][i]}</option>`).join("")}</select></label>`;
+else if(OBJ&&!d.plans[OBJ]&&(OBJ!==4||DEFW[d.c.g]))h+=`<p class="muted">Planen for best IGR er også den beste for ${GOALTXT[OBJ]}.</p>`;
 if(d._re)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
-if(mi>0)h+=`<p class="muted">Den beste kombinasjonen for ${["","løp uten ball","følelse","vanskelig å stoppe"][mi]}. IGR kan være litt lavere enn i planen for best IGR.</p>`;
+if(mi>0)h+=`<p class="muted">Den beste kombinasjonen for ${GOALTXT[mi]}. IGR kan være litt lavere enn i planen for best IGR.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
 if(plan[0].length>1)h+=`<p><b>Ta evoene i denne rekkefølgen.</b> Rekkefølgen er valgt så kortet kommer inn i alle, og så oppgraderingene gir mest.</p>`;

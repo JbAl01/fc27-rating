@@ -68,6 +68,56 @@
         "aggression": 0.2,
         "jumping": 0.05
       }
+    },
+    "defense": {
+      "_info": "Forsvar for CB, back og CDM: vektede forsvarsattributter (vises i «Før og etter», sorteringen «Forsvar» og planen «Best forsvar»). Planen velger aldri angreps-PlayStyles for disse posisjonene: et valg med en slik PlayStyle droppes når det finnes et annet valg, og en evo som bare gir angreps-PlayStyles tas ikke.",
+      "groups": [
+        "CB",
+        "FB",
+        "CDM"
+      ],
+      "attack_playstyles": [
+        "Gamechanger",
+        "Finesse Shot",
+        "Power Shot",
+        "Low Driven Shot",
+        "Chip Shot",
+        "Acrobatic",
+        "Trickster",
+        "Dead Ball"
+      ],
+      "weights": {
+        "CB": {
+          "def_awareness": 0.25,
+          "standing_tackle": 0.2,
+          "interceptions": 0.15,
+          "strength": 0.12,
+          "heading_accuracy": 0.08,
+          "sliding_tackle": 0.08,
+          "jumping": 0.07,
+          "reactions": 0.05
+        },
+        "FB": {
+          "def_awareness": 0.22,
+          "standing_tackle": 0.2,
+          "interceptions": 0.15,
+          "acceleration": 0.1,
+          "sprint_speed": 0.1,
+          "reactions": 0.1,
+          "sliding_tackle": 0.08,
+          "strength": 0.05
+        },
+        "CDM": {
+          "interceptions": 0.22,
+          "def_awareness": 0.2,
+          "standing_tackle": 0.2,
+          "strength": 0.12,
+          "reactions": 0.1,
+          "aggression": 0.06,
+          "sliding_tackle": 0.05,
+          "stamina": 0.05
+        }
+      }
     }
   },
   "op": {
@@ -2061,17 +2111,30 @@
       "name": "Intro to Pathway Evolutions",
       "cost": "gratis",
       "until": "2027-09-29T17:00Z",
-      "unchecked_note": "Har to valg i spillet. Bare valget med Gamechanger er kjent her, så det andre er ikke regnet med.",
       "req": {
         "max_ovr": 80,
         "max_ps": 3
       },
       "up": {
-        "ps": [
-          [
-            "Gamechanger",
-            4
-          ]
+        "paths": [
+          {
+            "label": "Valg A: Gamechanger",
+            "ps": [
+              [
+                "Gamechanger",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: Inventive",
+            "ps": [
+              [
+                "Inventive",
+                4
+              ]
+            ]
+          }
         ]
       },
       "sources": [
