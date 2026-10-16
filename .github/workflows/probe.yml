@@ -1,0 +1,24 @@
+name: probe
+on:
+  push:
+    branches: [claude/probe-card]
+permissions:
+  contents: write
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python ekstra/probe_card.py
+      - run: |
+          git config user.name probe
+          git config user.email probe@example.com
+          git checkout --orphan probe-out-tmp
+          git rm -rf . -q || true
+          cp /tmp/probe_card.txt probe_card.txt
+          git add probe_card.txt
+          git commit -q -m "probe card"
+          git push -f origin HEAD:probe-out
