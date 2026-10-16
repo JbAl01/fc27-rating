@@ -124,3 +124,13 @@ class CardBackgroundTests(unittest.TestCase):
         p = Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "club_image": "https://x/c.png", "nation_image": "javascript:1"})
         self.assertEqual(p.club_image, "https://x/c.png")
         self.assertIsNone(p.nation_image)
+
+
+class CardFaceTests(unittest.TestCase):
+    def test_face_is_this_cards_own_picture(self):
+        u = "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=400,format=auto/2027/player-item/27-%s.%s.webp"
+        html = '<img src="%s"><img src="%s">' % (u % ("999", "c3" * 32), u % ("111", "d4" * 32))
+        out = futgg.face_image(html, "111")
+        self.assertIn("27-111.", out)
+        self.assertIn("width=200", out)
+        self.assertIsNone(futgg.face_image("<html></html>", "111"))

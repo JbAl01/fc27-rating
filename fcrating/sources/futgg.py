@@ -104,6 +104,16 @@ def card_image(html: str, card: Optional[str], game: str = "27") -> Optional[str
     return re.sub(r"width=\d+", "width=200", m.group(0)) if m else None
 
 
+def face_image(html: str, card: Optional[str], game: str = "27") -> Optional[str]:
+    """This card's own player picture on its FUT.GG page (promo cards often have another picture than the
+    base card). The file name carries a hash, so it can only be read from the page."""
+    if not card:
+        return None
+    m = re.search(r'https://game-assets\.fut\.gg/cdn-cgi/image/[^"\'\s\\<>]*?/20\d\d/player-item/%s-%s\.[0-9a-f]{16,}\.webp'
+                  % (re.escape(str(game)), re.escape(str(card))), html)
+    return re.sub(r"width=\d+", "width=200", m.group(0)) if m else None
+
+
 def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> Optional[dict]:
     """The card's own PlayStyles: the first unbroken run of large icons, and its roles. None if the page has
     neither (layout changed, or not a card page) so nothing wrong is saved."""
@@ -125,7 +135,7 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
         return None
     h = _HEIGHT.search(html)
     rec = {"ps": [x for x in ps if x not in psp], "psp": psp,
-           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game),
+           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game),
            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
     if not started:
         rec["no_ps"] = True   # the icons were not found: keep the card's own PlayStyles
@@ -148,7 +158,7 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
             break
         old = cache.cards.get(card)
         # special cards fetched before the card picture was read are fetched once more
-        again = bool(old) and "img" not in old and not old.get("missing") and old.get("kind") != "base" and kind != "base"
+        again = bool(old) and "face" not in old and not old.get("missing") and old.get("kind") != "base" and kind != "base"
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -223,6 +233,8 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
         elif not rec.get("no_ps"):
             if rec.get("img") and str(rec["img"]).startswith(CARD_IMAGE_HOSTS):
                 p.card_image = rec["img"]
+            if rec.get("face") and str(rec["face"]).startswith(CARD_IMAGE_HOSTS):
+                p.image = rec["face"]
             p.playstyles_plus = list(rec.get("psp") or [])
             p.playstyles = [x for x in rec.get("ps") or [] if x not in p.playstyles_plus]
             p.playstyles_complete = True
