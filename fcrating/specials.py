@@ -10,6 +10,7 @@ from .net import Blocked, PoliteFetcher
 from .promo import BaseIndex, build_special, drop_released_leaks, norm_name
 from .schema import Player
 from .sources import fifarosters as fr
+from .sources import futgg
 from .sources import realsport101 as rs
 
 
@@ -249,6 +250,24 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
             n = fr.fetch_details(fetcher, fr_cache, specials, limit, log)
             missing = sum(1 for fid in specials if fid not in fr_cache.details)
             log(f"FIFA Rosters: {len(specials)} spesialkort, hentet {n} nye kortsider, {missing} gjenstår")
+            gcfg = sc.get("futgg") or {}
+            if gcfg.get("enabled", True):
+                # The special cards' own PlayStyles (FIFA Rosters has none; promo cards often have one more)
+                fg = futgg.FutggCache(str(Path(cache_dir) / "futgg"))
+                gfetch = PoliteFetcher(user_agent=gcfg.get("user_agent") or sc.get("user_agent") or "fc27-rating",
+                                       delay_seconds=float(gcfg.get("delay_seconds", 3.0)), log=log)
+                todo = [(str(e.get("player_id") or ""), fid) for fid, e in
+                        sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if not fr.is_base_version(e["version"])]
+                try:
+                    ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log)
+                    left = sum(1 for _, c in todo if c not in fg.cards)
+                    log(f"FUT.GG: leste PlayStyles for {ng} spesialkort, {left} gjenstår")
+                except Blocked as exc:
+                    log(f"FUT.GG stoppet: {exc}")
+                except Exception as exc:  # FUT.GG down or changed: the rest of the run goes on
+                    log(f"FUT.GG feilet: {exc}")
+                finally:
+                    fg.save()
             if height_known is not None:
                 # EA's FC 27 pages have no height. Base cards whose EA card lacks it (often new players)
                 # get the FIFA Rosters card page, which has height and the real attributes. Best cards first.

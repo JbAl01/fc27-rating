@@ -282,6 +282,8 @@ Du finner Stopp i rapporten (kolonne, filter, sortering, «Ranger etter» og på
 
 **Liga og land.** Både rapporten og Evo Lab kan filtreres på liga og land («Passer i laget ditt» / «Flere valg»), så du bare ser kort som passer inn i laget du har. Liga, land og klubb kommer fra EAs FC 27-ratingsider. Spesialkort arver dem fra basekortet til samme spiller. Icons regnes som «Icons» og vises uansett hvilken liga du velger, siden de gir kjemi med alle ligaer.
 
+**PlayStyles på spesialkort.** FIFA Rosters viser ikke PlayStyles, og promokort har ofte flere enn basekortet. PlayStyles og PlayStyle+ for spesialkort leses derfor fra kortets side på FUT.GG (bare de offentlige spillersidene, siden robots.txt forbyr `/api/`). Hvert kort leses én gang, 150 per kjøring. Til et kort er lest, brukes basekortets PlayStyles. Evoer med maks antall PlayStyles havner da under «Kan passe, men sjekk selv» hvis kortet ligger på grensen.
+
 **Hva som teller** (startvekter i `run_ai` i `config/weights.json`, vist som andel av totalen):
 
 | Tall | Andel | Hvorfor |
