@@ -1,6 +1,6 @@
 {
  "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
- "_sjekket": "2026-10-16T12:00:00Z",
+ "_sjekket": "2026-10-16T17:50:00Z",
  "evos": [
   {
    "key": "future_stars_academy_3",
@@ -326,6 +326,231 @@
     "https://www.fut.gg/evolutions/2556-centre-stage/",
     "https://futmind.com/articles/19098/centre-stage-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
    ]
+  },
+  {
+   "key": "future_stars_academy_4",
+   "name": "Future Stars Academy IV",
+   "cost": "gratis",
+   "until": "2026-10-26T17:00Z",
+   "note": "Siste steg etter Future Stars Academy III (krever 83 OVR og Future Stars Academy-kort; at Academy III må være gjort først står hos timesaver/FUT.GG-artikkelen, futnext og Futmind sier bare rarity Future Stars). Tallene er like hos futnext og Futmind. Fristen er fra Futmind (17:00 UTC). Taket 4 på Low Driven Shot er bare vist hos futnext (umerket «4»).",
+   "req": {
+    "min_ovr": 83,
+    "max_ovr": 83,
+    "max_ps": 7,
+    "requires_evo": "future_stars_academy_3"
+   },
+   "up": {
+    "ovr": [
+     2,
+     85
+    ],
+    "stats": {
+     "long_shots": [
+      3,
+      78
+     ],
+     "penalties": [
+      8,
+      75
+     ],
+     "composure": [
+      3,
+      80
+     ],
+     "jumping": [
+      5,
+      70
+     ],
+     "strength": [
+      4,
+      72
+     ],
+     "shot_power": [
+      3,
+      80
+     ],
+     "volleys": [
+      4,
+      76
+     ],
+     "crossing": [
+      6,
+      80
+     ],
+     "heading_accuracy": [
+      4,
+      72
+     ],
+     "stamina": [
+      3,
+      83
+     ],
+     "aggression": [
+      6,
+      60
+     ]
+    },
+    "paths": [
+     {
+      "label": "Valg A: Low Driven Shot, skudd",
+      "ps": [
+       [
+        "Low Driven Shot",
+        4
+       ]
+      ],
+      "stats": {
+       "finishing": [
+        1,
+        84
+       ],
+       "shot_power": [
+        3,
+        86
+       ],
+       "long_shots": [
+        2,
+        82
+       ],
+       "volleys": [
+        4,
+        82
+       ],
+       "composure": [
+        3,
+        84
+       ]
+      }
+     },
+     {
+      "label": "Valg B: pasning",
+      "stats": {
+       "vision": [
+        3,
+        88
+       ],
+       "short_passing": [
+        3,
+        88
+       ],
+       "long_passing": [
+        4,
+        86
+       ],
+       "reactions": [
+        4,
+        86
+       ],
+       "ball_control": [
+        2,
+        84
+       ],
+       "composure": [
+        4,
+        85
+       ]
+      }
+     }
+    ]
+   },
+   "sources": [
+    "https://www.futnext.com/evolutions/future-stars-academy-iv/2756",
+    "https://futmind.com/articles/19104/future-stars-academy-iv-evolution-guide-ea-sports-fc-27-ultimate-team"
+   ]
+  },
+  {
+   "key": "speed_bump",
+   "name": "Speed Bump",
+   "cost": "gratis",
+   "until": "2026-10-26T18:00Z",
+   "note": "Krav og tall er like hos futnext og Futmind. Fristen 26.10.2026 18:00 UTC er fra Futmind (etter at Storbritannia har gått over til vintertid), futnext sin nedtelling stemmer med den. Taket på PlayStyles (Jockey nivå 2, Intercept nivå 3) er ikke oppgitt. Roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle tre nivåer.",
+   "req": {
+    "max_ovr": 80,
+    "max_pace": 75,
+    "max_ps": 7,
+    "positions": [
+     "CB"
+    ],
+    "not_positions": [
+     "CDM"
+    ]
+   },
+   "up": {
+    "ovr": [
+     10,
+     83
+    ],
+    "ps": [
+     "Jockey",
+     "Intercept"
+    ],
+    "stats": {
+     "acceleration": [
+      10,
+      77
+     ],
+     "long_passing": [
+      4,
+      76
+     ],
+     "composure": [
+      14,
+      81
+     ],
+     "def_awareness": [
+      7,
+      82
+     ],
+     "jumping": [
+      10,
+      85
+     ],
+     "sprint_speed": [
+      10,
+      77
+     ],
+     "reactions": [
+      7,
+      80
+     ],
+     "interceptions": [
+      7,
+      82
+     ],
+     "standing_tackle": [
+      12,
+      82
+     ],
+     "strength": [
+      7,
+      86
+     ],
+     "short_passing": [
+      11,
+      80
+     ],
+     "ball_control": [
+      5,
+      76
+     ],
+     "heading_accuracy": [
+      5,
+      80
+     ],
+     "sliding_tackle": [
+      7,
+      82
+     ],
+     "aggression": [
+      5,
+      84
+     ]
+    }
+   },
+   "sources": [
+    "https://www.futnext.com/evolutions/speed-bump/2763",
+    "https://futmind.com/articles/19106/speed-bump-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
+   ]
   }
  ],
  "_hoppet_over": [
@@ -342,6 +567,11 @@
   {
    "navn": "Frontline Flair",
    "grunn": "Står allerede i config/evolab.json (frontline_flair).",
+   "dato": "2026-10-16"
+  },
+  {
+   "navn": "Gamechanger",
+   "grunn": "Bare futnext (maks 80 OVR, maks 2 PlayStyles, gir Gamechanger, umerket «3»). Ikke funnet hos FUT.GG, FUTBIN, Futmind eller andre.",
    "dato": "2026-10-16"
   }
  ]
