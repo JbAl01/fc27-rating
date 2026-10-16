@@ -253,6 +253,8 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         r.get("card_image") or "",
         r.get("club_image") or "",
         r.get("nation_image") or "",
+        r.get("league_image") or "",
+        r.get("foot") or "",
     ]
 
 
