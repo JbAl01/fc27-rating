@@ -94,7 +94,7 @@ groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6
 run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||""}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||""}});
 const $=id=>document.getElementById(id);
 const HASPRICE=DATA.some(d=>d.price);if(!HASPRICE){document.documentElement.classList.add("noprice");const po=document.querySelector('#sort option[value="price"]');if(po)po.remove()}
 const present=new Set(DATA.flatMap(d=>Object.keys(d.groups)));
@@ -223,8 +223,11 @@ $("combo").onchange=ev=>{const k=ev.target.dataset.k;if(!k)return;F.combo=ev.tar
 if(F.combo.length){key="combo";dir=-1}else if(key==="combo"){key="top_pct";dir=1}$("sort").value=key;syncF();reset()};
 const psNames=[...new Set(DATA.flatMap(d=>d.ps.map(n=>n.endsWith("+")?n.slice(0,-1):n)))].sort((a,b)=>a.localeCompare(b,"no"));
 $("pssel").innerHTML='<option value="">Alle</option>'+psNames.map(n=>`<option>${esc(n)}</option>`).join("");
-const optsOf=k=>'<option value="">Alle</option>'+[...new Set(DATA.map(d=>d[k]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"no")).map(n=>`<option>${esc(n)}</option>`).join("");
-$("lgsel").innerHTML=optsOf("lg");$("nasel").innerHTML=optsOf("na");
+/* the top leagues first (META.toplg, in that order), then the rest alphabetically */
+const optsOf=(k,first=[])=>{const all=[...new Set(DATA.map(d=>d[k]).filter(Boolean))],top=first.filter(x=>all.includes(x)),
+rest=all.filter(x=>!top.includes(x)).sort((a,b)=>a.localeCompare(b,"no")),o=n=>`<option>${esc(n)}</option>`;
+return'<option value="">Alle</option>'+top.map(o).join("")+(top.length&&rest.length?'<option disabled>──────────</option>':"")+rest.map(o).join("")};
+$("lgsel").innerHTML=optsOf("lg",META.toplg||[]);$("nasel").innerHTML=optsOf("na");
 document.querySelectorAll("#fp [data-f]").forEach(el=>{el.addEventListener(el.type==="checkbox"||el.tagName==="SELECT"?"change":"input",()=>{F[el.dataset.f]=el.type==="checkbox"?el.checked:el.value;syncF();reset()})});
 function syncF(){document.querySelectorAll("#fp [data-f]").forEach(el=>{if(el.type==="checkbox")el.checked=!!F[el.dataset.f];else if(el.value!==String(F[el.dataset.f]))el.value=F[el.dataset.f]});
 $("combo").querySelectorAll("input").forEach(b=>b.checked=F.combo.includes(b.dataset.k));
@@ -252,7 +255,7 @@ const ncol=13+(F.combo.length?1:0)+(HASPRICE?1:0);
 rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
 const sub=[d.version,d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
-tr.innerHTML=`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(sub)}</div>${d.ps.length?`<div>${psChips(d.ps,null,4,"mini")}</div>`:""}</td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
+tr.innerHTML=`<td><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(sub)}</div>${d.ps.length?`<div>${psChips(d.ps,null,4,"mini")}</div>`:""}</td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
 <td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
 <td class="num">${fmt(d.feel)}</td>

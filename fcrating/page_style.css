@@ -62,7 +62,7 @@ table.data th:first-child{z-index:3;background:var(--surface)}
 table.data tbody tr{background:var(--surface)}
 table.data tbody tr.row{cursor:pointer}
 table.data tbody tr.row:hover,table.data tbody tr.open{background:var(--hl)}
-td .nm{font-weight:600;font-size:15px}td .sub{color:var(--muted);font-size:13px}
+td .nm{font-weight:600;font-size:15px}td .nm .club{font-weight:500;font-size:13px;color:var(--muted);white-space:nowrap}td .sub{color:var(--muted);font-size:13px}
 .pos{font:700 15px var(--num);letter-spacing:.01em}
 .pos.att{color:var(--att)}.pos.mid{color:var(--mid)}.pos.def{color:var(--def)}.pos.gk{color:var(--gk)}
 tr.det>td{padding:0;background:var(--surface);white-space:normal;text-align:left}

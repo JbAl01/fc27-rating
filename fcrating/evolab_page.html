@@ -177,7 +177,7 @@ function runPlan(d,plan){const rt=rater(d);let st=stateOf(d),det=rt(st);const st
 for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(e,st,path),nd=rt(nx);steps.push({e,path,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}
 if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
 /* ---------- data ---------- */
-const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
+const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",club:S(r[39])||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
 h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
@@ -362,7 +362,11 @@ function fillSort(){$("sort").innerHTML=sortOptions().map(([v,l])=>`<option valu
 function sync(){$("g").value=F.g;$("ovr").value=F.ovrMax;$("ovrMin").value=F.ovrMin;$("h").value=String(F.h);$("kind").value=F.kind;$("gender").value=F.gender;$("lg").value=F.lg||"";$("na").value=F.na||"";
 $("live").checked=!!F.live;$("twin").value=F.twin||"";fillSort();save()}
 function setTwin(v){const t=META.targets.find(t=>twinName(t)===v);TWIN=t||null;TWC.clear();F.twin=TWIN?v:"";if(TWIN){F.sort="twin";dir=-1}else if(F.sort==="twin")F.sort="rel"}
-{const optsOf=k=>'<option value="">Alle</option>'+[...new Set(D.map(d=>d[k]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"no")).map(n=>`<option>${esc(n)}</option>`).join("");$("lg").innerHTML=optsOf("lg");$("na").innerHTML=optsOf("na")}
+/* the top leagues first (META.toplg, in that order), then the rest alphabetically */
+{const optsOf=(k,first=[])=>{const all=[...new Set(D.map(d=>d[k]).filter(Boolean))],top=first.filter(x=>all.includes(x)),
+rest=all.filter(x=>!top.includes(x)).sort((a,b)=>a.localeCompare(b,"no")),o=n=>`<option>${esc(n)}</option>`;
+return'<option value="">Alle</option>'+top.map(o).join("")+(top.length&&rest.length?'<option disabled>──────────</option>':"")+rest.map(o).join("")};
+$("lg").innerHTML=optsOf("lg",META.toplg||[]);$("na").innerHTML=optsOf("na")}
 for(const[id,k]of[["g","g"],["ovr","ovrMax"],["kind","kind"],["gender","gender"],["lg","lg"],["na","na"]])$(id).onchange=e=>{F[k]=e.target.value;sync();reset()};
 $("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset();usedInfo(null);if(objNow()!==OBJ)recompute()};
 $("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset();if(objNow()!==OBJ)recompute()};
@@ -392,7 +396,7 @@ const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","I
 function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
 $("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset();if(objNow()!==OBJ)recompute()})}
 function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
-return`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></td>
+return`<td><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></td>
 <td class="l"><span class="pos ${posClass(d.g)}">${esc(d.positions[0]||d.g)}</span></td>
 <td class="num">${d.ovr}<small>til ${h.ovr}</small></td>
 <td class="num">${fmt(d.now)}</td>

@@ -180,6 +180,11 @@ def position_group(position: Optional[str]) -> Optional[str]:
     return POSITION_GROUPS.get(str(position).upper().strip())
 
 
+# The ten leagues shown first in the league filter (the rest follow alphabetically). Names as on EA's ratings pages.
+TOP_LEAGUES = ["Premier League", "LALIGA EA SPORTS", "Serie A Enilive", "Bundesliga", "Ligue 1 McDonald's",
+               "ROSHN Saudi League", "Trendyol Süper Lig", "Liga Portugal", "Eredivisie", "MLS"]
+
+
 def parse_birthdate(v) -> Optional[str]:
     """A date of birth as YYYY-MM-DD, from ISO text ('1994-09-08', '1994-09-08T00:00:00Z'),
     '9/8/1994' or '12/20/1998 0:00' (EA, month first, sometimes with a time), '08.09.1994' or a Unix time in seconds or milliseconds."""

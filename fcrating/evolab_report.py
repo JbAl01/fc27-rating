@@ -24,7 +24,7 @@ from typing import Dict, List, Optional
 from .evolab import BLOCK_WORDS, FastRater, _clean, _favorites, horizons, state_from
 from .model import group_label
 from .report import ATTR_INDEX, ATTR_KEYS, _Interner
-from .schema import ATTRIBUTE_LABELS, GROUP_PLURAL_NO, Player, position_group
+from .schema import ATTRIBUTE_LABELS, GROUP_PLURAL_NO, TOP_LEAGUES, Player, position_group
 
 BASE_CSS = (Path(__file__).resolve().parent / "page_style.css").read_text(encoding="utf-8")
 GROUPS = ["ST", "W", "CAM", "CM", "CDM", "FB", "CB", "GK"]
@@ -244,6 +244,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         intern(r.get("nation") or ""),
         p.birthdate or "",
         r.get("futgg") or "",
+        intern(r.get("club") or ""),
     ]
 
 
@@ -306,7 +307,7 @@ def render(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: di
         "top": lab.get("op", {}).get("top_pct", 5), "favs": favs if any(x[17] for x in rows) else [],
         "research": lab.get("_research", ""), "checked": lab.get("_checked", ""),
         "stamp": datetime.now().strftime("%d.%m.%Y kl. %H:%M"), "rate": rate_meta(cfg), "rules": rules_meta(lab), "evos": evos,
-        "pools": pools, "rpool": rpool, "fpool": fpool, "spool": spool, "targets": tg, "sim": sim, "catq": catq,
+        "toplg": TOP_LEAGUES, "pools": pools, "rpool": rpool, "fpool": fpool, "spool": spool, "targets": tg, "sim": sim, "catq": catq,
         "cats": [{"k": k, "l": prof["categories"][k]["label"], "panel": k in style_keys(cfg),
                   "src": prof["categories"][k].get("source") or "w",
                   "w": [[ATTR_INDEX[a], v] for a, v in _clean(prof["categories"][k].get("weights") or {}).items() if a in ATTR_INDEX and v],

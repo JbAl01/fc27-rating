@@ -17,7 +17,7 @@ from .model import group_label, load_config
 from .explain import FEEL_KEYS, explain_keys, pool_stats
 from .runs import FEATURE_LABELS
 from .profile import ORDER as PROFILE_ORDER
-from .schema import ATTRIBUTE_LABELS, GROUP_PLURAL_NO, POSITION_GROUPS
+from .schema import ATTRIBUTE_LABELS, GROUP_PLURAL_NO, POSITION_GROUPS, TOP_LEAGUES
 
 GROUP_ORDER = ["ST", "W", "CAM", "CM", "CDM", "FB", "CB", "GK"]
 ATTR_KEYS = list(ATTRIBUTE_LABELS)
@@ -205,6 +205,7 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         intern(r.get("league") or ""),
         intern(r.get("nation") or ""),
         r.get("futgg") or "",
+        intern(r.get("club") or ""),
     ]
 
 
@@ -252,6 +253,7 @@ def _meta(results: List[dict], cfg: dict, intern: _Interner) -> dict:
         "fw": [[ATTR_INDEX[k], w] for k, w in wcfg["feel"]["attributes"].items() if not k.startswith("_")],
         "gk": group_label("GK"),
         "run": _run_meta(results, cfg),
+        "toplg": TOP_LEAGUES,
         "prof": _prof_meta(cfg),
         "ob": {"start": wcfg.get("off_balance", {}).get("start", 75),
                "gf": {group_label(g): f for g, f in wcfg.get("off_balance", {}).get("group_factor", {}).items()}},
