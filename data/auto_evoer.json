@@ -1,6 +1,6 @@
 {
  "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
- "_sjekket": "2026-10-14T20:30:00Z",
+ "_sjekket": "2026-10-16T12:00:00Z",
  "evos": [
   {
    "key": "future_stars_academy_3",
@@ -212,6 +212,120 @@
     "https://www.futbin.com/27/evolutions/50/side-step",
     "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/"
    ]
+  },
+  {
+   "key": "centre_stage",
+   "name": "Centre Stage",
+   "cost": "gratis",
+   "until": "2026-10-25T17:00Z",
+   "note": "Fristen for å starte (25.10.2026) står bare hos Futmind; FUT.GG oppgir ingen dato og FUTBIN bare «utløper om 2 uker». Tidligste tid (17:00 UTC) er brukt. Krav og oppgraderinger er like hos FUTBIN, FUT.GG og Futmind. Tallene er summen etter alle fire nivåer. Taket på PlayStyles (Jockey nivå 2, Incisive Pass nivå 3) er ikke oppgitt. Roller er ikke nevnt.",
+   "req": {
+    "max_ovr": 81,
+    "max_pace": 85,
+    "max_ps": 7,
+    "positions": [
+     "CDM",
+     "CM"
+    ],
+    "not_positions": [
+     "CB",
+     "ST",
+     "CAM"
+    ]
+   },
+   "up": {
+    "ovr": [
+     10,
+     85
+    ],
+    "wf": [
+     2,
+     3
+    ],
+    "sm": [
+     2,
+     3
+    ],
+    "ps": [
+     "Jockey",
+     "Incisive Pass"
+    ],
+    "stats": {
+     "sprint_speed": [
+      7,
+      77
+     ],
+     "acceleration": [
+      7,
+      77
+     ],
+     "short_passing": [
+      10,
+      82
+     ],
+     "heading_accuracy": [
+      10,
+      81
+     ],
+     "jumping": [
+      30,
+      85
+     ],
+     "vision": [
+      10,
+      83
+     ],
+     "long_passing": [
+      10,
+      83
+     ],
+     "def_awareness": [
+      10,
+      80
+     ],
+     "stamina": [
+      30,
+      84
+     ],
+     "crossing": [
+      10,
+      82
+     ],
+     "curve": [
+      10,
+      82
+     ],
+     "standing_tackle": [
+      10,
+      81
+     ],
+     "strength": [
+      30,
+      85
+     ],
+     "fk_accuracy": [
+      10,
+      82
+     ],
+     "interceptions": [
+      10,
+      82
+     ],
+     "sliding_tackle": [
+      10,
+      82
+     ],
+     "aggression": [
+      30,
+      85
+     ]
+    }
+   },
+   "sources": [
+    "https://www.futbin.com/27/evolutions/51/centre-stage",
+    "https://www.fut.gg/evolutions/2556-centre-stage/",
+    "https://futmind.com/articles/19098/centre-stage-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
+   ]
   }
  ],
  "_hoppet_over": [
@@ -222,8 +336,13 @@
   },
   {
    "navn": "Season Ladder Excellence",
-   "grunn": "Bare futnext, ingen detaljer funnet.",
-   "dato": "2026-10-14"
+   "grunn": "Bare futnext (side 2), ingen detaljer funnet hos andre kilder.",
+   "dato": "2026-10-16"
+  },
+  {
+   "navn": "Frontline Flair",
+   "grunn": "Står allerede i config/evolab.json (frontline_flair).",
+   "dato": "2026-10-16"
   }
  ]
 }
