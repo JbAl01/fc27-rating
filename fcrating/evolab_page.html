@@ -83,6 +83,11 @@ const sg=(v,dg=1)=>v==null||Number.isNaN(v)?"":(v>=0?"+":"−")+Math.abs(v).toFi
 const pctT=p=>p==null?"–":(p<1?"topp <1 %":"topp "+Math.round(p)+" %");
 const S=i=>STR[i]??"";
 const AI={};META.akeys.forEach((k,i)=>AI[k]=i);
+/* Forsvar: weighted defensive attributes for CB/FB/CDM (shown in Før og etter) */
+const DEFW={CB:{def_awareness:.25,standing_tackle:.2,interceptions:.15,strength:.12,heading_accuracy:.08,sliding_tackle:.08,jumping:.07,reactions:.05},
+FB:{def_awareness:.22,standing_tackle:.2,interceptions:.15,acceleration:.1,sprint_speed:.1,reactions:.1,sliding_tackle:.08,strength:.05},
+CDM:{interceptions:.22,def_awareness:.2,standing_tackle:.2,strength:.12,reactions:.1,aggression:.06,sliding_tackle:.05,stamina:.05}};
+function defOf(a,g){const w=DEFW[g];if(!w||!a)return null;let s=0,t=0;for(const k in w){const v=a[AI[k]];if(v==null)return null;s+=v*w[k];t+=w[k]}return Math.round(s/t*10)/10}
 const CI={};CATS.forEach((c,i)=>CI[c.k]=i);
 /* ---------- the same maths as Python (evolab.FastRater, evolab.apply) ---------- */
 function psum(xs){if(!R.pysum){let s=0;for(const x of xs)s+=x;return s}let f=0,c=0;for(const x of xs){const t=f+x;if(Math.abs(f)>=Math.abs(x))c+=(f-t)+x;else c+=(x-t)+f;f=t}if(c&&isFinite(c))f+=c;return f}
@@ -441,7 +446,7 @@ t+=kvRow(`Plass blant ${plural(d.g)}`,pick(d.rnow,h0.rank,hv(d).rank),0,-1);
 t+=kvRow("OVR",pick(d.ovr,h0.ovr,hv(d).ovr),0);
 t+=kvRow("Følelse",pick(d.nowx.feel,d.lv.feel,d.med.feel));
 t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
-t+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);
+t+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);if(DEFW[d.c.g])t+=kvRow("Forsvar",A.map(a=>defOf(a,d.c.g)));
 if(d.runcard){t+=kvRow("Løp uten ball",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));t+=kvRow("Smarte løp",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));t+=kvRow("Får avstand",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
 if(d.stops){t+=kvRow("Vanskelig å stoppe med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));t+=kvRow("Vanskelig å stoppe på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
 t+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
