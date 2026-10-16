@@ -261,3 +261,5 @@ table.data table.kv{max-width:600px}
 .fcard .bd.ni{top:84px}.fcard .bd.cl{top:108px}
 .fcard:not(.real) .bd{left:16px}
 @media (max-width:600px){.fcard:not(.mini) .bd{width:17px;height:17px;left:24px}.fcard:not(.mini) .bd.ni{top:72px}.fcard:not(.mini) .bd.cl{top:93px}}
+.dethead{flex-direction:column;align-items:flex-start;gap:14px}
+.dethead .info{order:-1;padding-top:0}
