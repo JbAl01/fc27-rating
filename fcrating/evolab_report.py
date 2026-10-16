@@ -200,7 +200,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
     lv = s["live"]
     med = s.get("med") or {}
     plans = [[_seq(lv.get("seq", []), idx, live_by_key) or [], 1 if lv.get("roles") else 0]]
-    for metric in ("run", "feel"):
+    for metric in ("run", "feel", "stp"):
         a = (lv.get("alt") or {}).get(metric)
         sq = _seq(a["seq"], idx, live_by_key) if a else None
         plans.append([sq, 1 if a.get("roles") else 0] if a and sq is not None else 0)

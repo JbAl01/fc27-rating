@@ -480,3 +480,60 @@ class AutoEvoFileTests(unittest.TestCase):
         names = set(_json.load(open(evolab.ROOT / "config" / "playstyles.json", encoding="utf-8"))["playstyles"])
         for e in _json.load(open(p, encoding="utf-8"))["evos"]:
             self.assertEqual(evolab.check_evo(e, min_sources=2, playstyles=names), [], e["key"])
+
+
+class PlanSearchTests(unittest.TestCase):
+    """The live plan must find the best combination, also when an evo has to be skipped or taken later."""
+
+    def plan(self, p, evos):
+        g = evolab.card_group(p) or "ST"
+        ev = evolab.Evaluator(p, g, CFG, RULES)
+        return evolab.plan_live(p, evolab.state_from(p), evos, ev, RULES)
+
+    def test_takes_the_small_ovr_evo_first_so_both_fit(self):
+        p = low_striker(ovr=75)
+        big_ovr = evo("big_ovr", {"max_ovr": 80}, {"ovr": [7, 90], "stats": {"finishing": [2, 99]}})
+        small = evo("small", {"max_ovr": 81}, {"ovr": [1, 90], "stats": {"finishing": [12, 99], "positioning": [12, 99]}})
+        steps = [s["key"] for s in self.plan(p, [big_ovr, small])["steps"]]
+        self.assertEqual(sorted(steps), ["big_ovr", "small"])
+        self.assertEqual(steps[0], "small")   # the other order shuts the card out of "small"
+
+    def test_skips_an_evo_that_would_shut_out_a_better_one(self):
+        p = low_striker(ovr=74)
+        weak_lift = evo("weak_lift", {"max_ovr": 79}, {"ovr": [6, 90], "stats": {"stamina": [3, 99]}})
+        strong = evo("strong", {"max_ovr": 75}, {"ovr": [1, 90], "stats": {"finishing": [15, 99], "reactions": [15, 99]}})
+        blocker = evo("blocker", {"max_ovr": 74}, {"ovr": [8, 90], "stats": {"stamina": [2, 99]}})
+        pl = self.plan(p, [weak_lift, strong, blocker])
+        keys = [s["key"] for s in pl["steps"]]
+        self.assertIn("strong", keys)
+        self.assertNotIn("blocker", keys)     # taking it first would shut out "strong" and "weak_lift"
+
+    def test_search_never_worse_than_any_single_order(self):
+        import itertools
+        p = low_striker(ovr=72)
+        evos = [evo("a", {"max_ovr": 78}, {"ovr": [4, 90], "stats": {"finishing": [6, 99]}}),
+                evo("b", {"max_ovr": 74}, {"ovr": [3, 90], "stats": {"positioning": [8, 99]}}),
+                evo("c", {"max_ovr": 80}, {"ovr": [2, 90], "stats": {"reactions": [5, 99]}}),
+                evo("d", {"max_ps": 1}, {"ps": ["Technical"]})]
+        g = evolab.card_group(p) or "ST"
+        ev = evolab.Evaluator(p, g, CFG, RULES)
+        best = self.plan(p, evos)["igr"]
+        st0 = evolab.state_from(p)
+        for order in itertools.permutations(evos):
+            st = st0
+            for e in order:
+                if evolab.check(e, st, RULES) is None:
+                    st = evolab.apply(e, st, RULES)
+            fin, _ = evolab.roles_plus_plus(st, p.position)
+            self.assertLessEqual(round(ev.fast.detail(fin)["igr"], 1), best + 1e-9)
+
+    def test_plans_for_other_goals(self):
+        p = low_striker(ovr=74)
+        igr_evo = evo("igr_evo", {"max_ovr": 74}, {"ovr": [6, 90], "stats": {
+            "finishing": [25, 99], "shot_power": [25, 99], "composure": [25, 99], "ball_control": [20, 99], "dribbling": [20, 99]}})
+        run_evo = evo("run_evo", {"max_ovr": 74}, {"ovr": [1, 90], "stats": {"positioning": [10, 99], "sprint_speed": [8, 99]}})
+        pl = self.plan(p, [igr_evo, run_evo])
+        self.assertEqual([s["key"] for s in pl["steps"]], ["igr_evo"])
+        alt = pl["alt"]
+        self.assertIn("run", alt)
+        self.assertEqual([k for k, _ in alt["run"]["seq"]], ["run_evo"])

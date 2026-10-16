@@ -22,3 +22,4 @@ data/loep.csv
 # Lages av wrangler
 .wrangler/
 node_modules/
+data/ea_players.meta.json
