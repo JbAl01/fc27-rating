@@ -447,12 +447,12 @@ function choiceText(e,path){if(!path)return"";const l=path[0];const multi=e[8][8
 if(multi){const ps=l.split(" + ");return`Velg ${esc(ps[0])} på nivå 1 og ${esc(ps[1])} på nivå 2.`}
 const m=/^Valg (\w+): (.*)$/.exec(l);if(m)return`På siste nivå: velg ${esc(m[1])} (${esc(m[2])}).`;return`Velg ${esc(l)}.`}
 function stepHtml(d,s){if(!s.e){return`<li><div class="hd">Roles++ ${esc(d.c.prim||"")}<span class="cost">${esc(RU.rppCost)}</span></div>
-${(()=>{const t=effectText(s);return t?`<p>${t}.</p>`:""})()}</li>`}
+</li>`}
 const e=s.e,closed=isClosed(e),g=gainsText(s.a,s.b),eff=effectText(s),gt=gateText(s,d.c.g);
 return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}<span class="cost">${esc(e[2]||"gratis")}</span></div>
 <div class="meta2">${closed?"Har stengt":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Hele sesongen":"Til "+esc(c)})()}</div>
 ${s.path?`<p class="muted">${choiceText(e,s.path)}</p>`:""}
-${g.stats.length||g.ps.length?`<div class="gains">${gainChips(g)}${g.ps.length?psChips(g.ps,new Set(g.ps)):""}</div>`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
+${g.ps.length?`<div class="gains">${psChips(g.ps,new Set(g.ps))}</div>`:""}
 ${eff||gt||e[9]?`<details class="why"><summary>Hvorfor</summary>${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</details>`:""}</li>`}
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
@@ -524,7 +524,7 @@ return`<div class="det"><div class="dethead">${detCards(d,h0)}<div class="info">
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
 <div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern":"Sammenlign"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk":"Prøv selv"}</button></div>
 <div class="cols"><section>${planHtml(d)}</section>
-<section>${beforeAfter(d,extrasHtml(d))}${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
+<section><details class="why"><summary>Flere tall</summary>${beforeAfter(d,extrasHtml(d))}</details>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
 function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
