@@ -73,20 +73,28 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
     """cards: (player id, card id) pairs in the order to fetch. Each card is fetched once.
     A page without PlayStyles is remembered as missing; a network error is tried again next run."""
     import urllib.error
-    done = 0
+    done, errors = 0, 0
     for player, card in cards:
         card = str(card)
-        if done >= limit:
+        if done >= limit or errors >= 5:
+            if errors >= 5:
+                log("  FUT.GG: for mange feil på rad, prøver igjen neste kjøring")
             break
         if not player or not card or card in cache.cards:
             continue
         try:
             rec = parse_card_page(fetcher.get(CARD_URL.format(player=player, game=game, card=card)))
+            errors = 0
         except urllib.error.HTTPError as exc:
-            if exc.code != 404:
+            if exc.code == 404:
+                rec = None
+            elif exc.code >= 500:  # FUT.GG busy: try this card again next run
+                errors += 1
+                continue
+            else:
                 raise
-            rec = None
         except (TimeoutError, OSError) as exc:
+            errors += 1
             log(f"  FUT.GG: {card} feilet ({exc}), prøver igjen neste gang")
             continue
         cache.cards[card] = rec or {"missing": True, "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
