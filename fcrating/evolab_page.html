@@ -35,8 +35,8 @@ __CSS__
 </style></head><body>
 <div class="page">
 <header class="top"><div><h1>Evo Lab</h1>
-<p>Hva kortene blir med evoene som er ute nå. Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</p></div>
-<nav><a href="rapport.html">Rangering</a></nav></header>
+<p>Hva kortene blir med evoene som er ute nå.<span class="x"> Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</span></p></div>
+<nav><a href="rapport.html">Rangering</a> <button type="button" class="link" id="xp"></button></nav></header>
 
 <section class="controls" aria-label="Filtre">
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
@@ -458,7 +458,7 @@ const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
 const alts=[0,1,2,3,4].filter(i=>i===0||d.plans[i]);
 if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe","Best forsvar"][i]}</option>`).join("")}</select></label>`;
-else if(OBJ&&!d.plans[OBJ]&&(OBJ!==4||DEFW[d.c.g]))h+=`<p class="muted">Planen for best IGR er også den beste for ${GOALTXT[OBJ]}.</p>`;
+else if(OBJ&&!d.plans[OBJ]&&(OBJ!==4||DEFW[d.c.g]))h+=`<p class="muted x">Planen for best IGR er også den beste for ${GOALTXT[OBJ]}.</p>`;
 if(d._re)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
 if(mi>0)h+=`<p class="muted">Best for ${GOALTXT[mi]}. IGR kan bli litt lavere.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
@@ -497,7 +497,7 @@ return h}
 function forecastHtml(d){let t=`<table class="kv"><thead><tr><th></th><th>Typisk</th><th>Spenn</th><th>OVR</th><th>Plass</th></tr></thead><tbody>`;
 t+=`<tr><th>I dag</th><td>${fmt(d.now)}</td><td>–</td><td>${d.ovr}</td><td>${n0(d.rnow)}</td></tr>`;
 d.h.forEach((h,i)=>{t+=`<tr><th>${i===0?"Evoene nå":esc(H[i].name)}</th><td>${fmt(h.p50)}</td><td>${i===0?"–":fmt(h.p10)+"–"+fmt(h.p90)}</td><td>${h.ovr}</td><td>${n0(h.rank)}</td></tr>`});
-return t+`</tbody></table><p class="muted">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}${d.h.some(h=>Math.abs(h.adj||0)>=0.05)?" Justert for evoene du har brukt opp.":""}</p>`}
+return t+`</tbody></table><p class="muted x">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}${d.h.some(h=>Math.abs(h.adj||0)>=0.05)?" Justert for evoene du har brukt opp.":""}</p>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
 return`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
@@ -531,7 +531,7 @@ t+=kvRow("AcceleRATE",[r.d0.acc||"–",r.d1.acc||"–"]);t+="</tbody></table>";
 const gx=gainsText(st0,r.st);if(gx.stats.length)t+=`<p class="muted">${esc(list(gx.stats))}.</p>`;if(gx.ps.length)t+=`<p>${psChips(psAll(r.st),new Set(gx.ps))}</p>`;
 return t}
 function sandbox(w,d){const s=SBX[d.i],rel=relevant(d),opts=META.attrs.map((l,i)=>i<29?`<option value="${i}">${esc(l)}</option>`:"").join(""),pso=PSN.map(p=>`<option>${esc(p)}</option>`).join("");
-w.innerHTML=`<section class="sbx"><h3>Prøv andre evoer selv</h3><p class="muted">Huk av evoene i rekkefølgen du vil ta dem. Tallene regnes på nytt med en gang, med samme regler som planen over.</p>
+w.innerHTML=`<section class="sbx"><h3>Prøv andre evoer selv</h3><p class="muted x">Huk av evoene i rekkefølgen du vil ta dem. Tallene regnes på nytt med en gang, med samme regler som planen over.</p>
 <ul class="sbxlist"></ul><label class="check"><input type="checkbox" data-rpp${s.rpp?" checked":""}${d.c.primPP?" disabled":""}> Roles++ til slutt${d.c.primPP?" (har allerede ++)":""}</label>
 <div class="add"><label class="f">Egen oppgradering<select data-cs>${opts}</select></label><label class="f">pluss<input data-cg class="small" type="number" value="5"></label><label class="f">maks<input data-cc class="small" type="number" value="85"></label><button type="button" data-add>Legg til</button>
 <label class="f">PlayStyle<select data-cps><option value="">Legg til …</option>${pso}</select></label><label class="f">PlayStyle+<select data-cpp><option value="">Legg til …</option>${pso}</select></label></div>
@@ -570,7 +570,7 @@ box.querySelectorAll("[data-unpin]").forEach(b=>b.onclick=()=>{PINS=PINS.filter(
 /* ---------- the evos ---------- */
 function renderEvos(){const evs=EV.map((e,i)=>[e,i]).sort((a,b)=>(untilMs(a[0][3])??9e15)-(untilMs(b[0][3])??9e15));const open=evs.filter(([e])=>!isClosed(e));
 $("evosum").textContent=`Evoene som er ute nå (${open.length})`;
-let t=`<p class="muted" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
+let t=`<p class="muted x" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
 for(const[e]of open){const c=false;t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas ${e[6]} ganger)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
 <td>${esc(reqText(e))}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
 t+=`</tbody></table></div>`;
@@ -585,4 +585,7 @@ $("footnote").textContent=`Laget ${META.stamp}.`;
 if(F.twin){TWIN=META.targets.find(t=>twinName(t)===F.twin)||null;if(!TWIN)F.twin=""}
 dir=F.sort==="name"?1:-1;sync();renderEvos();render();usedInfo(null);recompute();
 window.__lab={D,rater,stateOf,runPlan,check,apply,pyRound,psum,searchPlans};
-</script></body></html>
+</script>
+<script>(function(){const b=document.getElementById("xp");if(!b)return;let on=false;try{on=localStorage.getItem("fcx")==="1"}catch(e){}
+function set(){document.body.classList.toggle("exp",on);b.textContent=on?"Skjul forklaringer":"Vis forklaringer";b.setAttribute("aria-pressed",on)}
+b.onclick=()=>{on=!on;try{localStorage.setItem("fcx",on?"1":"0")}catch(e){}set()};set()})()</script></body></html>

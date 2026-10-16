@@ -21,8 +21,8 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 </style></head><body>
 <div class="page">
 <header class="top"><div><h1>FC 27-rating</h1>
-<p>Hvert kort er rangert mot kortene som kan spille samme posisjon, med vår egen rating (IGR). Oppdatert __STAMP__.</p></div>
-<nav>__EVOLAB__</nav></header>
+<p>Alle kort rangert mot kortene i samme posisjon. Oppdatert __STAMP__.<span class="x"> Ratingen (IGR) er vår egen.</span></p></div>
+<nav>__EVOLAB__ <button type="button" class="link" id="xp"></button></nav></header>
 
 <section class="controls" aria-label="Søk og sortering">
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
@@ -161,8 +161,8 @@ function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},
 const dr=mdrift(g),since=META.meta&&META.meta.since;
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
 let h=`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
-<p>IGR ${fmt(e.igr)} som ${gl}: nr. ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${e.meta!=null&&since&&dr>0.05?` Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.`:""}</p>
-${d.style||d.likes.length?`<p>${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
+<p>IGR ${fmt(e.igr)} som ${gl}: nr. ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${e.meta!=null&&since&&dr>0.05?` <span class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</span>`:""}</p>
+${d.style||d.likes.length?`<p class="x">${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;
 /* what the rating is built from */
 const extra=[];if(e.role>0)extra.push(e.role_name?`rollen ${esc(e.role_name)}`:"rolle");if(d.wf&&e.wfp>0)extra.push(`svakfot ${d.wf}`);if(d.sm&&e.smp>0)extra.push(`skill moves ${d.sm}`);
@@ -276,4 +276,7 @@ $("q").oninput=reset;$("more").onclick=()=>{shown+=PAGE;render()};
 gs.onchange=()=>{key=gs.value?"igr":"top_pct";dir=gs.value?-1:1;$("sort").value=key;reset()};
 $("sort").onchange=ev=>{key=ev.target.value;dir=key==="top_pct"?1:-1;if(key==="combo"&&!F.combo.length)$("fp").open=true;if(key.startsWith("evo")&&!F.evo){F.evo=true;syncF()}reset()};
 syncF();render();
-</script></body></html>
+</script>
+<script>(function(){const b=document.getElementById("xp");if(!b)return;let on=false;try{on=localStorage.getItem("fcx")==="1"}catch(e){}
+function set(){document.body.classList.toggle("exp",on);b.textContent=on?"Skjul forklaringer":"Vis forklaringer";b.setAttribute("aria-pressed",on)}
+b.onclick=()=>{on=!on;try{localStorage.setItem("fcx",on?"1":"0")}catch(e){}set()};set()})()</script></body></html>

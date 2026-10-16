@@ -131,3 +131,7 @@ table.kv td.note{text-align:left;white-space:normal;font:500 13px/1.35 var(--tex
 .dethead .ext{margin:2px 0 0}
 details.why{margin:8px 0}details.why>summary{cursor:pointer;color:var(--link);font-size:14px}
 details.why[open]>summary{margin-bottom:6px}
+
+/* forklaringer: skjult som standard, én bryter i toppen viser dem */
+body:not(.exp) .x,body:not(.exp) table.kv th small{display:none}
+header.top nav{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
