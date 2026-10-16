@@ -17,7 +17,12 @@ Repoet er `JbAl01/fc27-rating`. Er det ikke med i økten, kall `add_repo` med ow
 ## Viktig om nettilgang (lærdom 14.10.2026)
 
 Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PROVENANCE_REQUIRED` fordi tillatelsen for URL-en ikke blir besvart. Da får du ingen evoliste, og jobben svikter uten å finne noe. Derfor:
-- Hent listene med WebFetch på **nøyaktig** disse adressene (de står her i instruksen): https://www.fut.gg/evolutions/ , https://www.futnext.com/evolutions og https://www.futnext.com/evolutions?page=2 , https://www.futbin.com/27/evolutions . Prøv alle, og prøv en som feilet én gang til.
+- **WebFetch avviser adresser med PROVENANCE_REQUIRED** hvis adressen ikke har kommet fra et WebSearch-resultat eller et tidligere WebFetch-svar. Det hjelper ikke at adressen står i denne instruksen eller i oppgaveteksten (testet 16.10.2026). Løsningen, som virker uten at noen er til stede: kjør WebSearch først, så blir adressene i resultatet hentbare. Gjør dette **før** du henter listene:
+  1. WebSearch (mode standard) med query `evolutions` og `allowed_domains: ["futnext.com"]`. Gir https://www.futnext.com/evolutions. Side 2 (`?page=2`) og detaljsidene lenkes fra listesvaret og kan hentes etterpå.
+  2. WebSearch med query `evolutions FC 27` og `allowed_domains: ["futbin.com"]`. Gir https://www.futbin.com/27/evolutions og noen detaljsider.
+  3. FUT.GG: WebSearch `FC 27 evolutions fut.gg`, hent https://www.fut.gg/news/how-are-evolutions-changing-in-ea-fc-27-pathways-previews-and-more/ (be om lenkene til fut.gg/evolutions), og så https://www.fut.gg/evolutions/. Detaljsidene lenkes fra listesvaret.
+  4. Feiler en detaljside med PROVENANCE_REQUIRED: kjør WebSearch med `allowed_domains` for domenet og evoens navn som query, og prøv igjen. WebFetch av forsiden https://futbin.com/ lister også detaljsider, men ikke selve listen.
+  5. Skal en evo ha to kilder, kan futmind.com og destructoid.com-guider finnes via vanlig WebSearch.
 - FUTBIN viser også evoer som ikke er åpnet ennå («Unlock» i uker). Lister og detaljsider (f.eks. https://www.futbin.com/27/evolutions/50/side-step) går bra via WebFetch. Evoer som ikke er åpne ennå, kan nevnes i `_hoppet_over` til en andre kilde har dem.
 - Får du ikke hentet **noen** av listene, send varsel om at jobben ikke kunne kjøre, og si hvilken feil du fikk.
 - Destructoid har guider per evo (https://www.destructoid.com/best-players-for-fc-27-<evo-navn>-evolution/) som gjelder som egen kilde, men de oppgir ofte ikke fristen. Frister finner du best på futnext (nedtelling) og FUT.GG; FUTBINs «Expires 2 weeks» er ikke en dato og kan ikke brukes alene.
