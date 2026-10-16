@@ -18,7 +18,7 @@ jobs:
           git config user.email probe@example.com
           git checkout --orphan probe-out-tmp
           git rm -rf . -q || true
-          cp /tmp/probe_card.txt probe_card.txt; cp /tmp/ea_shield.png ea_shield.png 2>/dev/null || true
-          git add probe_card.txt ea_shield.png 2>/dev/null || git add probe_card.txt
+          cp /tmp/probe_card.txt probe_card.txt; cp /tmp/img_* . 2>/dev/null || true
+          git add -A
           git commit -q -m "probe card"
           git push -f origin HEAD:probe-out
