@@ -786,7 +786,7 @@ def _plan_orders(cands: List[dict]) -> List[List[dict]]:
     return out
 
 
-def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 6000,
+def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 20000,
                 best_path=None) -> Dict[tuple, Tuple[State, list]]:
     """Every combination of the live evos the card can take: for each evo in turn, take it (every pathway
     option) or skip it. Skipping matters: an evo that lifts OVR can shut the card out of a better one later.
@@ -827,7 +827,9 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 600
         return out
 
     limit_of = {"ovr": "max_ovr", "pace": "max_pace", "ps": "max_ps", "psp": "max_psp"}
-    for order in _plan_orders(cands):
+    # two passes: first a quick one that only skips an evo when it would shut the card out of a later evo
+    # right away, then a wide one that may skip any evo that can lift OVR, pace or PlayStyles (with a node budget)
+    for strict, order in [(True, o) for o in _plan_orders(cands)] + [(False, o) for o in _plan_orders(cands)]:
         seen = set()
         n = len(order)
         # skipping an evo only helps if it can shut out a later evo (its OVR, pace or PlayStyles)
@@ -837,39 +839,63 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 600
             may_skip.append(any(order[j]["req"][limit_of[x]] is not None for j in range(i + 1, n) for x in eff
                                 if order[j]["key"] != e["key"]))
 
-        def rec(i: int, st: State, chain: list, skipped: tuple) -> None:
+        def blocks_later(i: int, st: State, nexts: List[State]) -> bool:
+            """Would taking order[i] now shut the card out of a later evo it could still enter?"""
+            for j in range(i + 1, n):
+                ej = order[j]
+                if ej["key"] == order[i]["key"]:
+                    continue
+                now = check(ej, st, rules)
+                if now is not None and now[0] not in ("pre", "done") and not (now[0] == "ovr" and ej["req"]["min_ovr"] is not None
+                                                                          and st.ovr < ej["req"]["min_ovr"]):
+                    continue
+                for nxt in nexts:
+                    why = check(ej, nxt, rules)
+                    if why is not None and why[0] in ("ovr", "pace", "ps", "psp"):
+                        return True
+            return False
+
+        def rec(i: int, st: State, sk: tuple, done: tuple, chain: list, skipped: tuple) -> None:
             nonlocal nodes
-            k = (i, st.key(), tuple(sorted(st.done)))
-            if k in seen or nodes >= max_nodes:
+            k = (i, sk, done)
+            if k in seen or (not strict and nodes >= max_nodes) or (strict and len(seen) >= 4 * max_nodes):
                 return
             seen.add(k)
-            nodes += 1
+            if not strict:
+                nodes += 1
             if i == n:
                 st2, chain2 = finish(st, chain, skipped)
-                old = ends.get(st2.key())
+                k2 = st2.key() if chain2 is not chain else sk
+                old = ends.get(k2)
                 if old is None or len(chain2) < len(old[1]):
-                    ends[st2.key()] = (st2, chain2)
+                    ends[k2] = (st2, chain2)
                 return
             e = order[i]
             if check(e, st, rules) is None:
-                moved = False
+                nexts = []
                 for path in (e["up"]["paths"] or [None]):
                     nxt = apply(e, st, rules, path)
-                    if nxt.key() != st.key():
-                        moved = True
-                        rec(i + 1, nxt, chain + [(e, path, st, nxt)], skipped)
-                if may_skip[i] or not moved:
-                    rec(i + 1, st, chain, skipped + (e,) if moved else skipped)
+                    nk = nxt.key()
+                    if nk != sk:
+                        nexts.append((path, nxt, nk))
+                if nexts:
+                    done2 = tuple(sorted(done + (e["key"],)))
+                    for path, nxt, nk in nexts:
+                        rec(i + 1, nxt, nk, done2, chain + [(e, path, st, nxt)], skipped)
+                    if may_skip[i] and (not strict or blocks_later(i, st, [x for _, x, _ in nexts])):
+                        rec(i + 1, st, sk, done, chain, skipped + (e,))
+                else:
+                    rec(i + 1, st, sk, done, chain, skipped)
             else:
-                rec(i + 1, st, chain, skipped)
+                rec(i + 1, st, sk, done, chain, skipped)
 
-        rec(0, st0, [], ())
+        rec(0, st0, st0.key(), tuple(sorted(st0.done)), [], ())
     if not ends:
         ends[st0.key()] = (st0, [])
     return ends
 
 
-def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_nodes: int = 6000) -> dict:
+def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_nodes: int = 20000) -> dict:
     """Best order of the live evos for this card, with the evos it misses and why."""
     cands, near, unchecked = [], [], []
     for e in evos:

@@ -851,6 +851,28 @@ def cmd_import_text(args) -> int:
     return 0
 
 
+def _keep_heights(players: List[Player], old_file: str) -> int:
+    """EA's FC 27 pages leave height and weight empty. Keep them from the previous file (same EA id)."""
+    if not Path(old_file).exists():
+        return 0
+    try:
+        old = {str(p.id): p for p in local_src.load_any(old_file) if p.id}
+    except Exception:  # an unreadable old file should not stop a fresh fetch
+        return 0
+    n = 0
+    for p in players:
+        o = old.get(str(p.id))
+        if not o:
+            continue
+        changed = False
+        if p.height_cm is None and o.height_cm:
+            p.height_cm, changed = o.height_cm, True
+        if getattr(p, "weight_kg", None) is None and getattr(o, "weight_kg", None):
+            p.weight_kg, changed = o.weight_kg, True
+        n += changed
+    return n
+
+
 def cmd_fetch_ea(args) -> int:
     from .sources import ea_ratings
     cfg = ea_ratings.load_sources_config()
@@ -881,6 +903,9 @@ def cmd_fetch_ea(args) -> int:
     if len(players) < 1000 and not args.max_pages:
         print(f"Fikk bare {len(players)} spillere fra EA. Beholder filen fra forrige gang.")
         return 1
+    kept = _keep_heights(players, args.out)
+    if kept:
+        print(f"  Høyde og vekt mangler hos EA for FC 27; tok dem fra forrige fil for {kept} spillere.")
     local_src.save_json(players, args.out)
     meta_path.write_text(json.dumps({"source": source, "fetched": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                                      "players": len(players)}, ensure_ascii=False), encoding="utf-8")

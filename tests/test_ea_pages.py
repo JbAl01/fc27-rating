@@ -55,6 +55,20 @@ class EaPagesTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ea_ratings.next_data("<html>no data</html>")
 
+    def test_height_is_kept_from_the_previous_file(self):
+        import tempfile
+        from pathlib import Path
+        from fcrating.cli import _keep_heights
+        from fcrating.sources import local
+        from fcrating.schema import Player
+        with tempfile.TemporaryDirectory() as d:
+            old = Path(d) / "ea.json"
+            local.save_json([Player.from_dict({"id": "1", "name": "A", "position": "CDM", "height_cm": 186, "attributes": {}})], str(old))
+            new = ea_ratings.map_item(dict(item(1, "A", "CDM", ["CM"]), height=""))
+            self.assertIsNone(new.height_cm)
+            self.assertEqual(_keep_heights([new], str(old)), 1)
+            self.assertEqual(new.height_cm, 186)
+
 
 if __name__ == "__main__":
     unittest.main()

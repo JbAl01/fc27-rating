@@ -1,4 +1,4 @@
-# Midlertidig: undersøker datakilder og ett kort. Skriver resultatet til grenen probe-out. Slettes etterpå.
+# Midlertidig: prøver ny EA-henting og ny evo-plan på ekte data. Skriver resultatet til grenen probe-out. Slettes etterpå.
 name: Probe
 on:
   push:
@@ -9,9 +9,10 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 60
     env:
       PYTHONUTF8: "1"
+      TZ: Europe/Oslo
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
@@ -21,13 +22,16 @@ jobs:
         with:
           path: |
             data/ea_players.json
+            data/ea_players.meta.json
             data/spesialkort.json
             data/cache
             data/evolab_cache.pkl
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
-      - run: python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
-
+      - run: (time python -m fcrating fetch-ea) > /tmp/probe_out.txt 2>&1 || true
+      - run: python -m fcrating fetch-specials --offline >> /tmp/probe_out.txt 2>&1 || true
+      - run: python ekstra/probe.py >> /tmp/probe_out.txt 2>&1 || true
+      - run: (time python -m fcrating evolab data/ea_players.json data/spesialkort.json --name Vetlesen --maks-ovr 99) >> /tmp/probe_out.txt 2>&1 || true
       - name: Lagre resultatet på grenen probe-out
         run: |
           git config user.name "github-actions[bot]"

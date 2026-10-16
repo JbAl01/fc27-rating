@@ -345,12 +345,16 @@ Med `--lagre` lagres vektene i `config/run_ai_kalibrert.json`, og rapporten bruk
 
 **«Evoene som er ute nå»** åpner en liste over evoene planene bygger på: hvem som kan ta dem, hva de koster, når du senest kan starte dem (i norsk tid) og lenker til kildene. Har en evo stengt siden siden ble laget, står det øverst, og du bør kjøre `rate` på nytt.
 
+**Slik finnes planen:** programmet prøver alle kombinasjoner av evoene kortet kan ta: for hver evo både å ta den og å hoppe over den, i tre rekkefølger (strengeste OVR-krav først, strengeste PlayStyle-krav først og strengeste fartskrav først). Å hoppe over betyr noe, fordi en evo som løfter OVR kan stenge kortet ute fra en bedre evo senere. En evo som er hoppet over, men som kortet fortsatt kan ta til slutt, tas til slutt. Det tar lengre tid enn før, men planene ble bedre for omtrent halvparten av kortene i testen (i snitt +1 IGR, opptil +12).
+
+Kravene til posisjon gjelder alle posisjonene kortet har, også de alternative: «LW, RW» betyr at kortet må ha en av dem, og «ikke ST, CM, CAM» at det ikke kan ha noen av dem. Derfor må de alternative posisjonene være riktige. De hentes fra EAs FC 27-database (se «EAs offisielle ratingdatabase»).
+
 **Tabellen:** OVR i dag og etter, IGR i dag, IGR etter evo (med økningen under), plass i posisjonen etter evo, følelse, Løps-AI og Stopp etter evo. Med «Alle utespillere» sorteres det på plass i posisjonen, så spisser og midtstoppere kan blandes rettferdig. Keepere er utelatt (sett `include_gk` til `true` i `config/evolab.json`).
 
 **Trykk på et kort** for å se:
 
 - **Slik gjør du det:** evoene i den rekkefølgen som gir mest, med hva hver koster, når den stenger, hvilket valg du skal ta i pathway-evoer («På siste nivå: velg B (dribling + Press Proven)» eller «Velg Incisive Pass på nivå 1 og Press Proven på nivå 2»), hva den gir kortet og hva det betyr for IGR, følelse, Løps-AI og stopp. Viktige terskler står som en setning: «Blir Explosive», «Mister Explosive», «Off-balance går fra 72 til 77, og kortet er med i mekanikken». Til slutt Roles++, og hvorfor rekkefølgen betyr noe. Under står evoer kortet nesten kommer inn i, evoer det ikke kan ta, og evoer med krav du må sjekke selv (som fødselsdato).
-- **Plan:** finnes en rekkefølge som gir mer Løps-AI eller følelse enn den beste IGR-planen, kan du bytte.
+- **Plan:** planen følger det du sorterer etter. Sorterer du etter «Løp uten ball etter evo», «Følelse etter evo» eller «Vanskelig å stoppe etter evo», viser tabellen og kortet den beste evo-kombinasjonen for akkurat det, med alle tallene for den planen. Ellers vises planen som gir høyest IGR. I kortet kan du bytte mellom planene.
 - **Før og etter:** IGR, plass, OVR, følelse, fart, off-balance, Løps-AI, Løps-IQ, effekt, stopp med ball og på løp og AcceleRATE, i dag og med evoene nå (og i anslaget når du har valgt det), og alt som endres.
 - **Prøv andre evoer selv:** huk av evoene i den rekkefølgen du vil, velg pathway, legg til egne oppgraderinger og PlayStyles. Tallene regnes på nytt med en gang, med samme regler som Python (det er testet at de gir like tall).
 - **Legg til i sammenligning:** opptil tre kort side om side.
@@ -363,7 +367,7 @@ py -m fcrating brukt --fjern "Nine Duty"
 py -m fcrating brukt --tom
 ```
 
-Siden bruker et enklere søk enn Python når den regner på nytt (gammel rekkefølge uten de brukte, strengeste OVR-krav først, og «ta den som gir mest» steg for steg), så `brukt` + `rate` gir den grundigste planen.
+Siden bruker det samme søket som Python når den regner på nytt, så planen blir like god.
 
 **Anslaget for resten av året** er en gjetning. EA slipper nye evoer hele året, og ingen vet hvilke. Evo Lab lar kortet ta evoer som ligner dem EA har sluppet i FC 27, i 8 tenkte fortsettelser av året. Spennet (for eksempel 89.8–96.0) viser dårlig og god flaks. Ingen av de evoene finnes ennå, så planen og «Etter evo» i rapporten bruker bare evoene som er ute nå.
 
@@ -604,15 +608,11 @@ Spilleren lagres i `data/mine_spillere.json`. `--role` tar `POSISJON:Rolle:nivå
 
 ### 3. EAs offisielle ratingdatabase (alle basekort)
 
-**Viktig (oktober 2026): EA-adressen gir FC 25-kort, ikke FC 27.** Vicky López kommer for eksempel ut som 80 CAM, mens EAs FC 27-side viser 84 RW, og bildelenkene i svaret inneholder «/FC25/». Derfor bygges FC 27-basekortene nå fra FIFA Rosters (`use_base_cards` i `config/sources.json`):
+**FC 27 (fra 16. oktober 2026):** `fetch-ea` leser spillerlisten fra EAs egne ratingsider (ea.com/games/ea-sports-fc/ratings?page=1, 2, ...). Hver side har 100 spillere som JSON i siden, med FC 27-posisjon, alternative posisjoner, attributter, PlayStyles, høyde, svakfot og skill moves. Rundt 200 sider, så det tar noen minutter. GitHub-jobben henter dem én gang i uka (`fetch-ea --hvis-gammel 7`). Feiler en side tre ganger, beholdes filen fra forrige gang.
 
-- OVR, posisjoner, hovedtall, svakfot, skill moves og arbeidsrate kommer fra FIFA Rosters' FC 27-liste.
-- Attributtene anslås fra det eldre EA-kortet pluss endringen i hovedtallene, merket «estimert». Har kortsiden blitt hentet, brukes de ekte attributtene.
-- Høyde og PlayStyles kommer fra det eldre EA-kortet og kan ha endret seg i FC 27.
-- Spesialkort bygges fra FC 27-basekortet.
-- EA-kortene rangeres ikke selv, så spillere som ikke er med i FC 27, faller ut.
+FC 27-basekortene bygges fortsatt fra FIFA Rosters' liste (`use_base_cards`), men attributtene, høyden, PlayStyles og de alternative posisjonene kommer nå fra EAs FC 27-kort. Før kom de fra et FC 25-kort, og da manglet for eksempel CM hos Hugo Vetlesen, så Evo Lab trodde han kunne ta Touchline Magic (som ikke tillater CM).
 
-`fetch-ea` trengs fortsatt, fordi EA-kortene brukes som mal for attributtene. `fetch-specials --offline` bygger FC 27-basekortene fra det som er lagret, uten å hente noe. Finner du EAs FC 27-adresse, kan du sette `use_base_cards` til false og legge adressen inn som `url_template`.
+Den gamle JSON-adressen under gir fortsatt FC 25-kort og brukes bare hvis du fjerner `html_url_template` i `config/sources.json`.
 
 Adressen er lagt inn i `config/sources.json`:
 
