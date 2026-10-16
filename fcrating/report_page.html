@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FC 27-rating</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#15191e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0f1216"><script>try{if(localStorage.getItem("fcth")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
@@ -22,7 +22,7 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 <div class="page">
 <header class="top"><div><h1>FC 27-rating</h1>
 <p>Alle kort rangert mot kortene i samme posisjon. Oppdatert __STAMP__.<span class="x"> Ratingen (IGR) er vår egen.</span></p></div>
-<nav>__EVOLAB__ <button type="button" class="link" id="xp"></button></nav></header>
+<nav>__EVOLAB__ <button type="button" class="link" id="th"></button> <button type="button" class="link" id="xp"></button></nav></header>
 
 <section class="controls" aria-label="Søk og sortering">
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
@@ -160,8 +160,8 @@ const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
 function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
 const dr=mdrift(g),since=META.meta&&META.meta.since;
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
-let h=`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
-<p>IGR ${fmt(e.igr)} som ${gl}: nr. ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${e.meta!=null&&since&&dr>0.05?` <span class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</span>`:""}</p>
+let h=`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
+<div class="stats"><div class="stat"><small>IGR som ${gl}</small><b>${fmt(e.igr)}</b></div><div class="stat"><small>Plass blant ${esc(pl)}</small><b>${n0(e.rank)}<i>av</i>${n0(e.of)}</b></div>${d.evo&&d.evo.x===undefined&&d.evo.a!=null?`<div class="stat"><small>Med evoene nå</small><b><em>${fmt(d.evo.a)}</em></b></div>`:""}</div>${e.meta!=null&&since&&dr>0.05?`<p class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</p>`:""}
 ${d.style||d.likes.length?`<p class="x">${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;
 /* what the rating is built from */
@@ -175,9 +175,9 @@ ${kvd("Ferdigheter",`det som betyr mest for en ${gl}: ${esc(list(skillTop(g)))}`
 ${B.run&&e.rs!=null?kvd("Løp uten ball","hvor smart og nyttig han løper når laget har ballen",fmt(e.rs),pct(w.rp)):""}
 ${B.stop&&e.ss!=null?kvd("Vanskelig å stoppe","med ball og på løp: fart, styrke og balanse",fmt(e.ss),pct(w.ssp)):""}
 ${kvd("PlayStyles",e.pse?"ikke kjent for dette kortet ennå":"",e.pse?"?":(psn.length?psChips(psn):"ingen"),"")}
-${extra.length?kvd("Gir også ekstra",esc(list(extra)),"",""):""}
+${extra.length?kvd("Gir også ekstra",esc(list(extra)),"","").replace("<tr>","<tr class=\"x\">"):""}
 </tbody></table></section>
-<section><h3>Mer om kortet</h3><table class="kv"><tbody>
+<section><details class="why"><summary>Flere tall</summary><table class="kv"><tbody>
 ${!gk&&d.obd!=null?kvd("Off-balance",`snittet av Agility, Balance og Dribbling. ${obIn(d.obd)?`${OB.start} eller mer: kan drible seg ut av ubalanse`:`Under ${OB.start}: mister lettere balansen`}`,Math.round(d.obd),""):""}
 ${d.hs?kvd("Vanskelig å stoppe med ball","Strength, Balance, fart, Ball Control og Dribbling",fmt(d.hs.ball),""):""}
 ${d.hs?kvd("Vanskelig å stoppe på løp",d.accelerate==="Lengthy"?"Lengthy: tar igjen de fleste over lang avstand":"Sprint Speed, Strength, Acceleration og Balance",fmt(d.hs.run),""):""}
@@ -185,7 +185,7 @@ ${rg&&d.ra&&d.ra.dec!=null?kvd("Smarte løp","hvor og når han løper (Att. Posi
 ${rg&&d.ra&&d.ra.exe!=null?kvd("Får avstand","om løpet faktisk gir rom (fart, smidighet, kropp og Stamina)",fmt(d.ra.exe),""):""}
 ${d.accelerate?kvd("AcceleRATE",ACCTXT[d.accelerate]||"",esc(d.accelerate),""):""}
 ${d.h?kvd("Høyde",d.ra&&d.ra.body?esc(d.ra.body.toLowerCase()):"",Math.round(d.h)+" cm",""):""}
-</tbody></table>`;
+</tbody></table></details>`;
 if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Løper på samme måte som ${list(sims.map(([o])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a>`))}.</p>`}
 h+=`</section></div>`;
 const profBars=PROF.order.map((k,i)=>d.prof[i]==null||!(PROF.panel||PROF.order).includes(k)?"":bar(plab(i),d.prof[i],profPct(d,g,i),"Plass blant alle som kan spille posisjonen")).join("");
@@ -194,7 +194,7 @@ const strong=[];const seen=new Set();for(const x of [...w.tf,...w.ts,...w.s]){if
 strong.sort((a,b)=>(b[1]-(b[2]??b[1]))-(a[1]-(a[2]??a[1])));
 h+=`<p style="margin-top:14px"><b>Sterkest:</b> ${strong.length?nameList(strong.slice(0,5)):"–"}.</p>`;
 if(w.w.length)h+=`<p><b>Svakest:</b> ${nameList(w.w)}.</p>`;
-const v=d.evo;if(v){h+=v.x!==undefined?`<p class="muted">Kan ikke evolueres: ${esc(v.x)}.</p>`:`<p><b>Med evoene som er ute nå</b> kan kortet nå IGR ${fmt(v.a)} (fra ${fmt(v.n)}) og OVR ${v.o}.${META.evolab?' <a href="evolab.html">Se planen i Evo Lab</a>.':""}</p>`}
+const v=d.evo;if(v){h+=v.x!==undefined?`<p class="muted">Kan ikke evolueres: ${esc(v.x)}.</p>`:(META.evolab?`<p><a href="evolab.html">Se planen i Evo Lab</a></p>`:"")}
 /* the numbers behind it */
 const share=k=>B[k]?Math.round(B[k]*100)+" %":"";
 const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${share("feel")}`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${share("pace")}`);core.push(`ferdigheter ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løp uten ball ${fmt(e.rs)} × ${share("run")}`);if(B.stop&&e.ss!=null)core.push(`vanskelig å stoppe ${fmt(e.ss)} × ${share("stop")}`);
@@ -254,7 +254,7 @@ function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
 $("count").textContent=rows.length===DATA.length?`${n0(DATA.length)} kort`:`${n0(rows.length)} av ${n0(DATA.length)} kort`;
 const ncol=13+(F.combo.length?1:0)+(HASPRICE?1:0);
 rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
-const sub=[d.version,d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
+const sub=[String(d.version).replace(/^FC 27 /,""),d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
 tr.innerHTML=`<td><div class="who">${faceImg(d)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(sub)}</div>${d.ps.length?`<div>${psChips(d.ps,null,4,"mini")}</div>`:""}</div></div></td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
@@ -277,6 +277,8 @@ gs.onchange=()=>{key=gs.value?"igr":"top_pct";dir=gs.value?-1:1;$("sort").value=
 $("sort").onchange=ev=>{key=ev.target.value;dir=key==="top_pct"?1:-1;if(key==="combo"&&!F.combo.length)$("fp").open=true;if(key.startsWith("evo")&&!F.evo){F.evo=true;syncF()}reset()};
 syncF();render();
 </script>
-<script>(function(){const b=document.getElementById("xp");if(!b)return;let on=false;try{on=localStorage.getItem("fcx")==="1"}catch(e){}
+<script>(function(){const t=document.getElementById("th");if(t){const cur=()=>document.documentElement.getAttribute("data-theme")==="light";const lab=()=>t.textContent=cur()?"Mørk":"Lys";
+t.onclick=()=>{if(cur())document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme","light");try{localStorage.setItem("fcth",cur()?"light":"dark")}catch(e){}lab()};lab()}
+const b=document.getElementById("xp");if(!b)return;let on=false;try{on=localStorage.getItem("fcx")==="1"}catch(e){}
 function set(){document.body.classList.toggle("exp",on);b.textContent=on?"Skjul forklaringer":"Vis forklaringer";b.setAttribute("aria-pressed",on)}
 b.onclick=()=>{on=!on;try{localStorage.setItem("fcx",on?"1":"0")}catch(e){}set()};set()})()</script></body></html>

@@ -3,7 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Evo Lab</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#15191e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0f1216"><script>try{if(localStorage.getItem("fcth")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
 <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-180.png">
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
@@ -36,7 +36,7 @@ __CSS__
 <div class="page">
 <header class="top"><div><h1>Evo Lab</h1>
 <p>Hva kortene blir med evoene som er ute nå.<span class="x"> Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</span></p></div>
-<nav><a href="rapport.html">Rangering</a> <button type="button" class="link" id="xp"></button></nav></header>
+<nav><a href="rapport.html">Rangering</a> <button type="button" class="link" id="th"></button> <button type="button" class="link" id="xp"></button></nav></header>
 
 <section class="controls" aria-label="Filtre">
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
@@ -406,7 +406,7 @@ const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","I
 function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
 $("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset();if(objNow()!==OBJ)recompute()})}
 function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
-return`<td><div class="who">${faceImg(d)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></div></div></td>
+return`<td><div class="who">${faceImg(d)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(String(d.ver).replace(/^FC 27 /,""))}, ${esc(d.pos)}</div></div></div></td>
 <td class="l"><span class="pos ${posClass(d.g)}">${esc(d.positions[0]||d.g)}</span></td>
 <td class="num">${d.ovr}<small>til ${h.ovr}</small></td>
 <td class="num">${fmt(d.now)}</td>
@@ -433,6 +433,7 @@ const chg=([i,b,a])=>`${esc(META.attrs[i]||"?")} ${Math.round(b)} → ${Math.rou
 const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}"><i aria-hidden="true"></i>${esc(nm)}${plus?"<b>+</b>":""}</span>`};
 const psChips=(names,fresh,max,cls)=>{const s=[...names].sort((a,b)=>(b.endsWith("+")-a.endsWith("+"))||0);const shown=max&&s.length>max?s.slice(0,max):s;return`<span class="pscs${cls?" "+cls:""}">${shown.map(n=>psChip(n,fresh&&fresh.has(n))).join("")}${shown.length<s.length?`<span class="psc more">+${s.length-shown.length}</span>`:""}</span>`};
 const psAll=st=>st.ps.filter(p=>!st.psp.includes(p)).concat(st.psp.map(p=>p+"+"));
+const gainChips=(g,max)=>{const m=max||5;const sh=g.stats.slice(0,m).map(t=>{const x=/^(.*) (\d+) → (\d+)$/.exec(t);const dl=x?x[3]-x[2]:0;return`<span class="g">${x?esc(x[1])+" "+(dl>0?"+":"")+dl:esc(t)}</span>`}).join("");return sh+(g.stats.length>m?`<span class="g more">+${g.stats.length-m}</span>`:"")};
 function gainsText(a,b){const parts=diffs(a.a,b.a).map(chg);
 if(b.ovr!==a.ovr)parts.unshift(`OVR ${a.ovr} → ${b.ovr}`);if(b.wf!=null&&a.wf!=null&&b.wf!==a.wf)parts.push(`svakfot ${a.wf} → ${b.wf}`);if(b.sm!=null&&a.sm!=null&&b.sm!==a.sm)parts.push(`skill moves ${a.sm} → ${b.sm}`);
 const ps=b.ps.filter(p=>!a.ps.includes(p)&&!a.psp.includes(p)),psp=b.psp.filter(p=>!a.psp.includes(p));
@@ -446,13 +447,13 @@ if(k==="st")return t.replace(/\(.*\)/,"")+": flere taklingsanimasjoner.";return 
 function choiceText(e,path){if(!path)return"";const l=path[0];const multi=e[8][8].length>1&&e[8][8].every(p=>/ \+ /.test(p[0])&&!/^Valg/.test(p[0]));
 if(multi){const ps=l.split(" + ");return`Velg ${esc(ps[0])} på nivå 1 og ${esc(ps[1])} på nivå 2.`}
 const m=/^Valg (\w+): (.*)$/.exec(l);if(m)return`På siste nivå: velg ${esc(m[1])} (${esc(m[2])}).`;return`Velg ${esc(l)}.`}
-function stepHtml(d,s){if(!s.e){return`<li><div class="hd">Roles++ ${esc(d.c.prim||"")}</div><p class="muted">${esc(RU.rppCost)}. Gir ++ i alle roller i hovedposisjonen.</p>
+function stepHtml(d,s){if(!s.e){return`<li><div class="hd">Roles++ ${esc(d.c.prim||"")}<span class="cost">${esc(RU.rppCost)}</span></div>
 ${(()=>{const t=effectText(s);return t?`<p>${t}.</p>`:""})()}</li>`}
 const e=s.e,closed=isClosed(e),g=gainsText(s.a,s.b),eff=effectText(s),gt=gateText(s,d.c.g);
-return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}</div>
-<p class="muted">${esc(e[2]||"gratis")}. ${closed?"Har stengt.":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Kan startes hele sesongen.":"Kan startes til "+esc(c)+"."})()}</p>
-${s.path?`<p>${choiceText(e,s.path)}</p>`:""}
-${g.stats.length||g.ps.length?`${g.stats.length?`<p>Gir ${esc(list(g.stats.slice(0,4)))}${g.stats.length>4?` og ${g.stats.length-4} til`:""}.</p>`:""}${g.ps.length?`<p>${psChips(g.ps,new Set(g.ps))}</p>`:""}`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
+return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}<span class="cost">${esc(e[2]||"gratis")}</span></div>
+<div class="meta2">${closed?"Har stengt":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Hele sesongen":"Til "+esc(c)})()}</div>
+${s.path?`<p class="muted">${choiceText(e,s.path)}</p>`:""}
+${g.stats.length||g.ps.length?`<div class="gains">${gainChips(g)}${g.ps.length?psChips(g.ps,new Set(g.ps)):""}</div>`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
 ${eff||gt||e[9]?`<details class="why"><summary>Hvorfor</summary>${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</details>`:""}</li>`}
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
@@ -475,16 +476,22 @@ function beforeAfter(d){const last=d.h.length-1,cols=isNow()?[0]:[0,F.h],h0=d.h[
 const A=[d.base,buildLive(d)].concat(isNow()?[]:[buildEnd(d)]);
 const pick=(now,live,end)=>[now,live].concat(isNow()?[]:[end]);
 let t=`<table class="kv"><thead><tr><th></th><th>I dag</th><th>Evoene nå</th>${isNow()?"":"<th>Anslag</th>"}</tr></thead><tbody>`;
-t+=kvRow("IGR",pick(d.now,h0.p50,hv(d).p50));
-t+=kvRow(`Plass blant ${plural(d.g)}`,pick(d.rnow,h0.rank,hv(d).rank),0,-1);
-t+=kvRow("OVR",pick(d.ovr,h0.ovr,hv(d).ovr),0);
+const hd=t;
 t+=kvRow("Følelse",pick(d.nowx.feel,d.lv.feel,d.med.feel));
 t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
-t+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);if(DEFW[d.c.g])t+=kvRow("Forsvar",A.map(a=>defOf(a,d.c.g)));
-if(d.runcard){t+=kvRow("Løp uten ball",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));t+=kvRow("Smarte løp",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));t+=kvRow("Får avstand",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
-if(d.stops){t+=kvRow("Vanskelig å stoppe med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));t+=kvRow("Vanskelig å stoppe på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
-t+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
-return t+"</tbody></table>"}
+if(d.runcard)t+=kvRow("Løp uten ball",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));
+if(d.stops)t+=kvRow("Vanskelig å stoppe",pick(d.stops.now[0],d.stops.live[0],d.stops.end[0]));
+if(DEFW[d.c.g])t+=kvRow("Forsvar",A.map(a=>defOf(a,d.c.g)));
+t+="</tbody></table>";
+let m=hd;
+m+=kvRow("IGR",pick(d.now,h0.p50,hv(d).p50));
+m+=kvRow(`Plass blant ${plural(d.g)}`,pick(d.rnow,h0.rank,hv(d).rank),0,-1);
+m+=kvRow("OVR",pick(d.ovr,h0.ovr,hv(d).ovr),0);
+m+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);
+if(d.runcard){m+=kvRow("Smarte løp",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));m+=kvRow("Får avstand",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
+if(d.stops){m+=kvRow("Vanskelig å stoppe med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));m+=kvRow("Vanskelig å stoppe på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
+m+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
+return t+`<details class="why"><summary>Flere tall</summary>${m}</tbody></table></details>`}
 function extrasHtml(d){let h="";const st0=stateOf(d),lr=liveRun(d),g=gainsText(st0,lr.st);
 if(g.stats.length)h+=`<p><b>Alt som endres med evoene nå:</b> ${esc(list(g.stats))}.</p>`;
 {const now=psAll(st0),aft=psAll(lr.st),fresh=new Set(g.ps);if(now.length||aft.length)h+=`<p><b>PlayStyles i dag:</b> ${now.length?psChips(now):'<span class="muted">ingen</span>'}</p>${g.ps.length?`<p><b>Etter evoene:</b> ${psChips(aft,fresh)} <span class="muted">(grønn = ny)</span></p>`:""}`}
@@ -500,8 +507,8 @@ d.h.forEach((h,i)=>{t+=`<tr><th>${i===0?"Evoene nå":esc(H[i].name)}</th><td>${f
 return t+`</tbody></table><p class="muted x">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}${d.h.some(h=>Math.abs(h.adj||0)>=0.05)?" Justert for evoene du har brukt opp.":""}</p>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
-return`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
-<p>IGR ${fmt(d.now)} i dag og ${fmt(h0.p50)} med evoene som er ute nå. Det er plass ${n0(h0.rank)} av ${n0(h0.of)} ${esc(plural(d.g))}${d.rnow?`, opp fra ${n0(d.rnow)}`:""}. OVR ${d.ovr} til ${h0.ovr}.</p>
+return`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
+<div class="stats"><div class="stat"><small>IGR</small><b>${fmt(d.now)}<i>→</i><em>${fmt(h0.p50)}</em></b></div><div class="stat"><small>Plass blant ${esc(plural(d.g))}</small><b>${d.rnow?n0(d.rnow):"–"}<i>→</i><em>${n0(h0.rank)}</em></b></div><div class="stat"><small>OVR</small><b>${d.ovr}<i>→</i><em>${h0.ovr}</em></b></div></div>
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
 <div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern fra sammenligning":"Legg til i sammenligning"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk «prøv selv»":"Prøv andre evoer selv"}</button></div>
 <div class="cols"><section><h3>Slik gjør du det</h3>${planHtml(d)}</section>
@@ -586,6 +593,8 @@ if(F.twin){TWIN=META.targets.find(t=>twinName(t)===F.twin)||null;if(!TWIN)F.twin
 dir=F.sort==="name"?1:-1;sync();renderEvos();render();usedInfo(null);recompute();
 window.__lab={D,rater,stateOf,runPlan,check,apply,pyRound,psum,searchPlans};
 </script>
-<script>(function(){const b=document.getElementById("xp");if(!b)return;let on=false;try{on=localStorage.getItem("fcx")==="1"}catch(e){}
+<script>(function(){const t=document.getElementById("th");if(t){const cur=()=>document.documentElement.getAttribute("data-theme")==="light";const lab=()=>t.textContent=cur()?"Mørk":"Lys";
+t.onclick=()=>{if(cur())document.documentElement.removeAttribute("data-theme");else document.documentElement.setAttribute("data-theme","light");try{localStorage.setItem("fcth",cur()?"light":"dark")}catch(e){}lab()};lab()}
+const b=document.getElementById("xp");if(!b)return;let on=false;try{on=localStorage.getItem("fcx")==="1"}catch(e){}
 function set(){document.body.classList.toggle("exp",on);b.textContent=on?"Skjul forklaringer":"Vis forklaringer";b.setAttribute("aria-pressed",on)}
 b.onclick=()=>{on=!on;try{localStorage.setItem("fcx",on?"1":"0")}catch(e){}set()};set()})()</script></body></html>
