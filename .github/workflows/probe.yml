@@ -27,7 +27,7 @@ jobs:
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
       - run: python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
-      - run: python -m fcrating evolab data/ea_players.json data/spesialkort.json --name Vetlesen --maks-ovr 99 >> /tmp/probe_out.txt 2>&1 || true
+
       - name: Lagre resultatet på grenen probe-out
         run: |
           git config user.name "github-actions[bot]"
