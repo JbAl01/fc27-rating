@@ -257,10 +257,6 @@ table.data table.kv{max-width:600px}
 .fcard.real .st{left:24px;right:22px;top:160px;font-size:12px}.fcard.real .st i{font-size:7.5px}
 .fcard.real.mini .o{left:9px;top:9px;font-size:12px}.fcard.real.mini .pic{right:4px;bottom:6px;width:28px;height:30px}
 @media (max-width:600px){.fcard.real:not(.mini) .o{left:22px;top:28px;font-size:26px}.fcard.real:not(.mini) .p{left:24px;top:56px}.fcard.real:not(.mini) .pic{right:15px;bottom:68px;width:90px;height:100px}.fcard.real:not(.mini) .nme{top:118px}.fcard.real:not(.mini) .st{top:139px;font-size:10.5px;left:20px;right:18px}}
-.fcard .bd{position:absolute;left:28px;width:20px;height:20px;object-fit:contain;z-index:1}
-.fcard .bd.ni{top:84px}.fcard .bd.cl{top:108px}
-.fcard:not(.real) .bd{left:16px}
-@media (max-width:600px){.fcard:not(.mini) .bd{width:17px;height:17px;left:24px}.fcard:not(.mini) .bd.ni{top:72px}.fcard:not(.mini) .bd.cl{top:93px}}
 .dethead{flex-direction:column;align-items:flex-start;gap:14px}
 .dethead .info{order:-1;padding-top:0}
 .dethead{align-items:stretch;width:100%}
@@ -276,3 +272,12 @@ table.data table.kv{max-width:600px}
 .fcard.real .pic{right:16px;bottom:70px;width:112px;height:122px;object-position:50% 100%}
 @media (max-width:600px){.fcard.real:not(.mini) .pic{right:13px;bottom:62px;width:96px;height:104px}}
 .fcard.real .pic.tall{left:0;right:0;top:0;bottom:auto;width:100%;height:100%;object-fit:contain;object-position:50% 100%}
+/* posisjoner, ferdighetsmerke og logoer som på FUT.GG */
+.fcard .alt,.fcard .sw{position:absolute;right:20px;z-index:2;font:700 8.5px/1 var(--num);font-style:normal;padding:2px 3px;border-radius:3px;background:rgba(10,10,20,.62);color:#fff}
+.fcard .alt:nth-of-type(1){top:44px}.fcard .alt:nth-of-type(2){top:58px}.fcard .alt:nth-of-type(3){top:72px}
+.fcard .sw{top:116px;font-size:9px}.fcard .sw em{font-style:normal;margin:0 1px;opacity:.8}
+.fcard .bds{position:absolute;left:0;right:0;bottom:23px;display:flex;justify-content:center;gap:5px;z-index:2}
+.fcard .bd{width:15px;height:15px;object-fit:contain}
+.fcard:not(.real) .bds{bottom:8px}
+.fcard.real .nme{top:132px}.fcard.real .st{top:152px}
+@media (max-width:600px){.fcard:not(.mini) .alt,.fcard:not(.mini) .sw{right:16px}.fcard:not(.mini) .bds{bottom:20px}.fcard:not(.mini) .bd{width:13px;height:13px}.fcard.real:not(.mini) .nme{top:114px}.fcard.real:not(.mini) .st{top:132px}}
