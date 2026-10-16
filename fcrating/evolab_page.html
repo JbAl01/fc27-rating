@@ -392,6 +392,9 @@ function reset(){shown=PAGE;render()}
 /* ---------- detail ---------- */
 function diffs(a0,a1,n){const out=[];a1.forEach((v,i)=>{if(v!=null&&a0[i]!=null&&Math.round(v)!==Math.round(a0[i]))out.push([i,a0[i],v])});out.sort((x,y)=>(y[2]-y[1])-(x[2]-x[1]));return n?out.slice(0,n):out}
 const chg=([i,b,a])=>`${esc(META.attrs[i]||"?")} ${Math.round(b)} → ${Math.round(a)}`;
+const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}"><i aria-hidden="true"></i>${esc(nm)}${plus?"<b>+</b>":""}</span>`};
+const psChips=(names,fresh,max,cls)=>{const s=[...names].sort((a,b)=>(b.endsWith("+")-a.endsWith("+"))||0);const shown=max&&s.length>max?s.slice(0,max):s;return`<span class="pscs${cls?" "+cls:""}">${shown.map(n=>psChip(n,fresh&&fresh.has(n))).join("")}${shown.length<s.length?`<span class="psc more">+${s.length-shown.length}</span>`:""}</span>`};
+const psAll=st=>st.ps.filter(p=>!st.psp.includes(p)).concat(st.psp.map(p=>p+"+"));
 function gainsText(a,b){const parts=diffs(a.a,b.a).map(chg);
 if(b.ovr!==a.ovr)parts.unshift(`OVR ${a.ovr} → ${b.ovr}`);if(b.wf!=null&&a.wf!=null&&b.wf!==a.wf)parts.push(`svakfot ${a.wf} → ${b.wf}`);if(b.sm!=null&&a.sm!=null&&b.sm!==a.sm)parts.push(`skill moves ${a.sm} → ${b.sm}`);
 const ps=b.ps.filter(p=>!a.ps.includes(p)&&!a.psp.includes(p)),psp=b.psp.filter(p=>!a.psp.includes(p));
@@ -411,7 +414,7 @@ const e=s.e,closed=isClosed(e),g=gainsText(s.a,s.b),eff=effectText(s),gt=gateTex
 return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}</div>
 <p class="muted">${esc(e[2]||"gratis")}. ${closed?"Har stengt.":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Kan startes hele sesongen.":"Kan startes til "+esc(c)+"."})()}</p>
 ${s.path?`<p>${choiceText(e,s.path)}</p>`:""}
-${g.stats.length||g.ps.length?`<p>Gir ${esc(list(g.stats.slice(0,8)))}${g.stats.length>8?` og ${g.stats.length-8} til`:""}${g.ps.length?(g.stats.length?", og ":"")+"PlayStyle "+esc(list(g.ps)):""}.</p>`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
+${g.stats.length||g.ps.length?`${g.stats.length?`<p>Gir ${esc(list(g.stats.slice(0,8)))}${g.stats.length>8?` og ${g.stats.length-8} til`:""}.</p>`:""}${g.ps.length?`<p>${psChips(g.ps,new Set(g.ps))}</p>`:""}`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
 ${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</li>`}
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
@@ -444,7 +447,8 @@ if(d.stops){t+=kvRow("Vanskelig å stoppe med ball",pick(d.stops.now[1],d.stops.
 t+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
 return t+"</tbody></table>"}
 function extrasHtml(d){let h="";const st0=stateOf(d),lr=liveRun(d),g=gainsText(st0,lr.st);
-if(g.stats.length||g.ps.length)h+=`<p><b>Alt som endres med evoene nå:</b> ${esc(list(g.stats))}${g.ps.length?`${g.stats.length?". ":""}Nye PlayStyles: ${esc(list(g.ps))}`:""}.</p>`;
+if(g.stats.length)h+=`<p><b>Alt som endres med evoene nå:</b> ${esc(list(g.stats))}.</p>`;
+{const now=psAll(st0),aft=psAll(lr.st),fresh=new Set(g.ps);if(now.length||aft.length)h+=`<p><b>PlayStyles i dag:</b> ${now.length?psChips(now):'<span class="muted">ingen</span>'}</p>${g.ps.length?`<p><b>Etter evoene:</b> ${psChips(aft,fresh)} <span class="muted">(grønn = ny)</span></p>`:""}`}
 if(!isNow()){const ge=diffs(d.base,buildEnd(d),10).map(chg);if(ge.length)h+=`<p class="muted">I anslaget for resten av året: ${esc(list(ge))}${d.med.ps.length||d.med.psp.length?`, og ${esc(list(d.med.ps.concat(d.med.psp.map(p=>p+"+"))))}`:""}.</p>`}
 const s=R.ob?R.ob.start:75,o=obdOf(d,buildAt(d));if(o!=null)h+=`<p class="muted">Off-balance er snittet av Agility, Balance og Dribbling, slik EasySBC viser det. ${o>=s?"Kortet er med i mekanikken (75 eller mer).":"Kortet må opp i "+s+" for å være med."}</p>`;
 const cc=chemCheck(d,buildAt(d));if(cc.length)h+=`<p class="muted">Med ${esc(list(cc.map(c=>`${c.name}-kjemi: off-balance ${c.obd==null?"–":Math.round(c.obd)}, ${c.acc||"ukjent AcceleRATE"}`)))}.</p>`;
@@ -485,7 +489,7 @@ t+=kvRow("Følelse",[r.d0.feel,r.d1.feel]);t+=kvRow("Fart",[r.d0.pace,r.d1.pace]
 if(d.runcard){t+=kvRow("Løp uten ball",[r.d0.run,r.d1.run]);t+=kvRow("Smarte løp",[r.d0.vil,r.d1.vil]);t+=kvRow("Får avstand",[r.d0.eff,r.d1.eff])}
 if(r.d1.stp!=null){t+=kvRow("Vanskelig å stoppe med ball",[r.d0.stb,r.d1.stb]);t+=kvRow("Vanskelig å stoppe på løp",[r.d0.stl,r.d1.stl])}
 t+=kvRow("AcceleRATE",[r.d0.acc||"–",r.d1.acc||"–"]);t+="</tbody></table>";
-const gx=gainsText(st0,r.st);if(gx.stats.length||gx.ps.length)t+=`<p class="muted">${esc(list(gx.stats))}${gx.ps.length?`${gx.stats.length?". ":""}PlayStyles: ${esc(list(gx.ps))}`:""}.</p>`;
+const gx=gainsText(st0,r.st);if(gx.stats.length)t+=`<p class="muted">${esc(list(gx.stats))}.</p>`;if(gx.ps.length)t+=`<p>${psChips(psAll(r.st),new Set(gx.ps))}</p>`;
 return t}
 function sandbox(w,d){const s=SBX[d.i],rel=relevant(d),opts=META.attrs.map((l,i)=>i<29?`<option value="${i}">${esc(l)}</option>`:"").join(""),pso=PSN.map(p=>`<option>${esc(p)}</option>`).join("");
 w.innerHTML=`<section class="sbx"><h3>Prøv andre evoer selv</h3><p class="muted">Huk av evoene i rekkefølgen du vil ta dem. Tallene regnes på nytt med en gang, med samme regler som planen over.</p>
