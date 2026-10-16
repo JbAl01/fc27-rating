@@ -1,15 +1,15 @@
-# Midlertidig: undersøker datakilder og ett kort. Endrer ingenting. Slettes etterpå.
+# Midlertidig: undersøker datakilder og ett kort. Skriver resultatet til grenen probe-out. Slettes etterpå.
 name: Probe
 on:
   push:
     branches: [claude/evo-fix]
     paths: [".github/workflows/probe.yml", "ekstra/probe.py"]
 permissions:
-  contents: read
+  contents: write
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       PYTHONUTF8: "1"
     steps:
@@ -26,6 +26,15 @@ jobs:
             data/evolab_cache.pkl
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
-      - run: python ekstra/probe.py
-      - name: Plan for Vetlesen
-        run: python -m fcrating evolab data/ea_players.json data/spesialkort.json --name Vetlesen --maks-ovr 99 || true
+      - run: python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
+      - run: python -m fcrating evolab data/ea_players.json data/spesialkort.json --name Vetlesen --maks-ovr 99 >> /tmp/probe_out.txt 2>&1 || true
+      - name: Lagre resultatet på grenen probe-out
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan probe-out
+          git rm -rfq . > /dev/null
+          cp /tmp/probe_out.txt probe_out.txt
+          git add probe_out.txt
+          git commit -qm "probe output"
+          git push -f origin probe-out
