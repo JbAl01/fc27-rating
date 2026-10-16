@@ -55,3 +55,16 @@ class FutggTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PlayerPageTests(unittest.TestCase):
+    def test_link_to_the_card_on_futgg(self):
+        base = Player(name="Bruno Fernandes", position="CAM", attributes={}, id="212198")
+        special = Player(name="Bruno Fernandes", position="CAM", attributes={}, id="50544966", base_id="212198")
+        icon = Player(name="Pelé", position="CAM", attributes={}, id="67345931",
+                      url="https://www.fifarosters.com/players?player=237067&futid=67345931&v=27")
+        leak = Player(name="Lekket", position="ST", attributes={})
+        self.assertEqual(futgg.player_page(base), "https://www.fut.gg/players/212198/27-212198/")
+        self.assertEqual(futgg.player_page(special), "https://www.fut.gg/players/212198/27-50544966/")
+        self.assertEqual(futgg.player_page(icon), "https://www.fut.gg/players/237067/27-67345931/")
+        self.assertIsNone(futgg.player_page(leak))

@@ -29,6 +29,23 @@ _PLAIN = "M128,12.808L243.192,128,128,243.192,12.808,128Z"   # diamond = PlaySty
 _HEIGHT = re.compile(r"Height</[^>]+>\s*<[^>]+>\s*(\d{3})\s*cm", re.I)
 
 
+_FR_PLAYER = re.compile(r"[?&]player=(\d+)")
+
+
+def player_page(p: Player, game: str = "27") -> Optional[str]:
+    """The card's public page on FUT.GG: /players/<player id>/27-<card id>/. The player id is the base card's id
+    (special cards), the player id in the FIFA Rosters address (Icons and Heroes have no base card here), or the
+    card's own id (base cards, where card and player id are the same). None for cards without a known id."""
+    card = str(p.id or "").strip()
+    if not card.isdigit():
+        return None
+    player = str(p.base_id or "").strip()
+    if not player.isdigit():
+        m = _FR_PLAYER.search(p.url or "")
+        player = m.group(1) if m else card
+    return CARD_URL.format(player=player, game=game, card=card)
+
+
 class FutggCache:
     def __init__(self, folder: str):
         self.dir = Path(folder)

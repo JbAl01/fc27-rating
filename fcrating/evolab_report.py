@@ -243,6 +243,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         intern(r.get("league") or ""),
         intern(r.get("nation") or ""),
         p.birthdate or "",
+        r.get("futgg") or "",
     ]
 
 

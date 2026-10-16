@@ -72,6 +72,7 @@ tr.det>td{padding:0;background:var(--surface);white-space:normal;text-align:left
 .det{padding:18px 16px 22px;border-left:3px solid var(--link);max-width:min(1240px,calc(100vw - 32px));position:sticky;left:0}
 .det h2{margin:0;font:700 24px/1.15 var(--num)}
 .det h2 .muted{font-weight:500}
+.det .ext{margin:4px 0 0;font-size:14px}
 .det h3{margin:0 0 8px;font:700 18px var(--num)}
 .det p{margin:6px 0;max-width:75ch}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}

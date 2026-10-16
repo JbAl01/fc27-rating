@@ -94,7 +94,7 @@ groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6
 run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||""}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||""}});
 const $=id=>document.getElementById(id);
 const HASPRICE=DATA.some(d=>d.price);if(!HASPRICE){document.documentElement.classList.add("noprice");const po=document.querySelector('#sort option[value="price"]');if(po)po.remove()}
 const present=new Set(DATA.flatMap(d=>Object.keys(d.groups)));
@@ -159,7 +159,7 @@ const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
 function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
 const dr=mdrift(g),since=META.meta&&META.meta.since;
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
-let h=`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>
+let h=`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}
 <p>IGR ${fmt(e.igr)} som ${gl}: nr. ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${e.meta!=null&&since&&dr>0.05?` Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.`:""}</p>
 ${d.style||d.likes.length?`<p>${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;

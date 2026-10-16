@@ -330,6 +330,11 @@ def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Op
     }
 
 
+def _futgg_page(player: Player) -> Optional[str]:
+    from .sources.futgg import player_page
+    return player_page(player)
+
+
 def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int = 3,
          groups: Optional[List[str]] = None) -> dict:
     """Rate one player. chem: None, a style name, or 'best' (best known style)."""
@@ -386,6 +391,7 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "status": player.status,
         "estimated": player.estimated,
         "url": player.url,
+        "futgg": _futgg_page(player),
         "name": player.name,
         "id": player.id,
         "ovr": player.ovr,

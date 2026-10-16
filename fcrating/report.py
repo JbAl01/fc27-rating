@@ -204,6 +204,7 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         [hs["score"], hs["ball"], hs["run"]] if (hs := r.get("hard_to_stop")) else 0,
         intern(r.get("league") or ""),
         intern(r.get("nation") or ""),
+        r.get("futgg") or "",
     ]
 
 
