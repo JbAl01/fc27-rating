@@ -26,7 +26,7 @@ jobs:
             data/evolab_cache.pkl
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
-      - run: python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
+      - run: PYTHONPATH=. python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
       - name: Lagre resultatet
         run: |
           git config user.name "github-actions[bot]"
