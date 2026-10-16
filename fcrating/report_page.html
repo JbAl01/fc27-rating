@@ -95,6 +95,8 @@ run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tr
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
 return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||""}});
+const LGI={};DATA.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});DATA.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
+
 const $=id=>document.getElementById(id);
 const HASPRICE=DATA.some(d=>d.price);if(!HASPRICE){document.documentElement.classList.add("noprice");const po=document.querySelector('#sort option[value="price"]');if(po)po.remove()}
 const present=new Set(DATA.flatMap(d=>Object.keys(d.groups)));

@@ -120,6 +120,18 @@ def _label(v: Any) -> Optional[str]:
     return None
 
 
+def _foot(v: Any) -> Optional[str]:
+    """EA gives the preferred foot as a number (1 = right, 2 = left); other sources as text."""
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        return {1: "Right", 2: "Left"}.get(int(v))
+    text = _label(v)
+    if text and text.strip() in ("1", "2"):
+        return "Right" if text.strip() == "1" else "Left"
+    return text
+
+
 def map_item(item: dict, overrides: Optional[dict] = None) -> Player:
     overrides = overrides or {}
     attrs: Dict[str, float] = {}
@@ -223,7 +235,7 @@ def map_item(item: dict, overrides: Optional[dict] = None) -> Player:
         "gender": gender,
         "height_cm": height_cm,
         "weight_kg": _number(pick("weight", "weightKg")),
-        "foot": _label(pick("preferredFoot", "foot")),
+        "foot": _foot(pick("preferredFoot", "foot")),
         "skill_moves": _number(pick("skillMoves", "skillMovesRating")),
         "weak_foot": _number(pick("weakFootAbility", "weakFoot", "weakFootRating")),
         "attributes": attrs,

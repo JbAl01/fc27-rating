@@ -134,3 +134,17 @@ class CardFaceTests(unittest.TestCase):
         self.assertIn("27-111.", out)
         self.assertIn("width=200", out)
         self.assertIsNone(futgg.face_image("<html></html>", "111"))
+
+
+class LeagueAndFootTests(unittest.TestCase):
+    def test_league_image(self):
+        u = "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=80,format=auto/2027/league/53.%s.png" % ("e5" * 32)
+        self.assertEqual(futgg.league_image('<img src="%s">' % u), u)
+        self.assertIsNone(futgg.league_image("<html></html>"))
+
+    def test_ea_foot_is_a_number(self):
+        from fcrating.sources import ea_ratings
+        self.assertEqual(ea_ratings._foot(1), "Right")
+        self.assertEqual(ea_ratings._foot(2), "Left")
+        self.assertEqual(ea_ratings._foot("Left"), "Left")
+        self.assertIsNone(ea_ratings._foot(None))
