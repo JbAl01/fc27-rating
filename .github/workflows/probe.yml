@@ -1,0 +1,31 @@
+# Midlertidig: undersøker datakilder og ett kort. Endrer ingenting. Slettes etterpå.
+name: Probe
+on:
+  push:
+    branches: [claude/evo-fix]
+    paths: [".github/workflows/probe.yml", "ekstra/probe.py"]
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@v6
+        with:
+          path: |
+            data/ea_players.json
+            data/spesialkort.json
+            data/cache
+            data/evolab_cache.pkl
+          key: fcdata-probe-${{ github.run_id }}
+          restore-keys: fcdata-
+      - run: python ekstra/probe.py
+      - name: Plan for Vetlesen
+        run: python -m fcrating evolab data/ea_players.json data/spesialkort.json --name Vetlesen --maks-ovr 99 || true
