@@ -1,6 +1,10 @@
 {
   "_info": "Datakilder. {offset}, {limit} og {page} byttes ut automatisk for hver side.",
   "ea_ratings": {
+    "html_url_template": "https://www.ea.com/games/ea-sports-fc/ratings?page={page}",
+    "_html_info": "FC 27: spillerlisten leses fra EAs egne ratingsider (100 spillere per side, som JSON i siden). Gir FC 27-posisjoner med alternative posisjoner, attributter, PlayStyles, høyde, svakfot og skill moves. Fjern denne linjen for å bruke den gamle JSON-adressen under (den gir FC 25-kort).",
+    "html_user_agent": "Mozilla/5.0 (compatible; fc27-rating/0.3; personlig bruk)",
+    "refresh_days": 7,
     "url_template": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit={limit}&offset={offset}",
     "_url_info": "Adressen EAs ratingside henter spillerlisten fra. Funnet i et offentlig FC 25-verktøy (github.com/sauravhiremath/ea-fc25-scraper). Kjør 'fetch-ea --dump-sample' for å sjekke at den gir FC 27-data. Gir den feil, finner du riktig adresse i nettleserens Network-fane (se README).",
     "items_path": "items",

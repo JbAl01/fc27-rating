@@ -77,16 +77,16 @@ jobs:
         with:
           path: |
             data/ea_players.json
+            data/ea_players.meta.json
             data/spesialkort.json
             data/cache
             data/evolab_cache.pkl
           key: fcdata-${{ github.run_id }}
           restore-keys: fcdata-
 
-      - name: Hent EA-basekort (bare hvis de mangler)
-        if: hashFiles('data/ea_players.json') == ''
-        run: python -m fcrating fetch-ea
-        continue-on-error: true
+      - name: Hent EA-basekort (FC 27, én gang i uka)
+        run: python -m fcrating fetch-ea --hvis-gammel 7
+        continue-on-error: true     # EA nede: dataene fra forrige gang brukes
 
       - name: Hent spesialkort og lekkasjer
         run: python -m fcrating fetch-specials
@@ -120,6 +120,7 @@ jobs:
         with:
           path: |
             data/ea_players.json
+            data/ea_players.meta.json
             data/spesialkort.json
             data/cache
             data/evolab_cache.pkl

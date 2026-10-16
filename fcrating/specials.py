@@ -19,15 +19,15 @@ EA_SOURCE = "ea-ratings"
 
 def prefer_fc27_base(players: List[Player], min_cards: int = 5000) -> Tuple[List[Player], str]:
     """When FC 27 base cards from FIFA Rosters are loaded, the older EA cards are only
-    templates and are not rated themselves (EA's ratings feed returns FC 25 cards)."""
+    templates (attributes, height, alternative positions, PlayStyles) and are not rated themselves."""
     fc27 = [p for p in players if p.source == FC27_BASE_SOURCE]
     if not fc27:
         return players, ""
     ea = [p for p in players if p.source == EA_SOURCE]
     if len(fc27) >= min_cards:
         kept = [p for p in players if p.source != EA_SOURCE]
-        return kept, (f"Basekort: {len(fc27)} FC 27-kort fra FIFA Rosters. De {len(ea)} kortene i EA-filen er fra en "
-                      "eldre årgang og brukes bare til attributter, høyde og PlayStyles.")
+        return kept, (f"Basekort: {len(fc27)} FC 27-kort fra FIFA Rosters. De {len(ea)} kortene i EA-filen brukes som mal "
+                      "for attributter, høyde, posisjoner og PlayStyles.")
     replaced = {str(p.base_id) for p in fc27 if p.base_id} | {str(p.id) for p in fc27 if p.id}
     kept = [p for p in players if not (p.source == EA_SOURCE and str(p.id) in replaced)]
     return kept, f"Basekort: {len(fc27)} FC 27-kort fra FIFA Rosters erstatter de samme spillerne fra EA-filen."

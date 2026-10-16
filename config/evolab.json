@@ -2078,28 +2078,6 @@
         "https://www.futnext.com/evolutions/intro-to-pathway-evolutions/2698",
         "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/"
       ]
-    },
-    {
-      "key": "quick_step_fc26",
-      "name": "Quick Step [FC 26-oppdrag]",
-      "cost": "gratis",
-      "until": "2027-09-25T17:00Z",
-      "unchecked": "bare hvis du fullførte sesong 9-passet i FC 26",
-      "req": {
-        "max_ovr": 83,
-        "max_ps": 2
-      },
-      "up": {
-        "ps": [
-          [
-            "Quick Step",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://www.fut.gg/evolutions/2547-quick-step-fc-26-obj/"
-      ]
     }
   ],
   "future": {

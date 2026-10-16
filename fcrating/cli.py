@@ -431,7 +431,7 @@ def _print_lab_card(r: dict, s: dict, hz: list, hi: int) -> None:
     for a, b in lv.get("chk", []):
         print(f"  Sjekk selv: {a}: {b}")
     alt = lv.get("alt") or {}
-    for metric, word in (("run", "Løps-AI"), ("feel", "følelse")):
+    for metric, word in (("run", "løp uten ball"), ("feel", "følelse"), ("stp", "vanskelig å stoppe")):
         if alt.get(metric):
             names = " > ".join(k for k, _ in alt[metric]["seq"])
             print(f"  Best for {word}: {names} ({word} {alt[metric][metric]}, IGR {alt[metric]['igr']})")
@@ -851,6 +851,28 @@ def cmd_import_text(args) -> int:
     return 0
 
 
+def _keep_heights(players: List[Player], old_file: str) -> int:
+    """EA's FC 27 pages leave height and weight empty. Keep them from the previous file (same EA id)."""
+    if not Path(old_file).exists():
+        return 0
+    try:
+        old = {str(p.id): p for p in local_src.load_any(old_file) if p.id}
+    except Exception:  # an unreadable old file should not stop a fresh fetch
+        return 0
+    n = 0
+    for p in players:
+        o = old.get(str(p.id))
+        if not o:
+            continue
+        changed = False
+        if p.height_cm is None and o.height_cm:
+            p.height_cm, changed = o.height_cm, True
+        if getattr(p, "weight_kg", None) is None and getattr(o, "weight_kg", None):
+            p.weight_kg, changed = o.weight_kg, True
+        n += changed
+    return n
+
+
 def cmd_fetch_ea(args) -> int:
     from .sources import ea_ratings
     cfg = ea_ratings.load_sources_config()
@@ -865,10 +887,30 @@ def cmd_fetch_ea(args) -> int:
         sample.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"Lagret ett rått svar i {sample}")
         return 0
+    meta_path = Path(args.out).with_name(Path(args.out).stem + ".meta.json")
+    source = "ea-ratingsider" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
+    if args.hvis_gammel is not None and Path(args.out).exists() and meta_path.exists():
+        try:
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+            age = (datetime.now(timezone.utc) - datetime.fromisoformat(meta["fetched"])).total_seconds() / 86400
+            if meta.get("source") == source and age < args.hvis_gammel:
+                print(f"EA-dataene er {age:.1f} dager gamle (henter på nytt etter {args.hvis_gammel}). Hopper over.")
+                return 0
+        except (ValueError, KeyError):
+            pass
     print("Henter EAs ratingdatabase ...")
     players = ea_ratings.fetch_all(cfg, max_pages=args.max_pages, raw_dir=args.raw_dir)
+    if len(players) < 1000 and not args.max_pages:
+        print(f"Fikk bare {len(players)} spillere fra EA. Beholder filen fra forrige gang.")
+        return 1
+    kept = _keep_heights(players, args.out)
+    if kept:
+        print(f"  Høyde og vekt mangler hos EA for FC 27; tok dem fra forrige fil for {kept} spillere.")
     local_src.save_json(players, args.out)
-    print(f"Lagret {len(players)} spillere i {args.out}")
+    meta_path.write_text(json.dumps({"source": source, "fetched": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                                     "players": len(players)}, ensure_ascii=False), encoding="utf-8")
+    alts = sum(1 for p in players if p.alt_positions)
+    print(f"Lagret {len(players)} spillere i {args.out} ({alts} med alternative posisjoner)")
     return 0
 
 
@@ -927,10 +969,10 @@ def cmd_watch(args) -> int:
         extra = [str(ROOT / f) for f in cfg_src["watch"].get("extra_files", []) if (ROOT / f).exists()]
         files = list(extra)
         ea_file = ROOT / "data" / "ea_players.json"
-        if cfg_src["ea_ratings"].get("url_template"):
-            try:
-                players = ea_ratings.fetch_all(cfg_src)
-                local_src.save_json(players, str(ea_file))
+        if cfg_src["ea_ratings"].get("url_template") or cfg_src["ea_ratings"].get("html_url_template"):
+            try:  # EA's base cards change seldom: fetched again after refresh_days
+                cmd_fetch_ea(argparse.Namespace(out=str(ea_file), max_pages=None, raw_dir=None, dump_sample=False,
+                                                hvis_gammel=float(cfg_src["ea_ratings"].get("refresh_days", 7))))
             except Exception as exc:  # keep running on network errors
                 print(f"[{stamp}] Henting fra EA feilet: {exc}")
         if ea_file.exists():
@@ -1125,6 +1167,8 @@ def build_parser() -> argparse.ArgumentParser:
     f.add_argument("--max-pages", type=int)
     f.add_argument("--raw-dir", default=None)
     f.add_argument("--dump-sample", action="store_true")
+    f.add_argument("--hvis-gammel", type=float, metavar="DAGER",
+                   help="hent bare hvis filen mangler eller er eldre enn så mange dager (eller fra en annen kilde)")
     f.set_defaults(func=cmd_fetch_ea)
 
     sp = sub.add_parser("fetch-specials", help="hent Icons, TOTW og kampanjekort (FIFA Rosters) og lekkasjer (RealSport101)")

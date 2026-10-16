@@ -63,7 +63,7 @@ __CSS__
 <details><summary>Hva tallene betyr</summary>
 <p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen i dag, også spesialkort.</p>
 <p><b>Følelse</b>: hvor kvikk og lett kortet er å styre med ball. <b>Løp uten ball</b>: hvor smart og nyttig kortet løper når laget har ballen, delt i <b>smarte løp</b> (hvor og når det løper) og <b>får avstand</b> (om løpet faktisk gir rom). <b>Vanskelig å stoppe</b>: hvor vanskelig kortet er å stoppe, med ball og på løp.</p>
-<p><b>Med evoene som er ute nå</b> viser den beste rekkefølgen av evoene du kan ta i dag. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
+<p><b>Med evoene som er ute nå</b> viser den beste kombinasjonen av evoene du kan ta i dag: alle kombinasjoner er prøvd, også å hoppe over en evo som ellers ville stengt kortet ute fra en bedre. Sorterer du etter løp uten ball, følelse eller vanskelig å stoppe, vises den beste kombinasjonen for det. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
 <p>Nye evoer legges inn hver kveld like etter at EA slipper dem kl. 19.</p>
 </details>
 <p id="footnote"></p>
@@ -201,13 +201,13 @@ const runAt=d=>d.runcard?(isNow()?d.runs.live:d.runs.end):null;
 const feelAt=d=>isNow()?d.lv.feel:d.med.feel;
 const stopAt=d=>d.stops?(isNow()?d.stops.live:d.stops.end):null;
 function buildEnd(d){if(!d._end){const a=d.base.slice(),m=d.med.d;for(let j=0;j<m.length;j+=2)a[m[j]]=m[j+1];d._end=a}return d._end}
-function liveRun(d){if(!d._lr)d._lr=runPlan(d,d.plans[0]);return d._lr}
+function liveRun(d){if(!d._lr)d._lr=runPlan(d,activePlan(d));return d._lr}
 const buildLive=d=>liveRun(d).st.a;
 const buildAt=d=>isNow()?buildLive(d):buildEnd(d);
 const catsAt=d=>d.cats?(isNow()?d.cats[1]:d.cats[2]):null;
 function pctOf(g,ci,v){const q=(META.catq[g]||[])[ci];if(!q||v==null)return null;if(v>=q[0])return 0.5;for(let p=1;p<=100;p++){if(q[p]<=v)return p}return 100}
-function soonest(d){let m=null;for(const[ei]of d.plans[0][0]){const t=untilMs(EV[ei][3]);if(t!=null&&(m==null||t<m))m=t}return m}
-const hasLive=d=>d.plans[0][0].length>0;
+function soonest(d){let m=null;for(const[ei]of activePlan(d)[0]){const t=untilMs(EV[ei][3]);if(t!=null&&(m==null||t<m))m=t}return m}
+const hasLive=d=>activePlan(d)[0].length>0;
 
 /* "ligner på": movement profile distance, as in runs.distance */
 const SK=META.sim.keys||[],SST=META.sim.st||[],SW=META.sim.sumw||SST.reduce((s,x)=>s+x[2],0);
@@ -240,53 +240,97 @@ let dir=-1;
 let USED=new Set();try{USED=new Set(JSON.parse(localStorage.getItem("fc27-evolab-used")||"[]"))}catch(e){}
 const saveUsed=()=>{try{localStorage.setItem("fc27-evolab-used",JSON.stringify([...USED]))}catch(e){}};
 const isUsed=ei=>USED.has(EV[ei][0]);
-for(const d of D)d._orig={h0:{...d.h[0]},hs:d.h.map(x=>({...x})),lv:{...d.lv},rl:d.runs.live.slice(),sl:d.stops?d.stops.live.slice():null,c1:d.cats?d.cats[1]:null,plans:d.plans.slice(),tips:d.lm.tips};
+for(const d of D)d._obj=0,d._orig={h0:{...d.h[0]},hs:d.h.map(x=>({...x})),lv:{...d.lv},rl:d.runs.live.slice(),sl:d.stops?d.stops.live.slice():null,c1:d.cats?d.cats[1]:null,plans:d.plans.slice(),tips:d.lm.tips};
 /* category values on the attribute scale, as profile.categories in Python */
 function catVals(d,a,det){if(!d.cats)return null;return CATS.map(c=>{if(c.src==="feel")return det.feel;if(c.src==="run")return d.runcard?det.run:null;
 if(c.src==="run_decision")return d.runcard?det.vil:null;if(c.src==="run_execution")return d.runcard?det.eff:null;if(c.src==="stop")return det.stp;
 const pr=c.w.filter(([i])=>a[i]!=null);const tot=psum(pr.map(x=>x[1]));if(!pr.length||tot<0.5*c.wall)return null;return pyRound(psum(pr.map(([i,w])=>a[i]*w))/tot,1)})}
 function canEnterEver(d,e){const r=e[7],pos=d.positions;if(r[6].length&&!pos.some(p=>r[6].includes(p)))return false;if(pos.some(p=>r[7].includes(p)))return false;if(r[5]!=null&&pos.length>r[5])return false;return true}
-function bestStep(rt,st,ei){const e=EV[ei];if(check(e,st))return null;const paths=e[8][8];let best=null;
-for(const pi of(paths.length?paths.map((p,j)=>j):[-1])){const nx=apply(e,st,pi>=0?paths[pi]:null),v=rt(nx).igr;if(!best||v>best.v)best={ei,pi,st:nx,v}}return best}
-/* a new live plan without the used evos: the old order without them, strictest OVR limit first, and greedy; the best wins */
-function replan(d){const rt=rater(d),st0=stateOf(d),rpp=d._orig.plans[0][1];
-const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&canEnterEver(d,EV[i]));
-const rep=i=>Array(Math.max(1,EV[i][6])).fill(i);
-const runSeq=order=>{let st=st0;const seq=[];for(const ei of order){const b=bestStep(rt,st,ei);if(b){st=b.st;seq.push([b.ei,b.pi])}}return{st,seq}};
-const old=d._orig.plans[0][0].map(([ei])=>ei).filter(i=>C.includes(i));
-const tries=[runSeq(old.concat(C.filter(i=>!old.includes(i))).flatMap(rep)),runSeq(C.slice().sort((a,b)=>(EV[a][7][1]??99)-(EV[b][7][1]??99)).flatMap(rep))];
-let st=st0,seq=[];for(let k=0;k<12;k++){let best=null;for(const ei of C){const b=bestStep(rt,st,ei);if(b&&(!best||b.v>best.v))best=b}if(!best||best.v<=rt(st).igr+1e-9)break;st=best.st;seq.push([best.ei,best.pi])}
-tries.push({st,seq});
-let win=null,wv=-1e9;for(const t of tries){const fin=rpp&&!d.c.primPP?rolesPP(t.st):t.st,v=rt(fin).igr;if(v>wv+1e-9){wv=v;win=t}}return[win.seq,rpp]}
-function setLive(d,plan){const res=runPlan(d,plan),det=res.det,p50=pyRound(det.igr+d.off,1),pool=META.pools[d.g]||[];
-d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};
+/* ---------- the plan search: the same as evolab.search_ends and plan_live in Python ---------- */
+const PACEI=new Set((RU.face.pace||[]).map(x=>x[0])),LIMI={ovr:1,pace:2,ps:3,psp:4};
+const stKey=st=>st.a.join(",")+"|"+st.ovr+"|"+st.ps.slice().sort().join(",")+"|"+st.psp.slice().sort().join(",")+"|"+st.wf+"|"+st.sm+"|"+st.role;
+function psVal(n,plus,g){const e=R.ps[n];return e?(plus?e[1]:e[0])*(e[4][g]??0):0}
+function bestPathIdx(e,st){const paths=e[8][8];if(!paths.length)return -1;let bi=0,bv=-Infinity;
+paths.forEach((p,j)=>{let v=0;for(const[n]of p[6])if(!st.ps.includes(n)&&!st.psp.includes(n))v+=psVal(n,false,st.g);
+for(const[n]of p[7])if(!st.psp.includes(n))v+=psVal(n,true,st.g)-(st.ps.includes(n)?psVal(n,false,st.g):0);if(v>bv){bv=v;bi=j}});return bi}
+function planOrders(C){const lim=(ei,k)=>{const v=EV[ei][7][LIMI[k]];return v==null?99:v};
+const keys=[ei=>[lim(ei,"ovr"),lim(ei,"ps"),lim(ei,"pace")],ei=>[lim(ei,"ps"),lim(ei,"ovr"),lim(ei,"pace")],ei=>[lim(ei,"pace"),lim(ei,"ovr"),lim(ei,"ps")]];
+const out=[],sigs=new Set();
+for(const kf of keys){const order=C.slice().sort((a,b)=>{const x=kf(a),y=kf(b);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]-y[i];return EV[a][0]<EV[b][0]?-1:EV[a][0]>EV[b][0]?1:0});
+for(const ei of order.slice()){const pre=EV[ei][7][8];if(!pre)continue;const i=order.findIndex(x=>EV[x][0]===pre),j=order.indexOf(ei);if(i>j){order.splice(j,1);order.splice(i,0,ei)}}
+const seq=order.flatMap(ei=>Array(Math.max(1,EV[ei][6]||1)).fill(ei)),sg=seq.join(",");if(!sigs.has(sg)){sigs.add(sg);out.push(seq)}}return out}
+function effectsOf(ei){const e=EV[ei],us=[e[8]].concat(e[8][8].map(p=>p.slice(1))),o=new Set();
+for(const u of us){if(u[0])o.add("ovr");if(u[3].some(([i])=>PACEI.has(i))||u[4].some(([w])=>w==="pace"))o.add("pace");if(u[5].length)o.add("ps");if(u[6].length){o.add("ps");o.add("psp")}}return o}
+function searchEnds(d,C,maxNodes=20000){const st0=stateOf(d),ends=new Map();let nodes=0;
+const finish=(st,chain,skipped)=>{let moved=skipped.length>0;while(moved){moved=false;for(const ei of skipped){const e=EV[ei];if(check(e,st))continue;
+const pi=e[8][8].length?bestPathIdx(e,st):-1,nx=apply(e,st,pi>=0?e[8][8][pi]:null);if(stKey(nx)===stKey(st))continue;chain=chain.concat([[ei,pi]]);st=nx;moved=true}}return[st,chain]};
+const LIM=new Set(["ovr","pace","ps","psp"]),orders=planOrders(C);
+/* two passes, as in Python: a quick one that skips an evo only when it would shut the card out of a later evo
+   right away, then a wide one that may skip any evo that can lift OVR, pace or PlayStyles (with a node budget) */
+for(const[strict,order]of orders.map(o=>[true,o]).concat(orders.map(o=>[false,o]))){const seen=new Set(),n=order.length;
+const ms=order.map((ei,i)=>{const ef=effectsOf(ei);for(let j=i+1;j<n;j++){if(EV[order[j]][0]===EV[ei][0])continue;for(const x of ef)if(EV[order[j]][7][LIMI[x]]!=null)return true}return false});
+const blocksLater=(i,st,nexts)=>{for(let j=i+1;j<n;j++){const ej=EV[order[j]];if(ej[0]===EV[order[i]][0])continue;const now=check(ej,st);
+if(now&&now[0]!=="pre"&&now[0]!=="done"&&!(now[0]==="ovr"&&ej[7][0]!=null&&st.ovr<ej[7][0]))continue;
+for(const nx of nexts){const why=check(ej,nx);if(why&&LIM.has(why[0]))return true}}return false};
+const rec=(i,st,sk,done,chain,skipped)=>{const k=i+"#"+sk+"#"+done;if(seen.has(k)||(!strict&&nodes>=maxNodes)||(strict&&seen.size>=4*maxNodes))return;seen.add(k);if(!strict)nodes++;
+if(i===n){const[s2,c2]=finish(st,chain,skipped),kk=c2!==chain?stKey(s2):sk,old=ends.get(kk);if(!old||c2.length<old[1].length)ends.set(kk,[s2,c2]);return}
+const ei=order[i],e=EV[ei];if(!check(e,st)){const nexts=[];
+for(const pi of(e[8][8].length?e[8][8].map((p,j)=>j):[-1])){const nx=apply(e,st,pi>=0?e[8][8][pi]:null),nk=stKey(nx);if(nk!==sk)nexts.push([pi,nx,nk])}
+if(nexts.length){const d2=done?done.split(",").concat([e[0]]).sort().join(","):e[0];
+for(const[pi,nx,nk]of nexts)rec(i+1,nx,nk,d2,chain.concat([[ei,pi]]),skipped);
+if(ms[i]&&(!strict||blocksLater(i,st,nexts.map(x=>x[1]))))rec(i+1,st,sk,done,chain,skipped.concat([ei]))}
+else rec(i+1,st,sk,done,chain,skipped)}else rec(i+1,st,sk,done,chain,skipped)};
+rec(0,st0,stKey(st0),"",[],[])}
+if(!ends.size)ends.set(stKey(st0),[st0,[]]);return ends}
+/* the best plan for each goal: IGR, løp uten ball, følelse and vanskelig å stoppe (plans 0-3) */
+function searchPlans(d){const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&canEnterEver(d,EV[i]));
+const rt=rater(d),rpp=d._orig.plans[0][1],scored=[];
+for(const[st,chain]of searchEnds(d,C).values()){const fin=rpp&&!d.c.primPP?rolesPP(st):st;scored.push({det:rt(fin),chain,len:chain.length,prem:chain.reduce((n,[ei])=>n+(EV[ei][4]?1:0),0)})}
+const val=(t,m)=>t.det[m]!=null?t.det[m]:-1;
+const pick=m=>{let best=null;for(const t of scored){if(!best){best=t;continue}const a=[val(t,m),t.det.igr,-t.len,-t.prem],b=[val(best,m),best.det.igr,-best.len,-best.prem];
+for(let i=0;i<4;i++){if(a[i]>b[i]){best=t;break}if(a[i]<b[i])break}}return best};
+const b=pick("igr"),sig=c=>c.map(x=>x.join(":")).join(","),plans=[[b.chain,rpp]];
+for(const m of["run","feel","stp"]){const o=pick(m);plans.push(sig(o.chain)!==sig(b.chain)&&o.det[m]!=null&&(b.det[m]==null||o.det[m]>b.det[m]+0.05)?[o.chain,rpp]:0)}
+return plans}
+/* ---------- what the "evoene nå" view shows: the plan for the chosen goal ---------- */
+const GOAL={run:1,feel:2,stop:3};
+let OBJ=0;const objNow=()=>isNow()?(GOAL[F.sort]||0):0;
+const activePlan=d=>(OBJ&&d.plans[OBJ])||d.plans[0];
+/* live columns (IGR, plass, følelse, løp, stopp, kategorier) from one plan */
+function liveFields(d,plan){const res=runPlan(d,plan),det=res.det,p50=pyRound(det.igr+d.off,1),pool=META.pools[d.g]||[];
+d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};d.lv={feel:det.feel,acc:det.acc,pace:det.pace};
+if(d.runcard)d.runs.live=[det.run,det.vil,det.eff];if(d.stops)d.stops.live=[det.stp,det.stb,det.stl];if(d.cats)d.cats[1]=catVals(d,res.st.a,det);d._lr=res;return p50}
 /* The forecast for later in the year is simulated twice in Python: from the live plan (all of today's evos) and
    from today's card (none of them). With some evos used, the card keeps a share of the live gain, and the
    forecast is placed the same share of the way between the two. */
-const o0=d._orig.hs[0],gain0=o0.p50-d.now,keep=gain0>0.05?Math.max(0,Math.min(1,(p50-d.now)/gain0)):1;
+function forecastFrom(d,p50){const pool=META.pools[d.g]||[],o0=d._orig.hs[0],gain0=o0.p50-d.now,keep=gain0>0.05?Math.max(0,Math.min(1,(p50-d.now)/gain0)):1;
 for(let j=1;j<d.h.length;j++){const o=d._orig.hs[j];if(keep>=0.999){d.h[j]={...o};continue}
 let p10,m,p90,op=o.op,ovr=o.ovr;
 if(o.z){const mix=(a,b)=>pyRound(b+keep*(a-b),1);p10=mix(o.p10,o.z[0]);m=mix(o.p50,o.z[1]);p90=mix(o.p90,o.z[2]);op=Math.round(o.z[3]+keep*(o.op-o.z[3]));ovr=Math.round(o.z[4]+keep*(o.ovr-o.z[4]))}
 else{const drop=o0.p50-p50;p10=pyRound(o.p10-drop,1);m=pyRound(o.p50-drop,1);p90=pyRound(o.p90-drop,1)}
 m=Math.max(p50,m);p10=Math.min(m,Math.max(p50,p10));p90=Math.max(m,p90);
-d.h[j]={...o,p10,p50:m,p90,op,ovr,rank:rankIn(pool,m),adj:pyRound(o.p50-m,1)}}
-if(d.runcard)d.runs.live=[det.run,det.vil,det.eff];if(d.stops)d.stops.live=[det.stp,det.stb,det.stl];if(d.cats)d.cats[1]=catVals(d,res.st.a,det)}
-function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false}
+d.h[j]={...o,p10,p50:m,p90,op,ovr,rank:rankIn(pool,m),adj:pyRound(o.p50-m,1)}}}
+function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;
+d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._lr=null;d._obj=0}
+/* bring one card up to date with the used evos and the chosen goal */
+function refreshCard(d){restore(d);
+if(USED.size&&d.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))){d.plans=searchPlans(d);d.lm.tips=[];d._re=true;forecastFrom(d,liveFields(d,d.plans[0]))}
+if(OBJ&&d.plans[OBJ])liveFields(d,d.plans[OBJ]);d._obj=OBJ&&d.plans[OBJ]?OBJ:0;d._lr=null}
+const needsWork=d=>d._re||d._obj!==(OBJ&&d.plans[OBJ]?OBJ:0)||(OBJ&&d._orig.plans[OBJ]&&d._obj!==OBJ)||(USED.size&&d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));
 let usedJob=0;
-/* Replans every card whose plan used an evo you have marked as used. Cards that are in the current view and
-   high in the current sort come first, and the table is redrawn while it works, so the top settles quickly
-   (removing evos can only lower a card, so the cards first in line are the ones that can change the top). */
-function applyUsed(){const job=++usedJob,f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
-const todo=D.filter(d=>d._re||d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));
+/* Works through every card whose plan changes (evos marked as used, or another goal in the sort). Cards in the
+   current view and high in the current sort come first, and the table is redrawn while it works, so the top
+   settles quickly. */
+function recompute(){const job=++usedJob;OBJ=objNow();const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
+const todo=D.filter(needsWork);
 const key=d=>{const v=f(d);return[pass(d,q)?0:1,v==null?Infinity:-v*dir]};
 const ks=new Map(todo.map(d=>[d,key(d)]));todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);return x[0]-y[0]||x[1]-y[1]});
 let k=0,drawn=performance.now();
-const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40){const d=todo[k++];restore(d);
-if(USED.size&&d.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))){const touched=d.plans[0][0].some(([ei])=>isUsed(ei));
-d.plans=d.plans.map((p,i)=>i>0&&p&&p[0].some(([ei])=>isUsed(ei))?0:p);if(touched){d.plans[0]=replan(d);d.lm.tips=[];setLive(d,d.plans[0])}d._re=true}d._lr=null}
+const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40)refreshCard(todo[k++]);
 const busy=k<todo.length;usedInfo(busy?Math.round(100*k/todo.length):null);
 if(!busy||performance.now()-drawn>400){drawn=performance.now();TWC.clear();render()}
 if(busy)setTimeout(step,0)};step()}
+const applyUsed=recompute;
 function usedInfo(progress){const names=EV.filter(e=>USED.has(e[0])).map(e=>e[1]);let h="";
 if(META.usedfile&&META.usedfile.length)h+=`<p class="muted">Tatt ut av beregningen fordi de står i brukte_evoer.json: ${esc(list(META.usedfile))}.</p>`;
 if(names.length)h+=`<p class="warn">Planene og rangeringen regnes uten evoene du har brukt: ${esc(list(names))}.${progress!=null?` Regner nye planer … ${progress} %`:""}${!isNow()?" Anslaget for resten av året er justert for det samme.":""} <button type="button" class="link" id="clearused">Ta med alle igjen</button></p>`;
@@ -301,8 +345,8 @@ function sync(){$("g").value=F.g;$("ovr").value=F.ovrMax;$("ovrMin").value=F.ovr
 $("live").checked=!!F.live;$("twin").value=F.twin||"";fillSort();save()}
 function setTwin(v){const t=META.targets.find(t=>twinName(t)===v);TWIN=t||null;TWC.clear();F.twin=TWIN?v:"";if(TWIN){F.sort="twin";dir=-1}else if(F.sort==="twin")F.sort="rel"}
 for(const[id,k]of[["g","g"],["ovr","ovrMax"],["kind","kind"],["gender","gender"]])$(id).onchange=e=>{F[k]=e.target.value;sync();reset()};
-$("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset();usedInfo(null)};
-$("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset()};
+$("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset();usedInfo(null);if(objNow()!==OBJ)recompute()};
+$("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset();if(objNow()!==OBJ)recompute()};
 $("ovrMin").oninput=e=>{F.ovrMin=e.target.value;save();reset()};
 $("live").onchange=e=>{F.live=e.target.checked;save();reset()};
 $("twin").onchange=e=>{setTwin(e.target.value);sync();reset()};
@@ -319,7 +363,7 @@ r.sort((x,y)=>{const a=x[0],b=y[0];if(a===b)return 0;if(a==null)return 1;if(b==n
 const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","IGR i dag"],["p50",isNow()?"Etter evo":"Anslag"],["rel","Plass"],
 ["feel","Følelse"],["run","Løp uten ball"],["stop","Vanskelig å stoppe"]].concat(TWIN?[["twin","Likhet"]]:[]);
 function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
-$("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset()})}
+$("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset();if(objNow()!==OBJ)recompute()})}
 function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
 return`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></td>
 <td class="l"><span class="pos ${posClass(d.g)}">${esc(d.positions[0]||d.g)}</span></td>
@@ -367,15 +411,17 @@ ${s.path?`<p>${choiceText(e,s.path)}</p>`:""}
 ${g.stats.length||g.ps.length?`<p>Gir ${esc(list(g.stats.slice(0,8)))}${g.stats.length>8?` og ${g.stats.length-8} til`:""}${g.ps.length?(g.stats.length?", og ":"")+"PlayStyle "+esc(list(g.ps)):""}.</p>`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
 ${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</li>`}
 const PLANSEL={};
-function planHtml(d){const mi=PLANSEL[d.i]||0,plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
-const alts=[0,1,2].filter(i=>i===0||d.plans[i]);
-if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse"][i]}</option>`).join("")}</select></label>`;
-if(d._re&&mi===0)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
+function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
+const alts=[0,1,2,3].filter(i=>i===0||d.plans[i]);
+if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe"][i]}</option>`).join("")}</select></label>`;
+else if(OBJ&&!d.plans[OBJ])h+=`<p class="muted">Planen for best IGR er også den beste for ${["","løp uten ball","følelse","vanskelig å stoppe"][OBJ]}.</p>`;
+if(d._re)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
+if(mi>0)h+=`<p class="muted">Den beste kombinasjonen for ${["","løp uten ball","følelse","vanskelig å stoppe"][mi]}. IGR kan være litt lavere enn i planen for best IGR.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
-if(lm.tips.length)h+=`<p><b>Ta evoene i denne rekkefølgen.</b> Ellers blir OVR-en for høy til de neste.</p>`;
+if(plan[0].length>1)h+=`<p><b>Ta evoene i denne rekkefølgen.</b> Rekkefølgen er valgt så kortet kommer inn i alle, og så oppgraderingene gir mest.</p>`;
 const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"går ikke etter planen, "))}</li>`).join("")}</ul>`:"";
-h+=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+ul("Kan ikke tas:",lm.skip.slice(0,6),"muted");
+h+=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+(mi===0&&!d._re?ul("Ikke med i planen:",lm.skip.slice(0,6),"muted"):"");
 return h}
 function kvRow(label,vals,dg=1,better=1){const cells=vals.map((v,j)=>{if(v==null||v==="")return"<td>–</td>";if(typeof v==="string")return`<td>${esc(v)}</td>`;
 const imp=j>0&&vals[0]!=null&&typeof vals[0]==="number"&&(v-vals[0])*better>0.05;return`<td${imp?' class="ch"':""}>${dg===0?Math.round(v):fmt(v,dg)}</td>`}).join("");
@@ -407,7 +453,7 @@ t+=`<tr><th>I dag</th><td>${fmt(d.now)}</td><td>–</td><td>${d.ovr}</td><td>${n
 d.h.forEach((h,i)=>{t+=`<tr><th>${i===0?"Evoene nå":esc(H[i].name)}</th><td>${fmt(h.p50)}</td><td>${i===0?"–":fmt(h.p10)+"–"+fmt(h.p90)}</td><td>${h.ovr}</td><td>${n0(h.rank)}</td></tr>`});
 return t+`</tbody></table><p class="muted">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}${d.h.some(h=>Math.abs(h.adj||0)>=0.05)?" Justert for evoene du har brukt opp.":""}</p>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
-const stale=d.plans[0][0].some(([ei])=>isClosed(EV[ei]));
+const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
 return`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>
 <p>IGR ${fmt(d.now)} i dag og ${fmt(h0.p50)} med evoene som er ute nå. Det er plass ${n0(h0.rank)} av ${n0(h0.of)} ${esc(plural(d.g))}${d.rnow?`, opp fra ${n0(d.rnow)}`:""}. OVR ${d.ovr} til ${h0.ovr}.</p>
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
@@ -417,7 +463,7 @@ ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget.
 <div class="sbxwrap"></div></div>`}
 function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
-dt.querySelector("[data-act=sbx]").onclick=ev=>{ev.stopPropagation();if(SBX[d.i]&&SBX[d.i].open)SBX[d.i].open=false;else{if(!SBX[d.i])SBX[d.i]={items:d.plans[0][0].map(([ei,pi])=>({ei,pi})),rpp:!!d.plans[0][1],open:true};SBX[d.i].open=true}render()};
+dt.querySelector("[data-act=sbx]").onclick=ev=>{ev.stopPropagation();if(SBX[d.i]&&SBX[d.i].open)SBX[d.i].open=false;else{if(!SBX[d.i])SBX[d.i]={items:activePlan(d)[0].map(([ei,pi])=>({ei,pi})),rpp:!!d.plans[0][1],open:true};SBX[d.i].open=true}render()};
 dt.onclick=ev=>ev.stopPropagation();
 if(SBX[d.i]&&SBX[d.i].open)sandbox(dt.querySelector(".sbxwrap"),d)}
 
@@ -460,7 +506,7 @@ w.onclick=ev=>{const t=ev.target;ev.stopPropagation();
 if(t.hasAttribute("data-add")){const i=+w.querySelector("[data-cs]").value,g=+w.querySelector("[data-cg]").value||0,c=+w.querySelector("[data-cc]").value||99,id=++CUSTOM;
 s.items.push({ei:-1,pi:-1,id,e:["egen"+id,`${META.attrs[i]} +${g} (maks ${c})`,"","",0,"",1,[null,null,null,null,null,null,[],[],""],[0,0,0,[[i,g,c]],[],[],[],[],[]],"",[]]});draw()}
 else if(t.dataset.del){s.items=s.items.filter(x=>x.id!==+t.dataset.del);draw()}
-else if(t.hasAttribute("data-rec")){s.items=d.plans[0][0].map(([ei,pi])=>({ei,pi}));s.rpp=!!d.plans[0][1];w.querySelector("[data-rpp]").checked=s.rpp;draw()}
+else if(t.hasAttribute("data-rec")){s.items=activePlan(d)[0].map(([ei,pi])=>({ei,pi}));s.rpp=!!activePlan(d)[1];w.querySelector("[data-rpp]").checked=s.rpp;draw()}
 else if(t.hasAttribute("data-clear")){s.items=[];s.rpp=false;w.querySelector("[data-rpp]").checked=false;draw()}};
 draw()}
 
@@ -469,7 +515,7 @@ function renderCompare(){const box=$("cmp"),cards=PINS.map(k=>D.find(d=>d.name+"
 const rows=[["Posisjon",d=>esc(d.positions[0]||d.g)],["OVR",d=>`${d.ovr} til ${hv(d).ovr}`],["IGR i dag",d=>fmt(d.now)],[isNow()?"Etter evo":"Anslag",d=>fmt(hv(d).p50)],
 ["Plass",d=>`${n0(hv(d).rank)} av ${n0(hv(d).of)}`],["Følelse",d=>fmt(feelAt(d))],["Løp uten ball",d=>{const r=runAt(d);return r?fmt(r[0]):"–"}],
 ["Smarte løp",d=>{const r=runAt(d);return r?fmt(r[1]):"–"}],["Får avstand",d=>{const r=runAt(d);return r?fmt(r[2]):"–"}],["Vanskelig å stoppe",d=>{const s=stopAt(d);return s?fmt(s[0]):"–"}],
-["AcceleRATE",d=>esc((isNow()?d.lv.acc:d.med.acc)||"–")],["Evoer",d=>esc(d.plans[0][0].map(([ei])=>EV[ei][1]).join(", ")||"ingen")]];
+["AcceleRATE",d=>esc((isNow()?d.lv.acc:d.med.acc)||"–")],["Evoer",d=>esc(activePlan(d)[0].map(([ei])=>EV[ei][1]).join(", ")||"ingen")]];
 box.innerHTML=`<h2>Sammenligning</h2><div class="tw" style="border:0"><table><thead><tr><th></th>${cards.map(d=>`<th>${esc(d.name)}<br><span class="muted" style="font:500 13px var(--text)">${esc(d.ver)}</span></th>`).join("")}</tr></thead>
 <tbody>${rows.map(([l,f])=>`<tr><th>${l}</th>${cards.map(d=>`<td${l==="Evoer"?' style="white-space:normal;font:500 13px var(--text);max-width:220px"':""}>${f(d)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>
 <p>${cards.map(d=>`<button type="button" class="link" data-unpin="${esc(d.name+"|"+d.ver)}">Fjern ${esc(d.name)}</button>`).join(" &nbsp; ")}</p>`;
@@ -492,6 +538,6 @@ const shut=EV.filter(isClosed);$("stale").innerHTML=shut.length?`<p class="warn"
 if(META.checked){const t=Date.parse(META.checked);if(!isNaN(t))$("checked").textContent=new Intl.DateTimeFormat("nb-NO",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"}).format(new Date(t)).replace(" kl.",", kl.")}
 $("footnote").textContent=`Laget ${META.stamp}.`;
 if(F.twin){TWIN=META.targets.find(t=>twinName(t)===F.twin)||null;if(!TWIN)F.twin=""}
-dir=F.sort==="name"?1:-1;sync();renderEvos();render();usedInfo(null);if(USED.size)applyUsed();
-window.__lab={D,rater,stateOf,runPlan,check,apply,pyRound,psum};
+dir=F.sort==="name"?1:-1;sync();renderEvos();render();usedInfo(null);recompute();
+window.__lab={D,rater,stateOf,runPlan,check,apply,pyRound,psum,searchPlans};
 </script></body></html>

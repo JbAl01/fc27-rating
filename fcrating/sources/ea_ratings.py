@@ -1,5 +1,12 @@
 """Fetch the official EA SPORTS FC ratings database.
 
+Since FC 27 the player list is read from EA's ratings pages themselves
+(ea.com/games/ea-sports-fc/ratings?page=N): each page carries 100 players as
+JSON in a <script id="__NEXT_DATA__"> tag, with FC 27 positions, alternative
+positions, attributes, PlayStyles, height, weak foot and skill moves. The old
+JSON address (drop-api.ea.com) still answers, but with FC 25 cards, so it is
+only used when "html_url_template" is removed from config/sources.json.
+
 EA's ratings page (ea.com/games/ea-sports-fc/ratings) loads its player list
 from https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0
 (found in a public FC 25 scraper; set as default in config/sources.json).
@@ -41,6 +48,26 @@ def _get(url: str, user_agent: str, timeout: int = 30) -> Any:
     req = urllib.request.Request(url, headers={"User-Agent": user_agent, "Accept": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(resp.read().decode("utf-8"))
+
+
+def _get_html(url: str, user_agent: str, timeout: int = 40) -> str:
+    import gzip
+    req = urllib.request.Request(url, headers={"User-Agent": user_agent, "Accept": "text/html",
+                                               "Accept-Language": "en", "Accept-Encoding": "gzip"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        raw = resp.read()
+        if resp.headers.get("Content-Encoding") == "gzip":
+            raw = gzip.decompress(raw)
+        return raw.decode("utf-8", "replace")
+
+
+def next_data(html: str) -> dict:
+    """The JSON a Next.js page carries in <script id="__NEXT_DATA__">."""
+    import re
+    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.S)
+    if not m:
+        raise ValueError("fant ikke __NEXT_DATA__ på EA-siden (har EA endret siden?)")
+    return json.loads(m.group(1))
 
 
 def _dig(obj: Any, path: str) -> Any:
@@ -197,10 +224,55 @@ def map_item(item: dict, overrides: Optional[dict] = None) -> Player:
     })
 
 
+def fetch_pages(ea: dict, max_pages: Optional[int] = None, raw_dir: Optional[str] = None, log=print,
+                get=None, sleep=time.sleep) -> List[Player]:
+    """All players from EA's ratings pages (?page=1, 2, ...). A page that fails is tried twice more;
+    if it still fails, the whole fetch fails, so an older file is never replaced by half a list."""
+    get = get or _get_html
+    template = ea["html_url_template"]
+    items_path = ea.get("html_items_path", "props.pageProps.ratingDetails.items")
+    total_path = ea.get("html_total_path", "props.pageProps.ratingDetails.totalItems")
+    delay = float(ea.get("delay_seconds", 1.5))
+    ua = ea.get("html_user_agent") or "Mozilla/5.0 (compatible; fc27-rating; personlig bruk)"
+    overrides = ea.get("field_overrides") or {}
+    players: List[Player] = []
+    page, per_page, total = 1, None, None
+    while True:
+        url = template.format(page=page)
+        for attempt in range(3):
+            try:
+                data = next_data(get(url, ua))
+                break
+            except Exception as exc:  # network hiccup or a page that did not render
+                if attempt == 2:
+                    raise RuntimeError(f"side {page} feilet: {exc}") from exc
+                sleep(5 * (attempt + 1))
+        if raw_dir:
+            Path(raw_dir).mkdir(parents=True, exist_ok=True)
+            with open(Path(raw_dir) / f"ea_side_{page:04d}.json", "w", encoding="utf-8") as f:
+                json.dump(_dig(data, items_path), f)
+        items = _dig(data, items_path)
+        if not isinstance(items, list) or not items:
+            break
+        if total is None:
+            total = _number(_dig(data, total_path))
+            per_page = len(items)
+        players.extend(map_item(it, overrides) for it in items)
+        if page == 1 or page % 20 == 0:
+            log(f"  side {page}: {len(players)} av {int(total) if total else '?'} spillere")
+        if (total and len(players) >= total) or len(items) < (per_page or 1) or (max_pages and page >= max_pages):
+            break
+        page += 1
+        sleep(delay)
+    return players
+
+
 def fetch_all(cfg: Optional[dict] = None, max_pages: Optional[int] = None,
               raw_dir: Optional[str] = None, log=print) -> List[Player]:
     cfg = cfg or load_sources_config()
     ea = cfg["ea_ratings"]
+    if ea.get("html_url_template"):
+        return fetch_pages(ea, max_pages=max_pages, raw_dir=raw_dir, log=log)
     template = ea.get("url_template")
     if not template:
         raise RuntimeError("url_template mangler i config/sources.json. Se instruksjonene øverst i "

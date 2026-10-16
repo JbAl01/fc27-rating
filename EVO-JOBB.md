@@ -40,7 +40,7 @@ Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PRO
 
 2. **Finn de nye.** Sammenlign med `key` og `name` i `config/evolab.json` (under `live`), `data/auto_evoer.json` og `data/mine_evoer.json` (finnes den, så er det eierens egne evoer, ikke rør den). Det som allerede står der, er ikke nytt.
 
-3. **Hopp over** evoer som ikke endrer spillerens tall: merker, kortdesign (badges, «Golden Stars», «Pink Fire», «Prism Lights», «Arrow Spin» og lignende kosmetiske), og `… Roles++`-evoene. De siste er allerede regnet inn i reglene.
+3. **Hopp over** evoer som ikke endrer spillerens tall: merker, kortdesign (badges, «Golden Stars», «Pink Fire», «Prism Lights», «Arrow Spin» og lignende kosmetiske), og `… Roles++`-evoene. De siste er allerede regnet inn i reglene. Hopp også over evoer fra FC 26 eller eldre spill (for eksempel «Quick Step [FC 26 Obj]», som bare låses opp av FC 26-sesongpasset): de gjelder bare noen få og forvirrer.
 
 4. **Hent detaljene for hver ny evo fra minst to ulike kilder** (egen side for evoen på FUT.GG, futnext, FUTBIN, eller en guide). Du trenger:
    - kostnad

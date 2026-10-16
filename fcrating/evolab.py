@@ -43,7 +43,7 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 12
+CACHE_VERSION = 13
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -763,7 +763,141 @@ def gates(d0: dict, d1: dict, a0: Dict[str, float], a1: Dict[str, float], g: str
     return out
 
 
-def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_states: int = 600) -> dict:
+def _plan_orders(cands: List[dict]) -> List[List[dict]]:
+    """Orders to walk the evos in. Evos only raise a card, and the requirements are maximums, so the
+    evo with the strictest limit goes first; three tie-breaks cover OVR, PlayStyles and pace limits.
+    An evo that needs another evo first is moved right after it. Repeatable evos appear once per repeat."""
+    lim = lambda e, k: e["req"][k] if e["req"][k] is not None else 99
+    keys = [lambda e: (lim(e, "max_ovr"), lim(e, "max_ps"), lim(e, "max_pace")),
+            lambda e: (lim(e, "max_ps"), lim(e, "max_ovr"), lim(e, "max_pace")),
+            lambda e: (lim(e, "max_pace"), lim(e, "max_ovr"), lim(e, "max_ps"))]
+    out = []
+    for kf in keys:
+        order = sorted(cands, key=lambda e: (kf(e), e["key"]))
+        for e in list(order):  # prerequisites first
+            pre = e["req"]["requires_evo"]
+            i = next((j for j, x in enumerate(order) if x["key"] == pre), None)
+            if i is not None and i > order.index(e):
+                order.remove(e)
+                order.insert(i, e)
+        seq = [e for e in order for _ in range(max(1, int(e.get("repeat", 1) or 1)))]
+        if seq not in out:
+            out.append(seq)
+    return out
+
+
+def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 20000,
+                best_path=None, key=None) -> Dict[tuple, Tuple[State, list]]:
+    """Every combination of the live evos the card can take: for each evo in turn, take it (every pathway
+    option) or skip it. Skipping matters: an evo that lifts OVR can shut the card out of a better one later.
+    A skipped evo that the card can still enter at the end is taken then (skipping it gains nothing), so only
+    end states where no evo is left are kept. Same card states are merged.
+    Returns {state key: (end state, steps)}. key(state) decides which states count as the same (by default
+    State.key; plan_live passes one that only looks at what the rating uses)."""
+    skey = key or (lambda x: x.key())
+    ends: Dict[tuple, Tuple[State, list]] = {}
+    nodes = 0
+
+    def finish(st: State, chain: list, skipped: tuple) -> Tuple[State, list]:
+        moved = bool(skipped)
+        while moved:
+            moved = False
+            for e in skipped:
+                if check(e, st, rules) is not None:
+                    continue
+                path = best_path(e, st) if (best_path and e["up"]["paths"]) else (e["up"]["paths"] or [None])[0]
+                nxt = apply(e, st, rules, path)
+                if skey(nxt) == skey(st):
+                    continue
+                chain = chain + [(e, path, st, nxt)]
+                st, moved = nxt, True
+        return st, chain
+    pace_keys = set(_clean(rules["face"]["pace"]))
+
+    def effects(e: dict) -> set:
+        """What an evo can raise that later requirements limit."""
+        out = set()
+        for u in [e["up"]] + list(e["up"]["paths"] or []):
+            if u.get("ovr"):
+                out.add("ovr")
+            if pace_keys & set(u.get("stats") or {}) or "pace" in (u.get("face") or {}):
+                out.add("pace")
+            if u.get("ps"):
+                out.add("ps")
+            if u.get("psp"):
+                out.update(("ps", "psp"))
+        return out
+
+    limit_of = {"ovr": "max_ovr", "pace": "max_pace", "ps": "max_ps", "psp": "max_psp"}
+    # two passes: first a quick one that only skips an evo when it would shut the card out of a later evo
+    # right away, then a wide one that may skip any evo that can lift OVR, pace or PlayStyles (with a node budget)
+    for strict, order in [(True, o) for o in _plan_orders(cands)] + [(False, o) for o in _plan_orders(cands)]:
+        seen = set()
+        n = len(order)
+        # skipping an evo only helps if it can shut out a later evo (its OVR, pace or PlayStyles)
+        may_skip = []
+        for i, e in enumerate(order):
+            eff = effects(e)
+            may_skip.append(any(order[j]["req"][limit_of[x]] is not None for j in range(i + 1, n) for x in eff
+                                if order[j]["key"] != e["key"]))
+
+        def blocks_later(i: int, st: State, nexts: List[State]) -> bool:
+            """Would taking order[i] now shut the card out of a later evo it could still enter?"""
+            for j in range(i + 1, n):
+                ej = order[j]
+                if ej["key"] == order[i]["key"]:
+                    continue
+                now = check(ej, st, rules)
+                if now is not None and now[0] not in ("pre", "done") and not (now[0] == "ovr" and ej["req"]["min_ovr"] is not None
+                                                                          and st.ovr < ej["req"]["min_ovr"]):
+                    continue
+                for nxt in nexts:
+                    why = check(ej, nxt, rules)
+                    if why is not None and why[0] in ("ovr", "pace", "ps", "psp"):
+                        return True
+            return False
+
+        def rec(i: int, st: State, sk: tuple, done: tuple, chain: list, skipped: tuple) -> None:
+            nonlocal nodes
+            k = (i, sk, done)
+            if k in seen or (not strict and nodes >= max_nodes) or (strict and len(seen) >= 4 * max_nodes):
+                return
+            seen.add(k)
+            if not strict:
+                nodes += 1
+            if i == n:
+                st2, chain2 = finish(st, chain, skipped)
+                k2 = skey(st2) if chain2 is not chain else sk
+                old = ends.get(k2)
+                if old is None or len(chain2) < len(old[1]):
+                    ends[k2] = (st2, chain2)
+                return
+            e = order[i]
+            if check(e, st, rules) is None:
+                nexts = []
+                for path in (e["up"]["paths"] or [None]):
+                    nxt = apply(e, st, rules, path)
+                    nk = skey(nxt)
+                    if nk != sk:
+                        nexts.append((path, nxt, nk))
+                if nexts:
+                    done2 = tuple(sorted(done + (e["key"],)))
+                    for path, nxt, nk in nexts:
+                        rec(i + 1, nxt, nk, done2, chain + [(e, path, st, nxt)], skipped)
+                    if may_skip[i] and (not strict or blocks_later(i, st, [x for _, x, _ in nexts])):
+                        rec(i + 1, st, sk, done, chain, skipped + (e,))
+                else:
+                    rec(i + 1, st, sk, done, chain, skipped)
+            else:
+                rec(i + 1, st, sk, done, chain, skipped)
+
+        rec(0, st0, skey(st0), tuple(sorted(st0.done)), [], ())
+    if not ends:
+        ends[skey(st0)] = (st0, [])
+    return ends
+
+
+def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_nodes: int = 20000) -> dict:
     """Best order of the live evos for this card, with the evos it misses and why."""
     cands, near, unchecked = [], [], []
     for e in evos:
@@ -789,52 +923,12 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
             cands.remove(e)
             if any(u[0] == names.get(pre) for u in unchecked):
                 unchecked.append([e["name"], f"etter {names.get(pre, pre)}"])
-    # Only end states are rated (no evo left that the card can enter), plus the card as it is.
-    ends: Dict[tuple, Tuple[State, list]] = {st0.key(): (st0, [])}
-    seen = set()
+    role_pos = ev.fast.role_pos
 
-    def dfs(st: State, chain: list) -> None:
-        k = (st.key(), tuple(sorted(st.done)))
-        if k in seen or len(seen) >= max_states:
-            return
-        seen.add(k)
-        moved = False
-        for e in cands:
-            if check(e, st, rules) is not None:
-                continue
-            for path in (e["up"]["paths"] or [None]):
-                nxt = apply(e, st, rules, path)
-                if nxt.key() == st.key():
-                    continue
-                moved = True
-                dfs(nxt, chain + [(e, path, st, nxt)])
-        if not moved:
-            ends.setdefault(st.key(), (st, chain))
-
-    def greedy(order: List[dict]) -> None:
-        st, chain = st0, []
-        changed = True
-        while changed:
-            changed = False
-            for e in order:
-                if check(e, st, rules) is not None:
-                    continue
-                path = _best_path(e, st, ev.g, ev.cfg)
-                nxt = apply(e, st, rules, path)
-                if nxt.key() == st.key():
-                    continue
-                chain.append((e, path, st, nxt))
-                st, changed = nxt, True
-        ends.setdefault(st.key(), (st, chain))
-
-    if len(cands) <= 3:
-        dfs(st0, [])
-    else:  # many evos: try a few sensible orders instead of every order
-        r_ = lambda e: (e["req"]["max_ovr"] or 99, e["req"]["max_ps"] or 99, e["req"]["max_pace"] or 99)
-        greedy(sorted(cands, key=r_))
-        greedy(sorted(cands, key=lambda e: (bool(e["up"]["stats"] or e["up"]["face"]), r_(e))))
-        greedy(sorted(cands, key=lambda e: (not (e["up"]["stats"] or e["up"]["face"]), r_(e))))
-        greedy(sorted(cands, key=lambda e: (e["req"]["max_ps"] or 99, r_(e))))
+    def rating_key(st: State) -> tuple:  # the same card for the rating: other positions' roles do not count
+        lv = max((v for pos in role_pos for v in (st.roles.get(pos) or {}).values()), default=-1)
+        return (tuple(st.attrs.values()), st.ovr, tuple(sorted(st.ps)), tuple(sorted(st.psp)), st.wf, st.sm, lv)
+    ends = search_ends(st0, cands, rules, max_nodes, best_path=lambda e, st: _best_path(e, st, ev.g, ev.cfg), key=rating_key)
     primary = (p.position or "").upper()
     # the best end state for IGR, and also for Løps-AI and for feel (often the same plan)
     scored = []
@@ -852,12 +946,13 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     d_best, fin, chain, _, rpp, last = best
     v = d_best["igr"]
     alt = {}
-    for metric in ("run", "feel"):
+    for metric in ("run", "feel", "stp"):
         o = pick(metric)
         seq = [[c[0]["key"], (c[1] or {}).get("label", "")] for c in o[2]]
         if seq != [[c[0]["key"], (c[1] or {}).get("label", "")] for c in chain] and o[0].get(metric) is not None \
-                and (d_best.get(metric) is None or o[0][metric] > d_best[metric] + 0.3):
-            alt[metric] = {"seq": seq, "igr": o[0]["igr"], "run": o[0].get("run"), "feel": o[0].get("feel"), "roles": o[4]}
+                and (d_best.get(metric) is None or o[0][metric] > d_best[metric] + 0.05):
+            alt[metric] = {"seq": seq, "igr": o[0]["igr"], "run": o[0].get("run"), "feel": o[0].get("feel"),
+                           "stp": o[0].get("stp"), "roles": o[4]}
     steps = []
     for e, path, a, b in chain:
         steps.append({"key": e["key"], "name": e["name"], "path": (path or {}).get("label", ""), "cost": e["cost"],
