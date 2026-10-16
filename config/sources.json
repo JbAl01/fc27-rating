@@ -35,6 +35,12 @@
       "use_base_cards": true,
       "_base_cards_info": "EAs ratingadresse (drop-api) gir FC 25-kort. Med true bygges FC 27-basekortene fra FIFA Rosters' liste (riktig OVR, posisjon, hovedtall, svakfot og skill moves), og attributtene anslås fra det eldre EA-kortet. EA-kortene rangeres da ikke selv."
     },
+    "futgg": {
+      "enabled": true,
+      "limit_per_run": 600,
+      "delay_seconds": 0.8,
+      "_info": "PlayStyles, PlayStyle+ og høyde per kort fra FUT.GG (fut.gg/api/fut/player-item-definitions/27/<id>/). Spesialkort først, så basekort etter OVR. Hvert kort hentes én gang og lagres i data/cache/futgg."
+    },
     "realsport101": {
       "category_url": "https://realsport101.com/ea-sports-fc",
       "pages": 1
