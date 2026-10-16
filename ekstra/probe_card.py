@@ -1,41 +1,32 @@
-import json, re, sys
-from fcrating import net
-from fcrating.sources import ea_ratings
+import urllib.request, urllib.error, time
 out = []
-def log(*a):
-    out.append(" ".join(str(x) for x in a))
-f = net.PoliteFetcher(user_agent="fc27-rating/0.2 (personlig bruk)", delay_seconds=2)
-# EA: every key of the first item, and every string that looks like a URL
-try:
-    h = f.get("https://www.ea.com/games/ea-sports-fc/ratings?page=1")
-    d = ea_ratings.next_data(h)
-    it = d["props"]["pageProps"]["ratingDetails"]["items"][0]
-    log("EA keys:", sorted(it.keys()))
-    def walk(o, p=""):
-        if isinstance(o, dict):
-            for k, v in o.items(): walk(v, p + "." + k)
-        elif isinstance(o, list):
-            for i, v in enumerate(o[:3]): walk(v, p + f"[{i}]")
-        elif isinstance(o, str) and ("http" in o or o.endswith((".png", ".webp", ".jpg"))):
-            log("EA url", p, o)
-    walk(it)
-except Exception as e:
-    log("EA fail", repr(e))
-URLS = ["https://www.fut.gg/players/231747/27-231747/", "https://www.fut.gg/players/237067/27-67345931/",
-        "https://www.fut.gg/players/227203/27-100890499/", "https://www.fut.gg/players/227203/27-67336067/",
-        "https://www.fut.gg/players/264938/27-264938/"]
+def log(*a): out.append(" ".join(str(x) for x in a))
+UA = {"User-Agent": "fc27-rating/0.2 (personlig bruk)", "Accept": "image/webp,image/png,image/*"}
+H = "game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027"
+URLS = [
+ "https://ratings-images-prod.pulse.ea.com/FC25/full/player-shields/en/231747.png?width=265",
+ "https://ratings-images-prod.pulse.ea.com/FC27/full/player-shields/en/231747.png?width=265",
+ "https://ratings-images-prod.pulse.ea.com/FC26/full/player-shields/en/231747.png?width=265",
+ "https://ratings-images-prod.pulse.ea.com/FC27/full/player-shields/en/67345931.png?width=265",
+ "https://ratings-images-prod.pulse.ea.com/FC27/full/player-shields/en/100890499.png?width=265",
+ "https://ratings-images-prod.pulse.ea.com/FC27/full/player-shields/en/67336067.png?width=265",
+ f"https://{H}/futgg-player-item-card/27-231747.webp",
+ f"https://{H}/player-item-card/27-231747.webp",
+ f"https://{H}/player-item-card/27-67336067.webp",
+ f"https://{H}/futgg-player-item-card/27-67336067.webp",
+ "https://game-assets.fut.gg/2027/futgg-player-item-card/27-231747.webp",
+ "https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/futgg-player-item-card/27-231747.37dd54fdcfca9c59db34466e2dc0ef50f16417dcf5c64aaa7fdd8bba85f5b7a7.webp",
+]
 for u in URLS:
     try:
-        h = f.get(u)
-        log("\n==", u, len(h))
-        for m in re.finditer(r'<meta[^>]+(?:og:image|twitter:image)[^>]*>', h): log(m.group(0)[:300])
-        seen = set()
-        for m in re.finditer(r'https?://[^"\'\s\\<>)]+\.(?:png|webp|jpg|jpeg)[^"\'\s\\<>)]*', h):
-            x = m.group(0)
-            if x in seen: continue
-            seen.add(x); log("img", x[:260])
-            if len(seen) > 40: break
+        r = urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=20)
+        b = r.read()
+        log("OK", r.status, r.headers.get("content-type"), len(b), u)
+        if u == URLS[0]: open("/tmp/ea_shield.png", "wb").write(b)
+    except urllib.error.HTTPError as e:
+        log("HTTP", e.code, u)
     except Exception as e:
-        log("FUTGG fail", u, repr(e))
+        log("ERR", repr(e)[:80], u)
+    time.sleep(1.5)
 open("/tmp/probe_card.txt", "w", encoding="utf-8").write("\n".join(out))
-print("\n".join(out)[:3000])
+print("\n".join(out))
