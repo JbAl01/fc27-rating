@@ -250,6 +250,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         r.get("futgg") or "",
         intern(r.get("club") or ""),
         r.get("image") or "",
+        r.get("card_image") or "",
     ]
 
 

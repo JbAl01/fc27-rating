@@ -400,6 +400,7 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "rarity": player.rarity,
         "club": player.club,
         "image": player.image,
+        "card_image": player.card_image,
         "league": player.league,
         "nation": player.nation,
         "price": player.price,
