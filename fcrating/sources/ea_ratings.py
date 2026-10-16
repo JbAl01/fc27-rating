@@ -199,7 +199,16 @@ def map_item(item: dict, overrides: Optional[dict] = None) -> Player:
             if num is not None and 1 <= num <= 99:
                 face[k] = num
 
+    team, nat = item.get("team"), item.get("nationality")
+    club = _label(team) if isinstance(team, dict) else (team if isinstance(team, str) else None)
+    nation = _label(nat) if isinstance(nat, dict) else (nat if isinstance(nat, str) else None)
+    league = item.get("leagueName") or item.get("league")
+    league = _label(league) if isinstance(league, dict) else league
+
     return Player.from_dict({
+        "club": club,
+        "league": league if isinstance(league, str) else None,
+        "nation": nation,
         "face_stats": face,
         "id": pick("id", "playerId"),
         "name": name or "Ukjent",

@@ -280,6 +280,8 @@ Det bygger på det som har holdt seg gjennom mange FIFA- og FC-år, ikke på ett
 
 Du finner Stopp i rapporten (kolonne, filter, sortering, «Ranger etter» og på kortet under *Med ball* og *Uten ball*), i Evo Lab (kolonnen «Stopp», Bevegelse-panelet og sandkassen) og i `explain`. Vektene står under `hard_to_stop` i `config/weights.json` og er startverdier. Test dem med `test-par --type ball` og `--type løp`.
 
+**Liga og land.** Både rapporten og Evo Lab kan filtreres på liga og land («Passer i laget ditt» / «Flere valg»), så du bare ser kort som passer inn i laget du har. Liga, land og klubb kommer fra EAs FC 27-ratingsider. Spesialkort arver dem fra basekortet til samme spiller. Icons regnes som «Icons» og vises uansett hvilken liga du velger, siden de gir kjemi med alle ligaer.
+
 **Hva som teller** (startvekter i `run_ai` i `config/weights.json`, vist som andel av totalen):
 
 | Tall | Andel | Hvorfor |

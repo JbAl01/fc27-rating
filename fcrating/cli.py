@@ -52,7 +52,28 @@ def _load_players(files: List[str]) -> List[Player]:
     table = load_work_rates(str(ROOT / "data" / "cache"))
     if table:
         apply_work_rates(players, table)
+    _fill_club_info(players)
     return players
+
+
+def _fill_club_info(players: List[Player]) -> None:
+    """Cards without club/league/nation (special cards built before the fields existed, FC 27 base
+    cards from FIFA Rosters) get them from the EA card with the same player id. Icons get league "Icons"."""
+    table = {}
+    for p in players:
+        if p.league or p.nation:
+            table.setdefault(str(p.id), p)
+    for p in players:
+        if not p.league and "icon" in (p.rarity or "").lower():
+            p.league = "Icons"
+        if p.league and p.nation:
+            continue
+        src = table.get(str(p.base_id)) or table.get(str(p.id))
+        if src is None or src is p:
+            continue
+        p.club = p.club or src.club
+        p.league = p.league or src.league
+        p.nation = p.nation or src.nation
 
 
 def _ranked(files: List[str], chem: Optional[str] = None):
@@ -888,7 +909,7 @@ def cmd_fetch_ea(args) -> int:
         print(f"Lagret ett rått svar i {sample}")
         return 0
     meta_path = Path(args.out).with_name(Path(args.out).stem + ".meta.json")
-    source = "ea-ratingsider" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
+    source = "ea-ratingsider-2" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
     if args.hvis_gammel is not None and Path(args.out).exists() and meta_path.exists():
         try:
             meta = json.loads(meta_path.read_text(encoding="utf-8"))

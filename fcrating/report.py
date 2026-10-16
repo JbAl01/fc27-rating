@@ -202,6 +202,8 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         intern((r.get("profile") or {}).get("style") or ""),
         [intern(x) for x in (r.get("profile") or {}).get("likes", [])],
         [hs["score"], hs["ball"], hs["run"]] if (hs := r.get("hard_to_stop")) else 0,
+        intern(r.get("league") or ""),
+        intern(r.get("nation") or ""),
     ]
 
 

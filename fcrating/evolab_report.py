@@ -237,6 +237,8 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         1 if s.get("runcard") else 0,
         [_r1(lv.get("feel")), lv.get("acc") or "", _r1(lv.get("pace"))],
         [st.get("now"), st.get("live"), st.get("end")] if st else 0,
+        intern(r.get("league") or ""),
+        intern(r.get("nation") or ""),
     ]
 
 

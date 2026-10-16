@@ -219,6 +219,10 @@ class Player:
     # roles in FC 25, but the value is still in the card data.
     work_rate_att: Optional[str] = None
     work_rate_def: Optional[str] = None
+    # Club, league and nation (from EA's ratings pages; special cards inherit them from the base card)
+    club: Optional[str] = None
+    league: Optional[str] = None
+    nation: Optional[str] = None
 
     @property
     def uid(self) -> str:
@@ -317,6 +321,9 @@ class Player:
             estimated=bool(data.get("estimated", False)),
             base_id=str(data["base_id"]) if data.get("base_id") is not None else None,
             url=data.get("url"),
+            club=data.get("club") or None,
+            league=data.get("league") or None,
+            nation=data.get("nation") or None,
             work_rate_att=wr_att,
             work_rate_def=wr_def,
         )

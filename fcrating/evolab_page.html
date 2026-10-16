@@ -45,6 +45,8 @@ __CSS__
 <details class="more" id="more"><summary>Flere valg</summary><div>
 <label class="f">Korttype<select id="kind"><option value="">Alle</option><option value="base">Basekort</option><option value="special">Spesialkort</option></select></label>
 <label class="f">Kjønn<select id="gender"><option value="">Alle</option><option value="M">Menn</option><option value="F">Kvinner</option></select></label>
+<label class="f">Liga<select id="lg"><option value="">Alle</option></select></label>
+<label class="f">Land<select id="na"><option value="">Alle</option></select></label>
 <label class="f">OVR fra<input id="ovrMin" class="small" type="number" inputmode="numeric" placeholder="–"></label>
 <label class="f wide">Ligner på (løper og beveger seg likt som)<input id="twin" list="twinlist" placeholder="Skriv et kort, f.eks. Pichon" autocomplete="off"><datalist id="twinlist"></datalist></label>
 <label class="check"><input type="checkbox" id="live"> Bare kort som kan ta en evo nå</label>
@@ -162,7 +164,7 @@ function runPlan(d,plan){const rt=rater(d);let st=stateOf(d),det=rt(st);const st
 for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(e,st,path),nd=rt(nx);steps.push({e,path,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}
 if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
 /* ---------- data ---------- */
-const D=RAW.map((r,i)=>({i,name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
+const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
 h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
@@ -220,7 +222,7 @@ const v=used<0.5*SW?null:Math.round(100*Math.exp(-Math.sqrt(tot/used)/1.2));TWC.
 const twinName=t=>t[0]+" ("+(t[1]||t[2])+")";
 
 /* ---------- state ---------- */
-const F0={g:"",ovrMax:"79",ovrMin:"",h:0,sort:"rel",kind:"",gender:"",live:false,twin:""};
+const F0={g:"",ovrMax:"79",ovrMin:"",h:0,sort:"rel",kind:"",gender:"",lg:"",na:"",live:false,twin:""};
 let F={...F0};try{const s=JSON.parse(localStorage.getItem("fc27-evolab3")||"null");if(s)F={...F0,...s}}catch(e){}
 if(!(F.h>=0&&F.h<H.length))F.h=0;
 let PINS=[];try{PINS=JSON.parse(localStorage.getItem("fc27-evolab-pins")||"[]")}catch(e){}
@@ -341,10 +343,11 @@ $("g").innerHTML='<option value="">Alle utespillere</option>'+META.groups.map(g=
 $("h").innerHTML=H.map((h,i)=>`<option value="${i}">${i===0?"Med evoene som er ute nå":"Anslag: "+esc(h.name.toLowerCase())}</option>`).join("");
 $("twinlist").innerHTML=META.targets.map(t=>`<option value="${esc(twinName(t))}">`).join("");
 function fillSort(){$("sort").innerHTML=sortOptions().map(([v,l])=>`<option value="${v}">${esc(l)}</option>`).join("");if(!SORT[F.sort]||(F.sort==="twin"&&!TWIN))F.sort="rel";$("sort").value=F.sort}
-function sync(){$("g").value=F.g;$("ovr").value=F.ovrMax;$("ovrMin").value=F.ovrMin;$("h").value=String(F.h);$("kind").value=F.kind;$("gender").value=F.gender;
+function sync(){$("g").value=F.g;$("ovr").value=F.ovrMax;$("ovrMin").value=F.ovrMin;$("h").value=String(F.h);$("kind").value=F.kind;$("gender").value=F.gender;$("lg").value=F.lg||"";$("na").value=F.na||"";
 $("live").checked=!!F.live;$("twin").value=F.twin||"";fillSort();save()}
 function setTwin(v){const t=META.targets.find(t=>twinName(t)===v);TWIN=t||null;TWC.clear();F.twin=TWIN?v:"";if(TWIN){F.sort="twin";dir=-1}else if(F.sort==="twin")F.sort="rel"}
-for(const[id,k]of[["g","g"],["ovr","ovrMax"],["kind","kind"],["gender","gender"]])$(id).onchange=e=>{F[k]=e.target.value;sync();reset()};
+{const optsOf=k=>'<option value="">Alle</option>'+[...new Set(D.map(d=>d[k]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"no")).map(n=>`<option>${esc(n)}</option>`).join("");$("lg").innerHTML=optsOf("lg");$("na").innerHTML=optsOf("na")}
+for(const[id,k]of[["g","g"],["ovr","ovrMax"],["kind","kind"],["gender","gender"],["lg","lg"],["na","na"]])$(id).onchange=e=>{F[k]=e.target.value;sync();reset()};
 $("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset();usedInfo(null);if(objNow()!==OBJ)recompute()};
 $("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset();if(objNow()!==OBJ)recompute()};
 $("ovrMin").oninput=e=>{F.ovrMin=e.target.value;save();reset()};
@@ -356,7 +359,7 @@ $("morerows").onclick=()=>{shown+=PAGE;render()};
 
 /* ---------- table ---------- */
 function pass(d,q){if(F.ovrMin!==""&&d.ovr<+F.ovrMin)return false;if(F.ovrMax!==""&&d.ovr>+F.ovrMax)return false;if(F.g&&d.g!==F.g)return false;
-if(F.kind&&(F.kind==="base"?d.kind!=="base":d.kind==="base"))return false;if(F.gender&&d.gender!==F.gender)return false;if(F.live&&!hasLive(d))return false;
+if(F.kind&&(F.kind==="base"?d.kind!=="base":d.kind==="base"))return false;if(F.gender&&d.gender!==F.gender)return false;if(F.lg&&d.lg!==F.lg&&d.lg!=="Icons")return false;if(F.na&&d.na!==F.na)return false;if(F.live&&!hasLive(d))return false;
 if(q&&!(d.name+" "+d.ver).toLowerCase().includes(q))return false;return true}
 function rowsNow(){const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase(),r=[];for(const d of D){if(pass(d,q))r.push([f(d),d])}
 r.sort((x,y)=>{const a=x[0],b=y[0];if(a===b)return 0;if(a==null)return 1;if(b==null)return -1;return(a>b?1:-1)*dir});return r.map(x=>x[1])}
