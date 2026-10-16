@@ -7,18 +7,21 @@ permissions:
 jobs:
   p:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: PYTHONPATH=. python ekstra/probe_card.py
+      - run: python -m fcrating fetch-ea > /tmp/fetch.txt 2>&1 || true
+      - run: |
+          python -m fcrating rate data/ea_players.json --ignorer-brukte --top 5 > /tmp/rate.txt 2>&1 || echo "EXIT $?" >> /tmp/rate.txt
       - run: |
           git config user.name probe
           git config user.email probe@example.com
           git checkout --orphan probe-out-tmp
           git rm -rf . -q || true
-          cp /tmp/probe_card.txt probe_card.txt; cp /tmp/img_* . 2>/dev/null || true
+          tail -60 /tmp/fetch.txt > fetch.txt; tail -80 /tmp/rate.txt > rate.txt
           git add -A
-          git commit -q -m "probe card"
+          git commit -q -m "probe rate"
           git push -f origin HEAD:probe-out
