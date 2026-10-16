@@ -64,6 +64,8 @@ def build_specials(base_players: List[Player], fr_cache: Optional[fr.FifaRosters
     out: List[Player] = []
     problems: List[str] = []
     fc27_base: List[Player] = []
+    # player ids the source uses: a base card with one of these belongs to that player, not a namesake
+    source_ids = {str(e.get("player_id")) for e in (fr_cache.entries.values() if fr_cache else []) if e.get("player_id")}
 
     if fr_cache and include_base:
         # FC 27 base cards: OVR, position and face stats from FIFA Rosters; attributes from the
@@ -71,7 +73,8 @@ def build_specials(base_players: List[Player], fr_cache: Optional[fr.FifaRosters
         for futid, e in unique_entries(fr_cache):
             if not fr.is_base_version(e["version"]):
                 continue
-            base, _ = index.find(name=e["name"], player_id=e.get("player_id"), exact_name=True)
+            base, _ = index.find(name=e["name"], player_id=e.get("player_id"), exact_name=True,
+                                 ovr=e.get("ovr"), foot=e.get("foot"), base_card=True, other_ids=source_ids)
             detail = fr_cache.details.get(futid) or {}
             card = build_special(
                 base, name=e["name"], version=e["version"], ovr=e["ovr"], face=e["face"], cfg=cfg,
@@ -93,7 +96,8 @@ def build_specials(base_players: List[Player], fr_cache: Optional[fr.FifaRosters
             if _no_base_version(e["version"]):
                 base = None  # Icons and Heroes have no EA base card; never match a namesake
             else:
-                base, _ = index.find(name=e["name"], player_id=e.get("player_id"), exact_name=True)
+                base, _ = index.find(name=e["name"], player_id=e.get("player_id"), exact_name=True,
+                                     ovr=e.get("ovr"), foot=e.get("foot"), other_ids=source_ids)
             detail = fr_cache.details.get(futid) or {}
             card = build_special(
                 base, name=e["name"], version=e["version"], ovr=e["ovr"], face=e["face"], cfg=cfg,

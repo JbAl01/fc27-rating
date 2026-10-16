@@ -232,6 +232,38 @@ class IconMatchTests(unittest.TestCase):
         self.assertIsNone(idx.find(name="Rodri Hernández", player_id="999", exact_name=True)[0])
         self.assertIsNotNone(idx.find(name="Rodrigo Hernández", player_id="999", exact_name=True)[0])
 
+    def test_namesake_with_other_id_is_not_matched(self):
+        bruno = Player(name="Bruno Fernandes", position="CAM", id="212198", ovr=87, foot="Right",
+                       attributes={}, playstyles=["Incisive Pass"])
+        idx = BaseIndex([bruno])
+        # a 56-rated Bruno Fernandes with his own id: OVR doesn't fit
+        self.assertIsNone(idx.find(name="Bruno Fernandes", player_id="777", exact_name=True,
+                                   ovr=56, base_card=True)[0])
+        self.assertIsNone(idx.find(name="Bruno Fernandes", player_id="777", exact_name=True, ovr=56)[0])
+        # the base card's id is used by another player in the source
+        self.assertIsNone(idx.find(name="Bruno Fernandes", player_id="777", exact_name=True, ovr=88,
+                                   other_ids={"212198", "777"})[0])
+        # other foot
+        self.assertIsNone(idx.find(name="Bruno Fernandes", player_id="777", exact_name=True, ovr=88,
+                                   foot="Left")[0])
+        # same player with an unknown id and fitting OVR is still matched
+        self.assertIsNotNone(idx.find(name="Bruno Fernandes", player_id="777", exact_name=True, ovr=89,
+                                      foot="Right", other_ids={"777"})[0])
+
+    def test_build_specials_skips_namesake_base(self):
+        bruno = Player(name="Bruno Fernandes", position="CAM", id="212198", ovr=87, foot="Right",
+                       attributes=dict(BELLINGHAM_TOTW), playstyles=["Incisive Pass"], rarity="Rare")
+        other = {"ovr": 56, "name": "Bruno Fernandes", "position": "CB", "version": "Team of the Week",
+                 "work_rates": "M/M", "skill_moves": 2, "weak_foot": 3, "foot": "Right",
+                 "face": {"pac": 60, "sho": 30, "pas": 40, "dri": 45, "def": 58, "phy": 62},
+                 "player_id": "999001", "futid": "5551", "url": "https://www.fifarosters.com/player.php?futid=5551"}
+        with tempfile.TemporaryDirectory() as tmp:
+            fr_cache = fr.FifaRostersCache(str(Path(tmp) / "fr"))
+            fr_cache.entries["5551"] = other
+            cards, problems = specials.build_specials([bruno], fr_cache, None, CFG)
+        self.assertEqual([c for c in cards if c.ovr == 56], [])   # nothing to build without his card page
+        self.assertTrue(any("Bruno Fernandes" in p for p in problems))
+
 
 class DuplicateTests(unittest.TestCase):
     def test_same_card_listed_twice_is_kept_once(self):

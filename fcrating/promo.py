@@ -94,6 +94,26 @@ def norm_name(name: str) -> str:
     return re.sub(r"[^a-z ]", "", s).strip()
 
 
+BASE_OVR_GAP = 8      # a player's new base card is rarely more than this far from the old one
+SPECIAL_OVR_DROP = 2  # a special card is almost never lower than the player's base card
+
+
+def namesake_reason(cand: Player, player_id: str, ovr: Optional[int], foot: Optional[str],
+                    base_card: bool, other_ids: Optional[set]) -> str:
+    """Why a name match with another player id is a different player, or '' if it may be the same."""
+    if cand.id and other_ids and str(cand.id) != player_id and str(cand.id) in other_ids:
+        return f"navnebror (basekortet med samme navn har id {cand.id})"
+    f1, f2 = (foot or "").strip().lower()[:1], (cand.foot or "").strip().lower()[:1]
+    if f1 and f2 and f1 != f2:
+        return "navnebror (annen fot)"
+    if ovr is not None and cand.ovr is not None:
+        if base_card and abs(cand.ovr - ovr) > BASE_OVR_GAP:
+            return f"navnebror (OVR {ovr} mot {cand.ovr:.0f})"
+        if not base_card and cand.ovr > ovr + SPECIAL_OVR_DROP:
+            return f"navnebror (OVR {ovr} mot {cand.ovr:.0f})"
+    return ""
+
+
 class BaseIndex:
     """Look up base cards by EA player id or by name."""
 
@@ -110,9 +130,17 @@ class BaseIndex:
                 self.by_last.setdefault(n.split()[-1], []).append(p)
 
     def find(self, name: str = "", player_id: Optional[str] = None,
-             max_ovr: Optional[int] = None, exact_name: bool = False) -> Tuple[Optional[Player], str]:
+             max_ovr: Optional[int] = None, exact_name: bool = False,
+             ovr: Optional[int] = None, foot: Optional[str] = None, base_card: bool = False,
+             other_ids: Optional[set] = None) -> Tuple[Optional[Player], str]:
         """By EA id first, then by name. With exact_name, only a full-name match
-        is accepted (used when the source has an id that EA's base list lacks)."""
+        is accepted (used when the source has an id that EA's base list lacks).
+
+        A name match for a card whose own player id is unknown can be a namesake
+        (two players called Bruno Fernandes). It is turned down when the base card's
+        id belongs to another player in the source (other_ids), when the preferred
+        foot differs, or when the OVR doesn't fit (ovr: the card's OVR; base_card:
+        the card is the same player's new base card, so the OVR is close)."""
         if player_id and str(player_id) in self.by_id:
             return self.by_id[str(player_id)], "id"
         n = norm_name(name)
@@ -122,6 +150,10 @@ class BaseIndex:
         how = "navn"
         if exact_name and len(cands) != 1:
             return None, "fant ikke basekortet"
+        if exact_name and player_id:
+            why = namesake_reason(cands[0], str(player_id), ovr, foot, base_card, other_ids)
+            if why:
+                return None, why
         if not cands:
             parts = n.split()
             last = self.by_last.get(parts[-1], [])
