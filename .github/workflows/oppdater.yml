@@ -66,7 +66,7 @@ jobs:
       contents: write          # for å lagre data/meta_start.json første gang
       pages: write
       id-token: write
-    timeout-minutes: 90       # første kjøring og ukesgjennomgangen av FIFA Rosters tar lengst tid
+    timeout-minutes: 150      # første kjøring og ukesgjennomgangen av FIFA Rosters tar lengst tid
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
