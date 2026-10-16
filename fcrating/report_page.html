@@ -21,7 +21,7 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 </style></head><body>
 <div class="page">
 <header class="top"><div><h1>FC 27-rating</h1>
-<p>Alle kort rangert mot kortene i samme posisjon. Oppdatert __STAMP__.<span class="x"> Ratingen (IGR) er vår egen.</span></p></div>
+<p>Oppdatert __STAMP__<span class="x">. Alle kort er rangert mot kortene i samme posisjon. Ratingen (IGR) er vår egen.</span></p></div>
 <nav>__EVOLAB__ <button type="button" class="link" id="th"></button> <button type="button" class="link" id="xp"></button></nav></header>
 
 <section class="controls" aria-label="Søk og sortering">
@@ -131,7 +131,7 @@ const faceOf=(d,k)=>{let t=0;for(const[a,w]of META.face[k]){const v=d.at[META.id
 const tierOf=v=>/icon/i.test(v)?"icon":/hero/i.test(v)?"hero":/bronze/i.test(v)?"bronze":/silver/i.test(v)?"silver":/gold/i.test(v)?"gold":"special";
 const cardName=n=>{const w=String(n).split(" ");let s=w[w.length-1];if(s.length<=3&&w.length>1)s=w.slice(-2).join(" ");return s};
 const picImg=d=>d.img&&d.img.startsWith("https://")?`<img class="pic" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
-const cardHtml=(d,pos,mini)=>`<div class="fcard ${tierOf(d.version)}${mini?" mini":""}${picImg(d)?"":" nopic"}"><b class="o">${Math.round(d.ovr)}</b>${mini?"":`<span class="p">${esc(pos)}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${FK.map(k=>`<span><i>${k}</i>${d.gk?"–":(faceOf(d,k)??"–")}</span>`).join("")}</div>`}</div>`;
+const cardHtml=(d,pos,mini)=>`<div class="fcard ${tierOf(d.version)} ${posClass(d.group)}${mini?" mini":""}${picImg(d)?"":" nopic"}"><b class="o">${Math.round(d.ovr)}</b>${mini?"":`<span class="p">${esc(pos)}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${FK.map(k=>`<span><i>${k}</i>${d.gk?"–":(faceOf(d,k)??"–")}</span>`).join("")}</div>`}</div>`;
 function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="accelerate")return META.run.accv[d.accelerate]??null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
 const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
 function similarTo(d,g,n){const S=META.run.sim,tot=S.reduce((a,x)=>a+x[3],0),ref=S.map(([k])=>simVal(d,k)),res=[];
@@ -166,15 +166,15 @@ function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},
 const dr=mdrift(g),since=META.meta&&META.meta.since;
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
 let h=`<div class="det"><div class="dethead">${cardHtml({...d,gk},(d.positions||"").split("/")[0]||g)}<div class="info"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
-<div class="stats"><div class="stat"><small>IGR som ${gl}</small><b>${fmt(e.igr)}</b></div><div class="stat"><small>Plass blant ${esc(pl)}</small><b>${n0(e.rank)}<i>av</i>${n0(e.of)}</b></div>${d.evo&&d.evo.x===undefined&&d.evo.a!=null?`<div class="stat"><small>Med evoene nå</small><b><em>${fmt(d.evo.a)}</em></b></div>`:""}</div>${e.meta!=null&&since&&dr>0.05?`<p class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</p>`:""}
+${e.meta!=null&&since&&dr>0.05?`<p class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</p>`:""}
 ${d.style||d.likes.length?`<p class="x">${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;
 /* what the rating is built from */
 const extra=[];if(e.role>0)extra.push(e.role_name?`rollen ${esc(e.role_name)}`:"rolle");if(d.wf&&e.wfp>0)extra.push(`svakfot ${d.wf}`);if(d.sm&&e.smp>0)extra.push(`skill moves ${d.sm}`);
 if(e.obb>0)extra.push("off-balance");if(e.stb>0)extra.push("Standing Tackle");if(e.gkh>0)extra.push("høyde");
 const psn=d.ps||[];
-h+=`<div class="cols"><section><h3>Ratingen</h3><table class="kv"><thead><tr><th></th><th></th><th style="text-align:left">I posisjonen</th></tr></thead><tbody>
-${!gk?kvd("Følelse med ball","hvor kvikk og lett han er å styre",fmt(d.feel),pct(w.fp)):""}
+h+=`<div class="cols"><section><table class="kv"><tbody>
+${!gk?kvd("Følelse","hvor kvikk og lett han er å styre",fmt(d.feel),pct(w.fp)):""}
 ${kvd("Fart","Acceleration og Sprint Speed",fmt(e.pace),pct(w.pp))}
 ${kvd("Ferdigheter",`det som betyr mest for en ${gl}: ${esc(list(skillTop(g)))}`,fmt(e.skill),pct(w.sp))}
 ${B.run&&e.rs!=null?kvd("Løp uten ball","hvor smart og nyttig han løper når laget har ballen",fmt(e.rs),pct(w.rp)):""}
@@ -191,10 +191,10 @@ ${rg&&d.ra&&d.ra.exe!=null?kvd("Får avstand","om løpet faktisk gir rom (fart, 
 ${d.accelerate?kvd("AcceleRATE",ACCTXT[d.accelerate]||"",esc(d.accelerate),""):""}
 ${d.h?kvd("Høyde",d.ra&&d.ra.body?esc(d.ra.body.toLowerCase()):"",Math.round(d.h)+" cm",""):""}
 </tbody></table></details>`;
-if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Løper på samme måte som ${list(sims.map(([o])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a>`))}.</p>`}
+if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Lignende: ${list(sims.map(([o])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a>`))}.</p>`}
 h+=`</section></div>`;
 const profBars=PROF.order.map((k,i)=>d.prof[i]==null||!(PROF.panel||PROF.order).includes(k)?"":bar(plab(i),d.prof[i],profPct(d,g,i),"Plass blant alle som kan spille posisjonen")).join("");
-if(profBars)h+=`<h3 style="margin-top:20px">Profil</h3><div class="bars">${profBars}</div>`;
+if(profBars)h+=`<div class="bars" style="margin-top:20px">${profBars}</div>`;
 const strong=[];const seen=new Set();for(const x of [...w.tf,...w.ts,...w.s]){if(!seen.has(x[0])){seen.add(x[0]);strong.push(x)}}
 strong.sort((a,b)=>(b[1]-(b[2]??b[1]))-(a[1]-(a[2]??a[1])));
 h+=`<p style="margin-top:14px"><b>Sterkest:</b> ${strong.length?nameList(strong.slice(0,5)):"–"}.</p>`;
@@ -263,7 +263,7 @@ const sub=[String(d.version).replace(/^FC 27 /,""),d.status==="lekket"?"lekket":
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
 tr.innerHTML=`<td><div class="who">${cardHtml(d,"",true)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(sub)}</div>${d.ps.length?`<div>${psChips(d.ps,null,4,"mini")}</div>`:""}</div></div></td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
-<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
+<td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}</td><td class="num">${d.rank?n0(d.rank):"–"}</td>
 <td class="num">${fmt(d.feel)}</td>
 <td class="num">${fmt(d.pace)}</td><td class="num">${fmt(d.skill)}</td>
 <td class="num">${d.run_ai!=null?fmt(d.run_ai):"–"}</td>

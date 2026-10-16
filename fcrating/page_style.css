@@ -213,23 +213,26 @@ table.data table.kv thead th{position:static;border-bottom:1px solid var(--line2
 table.data table.kv th{white-space:nowrap}
 table.data table.kv{max-width:600px}
 
-/* kort: tegnet i CSS (ikke EAs egen grafikk), farge etter kortets nivå */
-.fcard{--cbg:#27304a;--cink:#f1f3f8;--cedge:#e0bd58;--cup:#82e6ae;position:relative;flex:none;width:150px;height:206px;border-radius:12px 12px 28px 28px;background:var(--cbg);color:var(--cink);box-shadow:inset 0 0 0 2px var(--cedge);overflow:hidden}
-.fcard.gold{--cbg:#e2c775;--cink:#2a2310;--cedge:#f3e2a2;--cup:#0a6a38}
-.fcard.silver{--cbg:#c9d0d8;--cink:#1f262d;--cedge:#e8edf1;--cup:#0a6a38}
-.fcard.bronze{--cbg:#cd9566;--cink:#2d1c0e;--cedge:#e9c09c;--cup:#0a6a38}
-.fcard.icon{--cbg:#eee3c3;--cink:#3a3014;--cedge:#fff6d8;--cup:#0a6a38}
-.fcard.hero{--cbg:#2d8c9e;--cink:#f2fbfc;--cedge:#6cc4d3}
-.fcard .o{position:absolute;left:13px;top:12px;font:700 32px/1 var(--num)}
-.fcard .p{position:absolute;left:13px;top:46px;font:600 14px var(--num);letter-spacing:.02em}
-.fcard .pic{position:absolute;right:8px;top:10px;width:92px;height:96px;object-fit:contain;object-position:bottom}
-.fcard .nme{position:absolute;left:10px;right:10px;top:114px;text-align:center;font:700 17px/1.1 var(--num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-bottom:5px;border-bottom:1px solid color-mix(in srgb,var(--cink) 30%,transparent)}
-.fcard .st{position:absolute;left:8px;right:8px;top:146px;display:grid;grid-template-columns:repeat(6,1fr);text-align:center;font:700 15px var(--num)}
-.fcard .st i{display:block;font:600 9px var(--text);font-style:normal;opacity:.7;margin-bottom:1px}
+/* kort: egen form (avskåret hjørne, stripe i posisjonsfarge), tegnet i CSS, farge etter kortets nivå */
+.fcard{--cbg:#27304a;--cink:#f1f3f8;--cedge:#e0bd58;--cup:#82e6ae;--pc:var(--faint);position:relative;flex:none;width:156px;height:214px;background:var(--cbg);color:var(--cink);overflow:hidden;clip-path:polygon(0 0,calc(100% - 26px) 0,100% 26px,100% 100%,14px 100%,0 calc(100% - 14px))}
+.fcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--pc);z-index:2}
+.fcard.att{--pc:var(--att)}.fcard.mid{--pc:var(--mid)}.fcard.def{--pc:var(--def)}.fcard.gk{--pc:var(--gk)}
+.fcard.gold{--cbg:#e2c775;--cink:#2a2310;--cup:#0a6a38}
+.fcard.silver{--cbg:#c9d0d8;--cink:#1f262d;--cup:#0a6a38}
+.fcard.bronze{--cbg:#cd9566;--cink:#2d1c0e;--cup:#0a6a38}
+.fcard.icon{--cbg:#eee3c3;--cink:#3a3014;--cup:#0a6a38}
+.fcard.hero{--cbg:#2d8c9e;--cink:#f2fbfc}
+.fcard .o{position:absolute;left:16px;top:10px;font:700 38px/1 var(--num);letter-spacing:-.01em}
+.fcard .p{position:absolute;left:17px;top:50px;font:700 14px var(--num);letter-spacing:.03em}
+.fcard .pic{position:absolute;right:4px;bottom:62px;width:112px;height:128px;object-fit:contain;object-position:bottom}
+.fcard .nme{position:absolute;left:0;right:0;top:150px;padding:0 10px 0 16px;font:700 17px/1.15 var(--num);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fcard .st{position:absolute;left:10px;right:8px;top:176px;display:grid;grid-template-columns:repeat(6,1fr);text-align:center;font:700 15px var(--num)}
+.fcard .st i{display:block;font:600 9px var(--text);font-style:normal;opacity:.65;margin-bottom:1px}
 .fcard .st .up{color:var(--cup)}
-.fcard.mini{width:38px;height:50px;border-radius:6px 6px 14px 14px;box-shadow:inset 0 0 0 1px var(--cedge)}
-.fcard.mini .o{left:4px;top:3px;font-size:13px}
-.fcard.mini .pic{width:32px;height:34px;right:3px;top:auto;bottom:2px}
+.fcard.mini{width:38px;height:50px;clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,5px 100%,0 calc(100% - 5px))}
+.fcard.mini::before{width:3px}
+.fcard.mini .o{left:7px;top:4px;font-size:13px}
+.fcard.mini .pic{width:34px;height:36px;right:1px;bottom:0}
 .cards{display:flex;align-items:center;gap:14px}
 .cards figure{margin:0}
 .cards figcaption{margin-top:7px;font-size:12.5px;color:var(--faint);text-align:center;line-height:1.35}
@@ -237,7 +240,8 @@ table.data table.kv{max-width:600px}
 .cards .arr{width:18px;height:18px;margin-top:-34px;border:solid var(--faint);border-width:2px 2px 0 0;transform:rotate(45deg) scale(.7);flex:none}
 .dethead{align-items:flex-start;gap:26px;flex-wrap:wrap}
 .dethead .info{padding-top:6px;min-width:220px}
-@media (max-width:600px){.cards{gap:8px}.fcard:not(.mini){width:132px;height:182px;border-radius:10px 10px 24px 24px}.fcard .o{font-size:28px;left:11px}.fcard .p{top:41px;left:11px;font-size:13px}.fcard .pic{width:80px;height:84px}.fcard .nme{top:100px;font-size:16px}.fcard .st{top:128px;font-size:14px}.cards .arr{margin-top:-30px}}
-.fcard.nopic::after{content:"";position:absolute;right:24px;top:26px;width:62px;height:76px;background:radial-gradient(circle at 50% 27%,currentColor 0 24%,transparent 25%),radial-gradient(ellipse at 50% 100%,currentColor 0 50%,transparent 51%);opacity:.13}
-.fcard.mini.nopic::after{right:7px;top:16px;width:24px;height:30px}
-@media (max-width:600px){.fcard:not(.mini) .st{left:4px;right:4px;font-size:12.5px}.fcard:not(.mini) .st i{font-size:8px;letter-spacing:-.02em}}
+.fcard.nopic::after{content:"";position:absolute;right:20px;top:34px;width:70px;height:90px;background:radial-gradient(circle at 50% 27%,currentColor 0 24%,transparent 25%),radial-gradient(ellipse at 50% 100%,currentColor 0 50%,transparent 51%);opacity:.12}
+.fcard.mini.nopic::after{right:6px;top:15px;width:26px;height:32px}
+.cards .arr{margin-top:0}
+@media (max-width:600px){.cards{gap:6px}.fcard:not(.mini){width:136px;height:188px;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.fcard:not(.mini) .o{font-size:32px;left:14px}.fcard:not(.mini) .p{top:43px;left:15px;font-size:13px}.fcard:not(.mini) .pic{width:96px;height:110px;bottom:54px}.fcard:not(.mini) .nme{top:132px;font-size:16px}.fcard:not(.mini) .st{top:156px;font-size:12.5px;left:8px;right:4px}.fcard:not(.mini) .st i{font-size:8px;letter-spacing:-.02em}}

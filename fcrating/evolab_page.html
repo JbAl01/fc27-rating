@@ -35,7 +35,7 @@ __CSS__
 </style></head><body>
 <div class="page">
 <header class="top"><div><h1>Evo Lab</h1>
-<p>Hva kortene blir med evoene som er ute nå.<span class="x"> Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</span></p></div>
+<p class="x">Hva kortene blir med evoene som er ute nå. Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</p></div>
 <nav><a href="rapport.html">Rangering</a> <button type="button" class="link" id="th"></button> <button type="button" class="link" id="xp"></button></nav></header>
 
 <section class="controls" aria-label="Filtre">
@@ -407,10 +407,10 @@ $("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset
 function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
 return`<td><div class="who">${cardHtml(d,"",d.ovr,[],true)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(String(d.ver).replace(/^FC 27 /,""))}, ${esc(d.pos)}</div></div></div></td>
 <td class="l"><span class="pos ${posClass(d.g)}">${esc(d.positions[0]||d.g)}</span></td>
-<td class="num">${d.ovr}<small>til ${h.ovr}</small></td>
+<td class="num">${d.ovr}${h.ovr>d.ovr?`<small class="up">${h.ovr}</small>`:""}</td>
 <td class="num">${fmt(d.now)}</td>
 <td class="num">${fmt(h.p50)}${isNow()?delta(h.p50-d.now):`<small>${fmt(h.p10)}–${fmt(h.p90)}</small>`}</td>
-<td class="num">${n0(h.rank)}<small>av ${n0(h.of)}</small></td>
+<td class="num">${n0(h.rank)}</td>
 <td class="num">${fmt(f)}${f!=null&&d.nowx.feel!=null?delta(f-d.nowx.feel):""}</td>
 <td class="num">${r&&r[0]!=null?fmt(r[0])+delta(r[0]-(d.runs.now[0]??r[0])):"–"}</td>
 <td class="num">${s&&s[0]!=null?fmt(s[0])+delta(s[0]-(d.stops.now[0]??s[0])):"–"}</td>
@@ -471,10 +471,10 @@ return h}
 function kvRow(label,vals,dg=1,better=1){const cells=vals.map((v,j)=>{if(v==null||v==="")return"<td>–</td>";if(typeof v==="string")return`<td>${esc(v)}</td>`;
 const imp=j>0&&vals[0]!=null&&typeof vals[0]==="number"&&(v-vals[0])*better>0.05;return`<td${imp?' class="ch"':""}>${dg===0?Math.round(v):fmt(v,dg)}</td>`}).join("");
 return`<tr><th>${label}</th>${cells}</tr>`}
-function beforeAfter(d){const last=d.h.length-1,cols=isNow()?[0]:[0,F.h],h0=d.h[0];
+function beforeAfter(d,extra){const last=d.h.length-1,cols=isNow()?[0]:[0,F.h],h0=d.h[0];
 const A=[d.base,buildLive(d)].concat(isNow()?[]:[buildEnd(d)]);
 const pick=(now,live,end)=>[now,live].concat(isNow()?[]:[end]);
-let t=`<table class="kv"><thead><tr><th></th><th>I dag</th><th>Evoene nå</th>${isNow()?"":"<th>Anslag</th>"}</tr></thead><tbody>`;
+let t=`<table class="kv">${isNow()?"":"<thead><tr><th></th><th></th><th></th><th>Anslag</th></tr></thead>"}<tbody>`;
 const hd=t;
 t+=kvRow("Følelse",pick(d.nowx.feel,d.lv.feel,d.med.feel));
 t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
@@ -490,7 +490,7 @@ m+=kvRow("Off-balance",A.map(a=>obdOf(d,a)),0);
 if(d.runcard){m+=kvRow("Smarte løp",pick(d.runs.now[1],d.runs.live[1],d.runs.end[1]));m+=kvRow("Får avstand",pick(d.runs.now[2],d.runs.live[2],d.runs.end[2]))}
 if(d.stops){m+=kvRow("Vanskelig å stoppe med ball",pick(d.stops.now[1],d.stops.live[1],d.stops.end[1]));m+=kvRow("Vanskelig å stoppe på løp",pick(d.stops.now[2],d.stops.live[2],d.stops.end[2]))}
 m+=kvRow("AcceleRATE",pick(d.nowx.acc||"–",d.lv.acc||"–",d.med.acc||"–"));
-return t+`<details class="why"><summary>Flere tall</summary>${m}</tbody></table></details>`}
+return t+`<details class="why"><summary>Flere detaljer</summary>${m}</tbody></table>${extra||""}</details>`}
 function extrasHtml(d){let h="";const st0=stateOf(d),lr=liveRun(d),g=gainsText(st0,lr.st);
 if(g.stats.length)h+=`<p><b>Alt som endres med evoene nå:</b> ${esc(list(g.stats))}.</p>`;
 {const now=psAll(st0),aft=psAll(lr.st),fresh=new Set(g.ps);if(now.length||aft.length)h+=`<p><b>PlayStyles i dag:</b> ${now.length?psChips(now):'<span class="muted">ingen</span>'}</p>${g.ps.length?`<p><b>Etter evoene:</b> ${psChips(aft,fresh)} <span class="muted">(grønn = ny)</span></p>`:""}`}
@@ -508,17 +508,17 @@ const FK=[["PAC","pace"],["SHO","shooting"],["PAS","passing"],["DRI","dribbling"
 const tierOf=v=>/icon/i.test(v)?"icon":/hero/i.test(v)?"hero":/bronze/i.test(v)?"bronze":/silver/i.test(v)?"silver":/gold/i.test(v)?"gold":"special";
 const cardName=n=>{const w=String(n).split(" ");let s=w[w.length-1];if(s.length<=3&&w.length>1)s=w.slice(-2).join(" ");return s};
 const picImg=d=>d.img&&d.img.startsWith("https://")?`<img class="pic" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
-const cardHtml=(d,pos,ovr,stats,mini)=>`<div class="fcard ${tierOf(d.ver||d.version)}${mini?" mini":""}${picImg(d)?"":" nopic"}"><b class="o">${ovr}</b>${mini?"":`<span class="p">${esc(pos)}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${stats.map(([l,v,u])=>`<span${u?' class="up"':""}><i>${l}</i>${v==null?"–":v}</span>`).join("")}</div>`}</div>`;
+const cardHtml=(d,pos,ovr,stats,mini)=>`<div class="fcard ${tierOf(d.ver||d.version)} ${posClass(d.g)}${mini?" mini":""}${picImg(d)?"":" nopic"}"><b class="o">${ovr}</b>${mini?"":`<span class="p">${esc(pos)}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${stats.map(([l,v,u])=>`<span${u?' class="up"':""}><i>${l}</i>${v==null?"–":v}</span>`).join("")}</div>`}</div>`;
 function detCards(d,h0){const live=buildLive(d),b=d.base;const w=(a,o)=>FK.map(([l,k])=>{const v=d.c.g==="GK"?null:faceVal(a,k),was=o?faceVal(o,k):null;return[l,v,o&&v!=null&&was!=null&&v>was]});
-return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,w(b))}<figcaption><b>I dag</b>IGR ${fmt(d.now)}, plass ${n0(d.rnow)}</figcaption></figure><span class="arr" aria-hidden="true"></span><figure>${cardHtml(d,d.positions[0]||d.g,h0.ovr,w(live,b))}<figcaption><b>Med evoene</b>IGR ${fmt(h0.p50)}, plass ${n0(h0.rank)}</figcaption></figure></div>`}
+return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,w(b))}</figure><span class="arr" aria-hidden="true"></span><figure>${cardHtml(d,d.positions[0]||d.g,h0.ovr,w(live,b))}</figure></div>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
-return`<div class="det"><div class="dethead">${detCards(d,h0)}<div class="info"><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
+return`<div class="det"><div class="dethead">${detCards(d,h0)}<div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
 
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
-<div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern fra sammenligning":"Legg til i sammenligning"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk «prøv selv»":"Prøv andre evoer selv"}</button></div>
-<div class="cols"><section><h3>Slik gjør du det</h3>${planHtml(d)}</section>
-<section><h3>Før og etter</h3>${beforeAfter(d)}<details class="why"><summary>Flere detaljer</summary>${extrasHtml(d)}</details>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
+<div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern":"Sammenlign"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk":"Prøv selv"}</button></div>
+<div class="cols"><section>${planHtml(d)}</section>
+<section>${beforeAfter(d,extrasHtml(d))}${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
 function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
