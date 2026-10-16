@@ -448,6 +448,23 @@ class PageMathTests(unittest.TestCase):
         self.assertEqual(len(st0["cats"]["end"]), len(meta["cats"]))
 
 
+    def test_twin_targets_cover_every_outfield_position(self):
+        """«Ligner på» can be any outfield card with the movement data, not only forwards; never a keeper."""
+        players = [copy.deepcopy(p) for p in BASE]
+        cb = card("Meza")
+        cb.name, cb.id, cb.position, cb.alt_positions, cb.ovr, cb.height_cm = "Test Midtstopper", "777", "CB", [], 90, 188.0
+        gk = card("Haaland")
+        gk.name, gk.id, gk.position, gk.alt_positions, gk.ovr = "Test Keeper", "778", "GK", [], 90
+        players += [cb, gk]
+        results = [rate(p, CFG) for p in players]
+        rank_by_position(results, CFG)
+        tg, sim = evolab_report.targets_meta(results, LAB, CFG)
+        names = {t[0] for t in tg}
+        self.assertIn("Test Midtstopper", names)
+        self.assertNotIn("Test Keeper", names)
+        self.assertTrue(all(len(t[3]) == len(sim["keys"]) for t in tg))
+
+
 class AutoEvoFileTests(unittest.TestCase):
     """data/auto_evoer.json (daily check) is read next to your own file, and evo-sjekk catches mistakes."""
 

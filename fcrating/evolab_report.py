@@ -166,7 +166,7 @@ def _seq(seq, idx, live_by_key):
 
 def targets_meta(results: List[dict], lab: dict, cfg: dict):
     """Cards you can pick as the "evo twin" target: favourites, Icons, Heroes and the best
-    cards in the run positions, with their movement profile."""
+    cards in every outfield position, with their movement profile."""
     rc = cfg["weights"].get("run_ai")
     if not rc:
         return [], {"keys": [], "st": []}
@@ -175,17 +175,20 @@ def targets_meta(results: List[dict], lab: dict, cfg: dict):
     keys = list(stats)
     fw = _clean(rc["similar"]["features"])
     favs = {r["uid"] for r in _favorites(lab, results)}
-    pool = [r for r in results if r.get("run_ai")]
+    # every outfield card can be a target (not only the run positions): the movement profile is attributes,
+    # height and work rate, which all outfield cards have
+    pool = [r for r in results if (r.get("position") or "").upper() != "GK" and any(g != "GK" for g in r["by_group"])
+            and sum(1 for k in keys if _sim_value(r, k, rc) is not None) >= 0.8 * len(keys)]
     chosen = {}
     for r in pool:
         v = (r.get("rarity") or "").lower()
         if r["uid"] in favs or "icon" in v or "hero" in v or (r.get("ovr") or 0) >= 88:
             chosen[r["uid"]] = r
-    for g in ("ST", "W", "CAM"):
-        best = sorted((r for r in pool if g in r["by_group"]), key=lambda r: r["by_group"][g]["igr"], reverse=True)[:200]
+    for g in ("ST", "W", "CAM", "CM", "CDM", "FB", "CB"):
+        best = sorted((r for r in pool if g in r["by_group"]), key=lambda r: r["by_group"][g]["igr"], reverse=True)[:150]
         chosen.update({r["uid"]: r for r in best})
     out = []
-    for r in sorted(chosen.values(), key=lambda r: (r["uid"] not in favs, -(r.get("ovr") or 0), r["name"]))[:1500]:
+    for r in sorted(chosen.values(), key=lambda r: (r["uid"] not in favs, -(r.get("ovr") or 0), r["name"]))[:2000]:
         feats = [_r1(_sim_value(r, k, rc)) for k in keys]
         g = r.get("position_group") or r.get("best_group")
         out.append([r["name"], r.get("rarity") or "", group_label(g), feats, 1 if r["uid"] in favs else 0])

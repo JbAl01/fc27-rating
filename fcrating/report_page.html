@@ -129,7 +129,7 @@ return {few,fp:gk||few?null:tp(S.f,d.feel),pp:few?null:tp(S.p,e.pace),sp:few?nul
 function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
 const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
 function similarTo(d,g,n){const S=META.run.sim,tot=S.reduce((a,x)=>a+x[3],0),ref=S.map(([k])=>simVal(d,k)),res=[];
-for(const o of DATA){if(o===d||!o.ra||!o.groups[g]||!o.groups[g].run||(o.name===d.name&&o.version===d.version))continue;let t=0,u=0;
+for(const o of DATA){if(o===d||!o.ra||!o.groups[g]||!o.groups[g].run||o.name===d.name)continue;let t=0,u=0;
 S.forEach(([k,m,sd,w],j)=>{const a=ref[j],b=simVal(o,k);if(a==null||b==null)return;t+=w*((a-b)/sd)**2;u+=w});
 if(u>=0.5*tot)res.push([o,Math.sqrt(t/u)])}
 res.sort((a,b)=>a[1]-b[1]);return res.slice(0,n)}

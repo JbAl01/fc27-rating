@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="fonts/fonts.css">
 <style>
 __CSS__
+.twinrow{display:flex;gap:6px;align-items:center}
+.f.wide .twinrow input{flex:1;min-width:0;width:auto}
+.twinrow button.link{font-size:20px;line-height:1;padding:0 6px}
 .evos{margin:0 0 16px}
 .evos table{margin-top:10px;background:var(--surface)}
 .evos th,.evos td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:14px}
@@ -48,7 +51,7 @@ __CSS__
 <label class="f">Liga<select id="lg"><option value="">Alle</option></select></label>
 <label class="f">Land<select id="na"><option value="">Alle</option></select></label>
 <label class="f">OVR fra<input id="ovrMin" class="small" type="number" inputmode="numeric" placeholder="–"></label>
-<label class="f wide">Ligner på (løper og beveger seg likt som)<input id="twin" list="twinlist" placeholder="Skriv et kort, f.eks. Pichon" autocomplete="off"><datalist id="twinlist"></datalist></label>
+<label class="f wide">Ligner på (løper og beveger seg likt som)<span class="twinrow"><input id="twin" list="twinlist" placeholder="Skriv et kort, f.eks. Pichon" autocomplete="off"><button type="button" class="link" id="twinclear" aria-label="Fjern valget">×</button></span><datalist id="twinlist"></datalist></label>
 <label class="check"><input type="checkbox" id="live"> Bare kort som kan ta en evo nå</label>
 <button type="button" class="link" id="reset">Nullstill</button>
 </div></details>
@@ -226,9 +229,12 @@ const SK=META.sim.keys||[],SST=META.sim.st||[],SW=META.sim.sumw||SST.reduce((s,x
 function simVal(d,a,k){if(k==="height_cm")return d.c.h;if(k==="arbeidsrate")return d.c.wrv;if(k==="kort_kropp")return d.c.hb;
 if(k==="kvikk_sterk")return a[AI.agility]!=null&&a[AI.strength]!=null?Math.min(a[AI.agility],a[AI.strength]):null;return a[AI[k]]??null}
 let TWIN=null;const TWC=new Map();
-function twinSim(d){if(!TWIN||!d.runcard)return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);const a=buildAt(d);
+/* Unrounded, so the sort is not decided by rounding. After the evos many cards end on the same capped values, so
+   equal likeness is common: rowsNow then sorts those by Plass etter evo instead of list order (which put the same
+   card on top for every target). Other versions of the target player itself are left out. */
+function twinSim(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);const a=buildAt(d);
 let tot=0,used=0;SK.forEach((key,j)=>{const va=simVal(d,a,key),vb=TWIN[3][j];if(va==null||vb==null)return;const[m,sd,w]=SST[j];tot+=w*((va-vb)/sd)**2;used+=w});
-const v=used<0.5*SW?null:Math.round(100*Math.exp(-Math.sqrt(tot/used)/1.2));TWC.set(k,v);return v}
+const v=used<0.5*SW?null:100*Math.exp(-Math.sqrt(tot/used)/1.2);TWC.set(k,v);return v}
 const twinName=t=>t[0]+" ("+(t[1]||t[2])+")";
 
 /* ---------- state ---------- */
@@ -362,7 +368,14 @@ $("h").onchange=e=>{F.h=+e.target.value;TWC.clear();sync();reset();usedInfo(null
 $("sort").onchange=e=>{F.sort=e.target.value;dir=F.sort==="name"?1:-1;sync();reset();if(objNow()!==OBJ)recompute()};
 $("ovrMin").oninput=e=>{F.ovrMin=e.target.value;save();reset()};
 $("live").onchange=e=>{F.live=e.target.checked;save();reset()};
-$("twin").onchange=e=>{setTwin(e.target.value);sync();reset()};
+/* the list under "Ligner på" only shows what matches the text in the box, so a chosen card would hide all the others:
+   empty the box while it has focus (the choice stays as placeholder) and put it back if nothing new is picked */
+{const tw=$("twin"),ph=tw.placeholder;
+tw.onfocus=()=>{if(tw.value){tw.placeholder=tw.value;tw.value=""}};
+tw.onblur=()=>{if(!tw.value&&F.twin)tw.value=F.twin;tw.placeholder=ph};
+tw.oninput=()=>{const v=tw.value;if(META.targets.some(t=>twinName(t)===v)){setTwin(v);sync();reset();tw.blur()}};
+tw.onchange=()=>{const v=tw.value.trim();if(v===F.twin)return;if(!v||META.targets.some(t=>twinName(t)===v)){setTwin(v);sync();reset()}}}
+$("twinclear").onclick=()=>{setTwin("");sync();reset()};
 $("q").oninput=()=>reset();
 $("reset").onclick=()=>{F={...F0};TWIN=null;TWC.clear();$("q").value="";dir=-1;sync();reset()};
 $("morerows").onclick=()=>{shown+=PAGE;render()};
@@ -372,7 +385,8 @@ function pass(d,q){if(F.ovrMin!==""&&d.ovr<+F.ovrMin)return false;if(F.ovrMax!==
 if(F.kind&&(F.kind==="base"?d.kind!=="base":d.kind==="base"))return false;if(F.gender&&d.gender!==F.gender)return false;if(F.lg&&d.lg!==F.lg&&d.lg!=="Icons")return false;if(F.na&&d.na!==F.na)return false;if(F.live&&!hasLive(d))return false;
 if(q&&!(d.name+" "+d.ver).toLowerCase().includes(q))return false;return true}
 function rowsNow(){const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase(),r=[];for(const d of D){if(pass(d,q))r.push([f(d),d])}
-r.sort((x,y)=>{const a=x[0],b=y[0];if(a===b)return 0;if(a==null)return 1;if(b==null)return -1;return(a>b?1:-1)*dir});return r.map(x=>x[1])}
+const tie=F.sort==="rel"?null:SORT.rel;
+r.sort((x,y)=>{const a=x[0],b=y[0];if(a===b){if(!tie||a==null)return 0;const p=tie(x[1]),q=tie(y[1]);return p===q?0:(p>q?-1:1)}if(a==null)return 1;if(b==null)return -1;return(a>b?1:-1)*dir});return r.map(x=>x[1])}
 const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","IGR i dag"],["p50",isNow()?"Etter evo":"Anslag"],["rel","Plass"],
 ["feel","Følelse"],["run","Løp uten ball"],["stop","Vanskelig å stoppe"]].concat(TWIN?[["twin","Likhet"]]:[]);
 function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
@@ -387,7 +401,7 @@ return`<td><div class="nm">${esc(d.name)}</div><div class="sub">${esc(d.ver)}, $
 <td class="num">${fmt(f)}${f!=null&&d.nowx.feel!=null?delta(f-d.nowx.feel):""}</td>
 <td class="num">${r&&r[0]!=null?fmt(r[0])+delta(r[0]-(d.runs.now[0]??r[0])):"–"}</td>
 <td class="num">${s&&s[0]!=null?fmt(s[0])+delta(s[0]-(d.stops.now[0]??s[0])):"–"}</td>
-${TWIN?`<td class="num">${(()=>{const t=twinSim(d);return t!=null?t+" %":"–"})()}</td>`:""}`}
+${TWIN?`<td class="num">${(()=>{const t=twinSim(d);return t!=null?Math.round(t)+" %":"–"})()}</td>`:""}`}
 let open=null;
 function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
 $("count").textContent=`${n0(rows.length)} av ${n0(D.length)} kort`;
