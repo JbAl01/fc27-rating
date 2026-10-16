@@ -29,7 +29,9 @@ jobs:
       - run: |
           curl -sL https://jbal01.github.io/fc27-rating/evolab.html -o /tmp/evolab_live.html || true
           curl -sL https://jbal01.github.io/fc27-rating/ -o /tmp/index_live.html || true
-      - run: PYTHONPATH=. python ekstra/probe.py > /tmp/probe_out.txt 2>&1 || true
+      - run: |
+          for i in 1 2 3 4; do curl -sfL https://jbal01.github.io/fc27-rating/evolab-data-$i.js -o /tmp/evolab-data-$i.js || true; done
+          echo ok > /tmp/probe_out.txt
       - name: Lagre resultatet
         run: |
           git config user.name "github-actions[bot]"
@@ -38,7 +40,7 @@ jobs:
           git rm -rfq . > /dev/null
           cp /tmp/probe_out.txt probe_out.txt
           cp /tmp/futgg_page.html futgg_page.html 2>/dev/null || true
-          cp /tmp/evolab_live.html /tmp/index_live.html . 2>/dev/null || true
-          git add -A
+          cp /tmp/evolab_live.html /tmp/index_live.html /tmp/evolab-data-*.js . 2>/dev/null || true
+          git add probe_out.txt *.html *.js
           git commit -qm "probe output"
           git push -f origin probe-out
