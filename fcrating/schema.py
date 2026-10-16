@@ -255,6 +255,7 @@ class Player:
     work_rate_def: Optional[str] = None
     # Club, league and nation (from EA's ratings pages; special cards inherit them from the base card)
     club: Optional[str] = None
+    image: Optional[str] = None  # portrait URL (EA), shown on the pages, never downloaded
     league: Optional[str] = None
     nation: Optional[str] = None
     # Date of birth as YYYY-MM-DD (EA's ratings pages; for evos with an age requirement)
@@ -361,6 +362,7 @@ class Player:
             base_id=str(data["base_id"]) if data.get("base_id") is not None else None,
             url=data.get("url"),
             club=data.get("club") or None,
+            image=(data.get("image") if str(data.get("image") or "").startswith("https://") else None),
             league=data.get("league") or None,
             nation=data.get("nation") or None,
             birthdate=parse_birthdate(data.get("birthdate")),

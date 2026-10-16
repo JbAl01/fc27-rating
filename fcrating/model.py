@@ -399,6 +399,7 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "positions": [player.position] + list(player.alt_positions),
         "rarity": player.rarity,
         "club": player.club,
+        "image": player.image,
         "league": player.league,
         "nation": player.nation,
         "price": player.price,

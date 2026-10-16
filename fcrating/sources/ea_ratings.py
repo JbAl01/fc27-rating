@@ -207,6 +207,7 @@ def map_item(item: dict, overrides: Optional[dict] = None) -> Player:
 
     return Player.from_dict({
         "club": club,
+        "image": item.get("avatarUrl") or item.get("imageUrl"),
         "league": league if isinstance(league, str) else None,
         "nation": nation,
         "birthdate": pick("birthdate", "birthDate", "dateOfBirth", "dob"),

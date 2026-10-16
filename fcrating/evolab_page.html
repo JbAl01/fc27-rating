@@ -176,7 +176,8 @@ function runPlan(d,plan){const rt=rater(d);let st=stateOf(d),det=rt(st);const st
 for(const[ei,pi]of plan[0]){const e=EV[ei],path=pi>=0?e[8][8][pi]:null,nx=apply(e,st,path),nd=rt(nx);steps.push({e,path,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}
 if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d1:nd});st=nx;det=nd}return{steps,st,det}}
 /* ---------- data ---------- */
-const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",club:S(r[39])||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
+const faceImg=(d,c)=>d.img&&d.img.startsWith("https://")?`<img class="face${c?" "+c:""}" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
+const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",club:S(r[39])||"",img:r[40]||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
 h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3]},plans:r[19],
@@ -405,7 +406,7 @@ const COLS=()=>[["name","Spiller","l"],["pos","Pos","l"],["ovr","OVR"],["now","I
 function head(){$("thead").innerHTML=COLS().map(([k,l,c])=>`<th class="${c||""}" data-k="${k}"${F.sort===k?` aria-sort="${dir<0?"descending":"ascending"}"`:""}>${l}</th>`).join("");
 $("thead").querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!SORT[k])return;if(F.sort===k)dir=-dir;else{F.sort=k;dir=k==="name"?1:-1}sync();reset();if(objNow()!==OBJ)recompute()})}
 function rowHtml(d){const h=hv(d),r=runAt(d),s=stopAt(d),f=feelAt(d);
-return`<td><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></td>
+return`<td><div class="who">${faceImg(d)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(d.ver)}, ${esc(d.pos)}</div></div></div></td>
 <td class="l"><span class="pos ${posClass(d.g)}">${esc(d.positions[0]||d.g)}</span></td>
 <td class="num">${d.ovr}<small>til ${h.ovr}</small></td>
 <td class="num">${fmt(d.now)}</td>
@@ -446,25 +447,26 @@ function choiceText(e,path){if(!path)return"";const l=path[0];const multi=e[8][8
 if(multi){const ps=l.split(" + ");return`Velg ${esc(ps[0])} på nivå 1 og ${esc(ps[1])} på nivå 2.`}
 const m=/^Valg (\w+): (.*)$/.exec(l);if(m)return`På siste nivå: velg ${esc(m[1])} (${esc(m[2])}).`;return`Velg ${esc(l)}.`}
 function stepHtml(d,s){if(!s.e){return`<li><div class="hd">Roles++ ${esc(d.c.prim||"")}</div><p class="muted">${esc(RU.rppCost)}. Gir ++ i alle roller i hovedposisjonen.</p>
-${d.runcard?"<p>Med ++ tar spilleren løpene rollen ber om med full iver og bedre timing (EA).</p>":""}${(()=>{const t=effectText(s);return t?`<p>${t}.</p>`:""})()}</li>`}
+${(()=>{const t=effectText(s);return t?`<p>${t}.</p>`:""})()}</li>`}
 const e=s.e,closed=isClosed(e),g=gainsText(s.a,s.b),eff=effectText(s),gt=gateText(s,d.c.g);
 return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt</span>':""}</div>
 <p class="muted">${esc(e[2]||"gratis")}. ${closed?"Har stengt.":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Kan startes hele sesongen.":"Kan startes til "+esc(c)+"."})()}</p>
 ${s.path?`<p>${choiceText(e,s.path)}</p>`:""}
-${g.stats.length||g.ps.length?`${g.stats.length?`<p>Gir ${esc(list(g.stats.slice(0,8)))}${g.stats.length>8?` og ${g.stats.length-8} til`:""}.</p>`:""}${g.ps.length?`<p>${psChips(g.ps,new Set(g.ps))}</p>`:""}`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
-${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</li>`}
+${g.stats.length||g.ps.length?`${g.stats.length?`<p>Gir ${esc(list(g.stats.slice(0,4)))}${g.stats.length>4?` og ${g.stats.length-4} til`:""}.</p>`:""}${g.ps.length?`<p>${psChips(g.ps,new Set(g.ps))}</p>`:""}`:"<p class=\"muted\">Gir ingen endring for dette kortet.</p>"}
+${eff||gt||e[9]?`<details class="why"><summary>Hvorfor</summary>${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</details>`:""}</li>`}
 const PLANSEL={};
 function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
 const alts=[0,1,2,3,4].filter(i=>i===0||d.plans[i]);
 if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe","Best forsvar"][i]}</option>`).join("")}</select></label>`;
 else if(OBJ&&!d.plans[OBJ]&&(OBJ!==4||DEFW[d.c.g]))h+=`<p class="muted">Planen for best IGR er også den beste for ${GOALTXT[OBJ]}.</p>`;
 if(d._re)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
-if(mi>0)h+=`<p class="muted">Den beste kombinasjonen for ${GOALTXT[mi]}. IGR kan være litt lavere enn i planen for best IGR.</p>`;
+if(mi>0)h+=`<p class="muted">Best for ${GOALTXT[mi]}. IGR kan bli litt lavere.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
-if(plan[0].length>1)h+=`<p><b>Ta evoene i denne rekkefølgen.</b> Rekkefølgen er valgt så kortet kommer inn i alle, og så oppgraderingene gir mest.</p>`;
+if(plan[0].length>1)h+=`<p class="muted">Ta dem i denne rekkefølgen.</p>`;
 const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"går ikke etter planen, "))}</li>`).join("")}</ul>`:"";
-h+=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+(mi===0&&!d._re?ul("Ikke med i planen:",lm.skip.slice(0,6),"muted"):"");
+const more=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+(mi===0&&!d._re?ul("Ikke med i planen:",lm.skip.slice(0,6),"muted"):"");
+if(more)h+=`<details class="why"><summary>Evoer som ikke er med</summary>${more}</details>`;
 return h}
 function kvRow(label,vals,dg=1,better=1){const cells=vals.map((v,j)=>{if(v==null||v==="")return"<td>–</td>";if(typeof v==="string")return`<td>${esc(v)}</td>`;
 const imp=j>0&&vals[0]!=null&&typeof vals[0]==="number"&&(v-vals[0])*better>0.05;return`<td${imp?' class="ch"':""}>${dg===0?Math.round(v):fmt(v,dg)}</td>`}).join("");
@@ -492,18 +494,18 @@ const cc=chemCheck(d,buildAt(d));if(cc.length)h+=`<p class="muted">Med ${esc(lis
 if(d.dna.cap)h+=`<p class="muted">Beste AcceleRATE kortet kan få med evoer: ${esc(d.dna.cap)}. Høyden kan ikke endres.</p>`;
 if(d.pse)h+=`<p class="muted">Vi vet ikke hvilke PlayStyles kortet har, så PlayStyle-krav kan slå annerledes ut.</p>`;
 return h}
-function forecastHtml(d){let t=`<h3 style="margin-top:22px">Anslag for resten av året</h3><table class="kv"><thead><tr><th></th><th>Typisk</th><th>Spenn</th><th>OVR</th><th>Plass</th></tr></thead><tbody>`;
+function forecastHtml(d){let t=`<table class="kv"><thead><tr><th></th><th>Typisk</th><th>Spenn</th><th>OVR</th><th>Plass</th></tr></thead><tbody>`;
 t+=`<tr><th>I dag</th><td>${fmt(d.now)}</td><td>–</td><td>${d.ovr}</td><td>${n0(d.rnow)}</td></tr>`;
 d.h.forEach((h,i)=>{t+=`<tr><th>${i===0?"Evoene nå":esc(H[i].name)}</th><td>${fmt(h.p50)}</td><td>${i===0?"–":fmt(h.p10)+"–"+fmt(h.p90)}</td><td>${h.ovr}</td><td>${n0(h.rank)}</td></tr>`});
 return t+`</tbody></table><p class="muted">Dette er en gjetning. Kortet tar evoer som ligner dem EA har sluppet i FC 27, i ${META.u} tenkte fortsettelser av året. Spennet viser dårlig og god flaks.${d.coarse?" Kortet er bare regnet i noen av fortsettelsene, så tallet er grovere.":""}${d.h.some(h=>Math.abs(h.adj||0)>=0.05)?" Justert for evoene du har brukt opp.":""}</p>`}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
-return`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}
+return`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.ver)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
 <p>IGR ${fmt(d.now)} i dag og ${fmt(h0.p50)} med evoene som er ute nå. Det er plass ${n0(h0.rank)} av ${n0(h0.of)} ${esc(plural(d.g))}${d.rnow?`, opp fra ${n0(d.rnow)}`:""}. OVR ${d.ovr} til ${h0.ovr}.</p>
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
 <div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern fra sammenligning":"Legg til i sammenligning"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk «prøv selv»":"Prøv andre evoer selv"}</button></div>
 <div class="cols"><section><h3>Slik gjør du det</h3>${planHtml(d)}</section>
-<section><h3>Før og etter</h3>${beforeAfter(d)}${extrasHtml(d)}${isNow()?"":forecastHtml(d)}</section></div>
+<section><h3>Før og etter</h3>${beforeAfter(d)}<details class="why"><summary>Flere detaljer</summary>${extrasHtml(d)}</details>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
 function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};

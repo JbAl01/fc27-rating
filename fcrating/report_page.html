@@ -94,7 +94,7 @@ groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6
 run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||""}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||""}});
 const $=id=>document.getElementById(id);
 const HASPRICE=DATA.some(d=>d.price);if(!HASPRICE){document.documentElement.classList.add("noprice");const po=document.querySelector('#sort option[value="price"]');if(po)po.remove()}
 const present=new Set(DATA.flatMap(d=>Object.keys(d.groups)));
@@ -126,6 +126,7 @@ const s=ks.filter(i=>z[i]>=X.sz&&!shown.has(i)).sort((a,b)=>z[b]-z[a]).slice(0,X
 const w=ks.filter(i=>z[i]<=X.wz&&(sk.includes(i)||META.feel.includes(i))).sort((a,b)=>z[a]-z[b]).slice(0,X.mw).map(T);
 const S=few?null:sortedFor(g),tp=(a,v)=>few?null:topPct(a,v);
 return {few,fp:gk||few?null:tp(S.f,d.feel),pp:few?null:tp(S.p,e.pace),sp:few?null:tp(S.s,e.skill),psp:few?null:tp(S.ps,e.playstyles),rp:few||e.rs==null?null:tp(S.rs,e.rs),ssp:few||e.ss==null?null:tp(S.ss,e.ss),tf:tfI.map(T),ts:tsI.map(T),s,w}}
+const faceImg=(d,c)=>d.img&&d.img.startsWith("https://")?`<img class="face${c?" "+c:""}" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
 function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="accelerate")return META.run.accv[d.accelerate]??null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
 const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
 function similarTo(d,g,n){const S=META.run.sim,tot=S.reduce((a,x)=>a+x[3],0),ref=S.map(([k])=>simVal(d,k)),res=[];
@@ -159,7 +160,7 @@ const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
 function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
 const dr=mdrift(g),since=META.meta&&META.meta.since;
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
-let h=`<div class="det"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}
+let h=`<div class="det"><div class="dethead">${faceImg(d,"big")}<div><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
 <p>IGR ${fmt(e.igr)} som ${gl}: nr. ${n0(e.rank)} av ${n0(e.of)} ${esc(pl)}${w.few?"":` (${pct(e.top_pct)})`}.${e.meta!=null&&since&&dr>0.05?` Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.`:""}</p>
 ${d.style||d.likes.length?`<p>${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;
@@ -255,7 +256,7 @@ const ncol=13+(F.combo.length?1:0)+(HASPRICE?1:0);
 rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
 const sub=[d.version,d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
-tr.innerHTML=`<td><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(sub)}</div>${d.ps.length?`<div>${psChips(d.ps,null,4,"mini")}</div>`:""}</td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
+tr.innerHTML=`<td><div class="who">${faceImg(d)}<div><div class="nm">${esc(d.name)}${d.club?` <span class="club">${esc(d.club)}</span>`:""}</div><div class="sub">${esc(sub)}</div>${d.ps.length?`<div>${psChips(d.ps,null,4,"mini")}</div>`:""}</div></div></td><td class="num cmb">${d.combo!=null?fmt(d.combo):"–"}</td>
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
 <td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}</td><td class="num">${d.rank?n0(d.rank):"–"}<small>${d.of?"av "+n0(d.of):""}</small></td>
 <td class="num">${fmt(d.feel)}</td>

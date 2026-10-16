@@ -122,3 +122,12 @@ table.kv td.note{text-align:left;white-space:normal;font:500 13px/1.35 var(--tex
 .psc.more{color:var(--muted);padding:1px 7px}.pscs.mini{margin-top:3px}.pscs.mini .psc{font-size:11px;line-height:1.45}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .psc.plus{color:#e3c25f;border-color:#a8862a}}
 :root[data-theme="dark"] .psc.plus{color:#e3c25f;border-color:#a8862a}
+
+/* player portraits (EA's own image, hidden if it does not load) */
+.who{display:flex;align-items:center;gap:10px}
+.face{width:44px;height:44px;flex:none;border-radius:50%;object-fit:cover;background:var(--hl);border:1px solid var(--line)}
+.face.big{width:76px;height:76px}
+.dethead{display:flex;align-items:center;gap:14px}
+.dethead .ext{margin:2px 0 0}
+details.why{margin:8px 0}details.why>summary{cursor:pointer;color:var(--link);font-size:14px}
+details.why[open]>summary{margin-bottom:6px}
