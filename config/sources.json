@@ -37,7 +37,7 @@
     },
     "futgg": {
       "enabled": true,
-      "limit_per_run": 150,
+      "limit_per_run": 400,
       "delay_seconds": 3.0,
       "base_limit_per_run": 250,
       "_base_info": "Basekort (EA-dataene har ikke roller): så mange kortsider per kjøring, beste kort først. Gir roller (+ og ++) og høyde. Hvert kort hentes én gang.",

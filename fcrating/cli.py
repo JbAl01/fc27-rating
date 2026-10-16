@@ -70,7 +70,7 @@ def _fill_club_info(players: List[Player]) -> None:
     for p in players:
         if not p.league and "icon" in (p.rarity or "").lower():
             p.league = "Icons"
-        if p.league and p.nation and p.birthdate and p.image:
+        if p.league and p.nation and p.birthdate and p.image and p.club_image and p.nation_image:
             continue
         src = table.get(str(p.base_id)) or table.get(str(p.id))
         if src is None or src is p:
@@ -80,6 +80,8 @@ def _fill_club_info(players: List[Player]) -> None:
         p.nation = p.nation or src.nation
         p.birthdate = p.birthdate or src.birthdate
         p.image = p.image or src.image
+        p.club_image = p.club_image or src.club_image
+        p.nation_image = p.nation_image or src.nation_image
 
 
 def _ranked(files: List[str], chem: Optional[str] = None):
@@ -915,7 +917,7 @@ def cmd_fetch_ea(args) -> int:
         print(f"Lagret ett rått svar i {sample}")
         return 0
     meta_path = Path(args.out).with_name(Path(args.out).stem + ".meta.json")
-    source = "ea-ratingsider-6" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
+    source = "ea-ratingsider-7" if cfg["ea_ratings"].get("html_url_template") else "drop-api"
     if args.hvis_gammel is not None and Path(args.out).exists() and meta_path.exists():
         try:
             meta = json.loads(meta_path.read_text(encoding="utf-8"))

@@ -256,3 +256,7 @@ table.data table.kv{max-width:600px}
 .fcard.real .st{left:24px;right:22px;top:166px;font-size:12px}.fcard.real .st i{font-size:7.5px}
 .fcard.real.mini .o{left:9px;top:9px;font-size:12px}.fcard.real.mini .pic{right:4px;bottom:6px;width:28px;height:30px}
 @media (max-width:600px){.fcard.real:not(.mini) .o{left:22px;top:28px;font-size:26px}.fcard.real:not(.mini) .p{left:24px;top:56px}.fcard.real:not(.mini) .pic{right:15px;bottom:68px;width:90px;height:100px}.fcard.real:not(.mini) .nme{top:122px}.fcard.real:not(.mini) .st{top:144px;font-size:10.5px;left:20px;right:18px}}
+.fcard .bd{position:absolute;left:28px;width:20px;height:20px;object-fit:contain;z-index:1}
+.fcard .bd.ni{top:84px}.fcard .bd.cl{top:108px}
+.fcard:not(.real) .bd{left:16px}
+@media (max-width:600px){.fcard:not(.mini) .bd{width:17px;height:17px;left:24px}.fcard:not(.mini) .bd.ni{top:72px}.fcard:not(.mini) .bd.cl{top:93px}}

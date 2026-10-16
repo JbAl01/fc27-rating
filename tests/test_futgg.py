@@ -119,3 +119,8 @@ class CardBackgroundTests(unittest.TestCase):
         bad = Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "card_image": "https://evil.example/a.png"})
         self.assertEqual(ok.card_image, self.BG)
         self.assertIsNone(bad.card_image)
+
+    def test_badges_need_https(self):
+        p = Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "club_image": "https://x/c.png", "nation_image": "javascript:1"})
+        self.assertEqual(p.club_image, "https://x/c.png")
+        self.assertIsNone(p.nation_image)
