@@ -36,6 +36,7 @@ jobs:
           git rm -rf . -q || true
           cp /tmp/an.txt an.txt || echo none > an.txt
           cp -r /tmp/img img || true
+          cp /tmp/mendes.html mendes.html || true
           git add -A
           git commit -q -m "probe rate"
           git push -f origin HEAD:probe-out

@@ -1,31 +1,23 @@
-import collections, random, urllib.request, urllib.error
-from concurrent.futures import ThreadPoolExecutor
-from fcrating import cli
+import json, re
+from fcrating import net
+from fcrating.sources import futgg
 log = open("/tmp/an.txt", "w")
 def w(*a):
     log.write(" ".join(str(x) for x in a) + "\n"); log.flush()
-players = cli._load_players(["data/ea_players.json", "data/spesialkort.json"])
-w("cards", len(players))
-host = collections.Counter((p.image or "NONE").split("/")[2] if p.image else "NONE" for p in players)
-w("image hosts", dict(host))
-fb = [p for p in players if p.image and "futbin" in p.image]
-random.seed(2)
-sample = random.sample(fb, min(400, len(fb)))
-def st(p):
-    try:
-        r = urllib.request.urlopen(urllib.request.Request(p.image, method="HEAD", headers={"User-Agent": "Mozilla/5.0"}), timeout=20)
-        return r.status
-    except urllib.error.HTTPError as e:
-        return e.code
-    except Exception as e:
-        return repr(e)[:40]
-with ThreadPoolExecutor(4) as ex:
-    res = list(ex.map(st, sample))
-w("futbin sample", len(sample), collections.Counter(res))
-for p, r in zip(sample, res):
-    if r != 200:
-        w("  miss", p.name, p.id, p.base_id, p.ovr, p.rarity, p.image)
-for n in ("Dermane Karim", "Nuno Mendes"):
-    for p in players:
-        if p.name == n:
-            w(n, p.id, p.base_id, p.rarity, p.image)
+try:
+    ic = json.load(open("data/cache/futgg/ikoner.json"))
+    w("ikoner.json", len(ic), sorted(ic)[:60])
+    for k in list(ic)[:3]:
+        w(" ", k, json.dumps(ic[k])[:1500])
+except Exception as e:
+    w("no ikoner", repr(e))
+f = net.PoliteFetcher(user_agent="fc27-rating/0.2 (personlig bruk)", delay_seconds=2)
+h = f.get("https://www.fut.gg/players/252145/27-252145/")
+open("/tmp/mendes.html", "w").write(h)
+n = 0
+for m in re.finditer(r'<svg[^>]*height="4\d"[^>]*>.*?</svg>', h, re.S):
+    w("SVG", h[max(0, m.start()-300):m.start()].replace("\n", " ")[-300:])
+    w("   ", m.group(0)[:4000])
+    n += 1
+    if n >= 3: break
+w("parse_icons", {k: (v["vb"], len(v["d"]), [len(x) for x in v["d"]]) for k, v in futgg.parse_icons(h).items()})
