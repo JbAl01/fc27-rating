@@ -1,9 +1,22 @@
-import json
+import os, re, urllib.request
+from fcrating import net
+os.makedirs("/tmp/pages", exist_ok=True)
 log = open("/tmp/an.txt", "w")
-k = json.load(open("data/cache/futgg/kort.json"))
-ic = json.load(open("data/cache/futgg/ikoner.json"))
-ok = [v for v in k.values() if not v.get("missing")]
-log.write(f"cards {len(k)} ok {len(ok)} with cc {sum(1 for v in ok if v.get('cc'))} old col only {sum(1 for v in ok if v.get('col') and not v.get('cc'))}\n")
-log.write(f"icons {len(ic)} with glyph {sum(1 for v in ic.values() if v.get('g'))}\n")
-log.write("no glyph: " + ", ".join(sorted(n for n, v in ic.items() if not v.get('g'))) + "\n")
+def get(u, name):
+    try:
+        b = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=60).read()
+        open("/tmp/pages/" + name, "wb").write(b); log.write(f"{name} {len(b)}\n")
+        return b.decode("utf-8", "replace")
+    except Exception as e:
+        log.write(f"{name} fail {e!r}\n"); return ""
+h = get("https://jbal01.github.io/fc27-rating/evolab.html", "evolab.html")
+for js in sorted(set(re.findall(r'src="(evolab-data-\d+\.js[^"]*)"', h))):
+    get("https://jbal01.github.io/fc27-rating/" + js.split("?")[0], js.split("?")[0])
+f = net.PoliteFetcher(user_agent="fc27-rating/0.2 (personlig bruk)", delay_seconds=2)
+for name, u in {"intro.html": "https://www.fut.gg/evolutions/2492-intro-to-repeatable-evolutions/",
+                "futnext_intro.html": "https://www.futnext.com/evolutions/intro-to-repeatable-evolutions/2697"}.items():
+    try:
+        x = f.get(u); open("/tmp/pages/" + name, "w").write(x); log.write(f"{name} {len(x)}\n")
+    except Exception as e:
+        log.write(f"{name} fail {e!r}\n")
 log.close()
