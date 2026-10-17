@@ -66,19 +66,19 @@ jobs:
       contents: write          # for å lagre data/meta_start.json første gang
       pages: write
       id-token: write
-    timeout-minutes: 150      # første kjøring og ukesgjennomgangen av FIFA Rosters tar lengst tid
+    timeout-minutes: 120      # henting (maks 55 min) + rating + raskt plansøk; dypsøket ligger i dypsok.yml
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Tidsfrister regnet fra start, så jobben blir ferdig og legger ut siden innenfor timeout-minutes (150):
-      # hentingen stopper etter 55 minutter, og Evo Lab starter ingen nye fulle plansøk etter 105 minutter
-      # (kortene som gjenstår får det raske søket nå og det fulle neste kjøring).
+      # Tidsfrister regnet fra start. Hentingen stopper etter 55 minutter. Dette løpet gjør bare det raske plansøket
+      # (FC_FRIST = nå): siden er ute få minutter etter at hentingen er ferdig. Det fulle plansøket gjør
+      # «Dypsøk Evo Lab» (dypsok.yml) rett etterpå og legger ut siden på nytt.
       - name: Sett tidsfrister
         run: |
           start=$(date +%s)
           echo "FC_HENT_FRIST=$((start + 55*60))" >> "$GITHUB_ENV"
-          echo "FC_FRIST=$((start + 105*60))" >> "$GITHUB_ENV"
+          echo "FC_FRIST=$start" >> "$GITHUB_ENV"
 
       - uses: actions/checkout@v7
 
