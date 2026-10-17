@@ -1,46 +1,38 @@
-import json, collections
-from fcrating import cli
-from fcrating.model import load_config
+import json, collections, glob, os
 from fcrating.evolab import face_value
 log = open("/tmp/an.txt", "w")
 def w(*a): log.write(" ".join(str(x) for x in a) + "\n"); log.flush()
+w(os.listdir("data/cache/fifarosters"))
 def load(f):
     d = json.load(open(f)); return d if isinstance(d, list) else d.get("players", [])
-ea = load("data/ea_players.json"); sp = load("data/spesialkort.json")
-w("ea", len(ea), json.load(open("data/ea_players.meta.json")))
-for src, ps in (("ea", ea), ("sp", sp)):
-    for p in ps:
-        if "Bisiwu" in p["name"]:
-            w(src, p["name"], p["id"], p.get("ovr"), p.get("rarity"), p.get("source"), p.get("face_stats"), {k: p["attributes"].get(k) for k in ("acceleration", "sprint_speed", "dribbling", "agility")})
-players = cli._load_players(["data/ea_players.json", "data/spesialkort.json"])
-for p in players:
-    if "Bisiwu" in p.name:
-        w("used", p.name, p.id, p.ovr, p.rarity, p.source, p.face_stats, {k: p.attributes.get(k) for k in ("acceleration", "sprint_speed")})
-# how often do face stats and attributes disagree (PAC from attributes vs shown PAC)?
-cfg = load_config()
+ea = {str(p["id"]): p for p in load("data/ea_players.json")}
+sp = load("data/spesialkort.json")
 rules = json.load(open("config/evolab.json"))["rules"]
-bad = collections.Counter(); ex = []
-for p in players:
-    fs = p.face_stats or {}
-    if not fs.get("pac") or p.position == "GK": continue
-    pv = face_value(p.attributes, "pace", rules)
-    if pv is None: continue
-    if abs(pv - fs["pac"]) > 1:
-        bad[(p.source, p.rarity if "Rare" in (p.rarity or "") or "Common" in (p.rarity or "") else "special")] += 1
-        if len(ex) < 25: ex.append((p.name, p.id, p.rarity, p.source, fs.get("pac"), pv, p.attributes.get("acceleration"), p.attributes.get("sprint_speed")))
-w("players", len(players), "pace mismatch", sum(bad.values()), dict(bad))
-for e in ex: w("  ", e)
-# compare EA vs FIFA Rosters base attributes for the same id
-eam = {str(p["id"]): p for p in ea}
-diff = 0; dex = []
-for p in sp:
-    if p.get("source") and str(p.get("id")) in eam and "Rare" in (p.get("rarity") or "") or "Common" in (p.get("rarity") or ""):
-        q = eam.get(str(p.get("id")))
-        if not q: continue
-        dd = {k: (q["attributes"].get(k), p["attributes"].get(k)) for k in q["attributes"] if q["attributes"].get(k) != p["attributes"].get(k)}
-        if dd:
-            diff += 1
-            if len(dex) < 10: dex.append((p["name"], p["id"], p.get("source"), list(dd.items())[:6]))
-w("base cards in both with different attributes:", diff)
-for e in dex: w("  ", e)
+F = {"pac": "pace", "sho": "shooting", "pas": "passing", "dri": "dribbling", "def": "defending", "phy": "physical"}
+def consist(p):
+    a = p["attributes"]; fs = p.get("face_stats") or {}
+    out = {}
+    for k, n in F.items():
+        if n not in rules["face"] or fs.get(k) is None: continue
+        v = face_value(a, n, rules)
+        if v is not None: out[k] = v - fs[k]
+    return out
+for name, src in (("EA", list(ea.values())), ("FRbase", [p for p in sp if p.get("source") == "FIFA Rosters (FC 27-basekort)"]), ("FRspecial", [p for p in sp if p.get("source") == "FIFA Rosters"])):
+    c = collections.Counter(); n = 0
+    for p in src:
+        if p.get("position") == "GK": continue
+        d = consist(p); n += 1
+        for k, v in d.items():
+            if abs(v) > 1: c[k] += 1
+    w(name, "cards", n, "face off by >1:", dict(c))
+# estimated flag
+fb = [p for p in sp if p.get("source") == "FIFA Rosters (FC 27-basekort)"]
+w("FRbase estimated", sum(1 for p in fb if p.get("estimated")), "of", len(fb))
+for nm in ("Harry Kane", "Jesse Eugen Bisiwu"):
+    for p in fb:
+        if p["name"] == nm:
+            q = ea.get(str(p["id"]))
+            w(nm, "estimated", p.get("estimated"), "notes", p.get("notes"))
+            w("  FR", sorted(p["attributes"].items()))
+            w("  EA", sorted(q["attributes"].items()) if q else None)
 log.close()
