@@ -1,16 +1,14 @@
-import os
-from fcrating import net
-os.makedirs("/tmp/pages", exist_ok=True)
+import hashlib, json, os, urllib.request
+os.makedirs("/tmp/img", exist_ok=True)
 log = open("/tmp/an.txt", "w")
-f = net.PoliteFetcher(user_agent="fc27-rating/0.2 (personlig bruk)", delay_seconds=2)
-pages = {"gold": "231747/27-231747", "silver": "264938/27-264938", "bronze": "269875/27-269875", "icon": "237067/27-67345931",
-         "totw": "227203/27-67336067", "fs": "271446/27-50603094", "dfg": "252145/27-67361009", "ce": "227203/27-100890499",
-         "otw": "216393/27-50548041", "sf": "193165/27-50524813", "potm": "247827/27-84133907", "pre_icon": "0/27-84129155"}
-for k, u in pages.items():
+for u in json.load(open("ekstra/urls.json")):
+    name = hashlib.md5(u.encode()).hexdigest()[:12]
     try:
-        h = f.get(f"https://www.fut.gg/players/{u}/")
-        open(f"/tmp/pages/{k}.html", "w").write(h)
-        log.write(f"{k} {len(h)}\n")
+        r = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0", "Accept": "image/webp,image/png,*/*"}), timeout=30)
+        b = r.read()
+        ext = {"image/webp": "webp", "image/png": "png", "image/avif": "avif", "image/jpeg": "jpg"}.get(r.headers.get("Content-Type"), "bin")
+        open(f"/tmp/img/{name}.{ext}", "wb").write(b)
+        log.write(f"{name}.{ext} {len(b)} {u}\n")
     except Exception as e:
-        log.write(f"{k} fail {e!r}\n")
+        log.write(f"FAIL {u} {e!r}\n")
 log.close()
