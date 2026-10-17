@@ -1,23 +1,16 @@
-import json, re
+import os
 from fcrating import net
-from fcrating.sources import futgg
+os.makedirs("/tmp/pages", exist_ok=True)
 log = open("/tmp/an.txt", "w")
-def w(*a):
-    log.write(" ".join(str(x) for x in a) + "\n"); log.flush()
-try:
-    ic = json.load(open("data/cache/futgg/ikoner.json"))
-    w("ikoner.json", len(ic), sorted(ic)[:60])
-    for k in list(ic)[:3]:
-        w(" ", k, json.dumps(ic[k])[:1500])
-except Exception as e:
-    w("no ikoner", repr(e))
 f = net.PoliteFetcher(user_agent="fc27-rating/0.2 (personlig bruk)", delay_seconds=2)
-h = f.get("https://www.fut.gg/players/252145/27-252145/")
-open("/tmp/mendes.html", "w").write(h)
-n = 0
-for m in re.finditer(r'<svg[^>]*height="4\d"[^>]*>.*?</svg>', h, re.S):
-    w("SVG", h[max(0, m.start()-300):m.start()].replace("\n", " ")[-300:])
-    w("   ", m.group(0)[:4000])
-    n += 1
-    if n >= 3: break
-w("parse_icons", {k: (v["vb"], len(v["d"]), [len(x) for x in v["d"]]) for k, v in futgg.parse_icons(h).items()})
+pages = {"gold": "231747/27-231747", "silver": "264938/27-264938", "bronze": "269875/27-269875", "icon": "237067/27-67345931",
+         "totw": "227203/27-67336067", "fs": "271446/27-50603094", "dfg": "252145/27-67361009", "ce": "227203/27-100890499",
+         "otw": "216393/27-50548041", "sf": "193165/27-50524813", "potm": "247827/27-84133907", "pre_icon": "0/27-84129155"}
+for k, u in pages.items():
+    try:
+        h = f.get(f"https://www.fut.gg/players/{u}/")
+        open(f"/tmp/pages/{k}.html", "w").write(h)
+        log.write(f"{k} {len(h)}\n")
+    except Exception as e:
+        log.write(f"{k} fail {e!r}\n")
+log.close()
