@@ -28,7 +28,7 @@
     "include_unchecked": false,
     "_unchecked_info": "Evoer med krav vi ikke kan sjekke (f.eks. alder) er ikke med i kjeden, men vises som «sjekk selv».",
     "face": {
-      "_info": "Hovedtall (for «Pace max 85» og oppgraderinger som «+2 Pace»). Samme formler som EA.",
+      "_info": "Hovedtall (for «Pace max 85» og oppgraderinger som «+2 Pace»). Samme formler som EA i FC 27, rundet av med 0,5 opp. Sjekket mot alle 17 585 utespillere på EAs ratingside (17.10.2026): alle seks hovedtall treffer på hvert kort. DRI har Reactions og Composure med i FC 27, som i spillets DRI-gruppe.",
       "pace": {
         "acceleration": 0.45,
         "sprint_speed": 0.55
@@ -50,10 +50,12 @@
         "curve": 0.05
       },
       "dribbling": {
-        "dribbling": 0.5,
-        "ball_control": 0.35,
+        "dribbling": 0.45,
+        "ball_control": 0.3,
         "agility": 0.1,
-        "balance": 0.05
+        "balance": 0.05,
+        "reactions": 0.05,
+        "composure": 0.05
       },
       "defending": {
         "def_awareness": 0.3,

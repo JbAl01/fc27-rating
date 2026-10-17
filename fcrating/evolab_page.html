@@ -137,7 +137,7 @@ if(st.wf!=null)igr+=(R.wfPts[String(st.wf)]??0)*G.wf;if(st.sm!=null)igr+=(R.smPt
 if(R.ob&&G.ob&&obd!=null)igr+=Math.max(0,Math.min(R.ob.max,(obd-R.ob.start)*R.ob.per_point))*G.ob;
 if(G.st){const v=a[AI.standing_tackle];if(v!=null){let p=0;for(const[t,val]of R.stT){if(v>=t)p=val}igr+=p*G.st}}
 out.igr=pyRound(igr,1);return out};return d._rt}
-function faceVal(a,w){const xs=[];for(const[i,v]of RU.face[w]){if(a[i]==null)return null;xs.push(a[i]*v)}return pyRound(psum(xs),0)}
+function faceVal(a,w){const xs=[];for(const[i,v]of RU.face[w]){if(a[i]==null)return null;xs.push(a[i]*v)}return Math.floor(psum(xs)+0.5+1e-9)}
 function psCount(st){const n=st.ps.length+st.psp.length;return st.psu&&n===0?Math.max(n,RU.assume):n}
 function stateOf(d){return{a:d.base.slice(),ovr:d.ovr||0,ps:d.ps.slice(),psp:d.psp.slice(),wf:d.wf,sm:d.sm,role:d.c.role,done:[],psu:!!d.c.psu,pos:d.positions,g:d.c.g,born:d.born}}
 /* age requirement (evolab.birth_block): r[9] born on or after, r[10] born on or before, as YYYY-MM-DD */

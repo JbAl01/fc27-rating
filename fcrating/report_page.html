@@ -130,7 +130,7 @@ const w=ks.filter(i=>z[i]<=X.wz&&(sk.includes(i)||META.feel.includes(i))).sort((
 const S=few?null:sortedFor(g),tp=(a,v)=>few?null:topPct(a,v);
 return {few,fp:gk||few?null:tp(S.f,d.feel),pp:few?null:tp(S.p,e.pace),sp:few?null:tp(S.s,e.skill),psp:few?null:tp(S.ps,e.playstyles),rp:few||e.rs==null?null:tp(S.rs,e.rs),ssp:few||e.ss==null?null:tp(S.ss,e.ss),tf:tfI.map(T),ts:tsI.map(T),s,w}}
 const FK=["PAC","SHO","PAS","DRI","DEF","PHY"];
-const faceOf=(d,k)=>{let t=0;for(const[a,w]of META.face[k]){const v=d.at[META.idx[a]];if(!v)return null;t+=v*w}return Math.round(t)};
+const faceOf=(d,k)=>{let t=0;for(const[a,w]of META.face[k]){const v=d.at[META.idx[a]];if(!v)return null;t+=v*w}return Math.floor(t+0.5+1e-9)};
 const tierOf=v=>/icon/i.test(v)?"icon":/hero/i.test(v)?"hero":/bronze/i.test(v)?"bronze":/silver/i.test(v)?"silver":/gold/i.test(v)?"gold":"special";
 const cardName=n=>{const w=String(n).split(" ");let s=w[w.length-1];if(s.length<=3&&w.length>1)s=w.slice(-2).join(" ");return s};
 const picImg=d=>{const alt=ALTIMG[d.name+"|"+(d.club||"")]||"",src=d.img&&d.img.startsWith("https://")?d.img:alt;return src?`<img class="pic" src="${esc(src)}" data-alt="${esc(alt!==src?alt:"")}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="if(this.naturalHeight>this.naturalWidth*1.2)this.classList.add('tall')" onerror="if(this.dataset.alt){const a=this.dataset.alt;this.dataset.alt='';this.src=a}else{this.parentNode.classList.add('nopic');this.remove()}">`:""};

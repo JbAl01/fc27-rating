@@ -62,21 +62,24 @@ def estimate_attributes(base: Player, face: Dict[str, float], new_ovr: Optional[
     attrs = dict(base.attributes)
     base_face = {k: v for k, v in base.face_stats.items() if k in FACE_KEYS} or \
         face_from_attributes(attrs, fw)
-    for key in FACE_KEYS:
-        if key not in face or key not in base_face:
-            continue
-        delta = face[key] - base_face[key]
-        if delta == 0:
-            continue
-        weights = {k: v for k, v in fw[key].items() if not k.startswith("_")}
-        current = sum(attrs[k] * weights[k] for k in weights if k in attrs) / \
-            max(1e-9, sum(weights[k] for k in weights if k in attrs))
-        _spread(attrs, weights, current + delta)
+    before = face_from_attributes(attrs, fw)   # unrounded, from the base card's attributes
     if new_ovr is not None and base.ovr is not None and new_ovr > base.ovr:
+        # Reactions and Composure rise with the card's OVR (both are in DRI in FC 27; DRI is then
+        # moved to the card's own value below, so the bump does not raise it twice)
         bump = round((new_ovr - base.ovr) * wcfg["promo"]["reactions_composure_per_ovr"])
         for k in ("reactions", "composure"):
             if k in attrs:
                 attrs[k] = float(min(99, attrs[k] + bump))
+    for key in FACE_KEYS:
+        if key not in face or key not in base_face or key not in before:
+            continue
+        target = before[key] + (face[key] - base_face[key])
+        weights = {k: v for k, v in fw[key].items() if not k.startswith("_")}
+        current = sum(attrs[k] * weights[k] for k in weights if k in attrs) / \
+            max(1e-9, sum(weights[k] for k in weights if k in attrs))
+        if abs(current - target) < 1e-9:
+            continue
+        _spread(attrs, weights, target)
     return attrs
 
 

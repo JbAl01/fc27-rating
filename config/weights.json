@@ -162,11 +162,11 @@
   },
 
   "face_stats": {
-    "_info": "Hvordan EA regner de seks hovedtallene fra attributtene (fifauteam). Sjekket mot Bellinghams TOTW-kort: alle seks treffer. Brukes til å lage kampanjekort fra basekort.",
+    "_info": "Hvordan EA regner de seks hovedtallene fra attributtene i FC 27, rundet av med 0,5 opp. Sjekket mot alle 17 585 utespillere på EAs ratingside (17.10.2026): alle seks treffer på hvert kort. DRI har Reactions og Composure med i FC 27. Brukes til å lage kampanjekort fra basekort.",
     "pac": {"acceleration": 0.45, "sprint_speed": 0.55},
     "sho": {"finishing": 0.45, "positioning": 0.05, "shot_power": 0.20, "long_shots": 0.20, "volleys": 0.05, "penalties": 0.05},
     "pas": {"short_passing": 0.35, "vision": 0.20, "crossing": 0.20, "long_passing": 0.15, "curve": 0.05, "fk_accuracy": 0.05},
-    "dri": {"dribbling": 0.50, "ball_control": 0.35, "agility": 0.10, "balance": 0.05},
+    "dri": {"dribbling": 0.45, "ball_control": 0.30, "agility": 0.10, "balance": 0.05, "reactions": 0.05, "composure": 0.05},
     "def": {"def_awareness": 0.30, "standing_tackle": 0.30, "interceptions": 0.20, "heading_accuracy": 0.10, "sliding_tackle": 0.10},
     "phy": {"strength": 0.50, "stamina": 0.25, "aggression": 0.20, "jumping": 0.05}
   },

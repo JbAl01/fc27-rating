@@ -29,6 +29,7 @@ from __future__ import annotations
 import bisect
 import hashlib
 import json
+import math
 import pickle
 import random
 import statistics
@@ -43,7 +44,7 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 15
+CACHE_VERSION = 16
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -324,11 +325,16 @@ def state_from(p: Player) -> State:
     return s
 
 
+def round_half_up(x: float) -> int:
+    """EA rounds the main stats with .5 up (Python's round() takes .5 to the even number)."""
+    return int(math.floor(x + 0.5 + 1e-9))
+
+
 def face_value(attrs: Dict[str, float], which: str, rules: dict) -> Optional[float]:
     w = _clean(rules["face"][which])
     if not all(k in attrs for k in w):
         return None
-    return round(sum(attrs[k] * v for k, v in w.items()))
+    return round_half_up(sum(attrs[k] * v for k, v in w.items()))
 
 
 def ps_count(st: State, rules: dict) -> int:

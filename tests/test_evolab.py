@@ -105,6 +105,21 @@ class RuleTests(unittest.TestCase):
         self.assertIsNone(evolab.check(evo("x", {"max_ovr": 80, "max_pace": 86}), st, RULES))
         self.assertEqual(evolab.check(evo("x", {"requires_evo": "y"}), st, RULES)[0], "pre")
 
+    def test_main_stats_as_ea_counts_them(self):
+        # FC 27: DRI has Reactions and Composure, and .5 is rounded up (checked on every outfield card on EA's page)
+        a = {"dribbling": 80, "ball_control": 80, "agility": 80, "balance": 80, "reactions": 80, "composure": 70}
+        self.assertEqual(evolab.face_value(a, "dribbling", RULES), 80)          # 79.5 -> 80 (Python's round gives 80 too)
+        a["composure"] = 50
+        self.assertEqual(evolab.face_value(a, "dribbling", RULES), 79)          # 78.5 -> 79, not 78
+        self.assertEqual(evolab.round_half_up(76.50000000000001), 77)
+        self.assertEqual(evolab.round_half_up(76.49), 76)
+        from fcrating.model import load_config
+        fw = load_config()["weights"]["face_stats"]
+        names = {"pac": "pace", "sho": "shooting", "pas": "passing", "dri": "dribbling", "def": "defending", "phy": "physical"}
+        for k, n in names.items():   # the two copies of the formulas say the same
+            self.assertEqual({a: v for a, v in fw[k].items() if not a.startswith("_")},
+                             {a: v for a, v in RULES["face"][n].items() if not a.startswith("_")}, k)
+
     def test_repeatable_evo_is_once_per_card(self):
         # «Repeatable 2» on FUT.GG/futnext: two players can take it, not the same card twice
         e = evo("intro_repeatable", {"max_ovr": 79, "positions": ["ST"]}, {"ovr": [1, 80]}, repeat=2)

@@ -28,6 +28,7 @@ BELLINGHAM_TOTW = {
     "ball_control": 92, "crossing": 71, "dribbling": 89, "finishing": 87, "fk_accuracy": 71,
     "heading_accuracy": 78, "long_passing": 88, "short_passing": 91, "def_awareness": 78, "shot_power": 87,
     "long_shots": 90, "standing_tackle": 82, "sliding_tackle": 86, "volleys": 80, "curve": 78, "penalties": 75,
+    "composure": 82,   # not on the original sheet; set so DRI fits the FC 27 formula (which has Composure)
 }
 TOTW_FACE = {"pac": 80, "sho": 87, "pas": 85, "dri": 89, "def": 80, "phy": 86}
 BASE_FACE = {"pac": 79, "sho": 86, "pas": 83, "dri": 88, "def": 79, "phy": 85}  # base 90 card
@@ -110,7 +111,7 @@ class FifaRostersTests(unittest.TestCase):
 
     def test_detail_parsing(self):
         d = fr.parse_detail_page((FIX / "fifarosters_kort.html").read_text(encoding="utf-8"))
-        self.assertEqual(d["attributes"], {k: float(v) for k, v in BELLINGHAM_TOTW.items()})
+        self.assertEqual(d["attributes"], {k: float(v) for k, v in BELLINGHAM_TOTW.items() if k != "composure"})
         self.assertEqual(d["height_cm"], 186)
         self.assertEqual((d["skill_moves"], d["weak_foot"]), (4, 4))
 
