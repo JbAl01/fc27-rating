@@ -137,7 +137,7 @@ const BGS={"gold": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=30
 const bgUrl=(d,t)=>(d.bg&&d.bg.startsWith("https://game-assets.fut.gg/")?d.bg:BGS[t]||"");
 const bgImg=(d,t)=>{const u=bgUrl(d,t);return u?`<img class="bgi" src="${esc(u)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove('real');this.remove()">`:""};
 const badge=(u,c)=>u&&u.startsWith("https://")?`<img class="bd ${c}" src="${esc(u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
-const tierD=d=>{const v=String(d.version||"");return/^(fc \d+ )?(rare|common)?$/i.test(v.trim())?(d.ovr<65?"bronze":d.ovr<75?"silver":"gold"):tierOf(v)};
+const tierD=d=>{const v=String(d.ver||d.version||"").replace(/^fc \d+ /i,"").trim();if(/^((non[- ]?)?rare|common)?\s*(gold|silver|bronze)?$/i.test(v))return d.ovr<65?"bronze":d.ovr<75?"silver":"gold";const t=tierOf(v);return t==="icon"||t==="hero"?t:"special"};
 const cardHtml=(d,pos,mini)=>`<div class="fcard${bgUrl(d,tierD(d))?" real":""} ${tierD(d)} ${posClass(d.group)}${mini?" mini":""}${picImg(d)?"":" nopic"}">${bgImg(d,tierD(d))}<b class="o">${Math.round(d.ovr)}</b>${mini?"":`<span class="p">${esc(pos)}</span>${String(d.positions||"").split("/").slice(1,4).map(x=>`<i class="alt">${esc(x)}</i>`).join("")}${d.fo?`<span class="ft">${d.fo}</span>`:""}${d.sm&&d.wf?`<span class="sw">${d.sm}<em>★</em>${d.wf}</span>`:""}<span class="bds">${badge(d.ni,"ni")}${badge(d.li,"li")}${badge(d.cl,"cl")}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${FK.map(k=>`<span><i>${k}</i>${d.gk?"–":(faceOf(d,k)??"–")}</span>`).join("")}</div>`}</div>`;
 function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="accelerate")return META.run.accv[d.accelerate]??null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
 const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
@@ -165,14 +165,18 @@ const FRONT={"Løp":"Løp uten ball","Løps-IQ":"Smarte løp","Løpseffekt":"Få
 const plab=i=>FRONT[PROF.labels[i]]||PROF.labels[i];
 const ACCTXT={Explosive:"kommer raskest opp i fart på korte avstander",Controlled:"en mellomting: grei start og grei toppfart",Lengthy:"tregere i starten, men tar igjen de fleste over lang avstand"};
 const skillTop=g=>(META.skill[g]||[]).slice().sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>lab(x[0]));
-const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}"><i aria-hidden="true"></i>${esc(nm)}${plus?"<b>+</b>":""}</span>`};
+const PSI=META.psi||{};
+const psIcon=n=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n,ic=PSI[nm+(plus?"+":"")]||PSI[nm];if(!ic||!Array.isArray(ic.d))return"";return`<svg class="psi${plus?" plus":""}" viewBox="${esc(ic.vb)}" aria-hidden="true">${ic.d.map((p,i)=>`<path d="${esc(p)}"${i?' class="g"':""}/>`).join("")}</svg>`};
+const psRow=(names,fresh)=>names.length?`<div class="psrow">${[...names].sort((a,b)=>b.endsWith("+")-a.endsWith("+")).map(n=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n,ic=psIcon(n);return`<span class="pi${plus?" plus":""}${fresh&&fresh.has(n)?" new":""}" title="${esc(nm)}${plus?"+":""}">${ic||`<b>${esc(nm)}${plus?"+":""}</b>`}</span>`}).join("")}</div>`:"";
+function attrGrid(d){if(d.gk)return"";return`<div class="attrwrap"><div class="attrs">${FK.map(k=>`<div class="ag"><div class="ah"><span>${k}</span><b>${faceOf(d,k)??"–"}</b></div>${META.face[k].map(([a])=>{const i=META.idx[a],v=d.at[i];return`<div class="ar"><span>${esc(META.labels[i])}</span><b>${v||"–"}</b></div>`}).join("")}</div>`).join("")}</div></div>`}
+const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}">${psIcon(n)||'<i aria-hidden="true"></i>'}${esc(nm)}${plus?"<b>+</b>":""}</span>`};
 const psChips=(names,fresh,max,cls)=>{const s=[...names].sort((a,b)=>(b.endsWith("+")-a.endsWith("+"))||0);const shown=max&&s.length>max?s.slice(0,max):s;return`<span class="pscs${cls?" "+cls:""}">${shown.map(n=>psChip(n,fresh&&fresh.has(n))).join("")}${shown.length<s.length?`<span class="psc more">+${s.length-shown.length}</span>`:""}</span>`};
 const kvd=(label,desc,val,extra)=>`<tr><th>${label}${desc?`<small>${desc}</small>`:""}</th><td>${val}</td><td class="note">${extra||""}</td></tr>`;
 const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
 function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
 const dr=mdrift(g),since=META.meta&&META.meta.since;
 const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
-let h=`<div class="det"><div class="dethead">${cardHtml({...d,gk},(d.positions||"").split("/")[0]||g)}<div class="info"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>
+let h=`<div class="det"><div class="dethead"><div class="top"><figure>${cardHtml({...d,gk},(d.positions||"").split("/")[0]||g)}${psRow(d.ps)}</figure></div><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>${attrGrid({...d,gk})}
 ${e.meta!=null&&since&&dr>0.05?`<p class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</p>`:""}
 ${d.style||d.likes.length?`<p class="x">${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
 ${tags.length?`<p class="muted">${esc(tags.join(". "))}.</p>`:""}`;
@@ -186,7 +190,6 @@ ${kvd("Fart","Acceleration og Sprint Speed",fmt(e.pace),pct(w.pp))}
 ${kvd("Ferdigheter",`det som betyr mest for en ${gl}: ${esc(list(skillTop(g)))}`,fmt(e.skill),pct(w.sp))}
 ${B.run&&e.rs!=null?kvd("Løp uten ball","hvor smart og nyttig han løper når laget har ballen",fmt(e.rs),pct(w.rp)):""}
 ${B.stop&&e.ss!=null?kvd("Vanskelig å stoppe","med ball og på løp: fart, styrke og balanse",fmt(e.ss),pct(w.ssp)):""}
-${kvd("PlayStyles",e.pse?"ikke kjent for dette kortet ennå":"",e.pse?"?":(psn.length?psChips(psn):"ingen"),"")}
 ${extra.length?kvd("Gir også ekstra",esc(list(extra)),"","").replace("<tr>","<tr class=\"x\">"):""}
 </tbody></table></section>
 <section><details class="why"><summary>Flere tall</summary><table class="kv"><tbody>
@@ -206,7 +209,7 @@ const strong=[];const seen=new Set();for(const x of [...w.tf,...w.ts,...w.s]){if
 strong.sort((a,b)=>(b[1]-(b[2]??b[1]))-(a[1]-(a[2]??a[1])));
 h+=`<p style="margin-top:14px"><b>Sterkest:</b> ${strong.length?nameList(strong.slice(0,5)):"–"}.</p>`;
 if(w.w.length)h+=`<p><b>Svakest:</b> ${nameList(w.w)}.</p>`;
-const v=d.evo;if(v){h+=v.x!==undefined?`<p class="muted">Kan ikke evolueres: ${esc(v.x)}.</p>`:(META.evolab?`<p><a href="evolab.html">Se planen i Evo Lab</a></p>`:"")}
+const v=d.evo;if(v){h+=v.x!==undefined?"":(META.evolab?`<p><a href="evolab.html">Se planen i Evo Lab</a></p>`:"")}
 /* the numbers behind it */
 const share=k=>B[k]?Math.round(B[k]*100)+" %":"";
 const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${share("feel")}`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${share("pace")}`);core.push(`ferdigheter ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løp uten ball ${fmt(e.rs)} × ${share("run")}`);if(B.stop&&e.ss!=null)core.push(`vanskelig å stoppe ${fmt(e.ss)} × ${share("stop")}`);

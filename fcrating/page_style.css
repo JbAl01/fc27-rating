@@ -282,3 +282,36 @@ table.data table.kv{max-width:600px}
 .fcard.real .nme{top:132px}.fcard.real .st{top:152px}
 @media (max-width:600px){.fcard:not(.mini) .alt,.fcard:not(.mini) .sw{right:16px}.fcard:not(.mini) .bds{bottom:20px}.fcard:not(.mini) .bd{width:13px;height:13px}.fcard.real:not(.mini) .nme{top:114px}.fcard.real:not(.mini) .st{top:132px}}
 .fcard .ft{top:104px;font-size:9px}.fcard .sw{top:118px}
+/* detaljvisning: kortene midt på og større */
+.dethead .top{flex-direction:column;align-items:center;gap:18px;width:100%}
+.dethead .kvbox{width:100%;max-width:460px;flex:none}
+.cards{justify-content:center}
+.cards figure{display:flex;flex-direction:column;align-items:center}
+.cards .fcard:not(.mini),.dethead .top>figure>.fcard{zoom:1.35}
+@media (max-width:600px){.cards .fcard:not(.mini),.dethead .top>figure>.fcard{zoom:1.12}}
+/* kortet: rating litt lenger ned så den ikke treffer rammen */
+.fcard.real .o{top:44px}.fcard.real .p{top:76px}
+.fcard.real .alt:nth-of-type(1){top:54px}.fcard.real .alt:nth-of-type(2){top:68px}.fcard.real .alt:nth-of-type(3){top:82px}
+@media (max-width:600px){.fcard.real:not(.mini) .o{top:38px}.fcard.real:not(.mini) .p{top:64px}}
+.fcard.real.nopic::after{display:block;right:36px;top:48px;width:84px;height:92px;opacity:.16}
+/* PlayStyles under kortet, med ikonene fra spillet */
+.psrow{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px;max-width:220px}
+.psrow .pi{display:inline-flex;align-items:center;justify-content:center;border-radius:50%}
+.psrow .pi svg{width:30px;height:30px}
+.psrow .pi b{font:600 11px var(--text);padding:3px 7px;border:1px solid var(--line);border-radius:5px;color:var(--ink)}
+.psrow .pi.new{box-shadow:0 0 0 2px var(--up,#3fbf7f)}
+.psrow .pi.plus b{border-color:#d9b44a;color:#d9b44a}
+svg.psi path{fill:#eef0f4}svg.psi path.g{fill:#14171d}
+svg.psi.plus path:first-child{fill:#e2b84b}
+.psc svg.psi{width:1.15em;height:1.15em;vertical-align:-.22em;margin-right:4px}
+/* alle attributter, gruppert som på kortet */
+.attrwrap{width:100%;margin-top:18px}
+.attrs{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px 18px;max-width:980px;margin:0 auto;font-size:13px}
+.attrs .ah{display:flex;gap:6px;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:3px;margin-bottom:3px;font-weight:700}
+.attrs .ah span{color:var(--faint);font-size:12px}
+.attrs .ar{display:flex;gap:6px;align-items:baseline;line-height:1.7}
+.attrs .ar span{flex:1;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.attrs b{font-family:var(--num)}.attrs b.upv{color:var(--up,#3fbf7f)}
+.attrs em{font-style:normal;font-size:11px;color:var(--up,#3fbf7f)}
+@media (max-width:820px){.attrs{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:480px){.attrs{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 14px}}

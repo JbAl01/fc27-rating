@@ -32,6 +32,9 @@ _RP = re.compile(r'rolesPlus:\$R\[\d+\]=\[([\d,]*)\],rolesPlusPlus:\$R\[\d+\]=\[
 _POS = re.compile(r'position:(\d+),alternativePositionIds:\$R\[\d+\]=\[([\d,]*)\]')
 _ICON = re.compile(r'<div(?: class="([^"]*)")? title="([^"]+)"><svg[^>]*?height="(\d+)"[^>]*>\s*<path d="([^"]+)"')
 _PLAIN = "M128,12.808L243.192,128,128,243.192,12.808,128Z"   # diamond = PlayStyle; other shape = PlayStyle+
+_SVG = re.compile(r'<div(?: class="([^"]*)")? title="([^"]+)"><svg([^>]*)>(.*?)</svg>', re.S)
+_SVG_D = re.compile(r'<path[^>]*?\sd="([MmLlHhVvCcSsQqTtAaZz0-9.,\-\s]{1,20000})"')
+_SVG_VB = re.compile(r'viewBox="([\d.\s\-]{3,40})"')
 _HEIGHT = re.compile(r"Height</[^>]+>\s*<[^>]+>\s*(\d{3})\s*cm", re.I)
 
 
@@ -70,11 +73,44 @@ class FutggCache:
         if p.exists():
             with open(p, encoding="utf-8") as f:
                 self.cards = json.load(f)
+        self.icons: Dict[str, dict] = load_icons(folder)
 
     def save(self) -> None:
         self.dir.mkdir(parents=True, exist_ok=True)
         with open(self.dir / "kort.json", "w", encoding="utf-8") as f:
             json.dump(self.cards, f, ensure_ascii=False)
+        with open(self.dir / "ikoner.json", "w", encoding="utf-8") as f:
+            json.dump(self.icons, f, ensure_ascii=False)
+
+
+def load_icons(folder: str) -> Dict[str, dict]:
+    """PlayStyle icons seen on FUT.GG pages: {"Name" or "Name+": {"vb": viewBox, "d": [path, ...]}}.
+    Only the outline numbers are kept (no markup), so they are safe to draw on our pages."""
+    p = Path(folder) / "ikoner.json"
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def parse_icons(html: str) -> Dict[str, dict]:
+    """The large PlayStyle icons on a card page, as outlines (first path = the frame: diamond or PlayStyle+)."""
+    out: Dict[str, dict] = {}
+    for m in _SVG.finditer(html):
+        cls, name, attrs, inner = m.group(1), m.group(2), m.group(3), m.group(4)
+        h = re.search(r'height="(\d+)"', attrs)
+        if cls or not h or int(h.group(1)) < 40:
+            continue
+        ds = _SVG_D.findall(inner)
+        vb = _SVG_VB.search(attrs)
+        if not ds or not vb:
+            continue
+        canon = canonical_playstyle(name) or name
+        plus = not ds[0].startswith(_PLAIN)
+        out[canon + ("+" if plus else "")] = {"vb": vb.group(1), "d": ds[:6]}
+    return out
 
 
 def parse_roles(html: str) -> Optional[dict]:
@@ -164,11 +200,13 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
             break
         old = cache.cards.get(card)
         # special cards fetched before the card picture was read are fetched once more
-        again = bool(old) and "lg" not in old and not old.get("missing") and old.get("kind") != "base" and kind != "base"
+        again = bool(old) and not old.get("missing") and ("lg" not in old or "face" not in old)
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
-            rec = parse_card_page(fetcher.get(CARD_URL.format(player=player, game=game, card=card)), card, game)
+            html = fetcher.get(CARD_URL.format(player=player, game=game, card=card))
+            rec = parse_card_page(html, card, game)
+            cache.icons.update(parse_icons(html))
             errors = 0
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
@@ -234,6 +272,8 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             continue
         if rec.get("lg") and str(rec["lg"]).startswith(CARD_IMAGE_HOSTS):
             p.league_image = rec["lg"]
+        if rec.get("face") and str(rec["face"]).startswith(CARD_IMAGE_HOSTS):
+            p.image = rec["face"]   # the card's own picture (promo cards often have another than the base card)
         if rec.get("kind") == "base":
             roles = roles_from(rec, role_positions or {}, p.position)
             if roles:
@@ -241,8 +281,6 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
         elif not rec.get("no_ps"):
             if rec.get("img") and str(rec["img"]).startswith(CARD_IMAGE_HOSTS):
                 p.card_image = rec["img"]
-            if rec.get("face") and str(rec["face"]).startswith(CARD_IMAGE_HOSTS):
-                p.image = rec["face"]
             p.playstyles_plus = list(rec.get("psp") or [])
             p.playstyles = [x for x in rec.get("ps") or [] if x not in p.playstyles_plus]
             p.playstyles_complete = True

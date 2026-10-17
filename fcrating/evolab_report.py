@@ -309,6 +309,7 @@ def render(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: di
     cat_keys = prof_order(cfg) if prof else []
     favs = [c.get("name") for c in (lab.get("favorites") or {}).get("cards", [])]
     meta = {
+        "psi": ps_icons(),
         "strings": intern.items, "attrs": [ATTRIBUTE_LABELS[k] for k in ATTR_KEYS], "akeys": ATTR_KEYS, "hz": horizons(lab),
         "plural": {group_label(g): pl for g, pl in GROUP_PLURAL_NO.items()},
         "groups": [group_label(g) for g in GROUPS if g in groups_seen], "gkey": {group_label(g): g for g in GROUPS},
@@ -381,3 +382,10 @@ def write(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: dic
 
 
 _HTML = (Path(__file__).resolve().parent / "evolab_page.html").read_text(encoding="utf-8")
+
+
+def ps_icons() -> dict:
+    """PlayStyle icons learned from FUT.GG pages (data/cache/futgg/ikoner.json), for the pages."""
+    from pathlib import Path
+    from .sources import futgg
+    return futgg.load_icons(str(Path(__file__).resolve().parent.parent / "data" / "cache" / "futgg"))
