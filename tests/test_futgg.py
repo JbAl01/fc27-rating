@@ -148,3 +148,16 @@ class LeagueAndFootTests(unittest.TestCase):
         self.assertEqual(ea_ratings._foot(2), "Left")
         self.assertEqual(ea_ratings._foot("Left"), "Left")
         self.assertIsNone(ea_ratings._foot(None))
+
+
+class ApplyImagesTests(unittest.TestCase):
+    def test_apply_sets_images_from_cache(self):
+        base = "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=200,format=auto/2027/"
+        p = Player.from_dict({"name": "A", "id": "7", "ovr": 80, "position": "ST"})
+        rec = {"7": {"ps": ["Rapid"], "psp": [], "img": base + "rarities-level-3-large/0." + "a1" * 32 + ".png",
+                     "face": base + "player-item/27-7." + "b2" * 32 + ".webp",
+                     "lg": base + "league/53." + "c3" * 32 + ".png", "t": "2026-10-16"}}
+        futgg.apply([p], rec)
+        self.assertTrue(p.card_image.endswith(".png"))
+        self.assertIn("player-item", p.image)
+        self.assertIn("/league/", p.league_image)
