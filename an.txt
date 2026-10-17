@@ -1,0 +1,22 @@
+after fix: outfield cards 18372 mismatch >1: {('FIFA Rosters (FC 27-basekort)', 'dri'): 908, ('FIFA Rosters (FC 27-basekort)', 'sho'): 33, ('FIFA Rosters (FC 27-basekort)', 'phy'): 74, ('FIFA Rosters (FC 27-basekort)', 'def'): 12, ('FIFA Rosters (FC 27-basekort)', 'pac'): 96, ('FIFA Rosters (FC 27-basekort)', 'pas'): 22, ('FIFA Rosters', 'pas'): 51, ('FIFA Rosters', 'pac'): 97, ('FIFA Rosters', 'phy'): 83, ('FIFA Rosters', 'sho'): 45, ('FIFA Rosters', 'def'): 43, ('FIFA Rosters', 'dri'): 20}
+Jesse Eugen Bisiwu FC 27 Rare Silver 67 PAC 86 {'acceleration': 87.0, 'sprint_speed': 86.0}
+   future_stars_academy_3 ('pre', 'krever forrige evo i kjeden')
+   future_stars_academy_4 ('pre', 'krever forrige evo i kjeden')
+   technical_obj None
+   future_stars_academy_1 None
+   future_stars_academy_2 ('pre', 'krever forrige evo i kjeden')
+   batigol_precision ('pace', 'PAC 86 (maks 85)')
+   nine_duty ('pace', 'PAC 86 (maks 85)')
+   repeat_delivery ('pace', 'PAC 86 (maks 83)')
+   frontline_flair ('pace', 'PAC 86 (maks 84)')
+   believe None
+   pinged_pass_obj None
+   relentless None
+   creative_or_composed None
+   tactical_ascent None
+   shooting_practice None
+   intro_repeatable ('pace', 'PAC 86 (maks 81)')
+   intro_pathway None
+  plan keys ['igr', 'ovr', 'steps', 'roles', 'skip', 'tips', 'near', 'chk', 'acc', 'feel', 'run', 'vil', 'eff', 'pace', 'alt', 'stp', 'stb', 'stl', 'def', 'seq', '_state']
+  plan {"igr": 92.2, "ovr": 85, "steps": [{"key": "creative_or_composed", "name": "Creative or Composed?", "path": "Incisive Pass + First Touch", "cost": "sesongpass, gratis (nivå 27)", "premium": false, "gates": [], "d": [], "ovr": [67, 67], "ps": ["Incisive Pass", "First Touch"], "psp": [], "wf": null, "sm": null}, {"key": "future_stars_academy_1", "name": "Future Stars Academy I", "path": "Valg C: dribling, skill moves +2", "cost": "gratis", "premium": false, "gates": [], "d": [["reactions", 56, 80], ["short_passing", 58, 82], ["vision", 58, 82], ["long_passing", 55, 76], ["volleys", 48, 68], ["stamina", 63, 82], ["ball_control", 68, 87], ["curve", 58, 76], ["positioning", 62, 80], ["composure", 67, 84], ["long_shots", 60, 77], ["balance", 68, 84], ["finishing", 63, 79], ["crossing", 61, 76], ["strength", 59, 73], ["dribbling", 73, 87], ["heading_accuracy", 60, 73], ["shot_power", 68, 80], ["fk_accuracy", 65, 72]], "ovr": [67, 81], "ps": [], "psp": [], "wf": null, "sm": null}, {"key": "shooting_practice", "name": "Shooting Practice", "path": "Low Driven Shot + Power Shot", "cost": "sesongpass, premium (nivå 28)", "premium": true, "gates": [], "d": [], "ovr": [81, 81], "ps": ["Low Driven Shot"], "psp": [], "wf": null, "sm": null}, {"key": "future_stars_academy_2", "name": "Future Stars Academy II", "path": "Valg A: pasning", "cost": "gratis", "premium": false, "gates": [], "d": [["curve", 76, 84], ["fk_accuracy", 72, 80], ["crossing", 76, 82], ["long_passing", 76, 82], ["short_pas
+sample plans with an evo twice: 0 of 150
