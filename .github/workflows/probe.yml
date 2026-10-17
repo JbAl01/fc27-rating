@@ -28,17 +28,15 @@ jobs:
           restore-keys: fcdata-
       - run: |
           python - > /tmp/an.txt 2>&1 <<'PY'
-          from fcrating.sources import futgg
-          from fcrating.specials import unique_entries
-          from fcrating.sources import fifarosters as fr
-          c = futgg.load_cards("data/cache/futgg")
-          sp = {k: v for k, v in c.items() if v.get("kind") != "base"}
-          print("futgg cards", len(c), "special", len(sp), "missing", sum(1 for v in sp.values() if v.get("missing")))
-          print("special with lg", sum(1 for v in sp.values() if "lg" in v), "with face", sum(1 for v in sp.values() if v.get("face")), "with img", sum(1 for v in sp.values() if v.get("img")))
-          fc = fr.FifaRostersCache("data/cache/fifarosters")
-          if fc:
-              todo = [fid for fid, e in unique_entries(fc) if not fr.is_base_version(e["version"])]
-              print("specials total", len(todo), "not in futgg", sum(1 for f in todo if f not in c), "need refetch (no lg)", sum(1 for f in todo if f in c and "lg" not in c[f] and not c[f].get("missing")))
+          import json, re, collections
+          d = json.load(open("data/ea_players.json", encoding="utf-8"))
+          ps = d["players"] if isinstance(d, dict) else d
+          print("players", len(ps), "no image", sum(1 for p in ps if not p.get("image")))
+          c = collections.Counter(re.sub(r"p\d+.*", "pN", p.get("image") or "NONE") for p in ps)
+          for k, v in c.most_common(8): print(v, k)
+          for n in ("Dermane Karim", "Jonna Brengel", "Gabriel Misehouy", "Filip Erik Thorvaldsen", "Martine Fenger"):
+              m = [p for p in ps if p.get("name") == n]
+              print(n, [p.get("image") for p in m][:2])
           PY
       - if: always()
         run: |
