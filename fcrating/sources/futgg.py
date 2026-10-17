@@ -95,8 +95,15 @@ def load_icons(folder: str) -> Dict[str, dict]:
         return {}
 
 
+_GLYPH = re.compile(r'\s*<svg([^>]*)>(.*?)</svg>', re.S)
+_TY = re.compile(r'translate-y-\[(\d{1,3})%\]')
+
+
 def parse_icons(html: str) -> Dict[str, dict]:
-    """The large PlayStyle icons on a card page, as outlines (first path = the frame: diamond or PlayStyle+)."""
+    """The large PlayStyle icons on a card page, as outlines only (no markup).
+    On FUT.GG an icon is two SVGs: the frame (diamond = PlayStyle, other shape = PlayStyle+), then the
+    symbol in its own SVG, smaller, centred and moved up a bit. Kept: "vb"/"d" for the frame, "gvb"/"g" for
+    the symbol, "gs" its size against the frame and "gy" how far up it is moved (per cent of its height)."""
     out: Dict[str, dict] = {}
     for m in _SVG.finditer(html):
         cls, name, attrs, inner = m.group(1), m.group(2), m.group(3), m.group(4)
@@ -109,7 +116,17 @@ def parse_icons(html: str) -> Dict[str, dict]:
             continue
         canon = canonical_playstyle(name) or name
         plus = not ds[0].startswith(_PLAIN)
-        out[canon + ("+" if plus else "")] = {"vb": vb.group(1), "d": ds[:6]}
+        rec = {"vb": vb.group(1), "d": ds[:1]}
+        g = _GLYPH.match(html, m.end())
+        if g:
+            gvb, gh = _SVG_VB.search(g.group(1)), re.search(r'height="(\d+)"', g.group(1))
+            gd = _SVG_D.findall(g.group(2))
+            if gvb and gd:
+                ty = _TY.search(g.group(1))
+                rec.update(gvb=gvb.group(1), g=gd[:12],
+                           gs=round(int(gh.group(1)) / int(h.group(1)), 3) if gh else 0.5,
+                           gy=int(ty.group(1)) if ty else 50)
+        out[canon + ("+" if plus else "")] = rec
     return out
 
 
@@ -156,13 +173,28 @@ def league_image(html: str) -> Optional[str]:
     return m.group(0) if m else None
 
 
+_FCARD = re.compile(r'class="fc-card [^"]*" style="([^"]{0,300})"')
+_CSSVAR = lambda name: re.compile(r'(?:^|;)%s:#([0-9a-fA-F]{6})(?:;|$)' % re.escape(name))
+_C_TEXT, _C_FILL, _C_OVR = _CSSVAR("--color"), _CSSVAR("--fill-color"), _CSSVAR("--overall-color")
+
+
 def card_colors(html: str, card: Optional[str]) -> Optional[str]:
-    """The card's own text, rating and line colours on FUT.GG (as on the in-game card), "text/overall/line"."""
+    """The card's own colours as FUT.GG draws it, "text/overall/fill": text for name, stats and the boxes'
+    border and letters, overall for rating and position, fill for the boxes and the PlayStyle+ badge.
+    Read from the drawn card itself (its style attribute), the one whose picture is this card. (The list of
+    the player's other versions on the page has colours too, but from other cards.)"""
     if not card:
         return None
-    m = re.search(r'eaId:%s,overall:\d+,[^{}]{0,400}?textColor:"([0-9a-fA-F]{6})",overallColor:"([0-9a-fA-F]{6})",lineColor:"([0-9a-fA-F]{6})"'
-                  % re.escape(str(card)), html)
-    return "/".join(x.lower() for x in m.groups()) if m else None
+    marks = list(_FCARD.finditer(html))
+    for n, m in enumerate(marks):
+        end = min(m.end() + 2500, marks[n + 1].start() if n + 1 < len(marks) else len(html))
+        if "/player-item/27-%s." % card not in html[m.end():end]:   # only this card's own drawing
+            continue
+        st = m.group(1)
+        t, f, o = _C_TEXT.search(st), _C_FILL.search(st), _C_OVR.search(st)
+        if t and f:
+            return "/".join(x.group(1).lower() for x in (t, o or t, f))
+    return None
 
 
 def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> Optional[dict]:
@@ -186,7 +218,7 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
         return None
     h = _HEIGHT.search(html)
     rec = {"ps": [x for x in ps if x not in psp], "psp": psp,
-           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html), "col": card_colors(html, card),
+           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html), "cc": card_colors(html, card),
            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
     if not started:
         rec["no_ps"] = True   # the icons were not found: keep the card's own PlayStyles
@@ -209,7 +241,7 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
             break
         old = cache.cards.get(card)
         # special cards fetched before the card picture was read are fetched once more
-        again = bool(old) and not old.get("missing") and "col" not in old
+        again = bool(old) and not old.get("missing") and "cc" not in old
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -281,8 +313,8 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             continue
         if rec.get("lg") and str(rec["lg"]).startswith(CARD_IMAGE_HOSTS):
             p.league_image = rec["lg"]
-        if rec.get("col") and re.fullmatch(r"[0-9a-f]{6}/[0-9a-f]{6}/[0-9a-f]{6}", str(rec["col"])):
-            p.card_color = rec["col"]
+        if rec.get("cc") and re.fullmatch(r"[0-9a-f]{6}/[0-9a-f]{6}/[0-9a-f]{6}", str(rec["cc"])):
+            p.card_color = rec["cc"]
         if rec.get("face") and str(rec["face"]).startswith(CARD_IMAGE_HOSTS):
             p.image = rec["face"]   # the card's own picture (promo cards often have another than the base card)
         if rec.get("kind") == "base":

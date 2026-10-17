@@ -393,3 +393,15 @@ header.top .tools{display:flex;gap:14px;align-items:center}
 .fcard.real:not(.mini) .pic:not(.tall){bottom:84px;height:112px}
 .fcard.real:not(.mini) .nme{z-index:3;text-shadow:0 0 3px color-mix(in srgb,var(--cl,#fff) 70%,transparent),0 0 1px var(--cl,#fff)}
 @media (max-width:600px){.fcard.real:not(.mini) .pic:not(.tall){bottom:76px;height:90px}.fcard.real:not(.mini) .nme{top:116px}.fcard.real:not(.mini) .st{top:134px}}
+/* PlayStyle-ikon som på FUT.GG: ramme + symbol (eget SVG inni) */
+svg.psi{overflow:visible}
+svg.psi .gl path.g{stroke:none;fill:#14171d}
+svg.psi path.f{fill:#eef0f4}
+svg.psi.plus path.f{fill:#e2b84b}
+.fcard .pps svg.psi path.f{fill:rgba(28,20,52,.92);stroke:#fff;stroke-width:12;paint-order:stroke}
+.fcard .pps svg.psi .gl path.g{fill:#fff;stroke:none}
+.fcard.real .pps svg.psi path.f{fill:var(--cl);stroke:var(--ct)}
+.fcard.real .pps svg.psi .gl path.g{fill:var(--ct);stroke:none}
+/* detaljvisning: kortet midt på, PlayStyles rett under */
+.dethead .top>figure{display:flex;flex-direction:column;align-items:center;margin:0 auto}
+.dethead .top>figure>.psrow{margin-left:auto;margin-right:auto}
