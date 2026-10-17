@@ -338,3 +338,24 @@ header.top .tools{display:flex;gap:14px;align-items:center}
 .stamp{margin:8px 0 0;color:var(--faint);font-size:13.5px}
 @media (max-width:600px){nav.tabs{flex:1 1 100%}nav.tabs a{flex:1;padding:12px 8px;font-size:18px}}
 @media (max-width:600px){header.top{flex-direction:column;align-items:stretch}header.top .tools{justify-content:flex-end}}
+/* PlayStyle+ på kortet, til venstre som i spillet */
+.fcard .pps{position:absolute;left:24px;top:96px;display:flex;flex-direction:column;gap:3px;z-index:2}
+.fcard .pps>span{display:block;width:15px;height:15px}
+.fcard .pps svg{display:block;width:15px;height:15px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.45))}
+.fcard .pps .pdia{display:block;width:11px;height:11px;margin:2px;background:#e2b84b;transform:rotate(45deg);border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.fcard:not(.real) .pps{left:14px;top:72px}
+/* ferdigheter og fot høyere opp så de ikke treffer navnet */
+.fcard .ft{top:94px}.fcard .sw{top:108px}
+/* minikort i listene: litt større, med PlayStyle+ */
+.fcard.mini{width:46px;height:62px}
+.fcard.real.mini{width:58px;height:78px;margin:-10px -7px -8px -5px}
+.fcard.real.mini .pic{left:9px;right:9px;bottom:18px;height:44px}
+.fcard.mini .pps{left:5px;top:auto;bottom:10px;gap:1px}
+.fcard.real.mini .pps{left:9px;top:24px;bottom:auto}
+.fcard.mini .pps>span,.fcard.mini .pps svg{width:11px;height:11px}
+.fcard.mini .pps .pdia{width:8px;height:8px;margin:1.5px}
+@media (max-width:600px){
+.fcard.real:not(.mini) .pps{left:20px;top:82px}
+.fcard:not(.mini) .pps>span,.fcard:not(.mini) .pps svg{width:13px;height:13px}
+.fcard.real:not(.mini) .alt:nth-of-type(1){top:44px}.fcard.real:not(.mini) .alt:nth-of-type(2){top:56px}.fcard.real:not(.mini) .alt:nth-of-type(3){top:68px}
+.fcard:not(.mini) .ft{top:82px}.fcard:not(.mini) .sw{top:95px}}
