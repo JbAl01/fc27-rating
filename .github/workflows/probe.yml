@@ -28,15 +28,18 @@ jobs:
           restore-keys: fcdata-
       - run: |
           python - > /tmp/an.txt 2>&1 <<'PY'
-          import json, re, collections
-          d = json.load(open("data/ea_players.json", encoding="utf-8"))
-          ps = d["players"] if isinstance(d, dict) else d
-          print("players", len(ps), "no image", sum(1 for p in ps if not p.get("image")))
-          c = collections.Counter(re.sub(r"p\d+.*", "pN", p.get("image") or "NONE") for p in ps)
-          for k, v in c.most_common(8): print(v, k)
-          for n in ("Dermane Karim", "Jonna Brengel", "Gabriel Misehouy", "Filip Erik Thorvaldsen", "Martine Fenger"):
-              m = [p for p in ps if p.get("name") == n]
-              print(n, [p.get("image") for p in m][:2])
+          import urllib.request
+          UA = {"User-Agent": "fc27-rating/0.2 (personlig bruk)"}
+          for pid in ("76509", "271406", "278216", "275201", "82127", "231747"):
+              for g in ("FC25", "FC26", "FC27", "fc27", "FC27/full/player-portraits"):
+                  path = g if "/" in g else g + "/full/player-portraits"
+                  for q in ("?padding=0.7", ""):
+                      u = "https://ratings-images-prod.pulse.ea.com/%s/p%s.png%s" % (path, pid, q)
+                      try:
+                          r = urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=15)
+                          b = r.read(); print(pid, g, q, r.status, len(b))
+                      except Exception as e:
+                          print(pid, g, q, "ERR", getattr(e, "code", repr(e)[:60]))
           PY
       - if: always()
         run: |
