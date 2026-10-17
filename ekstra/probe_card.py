@@ -1,14 +1,9 @@
-import hashlib, json, os, urllib.request
-os.makedirs("/tmp/img", exist_ok=True)
+import json
 log = open("/tmp/an.txt", "w")
-for u in json.load(open("ekstra/urls.json")):
-    name = hashlib.md5(u.encode()).hexdigest()[:12]
-    try:
-        r = urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0", "Accept": "image/webp,image/png,*/*"}), timeout=30)
-        b = r.read()
-        ext = {"image/webp": "webp", "image/png": "png", "image/avif": "avif", "image/jpeg": "jpg"}.get(r.headers.get("Content-Type"), "bin")
-        open(f"/tmp/img/{name}.{ext}", "wb").write(b)
-        log.write(f"{name}.{ext} {len(b)} {u}\n")
-    except Exception as e:
-        log.write(f"FAIL {u} {e!r}\n")
+k = json.load(open("data/cache/futgg/kort.json"))
+ic = json.load(open("data/cache/futgg/ikoner.json"))
+ok = [v for v in k.values() if not v.get("missing")]
+log.write(f"cards {len(k)} ok {len(ok)} with cc {sum(1 for v in ok if v.get('cc'))} old col only {sum(1 for v in ok if v.get('col') and not v.get('cc'))}\n")
+log.write(f"icons {len(ic)} with glyph {sum(1 for v in ic.values() if v.get('g'))}\n")
+log.write("no glyph: " + ", ".join(sorted(n for n, v in ic.items() if not v.get('g'))) + "\n")
 log.close()
