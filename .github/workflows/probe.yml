@@ -26,24 +26,8 @@ jobs:
             data/evolab_cache.pkl
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
-      - run: |
-          python - > /tmp/an.txt 2>&1 <<'PY'
-          import re
-          from fcrating import net
-          f = net.PoliteFetcher(user_agent="fc27-rating/0.2 (personlig bruk)", delay_seconds=2)
-          for key, u in {"mbappe": "https://www.fut.gg/players/231747/27-231747/", "icon": "https://www.fut.gg/players/237067/27-67345931/", "promo": "https://www.fut.gg/players/227203/27-67336067/"}.items():
-              h = f.get(u)
-              print("==", key, len(h))
-              seen = set()
-              for m in re.finditer(r'([A-Za-z]*(?:[Cc]olou?r|[Tt]ext|[Ll]ine|[Bb]ackground)[A-Za-z]*)\s*:\s*"?(#?[0-9a-fA-F]{6,8})"?', h):
-                  k = (m.group(1), m.group(2))
-                  if k in seen: continue
-                  seen.add(k)
-                  print(" ", m.group(1), m.group(2), "|", h[max(0, m.start()-120):m.start()].replace("\n", " ")[-120:])
-                  if len(seen) > 40: break
-              i = h.find("rarit")
-              print("  rarity ctx:", h[i:i+600].replace("\n", " ") if i >= 0 else None)
-          PY
+      - run: python ekstra/probe_card.py
+        continue-on-error: true
       - if: always()
         run: |
           git config user.name probe
