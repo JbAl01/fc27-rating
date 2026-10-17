@@ -165,25 +165,35 @@ class ApplyImagesTests(unittest.TestCase):
 
 
 class IconTests(unittest.TestCase):
-    def test_parse_icons_keeps_only_outlines(self):
+    def test_parse_icons_frame_and_symbol_as_on_futgg(self):
         plain = futgg._PLAIN
-        html = ('<div title="Finesse Shot"><svg width="48" height="48" viewBox="0 0 256 256"><path d="%s"></path>'
-                '<path fill="#000" d="M10 10L20 20Z" onclick="x()"></path></svg></div>'
-                '<div title="Rapid"><svg height="48" viewBox="0 0 256 256"><path d="M1 1L5 5Z"></path></svg></div>'
+        html = ('<div title="Pinged Pass"><svg viewBox="0 0 256 256" role="img" height="42" width="42"><path d="%s" fill="currentColor"></path></svg>'
+                '<svg role="img" viewBox="0 0 374.94 300.11" height="21" width="21" class="absolute -translate-y-[50%%]">'
+                '<path d="M114,255.77c8.05-16.41Z" fill="#000" onclick="x()"></path></svg></div>'
+                '<div title="Quick Step"><svg viewBox="0 0 256 256" height="42"><path d="M12.813,104.953L68.157,21.862Z"></path></svg>'
+                '<svg viewBox="0 0 259.98 386.12" height="21" class="-translate-y-[65%%]"><path d="M1,2Z"></path><path d="M3,4Z"></path></svg></div>'
                 '<div class="small" title="Trickster"><svg height="20" viewBox="0 0 256 256"><path d="M1 1Z"></path></svg></div>') % plain
         icons = futgg.parse_icons(html)
-        self.assertEqual(icons["Finesse Shot"]["d"], [plain, "M10 10L20 20Z"])
-        self.assertIn("Rapid+", icons)
+        self.assertEqual(icons["Pinged Pass"], {"vb": "0 0 256 256", "d": [plain], "gvb": "0 0 374.94 300.11",
+                                                "g": ["M114,255.77c8.05-16.41Z"], "gs": 0.5, "gy": 50})
+        self.assertEqual(icons["Quick Step+"]["g"], ["M1,2Z", "M3,4Z"])
+        self.assertEqual(icons["Quick Step+"]["gy"], 65)
         self.assertNotIn("Trickster", icons)
         self.assertNotIn("onclick", json.dumps(icons))
 
 
 class ColorTests(unittest.TestCase):
-    def test_card_colors_for_this_card_only(self):
-        html = ('eaId:999,overall:80,commonName:"X",cardName:"X",rarityName:"Rare",textColor:"111111",overallColor:"222222",lineColor:"333333",'
-                'eaId:50563395,overall:91,commonName:"Kylian Mbappé",cardName:"Mbappé",rarityName:"Destined for Glory",'
-                'textColor:"FFF3CF",overallColor:"fff3cf",lineColor:"005256",dominantColor:"005256"')
-        self.assertEqual(futgg.card_colors(html, "50563395"), "fff3cf/fff3cf/005256")
+    def test_card_colors_from_the_drawn_card_not_the_version_list(self):
+        # as on Nuno Mendes' Destined for Glory page: the version list also names an old TOTS card's colours
+        html = ('eaId:67361009,overall:89,commonName:"Nuno Mendes",rarityName:"Destined for Glory",x:1,'
+                'eaId:1,overall:97,rarityName:"Team of the Season",textColor:"FFEE90",overallColor:"FFEE90",lineColor:"00FEFE",'
+                '<div class="fc-card w-full bg-cover" style="color:#ffffff;--color:#ffffff;--fill-color:#2a084f;--overall-color:#ffffff">'
+                '<img src="https://game-assets.fut.gg/x/2027/player-item/27-5.ab.webp"/></div>'
+                '<div class="fc-card w-full bg-cover relative group is-dynamic" style="color:#fff3cf;--color:#fff3cf;--fill-color:#005256;'
+                '--overall-color:#FFF3CF;--position-color:#fff3cf"><img class="absolute" src="https://game-assets.fut.gg/x/2027/rarities/22.ab.png"/>'
+                '<img src="https://game-assets.fut.gg/x/2027/player-item/27-67361009.cd.webp" alt="Nuno Mendes"/></div>')
+        self.assertEqual(futgg.card_colors(html, "67361009"), "fff3cf/fff3cf/005256")
+        self.assertEqual(futgg.card_colors(html, "5"), "ffffff/ffffff/2a084f")
         self.assertIsNone(futgg.card_colors(html, "1"))
 
     def test_player_card_color_validated(self):
