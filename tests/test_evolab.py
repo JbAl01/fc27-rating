@@ -105,6 +105,15 @@ class RuleTests(unittest.TestCase):
         self.assertIsNone(evolab.check(evo("x", {"max_ovr": 80, "max_pace": 86}), st, RULES))
         self.assertEqual(evolab.check(evo("x", {"requires_evo": "y"}), st, RULES)[0], "pre")
 
+    def test_repeatable_evo_is_once_per_card(self):
+        # «Repeatable 2» on FUT.GG/futnext: two players can take it, not the same card twice
+        e = evo("intro_repeatable", {"max_ovr": 79, "positions": ["ST"]}, {"ovr": [1, 80]}, repeat=2)
+        st = evolab.state_from(low_striker(ovr=70, pace=(70, 70)))
+        self.assertIsNone(evolab.check(e, st, RULES))
+        st2 = evolab.apply(e, st, RULES)
+        self.assertEqual(evolab.check(e, st2, RULES)[0], "done")
+        self.assertEqual([x["key"] for x in evolab._plan_orders([e])[0]], ["intro_repeatable"])
+
     def test_fast_rater_matches_rate(self):
         rng = random.Random(4)
         players = [copy.deepcopy(p) for p in BASE] + [low_striker(i, ovr=60 + i) for i in range(8)]

@@ -176,6 +176,27 @@ class FC27BaseTests(unittest.TestCase):
         self.assertEqual(specials.prefer_fc27_base([old_ea, base, other], min_cards=1)[0], [base])
 
 
+class EaAttributeTests(unittest.TestCase):
+    def test_base_card_takes_ea_attributes_only_when_it_is_the_same_card(self):
+        face = {"pac": 86, "sho": 62, "pas": 59, "dri": 72, "def": 32, "phy": 59}
+        ea = Player(name="Jesse Eugen Bisiwu", position="LW", id="88043", ovr=67, face_stats=dict(face),
+                    attributes={"acceleration": 87, "sprint_speed": 86}, source="ea-ratings")
+        fr_card = Player(name="Jesse Eugen Bisiwu", position="LW", id="88043", ovr=67, face_stats=dict(face),
+                         attributes={"acceleration": 87, "sprint_speed": 76, "composure": 67},
+                         source=specials.FC27_BASE_SOURCE)
+        other = Player(name="X", position="ST", id="5", ovr=80, face_stats={"pac": 90}, attributes={"sprint_speed": 70},
+                       source=specials.FC27_BASE_SOURCE)
+        ea_other = Player(name="X", position="ST", id="5", ovr=81, face_stats={"pac": 91}, attributes={"sprint_speed": 91},
+                          source="ea-ratings")
+        n = specials.ea_attributes_for_base_cards([ea, fr_card, other, ea_other])
+        self.assertEqual(n, 1)
+        self.assertEqual(fr_card.attributes["sprint_speed"], 86)      # EA's, as on the card (PAC 86)
+        self.assertEqual(fr_card.attributes["composure"], 67)         # kept where EA has none
+        self.assertEqual(other.attributes["sprint_speed"], 70)        # EA has another version: untouched
+        self.assertTrue(specials.same_card(ea, 67, face))
+        self.assertFalse(specials.same_card(ea, 68, face))
+
+
 class PromoPageTests(unittest.TestCase):
     def test_other_game_versions_are_skipped(self):
         html = (FIX / "fifarosters_liste.html").read_text(encoding="utf-8")
