@@ -257,7 +257,8 @@ def scan_promo(fetcher, fr_cache: fr.FifaRostersCache, value: str, max_pages: Op
 def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, detail_limit: Optional[int] = None,
               leaks: bool = True, fifarosters: bool = True, log=print,
               extra_promos: Optional[List[str]] = None,
-              height_known: Optional[set] = None) -> Tuple[fr.FifaRostersCache, rs.LeakCache]:
+              height_known: Optional[set] = None,
+              ea_cards: Optional[dict] = None) -> Tuple[fr.FifaRostersCache, rs.LeakCache]:
     sc = cfg_sources["specials"]
     fetcher = PoliteFetcher(user_agent=sc.get("user_agent") or "fc27-rating/0.2 (personlig bruk)",
                             delay_seconds=float(sc.get("delay_seconds", 2.0)), log=log)
@@ -298,8 +299,11 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 # base cards: roles (+/++), which EA's data does not have. Best cards first, each once.
                 # players who also have a special card first (their base card is the one people look up), then best first
                 has_special = {str(e.get("player_id")) for _, e in unique_entries(fr_cache) if not fr.is_base_version(e["version"])}
+                # cards EA has no identical copy of first: their attributes can only come from FUT.GG
+                eac = ea_cards or {}
+                ea_ok = lambda e: same_card(eac.get(str(e.get("player_id"))), e.get("ovr"), e.get("face"))
                 base = [(str(e.get("player_id") or fid), fid) for fid, e in
-                        sorted(unique_entries(fr_cache), key=lambda t: (str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
+                        sorted(unique_entries(fr_cache), key=lambda t: (ea_ok(t[1]), str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
                         if fr.is_base_version(e["version"])]
                 try:
                     ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log)

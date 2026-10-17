@@ -16,12 +16,13 @@ On the page, the card's PlayStyles are the large icons (height 42) at the top, e
 from __future__ import annotations
 
 import json
+import math
 import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from ..schema import CARD_IMAGE_HOSTS, Player, canonical_playstyle
+from ..schema import ATTRIBUTE_LABELS, CARD_IMAGE_HOSTS, Player, canonical_playstyle
 
 CARD_URL = "https://www.fut.gg/players/{player}/{game}-{card}/"
 # Roles: the page data has a score per role the card can play, with its familiarity (isPlus / isPlusPlus).
@@ -197,6 +198,34 @@ def card_colors(html: str, card: Optional[str]) -> Optional[str]:
     return None
 
 
+PARSE_VERSION = 2   # 2: colours from the drawn card, the card's attributes; older records are read again once
+_ATTR = re.compile(r'attribute([A-Z][A-Za-z]+):(\d{1,2})\b')
+_FACE = re.compile(r'face(Pace|Shooting|Passing|Dribbling|Defending|Physicality):(\d{1,2})\b')
+_ATTR_NAMES = {"DefensiveAwareness": "def_awareness"}
+_FACE_KEYS = {"Pace": "pac", "Shooting": "sho", "Passing": "pas", "Dribbling": "dri", "Defending": "def", "Physicality": "phy"}
+
+
+def card_attributes(html: str, card: Optional[str], game: str = "27") -> Optional[dict]:
+    """The card's own 34 attributes and six main stats from the page data, {"at": {...}, "fs": {...}}.
+    Only the block that belongs to this card (its picture name comes right before it)."""
+    if not card:
+        return None
+    for m in re.finditer(r"attributeAcceleration:", html):
+        if "/%s-%s." % (game, card) not in html[max(0, m.start() - 3000):m.start()]:
+            continue
+        end = html.find("targetFacePace", m.start())
+        seg = html[m.start(): end if 0 < end - m.start() < 3000 else m.start() + 2000]
+        at = {}
+        for name, v in _ATTR.findall(seg):
+            key = _ATTR_NAMES.get(name) or re.sub(r"(?<!^)([A-Z])", r"_\1", name).lower()
+            if key in ATTRIBUTE_LABELS:
+                at[key] = float(v)
+        fs = {_FACE_KEYS[k]: float(v) for k, v in _FACE.findall(seg)}
+        if len(at) >= 29 and len(fs) == 6:
+            return {"at": at, "fs": fs}
+    return None
+
+
 def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> Optional[dict]:
     """The card's own PlayStyles: the first unbroken run of large icons, and its roles. None if the page has
     neither (layout changed, or not a card page) so nothing wrong is saved."""
@@ -220,6 +249,10 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
     rec = {"ps": [x for x in ps if x not in psp], "psp": psp,
            "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html), "cc": card_colors(html, card),
            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
+    attrs = card_attributes(html, card, game)
+    if attrs:
+        rec.update(attrs)
+    rec["v"] = PARSE_VERSION
     if not started:
         rec["no_ps"] = True   # the icons were not found: keep the card's own PlayStyles
     if roles:
@@ -240,8 +273,8 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
                 log("  FUT.GG: for mange feil på rad, prøver igjen neste kjøring")
             break
         old = cache.cards.get(card)
-        # special cards fetched before the card picture was read are fetched once more
-        again = bool(old) and not old.get("missing") and "cc" not in old
+        # cards fetched before the colours and attributes were read are fetched once more
+        again = bool(old) and not old.get("missing") and int(old.get("v") or 1) < PARSE_VERSION
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -302,6 +335,36 @@ def roles_from(rec: dict, role_positions: Dict[str, List[int]], position: str) -
     return out or None
 
 
+_GK_FACE = (("div", "pac", "gk_diving"), ("han", "sho", "gk_handling"), ("kic", "pas", "gk_kicking"),
+            ("ref", "dri", "gk_reflexes"), ("pos", "phy", "gk_positioning"))
+
+
+def _half_up(x: float) -> int:
+    return int(math.floor(x + 0.5 + 1e-9))
+
+
+def use_attributes(p: Player, rec: dict) -> bool:
+    """FUT.GG's attributes are used when they are this very card: they add up to FUT.GG's own main stats
+    (EA's formulas), and those are the card's main stats in our data. A card FUT.GG shows with other
+    stats (updated in game since) keeps ours, so the card and its attributes never disagree."""
+    at, fs = rec.get("at"), rec.get("fs")
+    if not at or not fs:
+        return False
+    ours = p.face_stats or {}
+    if (p.position or "").upper() == "GK":
+        pairs = [(ours.get(a, ours.get(b)), at.get(g)) for a, b, g in _GK_FACE]
+        return all(x is not None and y is not None and round(float(x)) == round(float(y)) for x, y in pairs)
+    from ..model import load_config
+    fw = load_config()["weights"]["face_stats"]
+    for k, v in fs.items():
+        w = {a: c for a, c in (fw.get(k) or {}).items() if not a.startswith("_")}
+        if not w or any(a not in at for a in w) or _half_up(sum(at[a] * c for a, c in w.items())) != round(v):
+            return False
+        if ours.get(k) is None or round(float(ours[k])) != round(v):
+            return False
+    return True
+
+
 def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optional[Dict[str, List[int]]] = None) -> int:
     """Use FUT.GG's PlayStyles (and height where missing) on the cards it has. Returns how many.
     Base cards (fetched for their roles) keep EA's PlayStyles and get their real roles (+ and ++);
@@ -317,6 +380,10 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             p.card_color = rec["cc"]
         if rec.get("face") and str(rec["face"]).startswith(CARD_IMAGE_HOSTS):
             p.image = rec["face"]   # the card's own picture (promo cards often have another than the base card)
+        if use_attributes(p, rec):
+            keep = {k: v for k, v in p.attributes.items() if k not in rec["at"]}
+            p.attributes = {**{k: float(v) for k, v in rec["at"].items()}, **keep}
+            p.estimated = False
         if rec.get("kind") == "base":
             roles = roles_from(rec, role_positions or {}, p.position)
             if roles:

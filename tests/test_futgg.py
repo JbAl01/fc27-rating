@@ -182,6 +182,42 @@ class IconTests(unittest.TestCase):
         self.assertNotIn("onclick", json.dumps(icons))
 
 
+class AttributeTests(unittest.TestCase):
+    # Nuno Mendes, Destined for Glory, as FUT.GG's page data has it (17.10.2026)
+    AT = ("attributeAcceleration:94,attributeSprintSpeed:94,attributeAgility:87,attributeBalance:84,attributeJumping:91,"
+          "attributeStamina:87,attributeStrength:80,attributeReactions:87,attributeAggression:77,attributeComposure:83,"
+          "attributeInterceptions:84,attributePositioning:83,attributeVision:73,attributeBallControl:87,attributeCrossing:85,"
+          "attributeDribbling:86,attributeFinishing:75,attributeFkAccuracy:79,attributeHeadingAccuracy:75,attributeLongPassing:78,"
+          "attributeShortPassing:84,attributeDefensiveAwareness:82,attributeShotPower:89,attributeLongShots:74,"
+          "attributeStandingTackle:89,attributeSlidingTackle:83,attributeVolleys:57,attributeCurve:79,attributePenalties:83,"
+          "attributeGkDiving:7,attributeGkHandling:8,attributeGkKicking:8,attributeGkReflexes:15,attributeGkPositioning:12,"
+          "facePace:94,faceShooting:78,facePassing:81,faceDribbling:86,faceDefending:84,facePhysicality:82,targetFacePace:null")
+
+    def page(self, card):
+        return 'imagePath:"2027/player-item/27-%s.ab.webp",x:1,' % card + self.AT
+
+    def test_attributes_of_this_card_only(self):
+        r = futgg.card_attributes(self.page("67361009"), "67361009")
+        self.assertEqual(len(r["at"]), 34)
+        self.assertEqual(r["at"]["def_awareness"], 82)
+        self.assertEqual(r["at"]["fk_accuracy"], 79)
+        self.assertEqual(r["fs"], {"pac": 94, "sho": 78, "pas": 81, "dri": 86, "def": 84, "phy": 82})
+        self.assertIsNone(futgg.card_attributes(self.page("67361009"), "1"))
+
+    def test_used_only_when_they_are_this_card(self):
+        rec = futgg.card_attributes(self.page("67361009"), "67361009")
+        fs = {"pac": 94, "sho": 78, "pas": 81, "dri": 86, "def": 84, "phy": 82}
+        p = Player(name="Nuno Mendes", position="LB", id="67361009", face_stats=dict(fs),
+                   attributes={"sprint_speed": 70, "composure": 60})
+        self.assertTrue(futgg.use_attributes(p, rec))     # adds up to its main stats with EA's FC 27 formulas
+        futgg.apply([p], {"67361009": dict(rec, ps=[], psp=[])})
+        self.assertEqual(p.attributes["sprint_speed"], 94)
+        p2 = Player(name="Nuno Mendes", position="LB", id="67361009", face_stats=dict(fs, pac=93), attributes={})
+        self.assertFalse(futgg.use_attributes(p2, rec))   # FUT.GG shows another version of the card
+        bad = {"at": dict(rec["at"], sprint_speed=60), "fs": rec["fs"]}
+        self.assertFalse(futgg.use_attributes(p, bad))    # does not add up: not used
+
+
 class ColorTests(unittest.TestCase):
     def test_card_colors_from_the_drawn_card_not_the_version_list(self):
         # as on Nuno Mendes' Destined for Glory page: the version list also names an old TOTS card's colours
