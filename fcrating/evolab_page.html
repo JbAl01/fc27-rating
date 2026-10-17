@@ -526,13 +526,20 @@ const cardStats=(d,a,o)=>FK.map(([l,k])=>{const v=d.c.g==="GK"?null:faceVal(a,k)
 const afterCard=(d,ovr,a,pp)=>cardHtml(d,d.positions[0]||d.g,ovr,cardStats(d,a,d.base),false,pp||d.psp);
 function detCards(d,h0){const live=buildLive(d),b=d.base,st0=stateOf(d),lr=liveRun(d),now=psAll(st0),aft=psAll(lr.st),had=new Set(now);
 return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,cardStats(d,b))}${psRow(now)}</figure><span class="arr" aria-hidden="true"></span><figure class="aft"><div class="ac">${afterCard(d,h0.ovr,live,lr.st.psp)}</div>${psRow(aft,new Set(aft.filter(n=>!had.has(n))))}</figure></div>`}
-const GN={PAC:"PACE",SHO:"SHOOTING",PAS:"PASSING",DRI:"DRIBBLING",DEF:"DEFENDING",PHY:"PHYSICAL"};
+const GN={PAC:"PACE",SHO:"SHOOTING",PAS:"PASSING",DRI:"DRIBBLING",DEF:"DEFENDING",PHY:"PHYSICAL",DIV:"DIVING",HAN:"HANDLING",KIC:"KICKING",REF:"REFLEXES",SPD:"SPEED",POS:"POSITIONING"};
+const AORD=["Acceleration","Sprint Speed","Att. Position","Finishing","Shot Power","Long Shots","Volleys","Penalties","Vision","Crossing","FK Accuracy","Short Passing","Long Passing","Curve","Agility","Balance","Reactions","Ball Control","Dribbling","Composure","Interceptions","Heading Accuracy","Def. Awareness","Standing Tackle","Sliding Tackle","Jumping","Stamina","Strength","Aggression"];
+const aord=rows=>rows.sort((x,y)=>AORD.indexOf(x.l)-AORD.indexOf(y.l));
+const GKG=[["DIV",["GK Diving"]],["HAN",["GK Handling"]],["KIC",["GK Kicking"]],["REF",["GK Reflexes"]],["SPD",["Acceleration","Sprint Speed"]],["POS",["GK Positioning"]]];
+const gkFace=(k,get)=>{if(k!=="SPD")return get(GKG.find(g=>g[0]===k)[1][0]);const a=get("Acceleration"),s=get("Sprint Speed");return a==null||s==null?null:Math.floor(0.45*a+0.55*s+0.5+1e-9)};
+
 const acol=v=>v==null?"var(--faint)":v>=80?"#3fcf7c":v>=70?"#9fd64a":v>=50?"#e2b440":"#e3684e";
 const gauge=v=>{const L=75.4,f=v==null?0:Math.max(0,Math.min(99,v))/99;return`<span class="gauge"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16" class="tr" stroke-dasharray="${L} 200"/><circle cx="20" cy="20" r="16" style="stroke:${acol(v)}" stroke-dasharray="${(L*f).toFixed(1)} 200"/></svg><b style="color:${acol(v)}">${v??"–"}</b></span>`};
 const attrBlock=gs=>`<div class="attrs">${gs.map(g=>`<section class="ag"><div class="ah"><span>${GN[g.k]||g.k}</span>${g.dv>0?`<em>+${g.dv}</em>`:""}${gauge(g.v)}</div>${g.rows.map(r=>`<div class="ar"><div class="al"><span>${esc(r.l)}</span>${r.dv>0?`<em>+${r.dv}</em>`:""}<b style="color:${acol(r.v)}">${r.v??"–"}</b></div><i class="bar"><i style="width:${r.v?Math.min(99,r.v)/99*100:0}%;background:${acol(r.v)}"></i>${r.dv>0&&r.v?`<i class="add" style="left:${(r.v-r.dv)/99*100}%;width:${r.dv/99*100}%"></i>`:""}</i></div>`).join("")}${g.extra||""}</section>`).join("")}</div>`;
-function attrGrid(d,a1){if(d.c.g==="GK")return"";const a0=d.base,df=(x,y)=>x!=null&&y!=null?y-x:0;
+function attrGrid(d,a1){const a0=d.base,df=(x,y)=>x!=null&&y!=null?y-x:0;
+if(d.c.g==="GK"){const g0=l=>{const i=META.attrs.indexOf(l);return i<0?null:a0[i]},g1=l=>{const i=META.attrs.indexOf(l);return i<0?null:a1[i]};
+return attrBlock(GKG.map(([k,ls])=>({k,v:gkFace(k,g1),dv:df(gkFace(k,g0),gkFace(k,g1)),rows:ls.map(l=>({l,v:g1(l),dv:df(g0(l),g1(l))}))})))}
 const acc=(classify(a1,d.c.h,d.c.gender)||d.c.accSrc||"");
-return attrBlock(FK.map(([l,k])=>{const v0=faceVal(a0,k),v1=faceVal(a1,k);return{k:l,v:v1,dv:df(v0,v1),rows:RU.face[k].map(([i])=>({l:META.attrs[i],v:a1[i],dv:df(a0[i],a1[i])})),extra:l==="PAC"&&acc?`<div class="accr"><span>AcceleRATE</span><b>${esc(acc)}</b></div>`:""}}))}
+return attrBlock(FK.map(([l,k])=>{const v0=faceVal(a0,k),v1=faceVal(a1,k);return{k:l,v:v1,dv:df(v0,v1),rows:aord(RU.face[k].map(([i])=>({l:META.attrs[i],v:a1[i],dv:df(a0[i],a1[i])}))),extra:l==="PAC"&&acc?`<div class="accr"><span>AcceleRATE</span><b>${esc(acc)}</b></div>`:""}}))}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
 return`<div class="det"><div class="dethead"><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div><div class="top">${detCards(d,h0)}<div class="kvbox">${beforeAfter(d,extrasHtml(d))}</div></div><div class="attrwrap">${attrGrid(d,liveRun(d).st.a)}</div></div>
