@@ -389,3 +389,7 @@ header.top .tools{display:flex;gap:14px;align-items:center}
 .fcard.real .pps svg path.g{fill:var(--ct)}
 .fcard.real .pps .pdia{background:var(--cl);border-color:var(--ct)}
 .fcard.real .st i{color:var(--ct);opacity:.8}
+/* ansiktet slutter over navnet, så navnet kan leses */
+.fcard.real:not(.mini) .pic:not(.tall){bottom:84px;height:112px}
+.fcard.real:not(.mini) .nme{z-index:3;text-shadow:0 0 3px color-mix(in srgb,var(--cl,#fff) 70%,transparent),0 0 1px var(--cl,#fff)}
+@media (max-width:600px){.fcard.real:not(.mini) .pic:not(.tall){bottom:76px;height:90px}.fcard.real:not(.mini) .nme{top:116px}.fcard.real:not(.mini) .st{top:134px}}
