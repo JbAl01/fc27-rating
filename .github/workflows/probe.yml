@@ -34,7 +34,7 @@ jobs:
           git config user.email probe@example.com
           git checkout --orphan probe-out-tmp
           git rm -rf . -q || true
-          cp /tmp/an.txt an.txt
+          cp /tmp/an.txt an.txt || echo none > an.txt
           git add -A
           git commit -q -m "probe rate"
           git push -f origin HEAD:probe-out
