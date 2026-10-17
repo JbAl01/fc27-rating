@@ -184,6 +184,7 @@ med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],o
 nowx:{acc:r[21][0],feel:r[21][1],pace:r[21][2]},runs:{now:r[22][0],live:r[22][1],end:r[22][2]},cats:r[23]||null,pse:r[24],base:r[25],
 c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14]},
 ps:r[27].map(S),psp:r[28].map(S),wf:r[29],sm:r[30],off:r[31],runcard:r[32],lv:{feel:r[33][0],acc:r[33][1],pace:r[33][2]},stops:r[34]?{now:r[34][0]||[],live:r[34][1]||[],end:r[34][2]||[]}:null}));
+const ALTIMG={};D.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};D.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});D.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 /* ---------- time and evo helpers ---------- */
 const DAY=86400000;
@@ -511,7 +512,7 @@ return t+`</tbody></table><p class="muted x">Dette er en gjetning. Kortet tar ev
 const FK=[["PAC","pace"],["SHO","shooting"],["PAS","passing"],["DRI","dribbling"],["DEF","defending"],["PHY","physical"]];
 const tierOf=v=>/icon/i.test(v)?"icon":/hero/i.test(v)?"hero":/bronze/i.test(v)?"bronze":/silver/i.test(v)?"silver":/gold/i.test(v)?"gold":"special";
 const cardName=n=>{const w=String(n).split(" ");let s=w[w.length-1];if(s.length<=3&&w.length>1)s=w.slice(-2).join(" ");return s};
-const picImg=d=>d.img&&d.img.startsWith("https://")?`<img class="pic" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="if(this.naturalHeight>this.naturalWidth*1.2)this.classList.add('tall')" onerror="this.remove()">`:"";
+const picImg=d=>{const alt=ALTIMG[d.name+"|"+(d.club||"")]||"",src=d.img&&d.img.startsWith("https://")?d.img:alt;return src?`<img class="pic" src="${esc(src)}" data-alt="${esc(alt!==src?alt:"")}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="if(this.naturalHeight>this.naturalWidth*1.2)this.classList.add('tall')" onerror="if(this.dataset.alt){const a=this.dataset.alt;this.dataset.alt='';this.src=a}else{this.parentNode.classList.add('nopic');this.remove()}">`:""};
 const BGS={"gold": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff2003606fe684cdf8f9de7138063ea96999d762785.png", "silver": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322bf982152ec613f327934236667fb1.png", "bronze": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-1-large/0.79b2a5aa3902a8b057f4acb6326065a1ec863510cce00fc702328e28451cb6c7.png", "icon": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-0-large/12.bfcdcd3305884da938cffb054b615c8c8f06c4e80160180dc1671a423bf24969.png"};
 const bgUrl=(d,t)=>(d.bg&&d.bg.startsWith("https://game-assets.fut.gg/")?d.bg:BGS[t]||"");
 const bgImg=(d,t)=>{const u=bgUrl(d,t);return u?`<img class="bgi" src="${esc(u)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove('real');this.remove()">`:""};

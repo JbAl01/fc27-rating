@@ -263,8 +263,11 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 todo = [(str(e.get("player_id") or ""), fid) for fid, e in
                         sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if not fr.is_base_version(e["version"])]
                 # base cards: roles (+/++), which EA's data does not have. Best cards first, each once.
+                # players who also have a special card first (their base card is the one people look up), then best first
+                has_special = {str(e.get("player_id")) for _, e in unique_entries(fr_cache) if not fr.is_base_version(e["version"])}
                 base = [(str(e.get("player_id") or fid), fid) for fid, e in
-                        sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if fr.is_base_version(e["version"])]
+                        sorted(unique_entries(fr_cache), key=lambda t: (str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
+                        if fr.is_base_version(e["version"])]
                 try:
                     ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log)
                     left = sum(1 for _, c in todo if c not in fg.cards)
