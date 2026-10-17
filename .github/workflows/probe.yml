@@ -27,21 +27,18 @@ jobs:
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
       - run: |
-          files=""
-          for f in data/ea_players.json data/spesialkort.json data/mine_spillere.json; do [ -f "$f" ] && files="$files $f"; done
-          python -m fcrating rate $files --ignorer-brukte --lagre-meta-start --top 5 > /tmp/rate.txt 2>&1 || echo "EXIT $?" >> /tmp/rate.txt
-          python -m fcrating publiser > /tmp/pub.txt 2>&1 || echo "EXIT $?" >> /tmp/pub.txt
-          ls -la output site > /tmp/ls.txt 2>&1 || true
           python - > /tmp/an.txt 2>&1 <<'PY'
-          import json,re,glob
-          for f in glob.glob("site/*.html")+glob.glob("output/*.html"):
-              t=open(f,encoding="utf-8").read()
-              m=re.search(r"const RAW=",t)
-              n=None
-              if m:
-                  try: n=len(json.JSONDecoder().raw_decode(t,m.end())[0])
-                  except Exception as e: n="ERR "+repr(e)[:100]
-              print(f,len(t),"RAW:",n, re.findall(r'<script src="[^"]+"',t)[:4], re.findall(r"const RAW=[^;]{0,60}",t)[:1])
+          from fcrating.sources import futgg
+          from fcrating.specials import unique_entries
+          from fcrating.sources import fifarosters as fr
+          c = futgg.load_cards("data/cache/futgg")
+          sp = {k: v for k, v in c.items() if v.get("kind") != "base"}
+          print("futgg cards", len(c), "special", len(sp), "missing", sum(1 for v in sp.values() if v.get("missing")))
+          print("special with lg", sum(1 for v in sp.values() if "lg" in v), "with face", sum(1 for v in sp.values() if v.get("face")), "with img", sum(1 for v in sp.values() if v.get("img")))
+          fc = fr.FifaRostersCache("data/cache/fifarosters")
+          if fc:
+              todo = [fid for fid, e in unique_entries(fc) if not fr.is_base_version(e["version"])]
+              print("specials total", len(todo), "not in futgg", sum(1 for f in todo if f not in c), "need refetch (no lg)", sum(1 for f in todo if f in c and "lg" not in c[f] and not c[f].get("missing")))
           PY
       - if: always()
         run: |
