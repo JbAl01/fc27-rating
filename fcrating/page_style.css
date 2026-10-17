@@ -359,3 +359,20 @@ header.top .tools{display:flex;gap:14px;align-items:center}
 .fcard:not(.mini) .pps>span,.fcard:not(.mini) .pps svg{width:13px;height:13px}
 .fcard.real:not(.mini) .alt:nth-of-type(1){top:44px}.fcard.real:not(.mini) .alt:nth-of-type(2){top:56px}.fcard.real:not(.mini) .alt:nth-of-type(3){top:68px}
 .fcard:not(.mini) .ft{top:82px}.fcard:not(.mini) .sw{top:95px}}
+/* som i spillet: PlayStyle+ som merke på venstre kant, hvite rammer rundt posisjoner, fot og ferdigheter */
+.fcard .alt,.fcard .sw,.fcard .ft{background:rgba(22,18,40,.82);color:#fff;border:1.5px solid rgba(255,255,255,.92);border-radius:4px;padding:1.5px 3px;font-size:9px;line-height:1}
+.fcard.real .alt:nth-of-type(1){top:52px}.fcard.real .alt:nth-of-type(2){top:68px}.fcard.real .alt:nth-of-type(3){top:84px}
+.fcard .ft{top:98px}.fcard .sw{top:114px}
+.fcard.real .pps{left:7px;top:92px;gap:4px}
+.fcard .pps>span,.fcard .pps svg{width:22px;height:22px}
+.fcard .pps svg path:first-child{fill:rgba(28,20,52,.92);stroke:#fff;stroke-width:12;paint-order:stroke}
+.fcard .pps svg path.g{fill:#fff}
+.fcard .pps .pdia{width:15px;height:15px;margin:3.5px;background:rgba(28,20,52,.92);border:1.5px solid #fff;border-radius:3px}
+.fcard.mini .pps>span,.fcard.mini .pps svg{width:13px;height:13px}
+.fcard.mini .pps .pdia{width:8px;height:8px;margin:2.5px;border-width:1px}
+.fcard.real.mini .pps{left:3px;top:26px}
+@media (max-width:600px){
+.fcard.real:not(.mini) .pps{left:6px;top:78px}
+.fcard:not(.mini) .pps>span,.fcard:not(.mini) .pps svg{width:19px;height:19px}
+.fcard.real:not(.mini) .alt:nth-of-type(1){top:42px}.fcard.real:not(.mini) .alt:nth-of-type(2){top:56px}.fcard.real:not(.mini) .alt:nth-of-type(3){top:70px}
+.fcard:not(.mini) .ft{top:84px}.fcard:not(.mini) .sw{top:98px}}
