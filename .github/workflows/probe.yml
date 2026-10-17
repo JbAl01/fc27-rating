@@ -26,18 +26,30 @@ jobs:
             data/evolab_cache.pkl
           key: fcdata-probe-${{ github.run_id }}
           restore-keys: fcdata-
-      - run: ls -la data data/cache > /tmp/ls.txt 2>&1 || true
       - run: |
           files=""
           for f in data/ea_players.json data/spesialkort.json data/mine_spillere.json; do [ -f "$f" ] && files="$files $f"; done
-          python -X faulthandler -m fcrating rate $files --ignorer-brukte --top 5 > /tmp/rate.txt 2>&1 || echo "EXIT $?" >> /tmp/rate.txt
+          python -m fcrating rate $files --ignorer-brukte --lagre-meta-start --top 5 > /tmp/rate.txt 2>&1 || echo "EXIT $?" >> /tmp/rate.txt
+          python -m fcrating publiser > /tmp/pub.txt 2>&1 || echo "EXIT $?" >> /tmp/pub.txt
+          ls -la output site > /tmp/ls.txt 2>&1 || true
+          python - > /tmp/an.txt 2>&1 <<'PY'
+          import json,re,glob
+          for f in glob.glob("site/*.html")+glob.glob("output/*.html"):
+              t=open(f,encoding="utf-8").read()
+              m=re.search(r"const RAW=",t)
+              n=None
+              if m:
+                  try: n=len(json.JSONDecoder().raw_decode(t,m.end())[0])
+                  except Exception as e: n="ERR "+repr(e)[:100]
+              print(f,len(t),"RAW:",n, re.findall(r'<script src="[^"]+"',t)[:4], re.findall(r"const RAW=[^;]{0,60}",t)[:1])
+          PY
       - if: always()
         run: |
           git config user.name probe
           git config user.email probe@example.com
           git checkout --orphan probe-out-tmp
           git rm -rf . -q || true
-          cp /tmp/ls.txt ls.txt; tail -80 /tmp/rate.txt > rate.txt
+          cp /tmp/ls.txt ls.txt; tail -60 /tmp/rate.txt > rate.txt; tail -20 /tmp/pub.txt > pub.txt; cp /tmp/an.txt an.txt
           git add -A
           git commit -q -m "probe rate"
           git push -f origin HEAD:probe-out
