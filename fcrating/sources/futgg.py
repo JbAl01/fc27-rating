@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
 
-from ..schema import Player, canonical_playstyle
+from ..schema import CARD_IMAGE_HOSTS, Player, canonical_playstyle
 
 CARD_URL = "https://www.fut.gg/players/{player}/{game}-{card}/"
 # Roles: the page data has a score per role the card can play, with its familiarity (isPlus / isPlusPlus).
