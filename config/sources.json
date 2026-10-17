@@ -37,9 +37,9 @@
     },
     "futgg": {
       "enabled": true,
-      "limit_per_run": 0,
+      "limit_per_run": 400,
       "delay_seconds": 3.0,
-      "base_limit_per_run": 0,
+      "base_limit_per_run": 250,
       "_base_info": "Basekort (EA-dataene har ikke roller): så mange kortsider per kjøring, beste kort først. Gir roller (+ og ++) og høyde. Hvert kort hentes én gang.",
       "role_positions": {
         "_info": "FUT.GG oppgir roller som tall. Hvilken posisjon hvert tall hører til, er funnet fra kort med kjente posisjoner (16.10.2026). Keepere har bare listene for + og ++. Ukjente tall (f.eks. CF og wingback) hoppes over.",
