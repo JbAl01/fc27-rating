@@ -255,6 +255,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         r.get("nation_image") or "",
         r.get("league_image") or "",
         r.get("foot") or "",
+        r.get("card_color") or "",
     ]
 
 
