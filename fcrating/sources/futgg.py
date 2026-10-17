@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import math
 import re
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -261,7 +262,7 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
 
 
 def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], limit: int, game: str = "27",
-                log=print, kind: Optional[str] = None) -> int:
+                log=print, kind: Optional[str] = None, deadline: Optional[float] = None) -> int:
     """cards: (player id, card id) pairs in the order to fetch. Each card is fetched once.
     A page without PlayStyles is remembered as missing; a network error is tried again next run."""
     import urllib.error
@@ -271,6 +272,9 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
         if done >= limit or errors >= 5:
             if errors >= 5:
                 log("  FUT.GG: for mange feil på rad, prøver igjen neste kjøring")
+            break
+        if deadline is not None and time.time() >= deadline:
+            log("  FUT.GG: tiden for denne kjøringen er brukt opp, fortsetter neste kjøring")
             break
         old = cache.cards.get(card)
         # cards fetched before the colours and attributes were read are fetched once more

@@ -44,7 +44,8 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 16
+CACHE_VERSION = 17
+SEARCH_MAX_NODES = 2000   # per card; when reached, the best plan found so far is used (never worse than the quick search)
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -495,6 +496,43 @@ def to_player(p: Player, st: State, rules: dict, cfg: Optional[dict] = None) -> 
                    off_balance_dribbling=obd, rarity=st.rarity or p.rarity)
 
 
+ACC_ANY = "*"   # the plan search's upper bound: the best AcceleRATE add-on of each kind, whatever the type
+
+
+def _acc_off(table: dict, acc_type) -> float:
+    if acc_type == ACC_ANY:
+        return max([float(v) for k, v in table.items() if not str(k).startswith("_")] + [0.0])
+    if isinstance(acc_type, tuple):   # the types the card can still get: the best add-on of them
+        return max(float(table.get(x or "", 0.0)) for x in acc_type)
+    return table.get(acc_type or "", 0.0)
+
+
+def acc_types_possible(lo: Dict[str, float], hi: Dict[str, float], p: Player, rules: dict) -> tuple:
+    """Every AcceleRATE type a card can have with each of Acceleration, Agility and Strength somewhere
+    between lo and hi (the thresholds in accelerate.classify). Controlled (and no type) is always kept."""
+    out = [acc_mod.CONTROLLED, None]
+    if p.accelerate_source:
+        out.append(p.accelerate_source)
+    try:
+        agi0, agi1 = lo["agility"], hi["agility"]
+        st0, st1 = lo["strength"], hi["strength"]
+        ac1 = hi["acceleration"]
+    except KeyError:
+        return (acc_mod.EXPLOSIVE, acc_mod.CONTROLLED, acc_mod.LENGTHY, None)
+    sex = "female" if p.gender == "F" else "male"
+    ex, le = rules["explosive"], rules["lengthy"]
+    h = p.height_cm
+    if h is None:   # without height classify never says Explosive or Lengthy (the card's own type is used)
+        return tuple(dict.fromkeys(out))
+    if (h <= ex["max_height_cm"][sex]) and agi1 >= ex["min_agility"] \
+            and agi1 - st0 >= ex["min_agility_minus_strength"] and ac1 >= ex["min_acceleration"]:
+        out.append(acc_mod.EXPLOSIVE)
+    if h >= le["min_height_cm"][sex] and st1 >= le["min_strength"] \
+            and st1 - agi0 >= le["min_strength_minus_agility"] and ac1 >= le["min_acceleration"]:
+        out.append(acc_mod.LENGTHY)
+    return tuple(dict.fromkeys(out))
+
+
 class FastRater:
     """The IGR rate() gives in one position, without building the full result.
     Same formulas as model.rate / rate_group (tests check that they agree);
@@ -591,7 +629,7 @@ class FastRater:
         if ball0 is None or run0 is None:
             return None, None, None
         ball = round(ball0 + ps_bonus(hs.get("playstyles_ball"), ps, psp, hs.get("ps_cap_ball", 4.0)), 1)
-        run = round(run0 + _clean(hs.get("accelerate_run")).get(acc_type or "", 0.0)
+        run = round(run0 + _acc_off(_clean(hs.get("accelerate_run")), acc_type)
                     + ps_bonus(hs.get("playstyles_run"), ps, psp, hs.get("ps_cap_run", 1.5)), 1)
         share = hs.get("ball_share", 0.5)
         return round(share * ball + (1 - share) * run, 1), ball, run
@@ -607,29 +645,35 @@ class FastRater:
     def igr(self, st: State) -> float:
         return self._calc(st, False)
 
-    def detail(self, st: State) -> dict:
-        """IGR plus the parts Evo Lab shows: feel, pace, Løps-AI (vilje/effekt) and AcceleRATE."""
-        return self._calc(st, True)
+    def detail(self, st: State, acc: Optional[str] = "", ub_ps: Optional[tuple] = None) -> dict:
+        """IGR plus the parts Evo Lab shows: feel, pace, Løps-AI (vilje/effekt) and AcceleRATE.
+        For the plan search's upper bound: acc forces an AcceleRATE type ("" = the card's own), and
+        ub_ps = (most PlayStyles the card can end with, the ones it has): PlayStyles count at full value
+        (no dampening), the ones it has always, and of the others only the most valuable that fit.""" 
+        return self._calc(st, True, acc, ub_ps)
 
-    def _calc(self, st: State, detail: bool):
+    def _calc(self, st: State, detail: bool, acc: Optional[str] = "", ub_ps: Optional[tuple] = None):
         a = st.attrs
         p = self.p
-        acc_type, _ = acc_mod.classify(a, p.height_cm, p.gender, self.acc_rules)
-        if acc_type is None and p.accelerate_source:
-            acc_type = p.accelerate_source
+        if acc != "":
+            acc_type = acc
+        else:
+            acc_type, _ = acc_mod.classify(a, p.height_cm, p.gender, self.acc_rules)
+            if acc_type is None and p.accelerate_source:
+                acc_type = p.accelerate_source
         out = {"acc": acc_type} if detail else None
         skill = self._weighted(a, self.skill_w, self.skill_tot)
         feel = run = pace = None
         if self.b_feel or detail:
             base = self._weighted(a, self.feel_w, self.feel_tot)
             if base is not None:
-                feel = base + self.feel_h + self.feel_acc.get(acc_type or "", 0.0) + self.feel_b
+                feel = base + self.feel_h + _acc_off(self.feel_acc, acc_type) + self.feel_b
         if (self.b_pace or detail) and self.g != "GK":
             ac, sp = a.get("acceleration"), a.get("sprint_speed")
             if ac is not None or sp is not None:
                 ac = sp if ac is None else ac
                 sp = ac if sp is None else sp
-                pace = self.share * ac + (1 - self.share) * sp + self.pace_acc.get(acc_type or "", 0.0)
+                pace = self.share * ac + (1 - self.share) * sp + _acc_off(self.pace_acc, acc_type)
         if self.run_w and (self.b_run or detail):
             f = dict(self.run_const)
             if "agility" in a and "strength" in a and a["agility"] and a["strength"]:
@@ -668,6 +712,8 @@ class FastRater:
             used += self.b_stop
         core /= used
         items = []
+        extra = []
+        fixed = ub_ps[1] if ub_ps is not None else None
         for names, plus in ((st.psp, True), (st.ps, False)):
             for n in names:
                 e = self.ps.get(n)
@@ -682,10 +728,17 @@ class FastRater:
                     syn = 0.6
                 damp = 1.0
                 d = e[3]
-                if d and d["attribute"] in a:
+                if d and d["attribute"] in a and ub_ps is None:
                     t = max(0.0, min(1.0, (a[d["attribute"]] - d["from"]) / (d["to"] - d["from"])))
                     damp = 1.0 - (1.0 - d["min_factor"]) * t
-                items.append((e[1] if plus else e[0]) * syn * damp)
+                v = (e[1] if plus else e[0]) * syn * damp
+                if fixed is not None and n not in fixed:
+                    extra.append(v)   # can still come; the ones the card has stay
+                else:
+                    items.append(v)
+        if ub_ps is not None:
+            extra.sort(reverse=True)
+            items += extra[:max(0, ub_ps[0] - len(fixed))]
         items.sort(reverse=True)
         fs = self.factors
         ps_total = 0.0
@@ -995,6 +1048,260 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
     return ends
 
 
+PLAN_METRICS = ("igr", "run", "feel", "stp", "def")
+ACC_TYPES = (acc_mod.EXPLOSIVE, acc_mod.CONTROLLED, acc_mod.LENGTHY, None)
+
+
+def _gather(rest: List[dict], paths_of, rules: dict) -> dict:
+    """What the remaining evos can give at most, summed over evos (each evo: its shared levels plus, per
+    attribute, the best of its options)."""
+    gain: Dict[str, float] = {}
+    top: Dict[str, float] = {}
+    ovr, wf, sm = [], [], []
+    psp_names, ps_names = set(), set()
+    roles: List[tuple] = []
+    face_opts: List[tuple] = []   # (evo, [(main stat, gain, max), ...]) per option
+    for e in rest:
+        opts = [p for p in (paths_of(e) or []) if p] or [None]
+        eg: Dict[str, float] = {}
+        ec: Dict[str, float] = {}
+        for path in opts:
+            parts = [e["up"]] + ([path] if path else [])
+            pg: Dict[str, float] = {}
+            fopt = []
+            for u in parts:
+                for k, (g, c) in u["stats"].items():
+                    pg[k] = pg.get(k, 0.0) + max(0.0, g)
+                    ec[k] = max(ec.get(k, 0.0), c)
+                for which, (g, c) in u["face"].items():
+                    fopt.append((which, max(0.0, g), c))
+                for n, _c in u["ps"]:
+                    ps_names.add(n)
+                for n, _c in u["psp"]:
+                    psp_names.add(n)
+                roles.extend(u["roles"])
+            if fopt:
+                face_opts.append((e["key"], fopt))
+            for k, v in pg.items():
+                eg[k] = max(eg.get(k, 0.0), v)
+            for lst, attr in ((ovr, "ovr"), (wf, "wf"), (sm, "sm")):
+                g = sum(max(0, u[attr][0]) for u in parts if u[attr])
+                c = max([u[attr][1] for u in parts if u[attr]], default=None)
+                if c is not None:
+                    lst.append((g, c))
+        for k, v in eg.items():
+            gain[k] = gain.get(k, 0.0) + v
+        for k, c in ec.items():
+            top[k] = max(top.get(k, 0.0), c)
+    face_keys = {k for _e, opts in face_opts for (w, _g, _c) in opts for k in _clean(rules["face"][w])}
+    return {"gain": gain, "top": top, "face_opts": face_opts, "ovr": ovr, "wf": wf, "sm": sm,
+            "ps": ps_names, "psp": psp_names, "roles": roles, "keys": sorted(set(gain) | face_keys)}
+
+
+def _optimistic(st: State, rest: List[dict], paths_of, rules: dict, gathered: Optional[dict] = None) -> State:
+    """A card at least as good as anything the remaining evos can make of st, in every rating: each
+    attribute raised by every remaining evo (its shared levels plus the best of its options for that
+    attribute; no requirements, no order). A plain upgrade leaves an attribute at most at max(before, its
+    max) and a main-stat upgrade adds at most its gain, so an attribute ends at most at max(now, highest
+    max) + all main-stat gains, and at most now + every gain. Also all their PlayStyles, and the most OVR,
+    weak foot, skill moves and roles they can give."""
+    g = gathered or _gather(rest, paths_of, rules)
+    s = st.copy()
+    gain, top = g["gain"], g["top"]
+    # a main-stat upgrade «+g up to c» adds at most min(g, c - the main stat now) (main stats only go up);
+    # per evo the best of its options, summed over the evos
+    face_now: Dict[str, Optional[float]] = {}
+    by_evo: Dict[str, Dict[str, float]] = {}
+    for ekey, opts in g["face_opts"]:
+        per: Dict[str, float] = {}
+        for which, gn, cap in opts:
+            if which not in face_now:
+                face_now[which] = face_value(st.attrs, which, rules)
+            now = face_now[which]
+            add = gn if now is None else max(0.0, min(gn, cap - now))
+            if add > 0:
+                for k in _clean(rules["face"][which]):
+                    per[k] = per.get(k, 0.0) + add
+        best = by_evo.setdefault(ekey, {})
+        for k, v in per.items():
+            best[k] = max(best.get(k, 0.0), v)
+    face_gain: Dict[str, float] = {}
+    for per in by_evo.values():
+        for k, v in per.items():
+            face_gain[k] = face_gain.get(k, 0.0) + v
+    for k in g["keys"]:
+        if k not in s.attrs:
+            continue
+        cur = s.attrs[k]
+        fg = face_gain.get(k, 0.0)
+        hi = min(cur + gain.get(k, 0.0) + fg, max(cur, top.get(k, cur)) + fg)
+        s.attrs[k] = min(99.0, max(cur, hi))
+
+    def up_to(cur, pairs):
+        if cur is None or not pairs:
+            return cur
+        return int(min(cur + sum(x for x, _ in pairs), max([cur] + [c for _, c in pairs])))
+    s.ovr, s.wf, s.sm = up_to(s.ovr, g["ovr"]), up_to(s.wf, g["wf"]), up_to(s.sm, g["sm"])
+    psp = set(s.psp) | g["psp"]
+    s.ps, s.psp = sorted((set(s.ps) | g["ps"]) - psp), sorted(psp)
+    for pos, role, level in g["roles"]:
+        cur = s.roles.setdefault(pos, {})
+        cur[role] = max(cur.get(role, 0), level)
+    return s
+
+
+def _touched(e: dict, rules: dict) -> set:
+    """Attributes the evo (any of its options, also those a position never picks) can raise."""
+    r = set()
+    for u in [e["up"]] + [x for x in (e["up"]["paths"] or []) if x]:
+        r.update(u["stats"])
+        for which in u["face"]:
+            r.update(_clean(rules["face"][which]))
+    return r
+
+
+def ps_limit(st: State, rest: List[dict], paths_of, ps_cap: int) -> int:
+    """The most PlayStyles (with +) the card can end with. A PlayStyle «(N)» in an evo is only added while the
+    card has fewer than N, and an evo with «max N PlayStyles» is only entered with N or fewer; so after the
+    last PlayStyle added the card has at most the lowest of those, and never more than the cap."""
+    now = len(st.ps) + len(st.psp)
+    hi = now
+    for e in rest:
+        lim = e["req"]["max_ps"]
+        for x in (paths_of(e) or [None]):
+            parts = [e["up"]] + ([x] if x else [])
+            add = sum(len(u["ps"]) + len(u["psp"]) for u in parts)
+            for u in parts:
+                for _n, c in list(u["ps"]) + list(u["psp"]):
+                    top = ps_cap if c is None else min(int(c), ps_cap)
+                    if lim is not None:
+                        top = min(top, lim + add)
+                    hi = max(hi, top)
+    return min(hi, ps_cap)
+
+
+def search_best(st0: State, cands: List[dict], rules: dict, score, bound, key, paths_of,
+                seeds: Optional[List[Tuple[State, list]]] = None, max_nodes: Optional[int] = None):
+    """The best plan for every rating, found by trying every way to use the evos: any evo the card can
+    enter, in any order, with any of its options, stopping anywhere. Card states reached twice are only
+    gone on from once (with the shortest way there). A branch is left only when a safe upper bound shows
+    nothing below it can beat, or tie with fewer evos, the best plan found for any of the ratings.
+    score(state) -> {metric: value}; bound(state, remaining evos) -> {metric: value at least as high as
+    any state below}. seeds are plans found another way (a good start). Returns ({metric: (value, igr,
+    steps, premium, state, chain)}, nodes visited, complete)."""
+    pre_needed = {e["req"]["requires_evo"] for e in cands if e["req"]["requires_evo"]}
+    best: Dict[str, tuple] = {}
+    acc_inputs = {"acceleration", "agility", "strength"}   # what AcceleRATE is worked out from (with height)
+    pace_attrs = set(_clean(rules["face"]["pace"]))
+    touches: Dict[str, set] = {}
+    limits: Dict[str, set] = {}
+    for e in cands:
+        r = set()
+        for u in [e["up"]] + [x for x in (paths_of(e) or []) if x]:
+            r.update(u["stats"])
+            for which in u["face"]:
+                r.update(_clean(rules["face"][which]))
+            for x in ("ovr", "wf", "sm"):
+                if u[x]:
+                    r.add(x)
+            if u["ps"] or u["psp"]:
+                r.add("ps")
+        touches[e["key"]] = r
+        q = e["req"]
+        lim = set()
+        if q["max_ovr"] is not None or q["min_ovr"] is not None:
+            lim.add("ovr")
+        if q["max_pace"] is not None:
+            lim |= pace_attrs
+        if q["max_ps"] is not None or q["max_psp"] is not None:
+            lim.add("ps")
+        limits[e["key"]] = lim
+
+    def free(e: dict, rest: List[dict]) -> bool:
+        """Taking e now is never worse than any other use of it: it touches nothing another remaining evo
+        upgrades or is limited by (so the others can still be taken, in any order, with the same result),
+        and nothing AcceleRATE comes from (so every rating only goes up with it)."""
+        r = touches[e["key"]]
+        if r & acc_inputs:
+            return False
+        return not any(o is not e and (r & touches[o["key"]] or r & limits[o["key"]]) for o in rest)
+
+    def offer(st: State, chain: list, sc: dict) -> None:
+        cost = (len(chain), sum(1 for c in chain if c[0]["premium"]))
+        for m in PLAN_METRICS:
+            v = sc.get(m)
+            if v is None:
+                continue
+            cand = (v, sc["igr"], -cost[0], -cost[1])
+            old = best.get(m)
+            if old is None or cand > old[0]:
+                best[m] = (cand, st, chain)
+
+    def hopeless(ub: dict, n_steps: int, prem: int) -> bool:
+        """Nothing below can beat the best plan for any rating (value, then IGR, then fewer evos)."""
+        for m in PLAN_METRICS:
+            v = ub.get(m)
+            if v is None:
+                continue
+            old = best.get(m)
+            if old is None:
+                return False
+            if v > old[0][0] + 1e-9:   # a tie is not worth going on for: trim() drops steps that add nothing
+                return False
+        return True
+
+    for st, chain in seeds or []:
+        offer(st, chain, score(st))
+    seen: Dict[tuple, List[Tuple[frozenset, int]]] = {}
+    nodes = 0
+    complete = True
+    stack = [(st0, tuple(sorted(st0.done)), [])]
+    while stack:
+        st, done, chain = stack.pop()
+        # the same card reached before with fewer (or the same) evos used and no more steps: nothing new here
+        ck, ds = key(st), frozenset(done)
+        prev = seen.setdefault(ck, [])
+        if any(d <= ds and n <= len(chain) for d, n in prev):
+            continue
+        prev.append((ds, len(chain)))
+        nodes += 1
+        if max_nodes and nodes > max_nodes:
+            complete = False
+            break
+        rest = []
+        for e in cands:
+            if e["key"] in done or not paths_of(e):
+                continue
+            why = check(e, st, rules)
+            if why is None or why[0] == "pre" or (why[0] == "ovr" and e["req"]["min_ovr"] is not None and st.ovr < e["req"]["min_ovr"]):
+                rest.append(e)
+        if rest:
+            # the bound covers this card too (the evos only add), so a hopeless branch is left unrated
+            prem = sum(1 for c in chain if c[0]["premium"])
+            if chain and hopeless(bound(st, rest), len(chain) - 1, prem):
+                continue
+        offer(st, chain, score(st))
+        if not rest:
+            continue
+        sk = key(st)
+        moves = []   # (evo, [(option, next card)]) for the evos the card can enter now that change something
+        for e in rest:
+            if check(e, st, rules) is not None:
+                continue
+            kids = []
+            for path in paths_of(e):
+                nxt = apply(e, st, rules, path)
+                if key(nxt) != sk or e["key"] in pre_needed:
+                    kids.append((path, nxt))
+            if kids:
+                moves.append((e, kids))
+        forced = next((m for m in moves if free(m[0], rest)), None)
+        for e, kids in ([forced] if forced is not None else moves):
+            for path, nxt in kids:
+                stack.append((nxt, tuple(sorted(done + (e["key"],))), chain + [(e, path, st, nxt)]))
+    return best, nodes, complete
+
+
 def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_nodes: int = 20000) -> dict:
     """Best order of the live evos for this card, with the evos it misses and why."""
     cands, near, unchecked = [], [], []
@@ -1022,23 +1329,119 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
             cands.append(e)
         elif why[0] in ("ovr", "pace", "ps", "psp") and _close(e, st0, why[0], rules):
             near.append([e["name"], why[1]])
-    keys = {e["key"] for e in cands}
     names = {e["key"]: e["name"] for e in evos}
-    for e in list(cands):
-        pre = e["req"]["requires_evo"]
-        if pre and pre not in keys:
-            cands.remove(e)
-            if any(u[0] == names.get(pre) for u in unchecked):
-                unchecked.append([e["name"], f"etter {names.get(pre, pre)}"])
+    changed = True
+    while changed:   # an evo whose earlier step can't be taken goes too (and the one after it, ...)
+        changed = False
+        keys = {e["key"] for e in cands}
+        for e in list(cands):
+            pre = e["req"]["requires_evo"]
+            if pre and pre not in keys:
+                cands.remove(e)
+                changed = True
+                if any(u[0] in (names.get(pre), names.get(pre, pre)) for u in unchecked) or \
+                        any(u[0] == names.get(pre) for u in unchecked):
+                    unchecked.append([e["name"], f"etter {names.get(pre, pre)}"])
     role_pos = ev.fast.role_pos
 
     def rating_key(st: State) -> tuple:  # the same card for the rating: other positions' roles do not count
         lv = max((v for pos in role_pos for v in (st.roles.get(pos) or {}).values()), default=-1)
         return (tuple(st.attrs.values()), st.ovr, tuple(sorted(st.ps)), tuple(sorted(st.psp)), st.wf, st.sm, lv)
+    paths_of = lambda e: plan_paths(e, ev.g, rules)
     ends = search_ends(st0, cands, rules, max_nodes, key=rating_key,
                        best_path=lambda e, st, allowed=None: _best_path(e, st, ev.g, ev.cfg, allowed),
-                       paths_of=lambda e: plan_paths(e, ev.g, rules))
+                       paths_of=paths_of)
     primary = (p.position or "").upper()
+    use_rpp = rules.get("roles_plus_plus", True)
+
+    def score(st: State) -> dict:
+        fin = roles_plus_plus(st, primary)[0] if use_rpp else st
+        d = ev.fast.detail(fin)
+        ev.calls += 1
+        return {"igr": d["igr"], "run": d.get("run"), "feel": d.get("feel"), "stp": d.get("stp"),
+                "def": def_value(fin.attrs, ev.g, rules)}
+
+    ps_cap = int(rules.get("ps_cap", 8))
+    acc_inputs = {"acceleration", "agility", "strength"}
+    moves_acc = {e["key"] for e in cands if acc_inputs & _touched(e, rules)}
+
+    gathered: Dict[tuple, dict] = {}
+
+    def stat_options(e: dict) -> list:
+        """The evo's options that differ in attributes (PlayStyle-only choices are covered by the PlayStyle bound)."""
+        al = [x for x in (paths_of(e) or []) if x]
+        return al if len(al) > 1 and any(x["stats"] or x["face"] for x in al) else []
+
+    def bound(st: State, rest: List[dict]) -> dict:
+        n_ps = (ps_limit(st, rest, paths_of, ps_cap), set(st.ps) | set(st.psp))
+        moves = any(e["key"] in moves_acc for e in rest)
+        # evos with options that give different attributes: the bound for each choice, and the highest of them
+        multi = [e for e in rest if stat_options(e)]
+        combos = [()]
+        for e in multi:
+            combos = [c + ((e["key"], i),) for c in combos for i in range(len(stat_options(e)))]
+            if len(combos) > 24:   # too many: per attribute the best option (still safe, a bit looser)
+                combos = [()]
+                break
+        out: Dict[str, Optional[float]] = {}
+        for combo in combos:
+            fixed = dict(combo)
+            pick = (lambda e, fixed=fixed: [stat_options(e)[fixed[e["key"]]]] if e["key"] in fixed else paths_of(e))
+            rk = (tuple(e["key"] for e in rest), combo)
+            if rk not in gathered:
+                gathered[rk] = _gather(rest, pick, rules)
+            hi = _optimistic(st, rest, pick, rules, gathered[rk])
+            fin = roles_plus_plus(hi, primary)[0] if use_rpp else hi
+            dv = def_value(fin.attrs, ev.g, rules)
+            if dv is not None and (out.get("def") is None or dv > out["def"]):
+                out["def"] = dv
+            # AcceleRATE is the one thing that can go down as stats go up: the best of the types it can still get
+            acc = acc_types_possible(st.attrs, fin.attrs, p, ev.fast.acc_rules) if moves else ""
+            d = ev.fast.detail(fin, acc, n_ps)
+            ev.calls += 1
+            for m in ("igr", "run", "feel", "stp"):
+                v = d.get(m)
+                if v is not None and (out.get(m) is None or v > out[m]):
+                    out[m] = v
+        return out
+    # the old search's plans as a start, then the full search; its best plans are the ones to choose from
+    best, nodes, complete = search_best(st0, cands, rules, score, bound, rating_key, paths_of,
+                                        seeds=list(ends.values()),
+                                        max_nodes=int(rules.get("plan_search_nodes", SEARCH_MAX_NODES)))
+
+    def replay(steps: list) -> Optional[list]:
+        st, out = st0, []
+        for e, path in steps:
+            if check(e, st, rules) is not None:
+                return None
+            nxt = apply(e, st, rules, path)
+            out.append((e, path, st, nxt))
+            st = nxt
+        return out
+
+    def trim(chain: list, m: str) -> list:
+        # Leave out evos that add nothing: a plan without one is kept when it is still allowed and is at
+        # least as good for this rating and for IGR (ties are not searched further, so this picks the
+        # shortest of equally good plans).
+        if not chain:
+            return chain
+        ref = score(chain[-1][3])
+        changed = True
+        while changed:
+            changed = False
+            for i in range(len(chain)):
+                cand = replay([(c[0], c[1]) for j, c in enumerate(chain) if j != i])
+                if cand is None:
+                    continue
+                s2 = score(cand[-1][3]) if cand else score(st0)
+                if (s2.get(m) is None or ref.get(m) is None or s2[m] >= ref[m] - 1e-9) and s2["igr"] >= ref["igr"] - 1e-9:
+                    chain, changed = cand, True
+                    break
+        return chain
+    ends = dict(ends)
+    for m, (_c, st, chain) in best.items():
+        chain = trim(chain, m)
+        ends[("best", m)] = (chain[-1][3] if chain else st0, chain)
     # the best end state for IGR, and also for Løps-AI and for feel (often the same plan)
     scored = []
     for st, chain in ends.values():
@@ -1098,6 +1501,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         cat = Counter(c for _, c in lst).most_common(1)[0][0]
         tips.append(f"{chain[i][0]['name']} før {names} (ellers {REASON_WORDS.get(cat, cat)})")
     return {"igr": round(v, 1), "ovr": fin.ovr, "steps": steps, "roles": rpp, "skip": skipped, "tips": tips[:3],
+            "proven": bool(complete),
             "near": near[:4], "chk": unchecked, "acc": d_best["acc"], "feel": d_best["feel"], "run": d_best["run"],
             "vil": d_best.get("vil"), "eff": d_best.get("eff"), "pace": d_best.get("pace"), "alt": alt,
             "stp": d_best.get("stp"), "stb": d_best.get("stb"), "stl": d_best.get("stl"), "def": d_best.get("def"),

@@ -38,6 +38,8 @@
     "futgg": {
       "enabled": true,
       "limit_per_run": 400,
+      "max_minutes": 35,
+      "_max_minutes_info": "FUT.GG-hentingen stopper etter så mange minutter (spesialkort og basekort til sammen), så hele kjøringen holder seg innenfor 150 minutter. Resten hentes neste kjøring.",
       "delay_seconds": 3.0,
       "base_limit_per_run": 250,
       "_base_info": "Basekort (EA-dataene har ikke roller): så mange kortsider per kjøring, beste kort først. Gir roller (+ og ++) og høyde. Hvert kort hentes én gang.",

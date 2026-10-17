@@ -182,6 +182,44 @@ class PlanTests(unittest.TestCase):
         self.assertTrue(any(t.startswith("A før B") for t in plan["tips"]))
         self.assertEqual(plan["ovr"], 82)
 
+    def brute_best(self, p, evos):
+        """Every way to use the evos (any order, any option, stopping anywhere): the best IGR."""
+        g = position_group(p.position)
+        ev = evolab.Evaluator(p, g, CFG, RULES)
+        st0 = evolab.state_from(p)
+        best, stack, seen = None, [st0], set()
+        while stack:
+            st = stack.pop()
+            k = (st.key(), tuple(sorted(st.done)))
+            if k in seen:
+                continue
+            seen.add(k)
+            fin = evolab.roles_plus_plus(st, p.position)[0]
+            v = ev.fast.detail(fin)["igr"]
+            best = v if best is None else max(best, v)
+            for e in evos:
+                if evolab.check(e, st, RULES) is None:
+                    for path in (e["up"]["paths"] or [None]):
+                        stack.append(evolab.apply(e, st, RULES, path))
+        return best
+
+    def test_search_finds_what_trying_everything_finds(self):
+        # order matters (caps and limits), options matter, an evo that gives nothing must not hide the others
+        p = low_striker(ovr=70, pace=(78, 78), ps=())
+        evos = [
+            evo("nothing", {"max_ovr": 80, "positions": ["ST"]}, {}),
+            evo("low_cap", {"max_ovr": 72, "positions": ["ST"]}, {"ovr": [3, 74], "stats": {"finishing": [10, 75], "positioning": [6, 80]}}),
+            evo("high_cap", {"max_ovr": 74, "positions": ["ST"]}, {"ovr": [2, 76], "stats": {"finishing": [4, 88]}}),
+            evo("ps_obj", {"max_ovr": 75, "max_ps": 1}, {"paths": [{"label": "A", "ps": [["Finesse Shot", 3]]},
+                                                                  {"label": "B", "ps": [["Power Shot", 3]], "stats": {"shot_power": [3, 90]}}]}),
+            evo("ps_cap", {"max_ovr": 80, "positions": ["ST"]}, {"ps": [["Quick Step", 1]], "stats": {"acceleration": [4, 85]}}),
+            evo("pace_lock", {"max_ovr": 80, "max_pace": 80, "positions": ["ST"]}, {"stats": {"dribbling": [8, 90], "ball_control": [6, 90]}}),
+        ]
+        plan = self.plan(p, evos)
+        self.assertAlmostEqual(plan["igr"], self.brute_best(p, evos), places=6)
+        self.assertNotIn("nothing", [s["key"] for s in plan["steps"]])    # gives nothing: not in the plan
+        self.assertTrue(plan["proven"])
+
     def test_pace_trap(self):
         # B raises the pace above A's limit, so A must come first
         p = low_striker(ovr=74, pace=(80, 80))

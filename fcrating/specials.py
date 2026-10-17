@@ -305,11 +305,15 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 base = [(str(e.get("player_id") or fid), fid) for fid, e in
                         sorted(unique_entries(fr_cache), key=lambda t: (ea_ok(t[1]), str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
                         if fr.is_base_version(e["version"])]
+                # a time limit, so the whole run stays within the workflow's limit (the rest comes next run)
+                import time as _time
+                deadline = _time.time() + 60 * float(gcfg.get("max_minutes", 35))
                 try:
-                    ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log)
+                    ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log, deadline=deadline)
                     left = sum(1 for _, c in todo if c not in fg.cards)
                     log(f"FUT.GG: leste PlayStyles for {ng} spesialkort, {left} gjenstår")
-                    nb = futgg.fetch_cards(gfetch, fg, base, int(gcfg.get("base_limit_per_run", 250)), log=log, kind="base")
+                    nb = futgg.fetch_cards(gfetch, fg, base, int(gcfg.get("base_limit_per_run", 250)), log=log, kind="base",
+                                           deadline=deadline)
                     left = sum(1 for _, c in base if c not in fg.cards)
                     log(f"FUT.GG: leste roller for {nb} basekort, {left} gjenstår")
                 except Blocked as exc:
