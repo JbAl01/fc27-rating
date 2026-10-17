@@ -439,7 +439,7 @@ class PageMathTests(unittest.TestCase):
         self.assertIn("ST", meta["rate"]["G"])
         self.assertTrue(meta["evos"])
         for r in rows:
-            self.assertEqual(len(r), 46)
+            self.assertEqual(len(r), 47)
             for ei, pi in r[19][0][0]:  # the plan points at live evos and their pathways
                 self.assertLess(ei, len(meta["evos"]))
                 self.assertLess(pi, max(1, len(meta["evos"][ei][8][8])))

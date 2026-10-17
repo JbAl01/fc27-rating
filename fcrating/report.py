@@ -212,6 +212,7 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         r.get("nation_image") or "",
         r.get("league_image") or "",
         r.get("foot") or "",
+        r.get("card_color") or "",
     ]
 
 

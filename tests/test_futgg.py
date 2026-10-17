@@ -176,3 +176,16 @@ class IconTests(unittest.TestCase):
         self.assertIn("Rapid+", icons)
         self.assertNotIn("Trickster", icons)
         self.assertNotIn("onclick", json.dumps(icons))
+
+
+class ColorTests(unittest.TestCase):
+    def test_card_colors_for_this_card_only(self):
+        html = ('eaId:999,overall:80,commonName:"X",cardName:"X",rarityName:"Rare",textColor:"111111",overallColor:"222222",lineColor:"333333",'
+                'eaId:50563395,overall:91,commonName:"Kylian Mbappé",cardName:"Mbappé",rarityName:"Destined for Glory",'
+                'textColor:"FFF3CF",overallColor:"fff3cf",lineColor:"005256",dominantColor:"005256"')
+        self.assertEqual(futgg.card_colors(html, "50563395"), "fff3cf/fff3cf/005256")
+        self.assertIsNone(futgg.card_colors(html, "1"))
+
+    def test_player_card_color_validated(self):
+        self.assertEqual(Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "card_color": "2d2410/2d2410/e1be5d"}).card_color, "2d2410/2d2410/e1be5d")
+        self.assertIsNone(Player.from_dict({"name": "A", "ovr": 80, "position": "ST", "card_color": "red;x"}).card_color)

@@ -156,6 +156,15 @@ def league_image(html: str) -> Optional[str]:
     return m.group(0) if m else None
 
 
+def card_colors(html: str, card: Optional[str]) -> Optional[str]:
+    """The card's own text, rating and line colours on FUT.GG (as on the in-game card), "text/overall/line"."""
+    if not card:
+        return None
+    m = re.search(r'eaId:%s,overall:\d+,[^{}]{0,400}?textColor:"([0-9a-fA-F]{6})",overallColor:"([0-9a-fA-F]{6})",lineColor:"([0-9a-fA-F]{6})"'
+                  % re.escape(str(card)), html)
+    return "/".join(x.lower() for x in m.groups()) if m else None
+
+
 def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> Optional[dict]:
     """The card's own PlayStyles: the first unbroken run of large icons, and its roles. None if the page has
     neither (layout changed, or not a card page) so nothing wrong is saved."""
@@ -177,7 +186,7 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
         return None
     h = _HEIGHT.search(html)
     rec = {"ps": [x for x in ps if x not in psp], "psp": psp,
-           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html),
+           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html), "col": card_colors(html, card),
            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
     if not started:
         rec["no_ps"] = True   # the icons were not found: keep the card's own PlayStyles
@@ -200,7 +209,7 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
             break
         old = cache.cards.get(card)
         # special cards fetched before the card picture was read are fetched once more
-        again = bool(old) and not old.get("missing") and ("lg" not in old or "face" not in old)
+        again = bool(old) and not old.get("missing") and "col" not in old
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -272,6 +281,8 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             continue
         if rec.get("lg") and str(rec["lg"]).startswith(CARD_IMAGE_HOSTS):
             p.league_image = rec["lg"]
+        if rec.get("col") and re.fullmatch(r"[0-9a-f]{6}/[0-9a-f]{6}/[0-9a-f]{6}", str(rec["col"])):
+            p.card_color = rec["col"]
         if rec.get("face") and str(rec["face"]).startswith(CARD_IMAGE_HOSTS):
             p.image = rec["face"]   # the card's own picture (promo cards often have another than the base card)
         if rec.get("kind") == "base":

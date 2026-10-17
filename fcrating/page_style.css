@@ -376,3 +376,20 @@ header.top .tools{display:flex;gap:14px;align-items:center}
 .fcard:not(.mini) .pps>span,.fcard:not(.mini) .pps svg{width:19px;height:19px}
 .fcard.real:not(.mini) .alt:nth-of-type(1){top:42px}.fcard.real:not(.mini) .alt:nth-of-type(2){top:56px}.fcard.real:not(.mini) .alt:nth-of-type(3){top:70px}
 .fcard:not(.mini) .ft{top:84px}.fcard:not(.mini) .sw{top:98px}}
+/* kortets egne farger (fra FUT.GG, som i spillet); standard per korttype når de mangler */
+.fcard.real{--ct:#f4f0e2;--cl:#1f1a33}
+.fcard.real.gold{--ct:#2d2410;--cl:#e1be5d}
+.fcard.real.silver{--ct:#262a30;--cl:#d3d7dc}
+.fcard.real.bronze{--ct:#3b2516;--cl:#d9a274}
+.fcard.real.icon{--ct:#54462b;--cl:#dbdbdb}
+.fcard.real{color:var(--ct)}
+.fcard.real .o,.fcard.real .p{color:var(--co,var(--ct))}
+.fcard.real .alt,.fcard.real .sw,.fcard.real .ft{background:var(--cl);color:var(--ct);border-color:var(--ct)}
+.fcard.real .pps svg path:first-child{fill:var(--cl);stroke:var(--ct)}
+.fcard.real .pps svg path.g{fill:var(--ct)}
+.fcard.real .pps .pdia{background:var(--cl);border-color:var(--ct)}
+.fcard.real .st i{color:var(--ct);opacity:.8}
+/* ansiktet slutter over navnet, så navnet kan leses */
+.fcard.real:not(.mini) .pic:not(.tall){bottom:84px;height:112px}
+.fcard.real:not(.mini) .nme{z-index:3;text-shadow:0 0 3px color-mix(in srgb,var(--cl,#fff) 70%,transparent),0 0 1px var(--cl,#fff)}
+@media (max-width:600px){.fcard.real:not(.mini) .pic:not(.tall){bottom:76px;height:90px}.fcard.real:not(.mini) .nme{top:116px}.fcard.real:not(.mini) .st{top:134px}}
