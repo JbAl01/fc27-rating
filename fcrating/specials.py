@@ -18,12 +18,42 @@ FC27_BASE_SOURCE = "FIFA Rosters (FC 27-basekort)"
 EA_SOURCE = "ea-ratings"
 
 
+def same_card(ea: Optional[Player], ovr, face: Optional[dict]) -> bool:
+    """The EA card is this very card: same OVR and the same six main stats."""
+    if ea is None or not face or ea.ovr is None or ovr is None or round(float(ea.ovr)) != round(float(ovr)):
+        return False
+    fs = ea.face_stats or {}
+    return all(fs.get(k) is not None and round(float(fs[k])) == round(float(v)) for k, v in face.items())
+
+
+def ea_attributes_for_base_cards(players: List[Player]) -> int:
+    """FC 27 base cards from FIFA Rosters get EA's attributes when EA has the very same card.
+    FIFA Rosters' card pages often have other single attributes than the game (Bisiwu: Sprint Speed 76,
+    EA and FUT.GG 86, PAC 86 on the card), and evo requirements like «PAC max 81» are worked out from
+    them. EA's ratings page is the game's own list, and its attributes add up to the card's main stats."""
+    ea = {str(p.id): p for p in players if p.source == EA_SOURCE and p.id and p.attributes}
+    n = 0
+    for p in players:
+        if p.source != FC27_BASE_SOURCE:
+            continue
+        q = ea.get(str(p.id)) or ea.get(str(p.base_id))
+        if q is not None and same_card(q, p.ovr, p.face_stats) and p.attributes != q.attributes:
+            keep = {k: v for k, v in p.attributes.items() if k not in q.attributes}
+            p.attributes = {**dict(q.attributes), **keep}
+            p.estimated = False
+            n += 1
+    return n
+
+
 def prefer_fc27_base(players: List[Player], min_cards: int = 5000) -> Tuple[List[Player], str]:
-    """When FC 27 base cards from FIFA Rosters are loaded, the older EA cards are only
-    templates (attributes, height, alternative positions, PlayStyles) and are not rated themselves."""
+    """When FC 27 base cards from FIFA Rosters are loaded, the EA cards are only templates
+    (attributes, height, alternative positions, PlayStyles) and are not rated themselves."""
     fc27 = [p for p in players if p.source == FC27_BASE_SOURCE]
     if not fc27:
         return players, ""
+    fixed = ea_attributes_for_base_cards(players)
+    if fixed:
+        print(f"Attributter fra EA på {fixed} FC 27-basekort (samme kort som hos EA).")
     ea = [p for p in players if p.source == EA_SOURCE]
     if len(fc27) >= min_cards:
         kept = [p for p in players if p.source != EA_SOURCE]
@@ -76,9 +106,12 @@ def build_specials(base_players: List[Player], fr_cache: Optional[fr.FifaRosters
             base, _ = index.find(name=e["name"], player_id=e.get("player_id"), exact_name=True,
                                  ovr=e.get("ovr"), foot=e.get("foot"), base_card=True, other_ids=source_ids)
             detail = fr_cache.details.get(futid) or {}
+            # EA's own attributes when EA has this very card (FIFA Rosters' card pages are often off)
+            attrs = dict(base.attributes) if same_card(base, e.get("ovr"), e.get("face")) and base.attributes \
+                else detail.get("attributes") or None
             card = build_special(
                 base, name=e["name"], version=e["version"], ovr=e["ovr"], face=e["face"], cfg=cfg,
-                position=e["position"], attributes=detail.get("attributes") or None,
+                position=e["position"], attributes=attrs,
                 status=None, card_id=e.get("player_id") or futid, url=e["url"],
                 height_cm=detail.get("height_cm"), skill_moves=e.get("skill_moves"),
                 weak_foot=e.get("weak_foot"), source=FC27_BASE_SOURCE,

@@ -43,7 +43,7 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 14
+CACHE_VERSION = 15
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -384,7 +384,7 @@ def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
         return age
     if r["requires_evo"] and r["requires_evo"] not in st.done:
         return "pre", "krever forrige evo i kjeden"
-    if st.done.count(evo["key"]) >= evo["repeat"]:
+    if evo["key"] in st.done:   # «repeatable» = several players can take it, never one card twice
         return "done", "allerede tatt"
     if r["min_ovr"] is not None and st.ovr < r["min_ovr"]:
         return "ovr", f"OVR {st.ovr} (minst {r['min_ovr']})"
@@ -808,7 +808,7 @@ def gates(d0: dict, d1: dict, a0: Dict[str, float], a1: Dict[str, float], g: str
 def _plan_orders(cands: List[dict]) -> List[List[dict]]:
     """Orders to walk the evos in. Evos only raise a card, and the requirements are maximums, so the
     evo with the strictest limit goes first; three tie-breaks cover OVR, PlayStyles and pace limits.
-    An evo that needs another evo first is moved right after it. Repeatable evos appear once per repeat."""
+    An evo that needs another evo first is moved right after it. Each evo appears once."""
     lim = lambda e, k: e["req"][k] if e["req"][k] is not None else 99
     keys = [lambda e: (lim(e, "max_ovr"), lim(e, "max_ps"), lim(e, "max_pace")),
             lambda e: (lim(e, "max_ps"), lim(e, "max_ovr"), lim(e, "max_pace")),
@@ -822,7 +822,7 @@ def _plan_orders(cands: List[dict]) -> List[List[dict]]:
             if i is not None and i > order.index(e):
                 order.remove(e)
                 order.insert(i, e)
-        seq = [e for e in order for _ in range(max(1, int(e.get("repeat", 1) or 1)))]
+        seq = list(order)   # each evo once per card (repeatable = more players, not the same card again)
         if seq not in out:
             out.append(seq)
     return out

@@ -148,7 +148,7 @@ function bornBlock(r,born){if(!(r[9]||r[10])||!born)return null;if((r[9]&&born<r
 function check(e,st){const r=e[7],pos=r[6],np=r[7];
 if(pos.length&&!st.pos.some(p=>pos.includes(p)))return["pos","feil posisjon"];const bad=st.pos.filter(p=>np.includes(p));if(bad.length)return["pos","har posisjonen "+bad[0]];
 if(r[5]!=null&&st.pos.length>r[5])return["pos",`${st.pos.length} posisjoner (maks ${r[5]})`];{const ab=bornBlock(r,st.born);if(ab)return ab}if(r[8]&&!st.done.includes(r[8]))return["pre","krever forrige evo i kjeden"];
-if(st.done.filter(k=>k===e[0]).length>=e[6])return["done","allerede tatt"];
+if(st.done.includes(e[0]))return["done","allerede tatt"];
 if(r[0]!=null&&st.ovr<r[0])return["ovr",`OVR ${st.ovr} (minst ${r[0]})`];if(r[1]!=null&&st.ovr>r[1])return["ovr",`OVR ${st.ovr} (maks ${r[1]})`];
 if(r[2]!=null){const pac=faceVal(st.a,"pace");if(pac!=null&&pac>r[2])return["pace",`PAC ${pac} (maks ${r[2]})`]}
 if(r[3]!=null){const n=psCount(st);if(n>r[3])return["ps",`${n} PlayStyles (maks ${r[3]})`]}if(r[4]!=null&&st.psp.length>r[4])return["psp",`${st.psp.length} PlayStyle+ (maks ${r[4]})`];return null}
@@ -285,7 +285,7 @@ const keys=[ei=>[lim(ei,"ovr"),lim(ei,"ps"),lim(ei,"pace")],ei=>[lim(ei,"ps"),li
 const out=[],sigs=new Set();
 for(const kf of keys){const order=C.slice().sort((a,b)=>{const x=kf(a),y=kf(b);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]-y[i];return EV[a][0]<EV[b][0]?-1:EV[a][0]>EV[b][0]?1:0});
 for(const ei of order.slice()){const pre=EV[ei][7][8];if(!pre)continue;const i=order.findIndex(x=>EV[x][0]===pre),j=order.indexOf(ei);if(i>j){order.splice(j,1);order.splice(i,0,ei)}}
-const seq=order.flatMap(ei=>Array(Math.max(1,EV[ei][6]||1)).fill(ei)),sg=seq.join(",");if(!sigs.has(sg)){sigs.add(sg);out.push(seq)}}return out}
+const seq=order,sg=seq.join(",");if(!sigs.has(sg)){sigs.add(sg);out.push(seq)}}return out}
 function effectsOf(ei){const e=EV[ei],us=[e[8]].concat(e[8][8].map(p=>p.slice(1))),o=new Set();
 for(const u of us){if(u[0])o.add("ovr");if(u[3].some(([i])=>PACEI.has(i))||u[4].some(([w])=>w==="pace"))o.add("pace");if(u[5].length)o.add("ps");if(u[6].length){o.add("ps");o.add("psp")}}return o}
 function searchEnds(d,C,maxNodes=20000){const st0=stateOf(d),ends=new Map();let nodes=0;
@@ -605,7 +605,7 @@ box.querySelectorAll("[data-unpin]").forEach(b=>b.onclick=()=>{PINS=PINS.filter(
 function renderEvos(){const evs=EV.map((e,i)=>[e,i]).sort((a,b)=>(untilMs(a[0][3])??9e15)-(untilMs(b[0][3])??9e15));const open=evs.filter(([e])=>!isClosed(e));
 $("evosum").textContent=`Evoene som er ute nå (${open.length})`;
 let t=`<p class="muted x" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
-for(const[e]of open){const c=false;t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas ${e[6]} ganger)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
+for(const[e]of open){const c=false;t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas av ${e[6]} spillere)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
 <td>${esc(reqText(e))}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
 t+=`</tbody></table></div>`;
 $("evobody").innerHTML=t;
