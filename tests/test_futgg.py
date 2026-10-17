@@ -1,3 +1,4 @@
+import json
 """PlayStyles for special cards from the card's page on FUT.GG."""
 import tempfile
 import unittest
@@ -161,3 +162,17 @@ class ApplyImagesTests(unittest.TestCase):
         self.assertTrue(p.card_image.endswith(".png"))
         self.assertIn("player-item", p.image)
         self.assertIn("/league/", p.league_image)
+
+
+class IconTests(unittest.TestCase):
+    def test_parse_icons_keeps_only_outlines(self):
+        plain = futgg._PLAIN
+        html = ('<div title="Finesse Shot"><svg width="48" height="48" viewBox="0 0 256 256"><path d="%s"></path>'
+                '<path fill="#000" d="M10 10L20 20Z" onclick="x()"></path></svg></div>'
+                '<div title="Rapid"><svg height="48" viewBox="0 0 256 256"><path d="M1 1L5 5Z"></path></svg></div>'
+                '<div class="small" title="Trickster"><svg height="20" viewBox="0 0 256 256"><path d="M1 1Z"></path></svg></div>') % plain
+        icons = futgg.parse_icons(html)
+        self.assertEqual(icons["Finesse Shot"]["d"], [plain, "M10 10L20 20Z"])
+        self.assertIn("Rapid+", icons)
+        self.assertNotIn("Trickster", icons)
+        self.assertNotIn("onclick", json.dumps(icons))

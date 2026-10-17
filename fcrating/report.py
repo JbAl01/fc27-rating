@@ -246,6 +246,7 @@ def _meta(results: List[dict], cfg: dict, intern: _Interner) -> dict:
     ecfg = wcfg.get("evo", {})
     xcfg = wcfg.get("explain", {})
     return {
+        "psi": ps_icons(),
         "order": [group_label(g) for g in GROUP_ORDER],
         "labels": [ATTRIBUTE_LABELS[k] for k in ATTR_KEYS],
         "idx": ATTR_INDEX,
@@ -315,7 +316,7 @@ def render_html(results: List[dict], evos: Dict[str, dict], cfg: Optional[dict] 
                     "groups": {group_label(g): [v["now"], v["start"], v["drift"]] for g, v in (mi.get("groups") or {}).items()}}
     meta["pg"] = {p: g for p, g in POSITION_GROUPS.items()}
     stamp = html.escape(datetime.now().strftime("%d.%m.%Y kl. %H:%M"))
-    link = '<a href="evolab.html">Evo Lab</a>' if evolab else ""
+    link = '<a href="evolab.html">Evolab</a>' if evolab else ""
     return (_HTML.replace("__CSS__", PAGE_CSS).replace("__DATA__", dump(data)).replace("__STAMP__", stamp)
             .replace("__META__", dump(meta)).replace("__EVOLAB__", link))
 
@@ -323,3 +324,10 @@ def render_html(results: List[dict], evos: Dict[str, dict], cfg: Optional[dict] 
 _DIR = Path(__file__).resolve().parent
 _HTML = (_DIR / "report_page.html").read_text(encoding="utf-8")
 PAGE_CSS = (_DIR / "page_style.css").read_text(encoding="utf-8")
+
+
+def ps_icons() -> dict:
+    """PlayStyle icons learned from FUT.GG pages (data/cache/futgg/ikoner.json), for the pages."""
+    from pathlib import Path
+    from .sources import futgg
+    return futgg.load_icons(str(Path(__file__).resolve().parent.parent / "data" / "cache" / "futgg"))

@@ -34,9 +34,9 @@ __CSS__
 .closedtag{color:var(--down);font-weight:600}
 </style></head><body>
 <div class="page">
-<header class="top"><div><h1>Evo Lab</h1>
-<p class="x">Hva kortene blir med evoene som er ute nå. Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</p></div>
-<nav><a href="rapport.html">Rangering</a> <button type="button" class="link" id="th"></button> <button type="button" class="link" id="xp"></button></nav></header>
+<header class="top"><h1 class="sr">Evolab</h1><nav class="tabs" aria-label="Sider"><a href="rapport.html">Players</a><a href="evolab.html" class="on" aria-current="page">Evolab</a></nav>
+<div class="tools"><button type="button" class="link" id="th"></button> <button type="button" class="link" id="xp"></button></div></header>
+<p class="stamp x">Hva kortene blir med evoene som er ute nå. Evoene og kravene er sjekket mot FUT.GG, futnext og FUTBIN <span id="checked"></span>.</p>
 
 <section class="controls" aria-label="Filtre">
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
@@ -184,6 +184,7 @@ med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],o
 nowx:{acc:r[21][0],feel:r[21][1],pace:r[21][2]},runs:{now:r[22][0],live:r[22][1],end:r[22][2]},cats:r[23]||null,pse:r[24],base:r[25],
 c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14]},
 ps:r[27].map(S),psp:r[28].map(S),wf:r[29],sm:r[30],off:r[31],runcard:r[32],lv:{feel:r[33][0],acc:r[33][1],pace:r[33][2]},stops:r[34]?{now:r[34][0]||[],live:r[34][1]||[],end:r[34][2]||[]}:null}));
+const ALTIMG={};D.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};D.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});D.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 /* ---------- time and evo helpers ---------- */
 const DAY=86400000;
@@ -430,7 +431,10 @@ function reset(){shown=PAGE;render()}
 /* ---------- detail ---------- */
 function diffs(a0,a1,n){const out=[];a1.forEach((v,i)=>{if(v!=null&&a0[i]!=null&&Math.round(v)!==Math.round(a0[i]))out.push([i,a0[i],v])});out.sort((x,y)=>(y[2]-y[1])-(x[2]-x[1]));return n?out.slice(0,n):out}
 const chg=([i,b,a])=>`${esc(META.attrs[i]||"?")} ${Math.round(b)} → ${Math.round(a)}`;
-const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}"><i aria-hidden="true"></i>${esc(nm)}${plus?"<b>+</b>":""}</span>`};
+const PSI=META.psi||{};
+const psIcon=n=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n,ic=PSI[nm+(plus?"+":"")]||PSI[nm];if(!ic||!Array.isArray(ic.d))return"";return`<svg class="psi${plus?" plus":""}" viewBox="${esc(ic.vb)}" aria-hidden="true">${ic.d.map((p,i)=>`<path d="${esc(p)}"${i?' class="g"':""}/>`).join("")}</svg>`};
+const psRow=(names,fresh)=>names.length?`<div class="psrow">${[...names].sort((a,b)=>b.endsWith("+")-a.endsWith("+")).map(n=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n,ic=psIcon(n);return`<span class="pi${plus?" plus":""}${fresh&&fresh.has(n)?" new":""}" title="${esc(nm)}${plus?"+":""}">${ic||`<b>${esc(nm)}${plus?"+":""}</b>`}</span>`}).join("")}</div>`:"";
+const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}">${psIcon(n)||'<i aria-hidden="true"></i>'}${esc(nm)}${plus?"<b>+</b>":""}</span>`};
 const psChips=(names,fresh,max,cls)=>{const s=[...names].sort((a,b)=>(b.endsWith("+")-a.endsWith("+"))||0);const shown=max&&s.length>max?s.slice(0,max):s;return`<span class="pscs${cls?" "+cls:""}">${shown.map(n=>psChip(n,fresh&&fresh.has(n))).join("")}${shown.length<s.length?`<span class="psc more">+${s.length-shown.length}</span>`:""}</span>`};
 const psAll=st=>st.ps.filter(p=>!st.psp.includes(p)).concat(st.psp.map(p=>p+"+"));
 const gainChips=(g,max)=>{const m=max||5;const sh=g.stats.slice(0,m).map(t=>{const x=/^(.*) (\d+) → (\d+)$/.exec(t);const dl=x?x[3]-x[2]:0;return`<span class="g">${x?esc(x[1])+" "+(dl>0?"+":"")+dl:esc(t)}</span>`}).join("");return sh+(g.stats.length>m?`<span class="g more">+${g.stats.length-m}</span>`:"")};
@@ -508,20 +512,28 @@ return t+`</tbody></table><p class="muted x">Dette er en gjetning. Kortet tar ev
 const FK=[["PAC","pace"],["SHO","shooting"],["PAS","passing"],["DRI","dribbling"],["DEF","defending"],["PHY","physical"]];
 const tierOf=v=>/icon/i.test(v)?"icon":/hero/i.test(v)?"hero":/bronze/i.test(v)?"bronze":/silver/i.test(v)?"silver":/gold/i.test(v)?"gold":"special";
 const cardName=n=>{const w=String(n).split(" ");let s=w[w.length-1];if(s.length<=3&&w.length>1)s=w.slice(-2).join(" ");return s};
-const picImg=d=>d.img&&d.img.startsWith("https://")?`<img class="pic" src="${esc(d.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="if(this.naturalHeight>this.naturalWidth*1.2)this.classList.add('tall')" onerror="this.remove()">`:"";
+const picImg=d=>{const alt=ALTIMG[d.name+"|"+(d.club||"")]||"",src=d.img&&d.img.startsWith("https://")?d.img:alt;return src?`<img class="pic" src="${esc(src)}" data-alt="${esc(alt!==src?alt:"")}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="if(this.naturalHeight>this.naturalWidth*1.2)this.classList.add('tall')" onerror="if(this.dataset.alt){const a=this.dataset.alt;this.dataset.alt='';this.src=a}else{this.parentNode.classList.add('nopic');this.remove()}">`:""};
 const BGS={"gold": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff2003606fe684cdf8f9de7138063ea96999d762785.png", "silver": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322bf982152ec613f327934236667fb1.png", "bronze": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-1-large/0.79b2a5aa3902a8b057f4acb6326065a1ec863510cce00fc702328e28451cb6c7.png", "icon": "https://game-assets.fut.gg/cdn-cgi/image/quality=85,width=300,format=auto/2027/rarities-level-0-large/12.bfcdcd3305884da938cffb054b615c8c8f06c4e80160180dc1671a423bf24969.png"};
 const bgUrl=(d,t)=>(d.bg&&d.bg.startsWith("https://game-assets.fut.gg/")?d.bg:BGS[t]||"");
 const bgImg=(d,t)=>{const u=bgUrl(d,t);return u?`<img class="bgi" src="${esc(u)}" alt="" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove('real');this.remove()">`:""};
 const badge=(u,c)=>u&&u.startsWith("https://")?`<img class="bd ${c}" src="${esc(u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">`:"";
-const tierD=d=>{const v=String(d.ver||d.version||"");return/^(fc \d+ )?(rare|common)?$/i.test(v.trim())?(d.ovr<65?"bronze":d.ovr<75?"silver":"gold"):tierOf(v)};
-const cardHtml=(d,pos,ovr,stats,mini)=>`<div class="fcard${bgUrl(d,tierD(d))?" real":""} ${tierD(d)} ${posClass(d.g)}${mini?" mini":""}${picImg(d)?"":" nopic"}">${bgImg(d,tierD(d))}<b class="o">${ovr}</b>${mini?"":`<span class="p">${esc(pos)}</span>${(d.positions||[]).slice(1,4).map(x=>`<i class="alt">${esc(x)}</i>`).join("")}${d.fo?`<span class="ft">${d.fo}</span>`:""}${d.sm&&d.wf?`<span class="sw">${d.sm}<em>★</em>${d.wf}</span>`:""}<span class="bds">${badge(d.ni,"ni")}${badge(d.li,"li")}${badge(d.cl,"cl")}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${stats.map(([l,v,u])=>`<span${u?' class="up"':""}><i>${l}</i>${v==null?"–":v}</span>`).join("")}</div>`}</div>`;
+const tierD=d=>{const v=String(d.ver||d.version||"").replace(/^fc \d+ /i,"").trim();if(/^((non[- ]?)?rare|common)?\s*(gold|silver|bronze)?$/i.test(v))return d.ovr<65?"bronze":d.ovr<75?"silver":"gold";const t=tierOf(v);return t==="icon"||t==="hero"?t:"special"};
+const ppHtml=pp=>pp&&pp.length?`<span class="pps">${pp.slice(0,3).map(n=>`<span title="${esc(n)}+">${psIcon(n+"+")||'<i class="pdia"></i>'}</span>`).join("")}</span>`:"";
+const cardHtml=(d,pos,ovr,stats,mini,pp=d.psp)=>`<div class="fcard${bgUrl(d,tierD(d))?" real":""} ${tierD(d)} ${posClass(d.g)}${mini?" mini":""}${picImg(d)?"":" nopic"}">${bgImg(d,tierD(d))}${ppHtml(pp)}<b class="o">${ovr}</b>${mini?"":`<span class="p">${esc(pos)}</span>${(d.positions||[]).slice(1,4).map(x=>`<i class="alt">${esc(x)}</i>`).join("")}${d.fo?`<span class="ft">${d.fo}</span>`:""}${d.sm&&d.wf?`<span class="sw">${d.sm}<em>★</em>${d.wf}</span>`:""}<span class="bds">${badge(d.ni,"ni")}${badge(d.li,"li")}${badge(d.cl,"cl")}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${stats.map(([l,v,u])=>`<span${u?' class="up"':""}><i>${l}</i>${v==null?"–":v}</span>`).join("")}</div>`}</div>`;
 const cardStats=(d,a,o)=>FK.map(([l,k])=>{const v=d.c.g==="GK"?null:faceVal(a,k),was=o?faceVal(o,k):null;return[l,v,o&&v!=null&&was!=null&&v>was]});
-const afterCard=(d,ovr,a)=>cardHtml(d,d.positions[0]||d.g,ovr,cardStats(d,a,d.base));
-function detCards(d,h0){const live=buildLive(d),b=d.base;
-return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,cardStats(d,b))}</figure><span class="arr" aria-hidden="true"></span><figure class="aft">${afterCard(d,h0.ovr,live)}</figure></div>`}
+const afterCard=(d,ovr,a,pp)=>cardHtml(d,d.positions[0]||d.g,ovr,cardStats(d,a,d.base),false,pp||d.psp);
+function detCards(d,h0){const live=buildLive(d),b=d.base,st0=stateOf(d),lr=liveRun(d),now=psAll(st0),aft=psAll(lr.st),had=new Set(now);
+return`<div class="cards"><figure>${cardHtml(d,d.positions[0]||d.g,d.ovr,cardStats(d,b))}${psRow(now)}</figure><span class="arr" aria-hidden="true"></span><figure class="aft"><div class="ac">${afterCard(d,h0.ovr,live,lr.st.psp)}</div>${psRow(aft,new Set(aft.filter(n=>!had.has(n))))}</figure></div>`}
+const GN={PAC:"PACE",SHO:"SHOOTING",PAS:"PASSING",DRI:"DRIBBLING",DEF:"DEFENDING",PHY:"PHYSICAL"};
+const acol=v=>v==null?"var(--faint)":v>=80?"#3fcf7c":v>=70?"#9fd64a":v>=50?"#e2b440":"#e3684e";
+const gauge=v=>{const L=75.4,f=v==null?0:Math.max(0,Math.min(99,v))/99;return`<span class="gauge"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16" class="tr" stroke-dasharray="${L} 200"/><circle cx="20" cy="20" r="16" style="stroke:${acol(v)}" stroke-dasharray="${(L*f).toFixed(1)} 200"/></svg><b style="color:${acol(v)}">${v??"–"}</b></span>`};
+const attrBlock=gs=>`<div class="attrs">${gs.map(g=>`<section class="ag"><div class="ah"><span>${GN[g.k]||g.k}</span>${g.dv>0?`<em>+${g.dv}</em>`:""}${gauge(g.v)}</div>${g.rows.map(r=>`<div class="ar"><div class="al"><span>${esc(r.l)}</span>${r.dv>0?`<em>+${r.dv}</em>`:""}<b style="color:${acol(r.v)}">${r.v??"–"}</b></div><i class="bar"><i style="width:${r.v?Math.min(99,r.v)/99*100:0}%;background:${acol(r.v)}"></i>${r.dv>0&&r.v?`<i class="add" style="left:${(r.v-r.dv)/99*100}%;width:${r.dv/99*100}%"></i>`:""}</i></div>`).join("")}${g.extra||""}</section>`).join("")}</div>`;
+function attrGrid(d,a1){if(d.c.g==="GK")return"";const a0=d.base,df=(x,y)=>x!=null&&y!=null?y-x:0;
+const acc=(classify(a1,d.c.h,d.c.gender)||d.c.accSrc||"");
+return attrBlock(FK.map(([l,k])=>{const v0=faceVal(a0,k),v1=faceVal(a1,k);return{k:l,v:v1,dv:df(v0,v1),rows:RU.face[k].map(([i])=>({l:META.attrs[i],v:a1[i],dv:df(a0[i],a1[i])})),extra:l==="PAC"&&acc?`<div class="accr"><span>AcceleRATE</span><b>${esc(acc)}</b></div>`:""}}))}
 function detail(d){const h0=d.h[0],pinned=PINS.includes(d.name+"|"+d.ver);
 const stale=activePlan(d)[0].some(([ei])=>isClosed(EV[ei]));
-return`<div class="det"><div class="dethead"><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div><div class="top">${detCards(d,h0)}<div class="kvbox">${beforeAfter(d,extrasHtml(d))}</div></div></div>
+return`<div class="det"><div class="dethead"><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div><div class="top">${detCards(d,h0)}<div class="kvbox">${beforeAfter(d,extrasHtml(d))}</div></div><div class="attrwrap">${attrGrid(d,liveRun(d).st.a)}</div></div>
 
 ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget. Kjør rate på nytt for en oppdatert plan.</p>':""}
 <div class="acts"><button type="button" data-act="cmp">${pinned?"Fjern":"Sammenlign"}</button><button type="button" data-act="sbx">${SBX[d.i]&&SBX[d.i].open?"Lukk":"Prøv selv"}</button></div>
@@ -562,7 +574,7 @@ w.querySelector(".sbxlist").innerHTML=rel.map(([e,i])=>{const it=s.items.find(x=
 return`<li><label class="check"><input type="checkbox" data-ei="${i}"${on?" checked":""}> ${on?ord+". ":""}${esc(e[1])}${isClosed(e)?' <span class="closedtag">stengt</span>':""}${USED.has(e[0])?' <span class="muted">(brukt)</span>':""}</label>
 ${pth.length?`<select data-pi="${i}"${on?"":" disabled"}>${pth.map((p,j)=>`<option value="${j}"${it&&it.pi===j?" selected":""}>${esc(p[0])}</option>`).join("")}</select>`:""}${why?`<span class="why">Kan ikke tas: ${esc(why)}</span>`:""}</li>`}).join("");
 w.querySelector(".mine").innerHTML=s.items.filter(x=>x.ei<0).map(x=>`<p>${esc(x.e[1])}${stat.get(x)?` <span class="down">(${esc(stat.get(x))})</span>`:""} <button type="button" class="link" data-del="${x.id}">fjern</button></p>`).join("");
-w.querySelector(".sbxres").innerHTML=sbxResult(d);const af=w.closest(".det").querySelector(".cards .aft");if(af)af.innerHTML=afterCard(d,r.st.ovr,r.st.a)};
+w.querySelector(".sbxres").innerHTML=sbxResult(d);const dt0=w.closest(".det"),af=dt0.querySelector(".cards .aft .ac");if(af)af.innerHTML=afterCard(d,r.st.ovr,r.st.a,r.st.psp);const ag=dt0.querySelector(".attrwrap");if(ag)ag.innerHTML=attrGrid(d,r.st.a)};
 w.onchange=ev=>{const t=ev.target;
 if(t.dataset.ei!==undefined){const i=+t.dataset.ei;if(t.checked)s.items.push({ei:i,pi:EV[i][8][8].length?0:-1});else s.items=s.items.filter(x=>x.ei!==i);draw()}
 else if(t.dataset.pi!==undefined){const it=s.items.find(x=>x.ei===+t.dataset.pi);if(it){it.pi=+t.value;draw()}}

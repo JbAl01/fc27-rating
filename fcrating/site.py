@@ -171,7 +171,8 @@ def split_data(page: Path, limit: Optional[int] = None, chunk: Optional[int] = N
         names.append(name)
     tags = "".join(f'<script src="{n}"></script>' for n in names)
     text = text[:start] + f"window.{var}||[]" + text[end:]
-    at = text.rindex("<script>")
+    # right before the script that reads RAW (not just the last script: small scripts may follow it)
+    at = text.rindex("<script>", 0, text.index(f"window.{var}||[]"))
     page.write_text(text[:at] + tags + "\n" + text[at:], encoding="utf-8")
     return names
 

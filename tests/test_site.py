@@ -100,7 +100,8 @@ class SiteTests(unittest.TestCase):
             self.assertGreater(len(names), 1)
             new = page.read_text(encoding="utf-8")
             self.assertIn("const RAW=window.__RAW_EVOLAB||[]", new)
-            self.assertLess(new.index(f'<script src="{names[-1]}">'), new.rindex("<script>"))
+            raw_at = new.index("const RAW=window.__RAW_EVOLAB")
+            self.assertLess(new.index(f'<script src="{names[-1]}">'), new.rindex("<script>", 0, raw_at))
             back = []
             for n in names:
                 js = (Path(d) / n).read_text(encoding="utf-8").strip()
