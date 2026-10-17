@@ -17,6 +17,8 @@
     "_info": "Spesialkort: FIFA Rosters (utgitte kort, inkl. Icons og TOTW) og RealSport101 (lekkasjer). Programmet følger robots.txt og venter mellom hver forespørsel.",
     "user_agent": "fc27-rating/0.2 (personlig bruk)",
     "delay_seconds": 2.0,
+    "max_minutes": 45,
+    "_max_minutes_info": "All henting av spesialkort (FIFA Rosters, FUT.GG og RealSport101) stopper etter så mange minutter, så hele kjøringen holder seg innenfor tidsgrensen. Resten hentes neste kjøring.",
     "fifarosters": {
       "full_list_url": "https://www.fifarosters.com/futplayerslist.php?&pageNum={page}",
       "totw_list_url": "https://www.fifarosters.com/totw.php?&pageNum={page}",
@@ -38,7 +40,7 @@
     "futgg": {
       "enabled": true,
       "limit_per_run": 400,
-      "max_minutes": 35,
+      "max_minutes": 30,
       "_max_minutes_info": "FUT.GG-hentingen stopper etter så mange minutter (spesialkort og basekort til sammen), så hele kjøringen holder seg innenfor 150 minutter. Resten hentes neste kjøring.",
       "delay_seconds": 3.0,
       "base_limit_per_run": 250,

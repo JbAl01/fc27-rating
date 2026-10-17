@@ -137,7 +137,7 @@ def evos_meta(live: List[dict]):
             [r["min_ovr"], r["max_ovr"], r["max_pace"], r["max_ps"], r["max_psp"], r["max_positions"], r["positions"],
              r["not_positions"], r["requires_evo"] or "", r.get("born_from") or "", r.get("born_to") or ""],
             upg(u) + [[[pa["label"]] + upg(pa) for pa in u["paths"]]],
-            e.get("note") or "", e.get("sources") or [],
+            e.get("note") or "", e.get("sources") or [], e.get("per_card", 1),
         ])
     return out, idx
 
@@ -229,7 +229,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         [[f[0], f[1]] for f in s.get("fav", [])],
         [[intern(t) for t in lv.get("tips", [])], [[intern(a), intern(b)] for a, b in lv.get("skip", [])],
          [[intern(a), intern(b)] for a, b in lv.get("near", [])], [[intern(a), intern(b)] for a, b in lv.get("chk", [])],
-         0 if lv.get("proven") is False else 1],
+         2 if lv.get("quick") else 0 if lv.get("proven") is False else 1],
         plans,
         [[x for k, b0, a in med.get("d", []) if k in ATTR_INDEX for x in (ATTR_INDEX[k], _num(a))], [intern(x) for x in med.get("ps", [])],
          [intern(x) for x in med.get("psp", [])], med.get("wf"), med.get("sm"), (med.get("ovr") or [None, None])[1],
@@ -340,7 +340,7 @@ def render(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: di
 CSV_COLUMNS = ["name", "version", "ovr", "position", "igr_now", "live_igr", "live_ovr", "live_plan",
                "s2_p50", "s4_p50", "year_p10", "year_p50", "year_p90", "year_ovr", "op_chance_year", "op_when",
                "gain", "run_now", "run_year", "feel_now", "feel_year", "stop_now", "stop_year", "dna_points", "dna_top_pct", "evo_access", "blocked_by",
-               "favourite_likeness", "rough_estimate", "uid"]
+               "favourite_likeness", "favourite_likeness_now", "rough_estimate", "uid"]
 
 
 def write(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: dict, out_dir: str,
@@ -372,6 +372,7 @@ def write(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: dic
             "dna_points": s["dna"]["pts"], "dna_top_pct": s["dna"]["top"], "evo_access": s.get("access"),
             "blocked_by": ", ".join(f"{BLOCK_WORDS.get(k, k)} {pc} %" for k, pc in s.get("block", [])),
             "favourite_likeness": ", ".join(f"{n} {pc} %" for n, pc in s.get("fav", [])),
+            "favourite_likeness_now": ", ".join(f"{n} {pc} %" for n, pc in s.get("fav_live", [])),
             "rough_estimate": "ja" if s["coarse"] else "", "uid": uid,
         })
     rows.sort(key=lambda x: (x["position"], -(x["year_p50"] or 0)))

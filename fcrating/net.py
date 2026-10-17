@@ -70,8 +70,9 @@ class Robots:
 
 class PoliteFetcher:
     def __init__(self, user_agent: str = DEFAULT_UA, delay_seconds: float = 2.0, timeout: int = 30,
-                 respect_robots: bool = True, log=print):
+                 respect_robots: bool = True, log=print, deadline: Optional[float] = None):
         self.ua = user_agent
+        self.deadline = deadline   # time.time() after which no more pages are fetched (the run's time limit)
         self.delay = delay_seconds
         self.timeout = timeout
         self.respect_robots = respect_robots
@@ -102,6 +103,8 @@ class PoliteFetcher:
         return True if rp is None else rp.can_fetch(self.ua, url)
 
     def get(self, url: str) -> str:
+        if self.deadline is not None and time.time() >= self.deadline:
+            raise Blocked("tidsgrensen for hentingen er nådd. Resten hentes neste kjøring")
         if not self.allowed(url):
             raise Blocked(f"robots.txt tillater ikke henting av {url}")
         host = urlparse(url).netloc

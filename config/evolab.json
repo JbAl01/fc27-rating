@@ -2150,7 +2150,9 @@
     "universes": 8,
     "seed": 27,
     "workers": "auto",
-    "_workers_info": "Antall prosesser som simulerer samtidig. auto = antall kjerner minus én (maks 8). Sett 1 hvis noe henger.",
+    "_workers_info": "Antall prosesser som simulerer samtidig. auto = antall kjerner (maks 8). Sett 1 hvis noe henger.",
+    "max_minutes": 70,
+    "_max_minutes_info": "Etter så mange minutter starter Evo Lab ikke flere fulle plansøk. Kortene som gjenstår (de svakeste, de beste tas først) får planen fra det raske søket, og det fulle søket tas neste kjøring. På GitHub settes en egen frist (FC_FRIST) så hele kjøringen holder seg innenfor 150 minutter.",
     "stage2_per_bucket": 10,
     "_stage2_info": "Full simulering (alle fremtider) for de beste kortene per posisjon og OVR etter et første, raskt anslag. Resten får bare det raske anslaget (merket «grovt anslag»).",
     "waves": [

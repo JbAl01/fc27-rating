@@ -66,9 +66,9 @@ __CSS__
 
 <footer class="foot">
 <details><summary>Hva tallene betyr</summary>
-<p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen i dag, også spesialkort.</p>
+<p><b>IGR</b> er vår egen rating av hvor godt kortet spiller i posisjonen, på samme skala som OVR. Den bygger på følelse, fart, AcceleRATE, høyde og kroppstype, løp uten ball, hvor vanskelig kortet er å stoppe, ferdighetene posisjonen trenger, PlayStyles, roller, svakfot og skill moves. Planen velges etter IGR, ikke etter OVR, så en plan kan ende på lavere OVR enn hos FUT.GG og likevel gi et bedre kort i spillet. <b>Plass</b> er plassen blant alle kort som kan spille posisjonen i dag, også spesialkort. <b>Topp 5 %</b> under plassen betyr at kortet etter evoene er blant de 5 % beste i posisjonen, også mot kort som ikke kan evolueres.</p>
 <p><b>Følelse</b>: hvor kvikk og lett kortet er å styre med ball. <b>Løp uten ball</b>: hvor smart og nyttig kortet løper når laget har ballen, delt i <b>smarte løp</b> (hvor og når det løper) og <b>får avstand</b> (om løpet faktisk gir rom). <b>Vanskelig å stoppe</b>: hvor vanskelig kortet er å stoppe, med ball og på løp.</p>
-<p><b>Med evoene som er ute nå</b> viser den beste kombinasjonen av evoene du kan ta i dag: alle kombinasjoner er prøvd, også å hoppe over en evo som ellers ville stengt kortet ute fra en bedre. Sorterer du etter løp uten ball, følelse, vanskelig å stoppe eller forsvar, vises den beste kombinasjonen for det. For CB, back og CDM velger planen aldri angreps-PlayStyles som Gamechanger. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
+<p><b>Med evoene som er ute nå</b> viser den beste kombinasjonen av evoene du kan ta i dag: alle kombinasjoner prøves (rekkefølge, valg og å hoppe over en evo som ellers ville stengt kortet ute fra en bedre). For noen få kort med svært mange evoer rekker ikke alle å bli prøvd, og da står det i kortet. Sorterer du etter løp uten ball, følelse, vanskelig å stoppe eller forsvar, vises den beste kombinasjonen for det. Velger du et kort under «Ligner på», regnes planen ut på nytt for kortene øverst i listen, så kortet blir mest mulig likt det du valgte (planen «Mest lik» i kortet). For CB, back og CDM velger planen aldri angreps-PlayStyles som Gamechanger. <b>Anslag resten av året</b> er en gjetning: kortet tar evoer som ligner dem EA har sluppet så langt, i 8 tenkte fortsettelser av året. Spennet viser dårlig og god flaks. Ingen av de evoene finnes ennå.</p>
 <p>Nye evoer legges inn hver kveld like etter at EA slipper dem kl. 19.</p>
 </details>
 <p id="footnote"></p>
@@ -148,7 +148,7 @@ function bornBlock(r,born){if(!(r[9]||r[10])||!born)return null;if((r[9]&&born<r
 function check(e,st){const r=e[7],pos=r[6],np=r[7];
 if(pos.length&&!st.pos.some(p=>pos.includes(p)))return["pos","feil posisjon"];const bad=st.pos.filter(p=>np.includes(p));if(bad.length)return["pos","har posisjonen "+bad[0]];
 if(r[5]!=null&&st.pos.length>r[5])return["pos",`${st.pos.length} posisjoner (maks ${r[5]})`];{const ab=bornBlock(r,st.born);if(ab)return ab}if(r[8]&&!st.done.includes(r[8]))return["pre","krever forrige evo i kjeden"];
-if(st.done.includes(e[0]))return["done","allerede tatt"];
+{const per=e[11]||1;if(st.done.includes(e[0])&&st.done.filter(k=>k===e[0]).length>=per)return["done",per===1?"allerede tatt":`allerede tatt ${per} ganger`]}
 if(r[0]!=null&&st.ovr<r[0])return["ovr",`OVR ${st.ovr} (minst ${r[0]})`];if(r[1]!=null&&st.ovr>r[1])return["ovr",`OVR ${st.ovr} (maks ${r[1]})`];
 if(r[2]!=null){const pac=faceVal(st.a,"pace");if(pac!=null&&pac>r[2])return["pace",`PAC ${pac} (maks ${r[2]})`]}
 if(r[3]!=null){const n=psCount(st);if(n>r[3])return["ps",`${n} PlayStyles (maks ${r[3]})`]}if(r[4]!=null&&st.psp.length>r[4])return["psp",`${st.psp.length} PlayStyle+ (maks ${r[4]})`];return null}
@@ -179,7 +179,7 @@ if(plan[1]){const nx=rolesPP(st),nd=rt(nx);steps.push({e:null,a:st,b:nx,d0:det,d
 const D=RAW.map((r,i)=>({i,lg:S(r[35])||"",na:S(r[36])||"",born:r[37]||"",fg:r[38]||"",club:S(r[39])||"",img:r[40]||"",bg:r[41]||"",cl:r[42]||"",ni:r[43]||"",li:r[44]||"",fo:r[45]||"",cc:r[46]||"",name:r[0],ver:S(r[1]),ovr:r[2],pos:S(r[3]),positions:S(r[3]).split("/").map(x=>x.toUpperCase()),g:r[4],gender:r[5],kind:r[6],now:r[7],rnow:r[8],
 h:r[9].map((x,j)=>({p10:x[0],p50:x[1],p90:x[2],op:x[3],ovr:x[4],rank:x[5],z:x[6]||null,thr:(META.thr[r[4]]||[])[j]??null,of:META.of[r[4]]})),when:r[10],gain:r[11],coarse:r[12],
 like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],top:r[16][1],cap:r[16][2],chips:r[16][3]},fav:r[17],
-lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3],pv:r[18][4]!==0},plans:r[19],
+lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3],pv:r[18][4]===1,qk:r[18][4]===2},plans:r[19],
 med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],ovr:r[20][5],acc:r[20][6],feel:r[20][7],pace:r[20][8]},
 nowx:{acc:r[21][0],feel:r[21][1],pace:r[21][2]},runs:{now:r[22][0],live:r[22][1],end:r[22][2]},cats:r[23]||null,pse:r[24],base:r[25],
 c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14]},
@@ -233,9 +233,9 @@ let TWIN=null;const TWC=new Map();
 /* Unrounded, so the sort is not decided by rounding. After the evos many cards end on the same capped values, so
    equal likeness is common: rowsNow then sorts those by Plass etter evo instead of list order (which put the same
    card on top for every target). Other versions of the target player itself are left out. */
-function twinSim(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);const a=buildAt(d);
-let tot=0,used=0;SK.forEach((key,j)=>{const va=simVal(d,a,key),vb=TWIN[3][j];if(va==null||vb==null)return;const[m,sd,w]=SST[j];tot+=w*((va-vb)/sd)**2;used+=w});
-const v=used<0.5*SW?null:100*Math.exp(-Math.sqrt(tot/used)/1.2);TWC.set(k,v);return v}
+function simOf(d,a){let tot=0,used=0;SK.forEach((key,j)=>{const va=simVal(d,a,key),vb=TWIN[3][j];if(va==null||vb==null)return;const[m,sd,w]=SST[j];tot+=w*((va-vb)/sd)**2;used+=w});
+return used<0.5*SW?null:100*Math.exp(-Math.sqrt(tot/used)/1.2)}
+function twinSim(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);const v=simOf(d,buildAt(d));TWC.set(k,v);return v}
 const twinName=t=>t[0]+" ("+(t[1]||t[2])+")";
 
 /* ---------- state ---------- */
@@ -285,7 +285,8 @@ const keys=[ei=>[lim(ei,"ovr"),lim(ei,"ps"),lim(ei,"pace")],ei=>[lim(ei,"ps"),li
 const out=[],sigs=new Set();
 for(const kf of keys){const order=C.slice().sort((a,b)=>{const x=kf(a),y=kf(b);for(let i=0;i<3;i++)if(x[i]!==y[i])return x[i]-y[i];return EV[a][0]<EV[b][0]?-1:EV[a][0]>EV[b][0]?1:0});
 for(const ei of order.slice()){const pre=EV[ei][7][8];if(!pre)continue;const i=order.findIndex(x=>EV[x][0]===pre),j=order.indexOf(ei);if(i>j){order.splice(j,1);order.splice(i,0,ei)}}
-const seq=order,sg=seq.join(",");if(!sigs.has(sg)){sigs.add(sg);out.push(seq)}}return out}
+/* each evo once per card, or EV[ei][11] times in a row when the same card may take it again */
+const seq=order.flatMap(ei=>Array(EV[ei][11]||1).fill(ei)),sg=seq.join(",");if(!sigs.has(sg)){sigs.add(sg);out.push(seq)}}return out}
 function effectsOf(ei){const e=EV[ei],us=[e[8]].concat(e[8][8].map(p=>p.slice(1))),o=new Set();
 for(const u of us){if(u[0])o.add("ovr");if(u[3].some(([i])=>PACEI.has(i))||u[4].some(([w])=>w==="pace"))o.add("pace");if(u[5].length)o.add("ps");if(u[6].length){o.add("ps");o.add("psp")}}return o}
 function searchEnds(d,C,maxNodes=20000){const st0=stateOf(d),ends=new Map();let nodes=0;
@@ -321,10 +322,30 @@ const b=pick("igr"),sig=c=>c.map(x=>x.join(":")).join(","),plans=[[b.chain,rpp]]
 for(const m of["run","feel","stp","def"]){const o=pick(m);plans.push(sig(o.chain)!==sig(b.chain)&&o.det[m]!=null&&(b.det[m]==null||o.det[m]>b.det[m]+0.05)?[o.chain,rpp]:0)}
 return plans}
 /* ---------- what the "evoene nå" view shows: the plan for the chosen goal ---------- */
-const GOAL={run:1,feel:2,stop:3,def:4};
+/* plan 5: the one that makes the card most like the card chosen under «Ligner på» (worked out here, for any card) */
+const GOAL={run:1,feel:2,stop:3,def:4,twin:5};
 const GOALTXT=["","løp uten ball","følelse","vanskelig å stoppe","forsvar"];
-let OBJ=0;const objNow=()=>isNow()?(GOAL[F.sort]||0):0;
-const activePlan=d=>(OBJ&&d.plans[OBJ])||d.plans[0];
+const goalTxt=i=>i===5?"likhet med "+(TWIN?TWIN[0]:"kortet du valgte"):GOALTXT[i];
+const PLANNAMES=["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe","Best forsvar","Mest lik"];
+let OBJ=0;const objNow=()=>isNow()?(GOAL[F.sort]===5&&!TWIN?0:(GOAL[F.sort]||0)):0;
+/* the plan the card uses: the one picked under «Plan» in the card, else the one for the goal in the sort, else best IGR */
+const PLANSEL={};
+const want=d=>{const s=PLANSEL[d.i];if(s!=null&&d.plans[s])return s;return OBJ&&d.plans[OBJ]?OBJ:0};
+const activePlan=d=>{const w=want(d);return(w&&d.plans[w])||d.plans[0]};
+const twinKey=()=>OBJ===5&&TWIN?twinName(TWIN):"";
+/* every plan the search finds (all its end states) and the best plan for each goal: the one most like the target,
+   then the higher IGR, then fewer evos. 0 when it is the IGR plan or no more alike (half a percentage point). */
+function twinPlan(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return 0;
+const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
+const rt=rater(d),rpp=d._orig.plans[0][1],cands=d.plans.slice(0,5).filter(Boolean).map(p=>[p[0],p[1]]);
+for(const[,chain]of searchEnds(d,C,1500).values())cands.push([chain,rpp]);
+const sig=c=>c.map(x=>x.join(":")).join(",");let best=null;const seen=new Set();
+for(const plan of cands){const k=sig(plan[0])+"|"+plan[1];if(seen.has(k))continue;seen.add(k);
+let st=stateOf(d),ok=true;for(const[ei,pi]of plan[0]){const e=EV[ei];if(check(e,st)){ok=false;break}st=apply(e,st,pi>=0?e[8][8][pi]:null)}if(!ok)continue;
+if(plan[1]&&!d.c.primPP)st=rolesPP(st);const sm=simOf(d,st.a);if(sm==null)continue;const t={plan,sm,igr:rt(st).igr,len:plan[0].length};
+if(!best||t.sm>best.sm+1e-9||(Math.abs(t.sm-best.sm)<=1e-9&&(t.igr>best.igr||(t.igr===best.igr&&t.len<best.len))))best=t}
+if(!best)return 0;const p0=d.plans[0];let s0=stateOf(d);for(const[ei,pi]of p0[0])s0=apply(EV[ei],s0,pi>=0?EV[ei][8][8][pi]:null);if(p0[1]&&!d.c.primPP)s0=rolesPP(s0);
+const sm0=simOf(d,s0.a);return sig(best.plan[0])===sig(p0[0])||(sm0!=null&&best.sm<=sm0+0.5)?0:best.plan}
 /* live columns (IGR, plass, følelse, løp, stopp, kategorier) from one plan */
 function liveFields(d,plan){const res=runPlan(d,plan),det=res.det,p50=pyRound(det.igr+d.off,1),pool=META.pools[d.g]||[];
 d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};d.lv={feel:det.feel,acc:det.acc,pace:det.pace};
@@ -340,23 +361,31 @@ else{const drop=o0.p50-p50;p10=pyRound(o.p10-drop,1);m=pyRound(o.p50-drop,1);p90
 m=Math.max(p50,m);p10=Math.min(m,Math.max(p50,p10));p90=Math.max(m,p90);
 d.h[j]={...o,p10,p50:m,p90,op,ovr,rank:rankIn(pool,m),adj:pyRound(o.p50-m,1)}}}
 function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;
-d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._lr=null;d._obj=0}
+d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._lr=null;d._obj=0;d._tw=""}
 /* bring one card up to date with the used evos and the chosen goal */
 function refreshCard(d){restore(d);
 if(USED.size&&d.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))){d.plans=searchPlans(d);d.lm.tips=[];d._re=true;forecastFrom(d,liveFields(d,d.plans[0]))}
-if(OBJ&&d.plans[OBJ])liveFields(d,d.plans[OBJ]);d._obj=OBJ&&d.plans[OBJ]?OBJ:0;d._lr=null}
-const needsWork=d=>d._re||d._obj!==(OBJ&&d.plans[OBJ]?OBJ:0)||(OBJ&&d._orig.plans[OBJ]&&d._obj!==OBJ)||(USED.size&&d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));
+d._tw=twinKey();if(d._tw)d.plans[5]=twinPlan(d);
+const w=want(d);if(w)liveFields(d,d.plans[w]);d._obj=w;d._lr=null}
+const needsWork=d=>d._re||d._obj!==want(d)||(OBJ&&OBJ<5&&d._orig.plans[OBJ]&&d._obj!==OBJ)||(d._tw||"")!==twinKey()||PLANSEL[d.i]!=null||(USED.size&&d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));
 let usedJob=0;
 /* Works through every card whose plan changes (evos marked as used, or another goal in the sort). Cards in the
    current view and high in the current sort come first, and the table is redrawn while it works, so the top
    settles quickly. */
+/* The plan for likeness is worked out for the cards at the top of the list (TWIN_TOP in the current filters); the
+   rest keep the IGR plan until they come up (render() asks for more when the visible rows lack it). */
+const TWIN_TOP=400;let twinMore=false;
 function recompute(){const job=++usedJob;OBJ=objNow();const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
-const todo=D.filter(needsWork);
-const key=d=>{const v=f(d);return[pass(d,q)?0:1,v==null?Infinity:-v*dir]};
-const ks=new Map(todo.map(d=>[d,key(d)]));todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);return x[0]-y[0]||x[1]-y[1]});
+let todo=D.filter(needsWork);
+/* in the order the table shows them (as rowsNow: the sort direction, empty values last), cards in the view first */
+const key=d=>[pass(d,q)?0:1,f(d)];
+const ks=new Map(todo.map(d=>[d,key(d)]));todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);if(x[0]!==y[0])return x[0]-y[0];
+const u=x[1],v=y[1];if(u===v)return 0;if(u==null)return 1;if(v==null)return -1;return(u>v?1:-1)*dir});
+if(OBJ===5){const tk=twinKey(),only=todo.filter(d=>(d._tw||"")!==tk&&!d._re&&PLANSEL[d.i]==null&&!(USED.size&&d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))));
+const keep=new Set(only.filter(d=>ks.get(d)[0]===0).slice(0,TWIN_TOP));todo=todo.filter(d=>!only.includes(d)||keep.has(d));twinMore=false}
 let k=0,drawn=performance.now();
 const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40)refreshCard(todo[k++]);
-const busy=k<todo.length;usedInfo(busy?Math.round(100*k/todo.length):null);
+const busy=k<todo.length;usedInfo(busy?Math.round(100*k/todo.length):null);if(!busy)twinMore=false;
 if(!busy||performance.now()-drawn>400){drawn=performance.now();TWC.clear();render()}
 if(busy)setTimeout(step,0)};step()}
 const applyUsed=recompute;
@@ -388,11 +417,11 @@ $("live").onchange=e=>{F.live=e.target.checked;save();reset()};
 {const tw=$("twin"),ph=tw.placeholder;
 tw.onfocus=()=>{if(tw.value){tw.placeholder=tw.value;tw.value=""}};
 tw.onblur=()=>{if(!tw.value&&F.twin)tw.value=F.twin;tw.placeholder=ph};
-tw.oninput=()=>{const v=tw.value;if(META.targets.some(t=>twinName(t)===v)){setTwin(v);sync();reset();tw.blur()}};
-tw.onchange=()=>{const v=tw.value.trim();if(v===F.twin)return;if(!v||META.targets.some(t=>twinName(t)===v)){setTwin(v);sync();reset()}}}
-$("twinclear").onclick=()=>{setTwin("");sync();reset()};
+tw.oninput=()=>{const v=tw.value;if(META.targets.some(t=>twinName(t)===v)){setTwin(v);sync();reset();tw.blur();recompute()}};
+tw.onchange=()=>{const v=tw.value.trim();if(v===F.twin)return;if(!v||META.targets.some(t=>twinName(t)===v)){setTwin(v);sync();reset();recompute()}}}
+$("twinclear").onclick=()=>{setTwin("");sync();reset();recompute()};
 $("q").oninput=()=>reset();
-$("reset").onclick=()=>{F={...F0};TWIN=null;TWC.clear();$("q").value="";dir=-1;sync();reset()};
+$("reset").onclick=()=>{F={...F0};TWIN=null;TWC.clear();$("q").value="";dir=-1;sync();reset();recompute()};
 $("morerows").onclick=()=>{shown+=PAGE;render()};
 
 /* ---------- table ---------- */
@@ -412,7 +441,7 @@ return`<td><div class="who">${cardHtml(d,"",d.ovr,[],true)}<div><div class="nm">
 <td class="num">${d.ovr}${h.ovr>d.ovr?`<small class="up">${h.ovr}</small>`:""}</td>
 <td class="num">${fmt(d.now)}</td>
 <td class="num">${fmt(h.p50)}${isNow()?delta(h.p50-d.now):`<small>${fmt(h.p10)}–${fmt(h.p90)}</small>`}</td>
-<td class="num">${n0(h.rank)}</td>
+<td class="num">${n0(h.rank)}${h.p50!=null&&h.thr!=null&&h.p50>=h.thr?`<small class="wow" title="Blant de ${META.top} % beste ${esc(plural(d.g))} i spillet ${isNow()?"med evoene nå":"i anslaget"}, også mot kort som ikke kan evolueres">topp ${META.top} %</small>`:""}</td>
 <td class="num">${fmt(f)}${f!=null&&d.nowx.feel!=null?delta(f-d.nowx.feel):""}</td>
 <td class="num">${r&&r[0]!=null?fmt(r[0])+delta(r[0]-(d.runs.now[0]??r[0])):"–"}</td>
 <td class="num">${s&&s[0]!=null?fmt(s[0])+delta(s[0]-(d.stops.now[0]??s[0])):"–"}</td>
@@ -425,7 +454,8 @@ rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.classNa
 const tog=()=>{open=open===d.i?null:d.i;render()};tr.onclick=tog;tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};tb.appendChild(tr);
 if(open===d.i){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${detail(d)}</td>`;tb.appendChild(dt);wireDetail(dt,d)}});
 if(!rows.length)tb.innerHTML=`<tr><td colspan="${ncol}" class="l" style="padding:18px">Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».</td></tr>`;
-const m=$("morerows");m.hidden=rows.length<=shown;m.textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til`;renderCompare()}
+const m=$("morerows");m.hidden=rows.length<=shown;m.textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til`;renderCompare();
+if(OBJ===5&&!twinMore&&rows.slice(0,shown).some(d=>(d._tw||"")!==twinKey())){twinMore=true;setTimeout(recompute,50)}}
 function reset(){shown=PAGE;render()}
 
 /* ---------- detail ---------- */
@@ -459,14 +489,13 @@ return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt
 ${s.path?`<p class="muted">${choiceText(e,s.path)}</p>`:""}
 ${g.ps.length?`<div class="gains">${psChips(g.ps,new Set(g.ps))}</div>`:""}
 ${eff||gt||e[9]?`<details class="why"><summary>Hvorfor</summary>${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</details>`:""}</li>`}
-const PLANSEL={};
-function planHtml(d){const mi=PLANSEL[d.i]??(OBJ&&d.plans[OBJ]?OBJ:0),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
-const alts=[0,1,2,3,4].filter(i=>i===0||d.plans[i]);
-if(!d._re)h+=`<p class="muted" style="margin:0 0 8px;font-size:13px">${d.lm.pv?"Alle måter å ta evoene på er prøvd (rekkefølge, valg og å hoppe over): dette er den beste.":"Mange kombinasjoner er prøvd, men ikke alle rakk å bli sjekket for dette kortet. Planen er den beste som ble funnet."}</p>`;
-if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${["Best IGR","Best løp uten ball","Best følelse","Vanskeligst å stoppe","Best forsvar"][i]}</option>`).join("")}</select></label>`;
-else if(OBJ&&!d.plans[OBJ]&&(OBJ!==4||DEFW[d.c.g]))h+=`<p class="muted x">Planen for best IGR er også den beste for ${GOALTXT[OBJ]}.</p>`;
+function planHtml(d){const mi=want(d),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
+const alts=[0,1,2,3,4,5].filter(i=>i===0||d.plans[i]);
+if(!d._re&&mi===0)h+=`<p class="muted" style="margin:0 0 8px;font-size:13px">${d.lm.pv?"Alle måter å ta evoene på er prøvd (rekkefølge, valg og å hoppe over): dette er den beste.":d.lm.qk?"Bare det raske søket rakk å kjøre for dette kortet i denne oppdateringen. Neste oppdatering prøver alle måter.":"Mange kombinasjoner er prøvd, men ikke alle rakk å bli sjekket for dette kortet. Planen er den beste som ble funnet."}</p>`;
+if(alts.length>1)h+=`<label class="f" style="margin:0 0 10px">Plan<select data-plan>${alts.map(i=>`<option value="${i}"${i===mi?" selected":""}>${i===5?"Mest lik "+esc(TWIN?TWIN[0]:""):PLANNAMES[i]}</option>`).join("")}</select></label>`;
+else if(OBJ&&!d.plans[OBJ]&&(OBJ!==4||DEFW[d.c.g]))h+=`<p class="muted x">Planen for best IGR er også den beste for ${esc(goalTxt(OBJ))}.</p>`;
 if(d._re)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
-if(mi>0)h+=`<p class="muted">Best for ${GOALTXT[mi]}. IGR kan bli litt lavere.</p>`;
+if(mi>0)h+=`<p class="muted">Best for ${esc(goalTxt(mi))}${mi===5?` (${Math.round(twinSim(d)??0)} % lik)`:""}. IGR kan bli litt lavere.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
 if(plan[0].length>1)h+=`<p class="muted">Ta dem i denne rekkefølgen.</p>`;
@@ -549,7 +578,7 @@ ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget.
 <div class="cols"><section>${planHtml(d)}</section>
 <section>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
-function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{PLANSEL[d.i]=+sel.value;render()});
+function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{const v=+sel.value;if(v===(OBJ&&d.plans[OBJ]?OBJ:0))delete PLANSEL[d.i];else PLANSEL[d.i]=v;refreshCard(d);TWC.clear();render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
 dt.querySelector("[data-act=sbx]").onclick=ev=>{ev.stopPropagation();if(SBX[d.i]&&SBX[d.i].open)SBX[d.i].open=false;else{if(!SBX[d.i])SBX[d.i]={items:activePlan(d)[0].map(([ei,pi])=>({ei,pi})),rpp:!!d.plans[0][1],open:true};SBX[d.i].open=true}render()};
 dt.onclick=ev=>ev.stopPropagation();
@@ -612,9 +641,12 @@ box.querySelectorAll("[data-unpin]").forEach(b=>b.onclick=()=>{PINS=PINS.filter(
 /* ---------- the evos ---------- */
 function renderEvos(){const evs=EV.map((e,i)=>[e,i]).sort((a,b)=>(untilMs(a[0][3])??9e15)-(untilMs(b[0][3])??9e15));const open=evs.filter(([e])=>!isClosed(e));
 $("evosum").textContent=`Evoene som er ute nå (${open.length})`;
-let t=`<p class="muted x" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
-for(const[e]of open){const c=false;t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas av ${e[6]} spillere)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
-<td>${esc(reqText(e))}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
+/* the cards that end best (IGR with today's evos) with this evo in their plan, as FUT.GG's «best players» per evo */
+const best=new Map();for(const d of D){const ps=d.plans[0];if(!ps||!ps[0].length)continue;const v=d.h[0].p50;for(const[ei]of ps[0]){let a=best.get(ei);if(!a)best.set(ei,a=[]);if(!a.some(x=>x[0]===d))a.push([d,v])}}
+for(const a of best.values()){a.sort((x,y)=>y[1]-x[1]);a.length=Math.min(a.length,3)}
+let t=`<p class="muted x" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem. «Blir best med den» er kortene som ender høyest (IGR med evoene nå) og har evoen i planen sin.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Blir best med den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
+for(const[e,ei]of open){const c=false,bb=(best.get(ei)||[]).map(([d,v])=>`${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}, ${fmt(v)}</span>`).join("<br>");t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas av ${e[6]} spillere)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
+<td>${esc(reqText(e))}</td><td style="white-space:normal;min-width:180px">${bb||'<span class="muted">–</span>'}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
 t+=`</tbody></table></div>`;
 $("evobody").innerHTML=t;
 $("evobody").querySelectorAll("[data-used]").forEach(cb=>cb.onchange=()=>{if(cb.checked)USED.add(cb.dataset.used);else USED.delete(cb.dataset.used);saveUsed();renderEvos();applyUsed()});

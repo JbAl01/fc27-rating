@@ -101,6 +101,7 @@ Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PRO
 - Alderskrav: `"born_from": "2003-10-09"` i `req` betyr født denne datoen eller senere, `"born_to"` født denne datoen eller tidligere (ISO-dato). Evo Lab sjekker det mot fødselsdatoen fra EA. Bruk ikke `unchecked` for alder.
 - Svakfot og skill moves: `wf: [økning, maks]` og `sm: [økning, maks]`.
 - Roller: `"roles": [["ST", "Advanced Forward", 2]]` (1 = +, 2 = ++).
+- Repeatable: «Repeatable 2» på FUT.GG/futnext betyr at **to spillere** kan ta evoen. Skriv det som `"repeat": 2`. Det betyr ikke at samme kort kan ta den to ganger. Sier kildene uttrykkelig at **samme kort** kan ta evoen flere ganger (EA har gjort det før), skriv i tillegg `"per_card": N` (hvor mange ganger samme kort kan ta den). Uten `per_card` regner Evo Lab med én gang per kort.
 - Se `config/evolab.json` for ferdige eksempler på alle felt, og README under «Evoene og hvor de kommer fra».
 
 ## Kontroll av det som allerede ligger inne

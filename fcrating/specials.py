@@ -260,8 +260,19 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
               height_known: Optional[set] = None,
               ea_cards: Optional[dict] = None) -> Tuple[fr.FifaRostersCache, rs.LeakCache]:
     sc = cfg_sources["specials"]
+    import os
+    import time as _time
+    # one time limit for all fetching in this run (specials.max_minutes, and never after FC_HENT_FRIST from the
+    # workflow), so the whole run stays within its limit. What is not fetched now is fetched next run.
+    ends = [_time.time() + 60 * float(sc["max_minutes"])] if sc.get("max_minutes") else []
+    try:
+        if os.environ.get("FC_HENT_FRIST"):
+            ends.append(float(os.environ["FC_HENT_FRIST"]))
+    except ValueError:
+        pass
+    stop_at = min(ends) if ends else None
     fetcher = PoliteFetcher(user_agent=sc.get("user_agent") or "fc27-rating/0.2 (personlig bruk)",
-                            delay_seconds=float(sc.get("delay_seconds", 2.0)), log=log)
+                            delay_seconds=float(sc.get("delay_seconds", 2.0)), log=log, deadline=stop_at)
     fr_cache = fr.FifaRostersCache(str(Path(cache_dir) / "fifarosters"))
     leak_cache = rs.LeakCache(str(Path(cache_dir) / "realsport101"))
 
@@ -293,7 +304,7 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 # The special cards' own PlayStyles (FIFA Rosters has none; promo cards often have one more)
                 fg = futgg.FutggCache(str(Path(cache_dir) / "futgg"))
                 gfetch = PoliteFetcher(user_agent=gcfg.get("user_agent") or sc.get("user_agent") or "fc27-rating",
-                                       delay_seconds=float(gcfg.get("delay_seconds", 3.0)), log=log)
+                                       delay_seconds=float(gcfg.get("delay_seconds", 3.0)), log=log, deadline=stop_at)
                 todo = [(str(e.get("player_id") or ""), fid) for fid, e in
                         sorted(unique_entries(fr_cache), key=lambda t: -t[1]["ovr"]) if not fr.is_base_version(e["version"])]
                 # base cards: roles (+/++), which EA's data does not have. Best cards first, each once.
@@ -306,8 +317,9 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                         sorted(unique_entries(fr_cache), key=lambda t: (ea_ok(t[1]), str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
                         if fr.is_base_version(e["version"])]
                 # a time limit, so the whole run stays within the workflow's limit (the rest comes next run)
-                import time as _time
                 deadline = _time.time() + 60 * float(gcfg.get("max_minutes", 35))
+                if stop_at is not None:
+                    deadline = min(deadline, stop_at)
                 try:
                     ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log, deadline=deadline)
                     left = sum(1 for _, c in todo if c not in fg.cards)

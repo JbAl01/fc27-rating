@@ -163,6 +163,18 @@ class ApplyImagesTests(unittest.TestCase):
         self.assertIn("player-item", p.image)
         self.assertIn("/league/", p.league_image)
 
+    def test_date_of_birth_for_age_requirements(self):
+        # as on FUT.GG's card page (page data and the person's JSON-LD)
+        html = 'x,dateOfBirth:"2005-04-27",height:183,y'
+        self.assertEqual(futgg._BORN.search(html).group(1), "2005-04-27")
+        self.assertEqual(futgg._BORN.search('{"@type":"Person","birthDate":"2004-07-10"}').group(1), "2004-07-10")
+        p = Player.from_dict({"name": "A", "id": "7", "ovr": 70, "position": "ST"})
+        futgg.apply([p], {"7": {"ps": [], "psp": [], "born": "2005-04-27", "t": "2026-10-17"}})
+        self.assertEqual(p.birthdate, "2005-04-27")
+        q = Player.from_dict({"name": "B", "id": "8", "ovr": 70, "position": "ST", "birthdate": "2001-01-02"})
+        futgg.apply([q], {"8": {"ps": [], "psp": [], "born": "2005-04-27", "t": "2026-10-17"}})
+        self.assertEqual(q.birthdate, "2001-01-02")   # EA's date is kept
+
 
 class IconTests(unittest.TestCase):
     def test_parse_icons_frame_and_symbol_as_on_futgg(self):

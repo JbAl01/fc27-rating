@@ -71,6 +71,15 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Tidsfrister regnet fra start, så jobben blir ferdig og legger ut siden innenfor timeout-minutes (150):
+      # hentingen stopper etter 55 minutter, og Evo Lab starter ingen nye fulle plansøk etter 105 minutter
+      # (kortene som gjenstår får det raske søket nå og det fulle neste kjøring).
+      - name: Sett tidsfrister
+        run: |
+          start=$(date +%s)
+          echo "FC_HENT_FRIST=$((start + 55*60))" >> "$GITHUB_ENV"
+          echo "FC_FRIST=$((start + 105*60))" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v7

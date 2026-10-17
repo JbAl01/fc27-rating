@@ -46,6 +46,7 @@ from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 ROOT = Path(__file__).resolve().parent.parent
 CACHE_VERSION = 17
 SEARCH_MAX_NODES = 2000   # per card; when reached, the best plan found so far is used (never worse than the quick search)
+QUICK_NODES = 1500        # the fast search's budget when a run is short of time (the full search is done next run)
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
                 "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
 BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
@@ -117,6 +118,7 @@ def parse_evo(d: dict) -> dict:
     return {
         "key": d["key"], "name": d.get("name", d["key"]), "cost": d.get("cost", ""), "until": d.get("until"),
         "premium": bool(d.get("premium")), "unchecked": d.get("unchecked"), "repeat": int(d.get("repeat", 1) or 1),
+        "per_card": max(1, int(d.get("per_card", 1) or 1)),
         "source": d.get("source", "live"), "note": d.get("unchecked_note") or d.get("note") or "",
         "sources": list(d.get("sources") or []),
         "req": {
@@ -205,6 +207,10 @@ def check_evo(d: dict, min_sources: int = 0, playstyles: Optional[set] = None) -
     urls = [u for u in d.get("sources") or [] if isinstance(u, str) and u.startswith("http")]
     if len(set(urls)) < min_sources:
         out.append(f"trenger minst {min_sources} ulike kilde-lenker i sources, har {len(set(urls))}")
+    for k in ("repeat", "per_card"):
+        v = d.get(k)
+        if v is not None and (not isinstance(v, int) or isinstance(v, bool) or not 1 <= v <= 20):
+            out.append(f"{k} må være et helt tall 1-20, er {v!r}")
     req, up = d.get("req") or {}, d.get("up") or {}
     if not req and not up:
         out.append("har verken req eller up")
@@ -391,8 +397,10 @@ def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
         return age
     if r["requires_evo"] and r["requires_evo"] not in st.done:
         return "pre", "krever forrige evo i kjeden"
-    if evo["key"] in st.done:   # «repeatable» = several players can take it, never one card twice
-        return "done", "allerede tatt"
+    per = evo.get("per_card", 1)
+    if evo["key"] in st.done and st.done.count(evo["key"]) >= per:
+        # «repeatable» = several players can take it; the same card only as many times as per_card (default once)
+        return "done", "allerede tatt" if per == 1 else f"allerede tatt {per} ganger"
     if r["min_ovr"] is not None and st.ovr < r["min_ovr"]:
         return "ovr", f"OVR {st.ovr} (minst {r['min_ovr']})"
     if r["max_ovr"] is not None and st.ovr > r["max_ovr"]:
@@ -881,7 +889,9 @@ def _plan_orders(cands: List[dict]) -> List[List[dict]]:
             if i is not None and i > order.index(e):
                 order.remove(e)
                 order.insert(i, e)
-        seq = list(order)   # each evo once per card (repeatable = more players, not the same card again)
+        # each evo once per card (repeatable = more players), or per_card times in a row when the same card may
+        # take it again
+        seq = [x for e in order for x in [e] * e.get("per_card", 1)]
         if seq not in out:
             out.append(seq)
     return out
@@ -1060,8 +1070,8 @@ def _gather(rest: List[dict], paths_of, rules: dict) -> dict:
     ovr, wf, sm = [], [], []
     psp_names, ps_names = set(), set()
     roles: List[tuple] = []
-    face_opts: List[tuple] = []   # (evo, [(main stat, gain, max), ...]) per option
-    for e in rest:
+    face_opts: List[tuple] = []   # (evo's place in rest, [(main stat, gain, max), ...]) per option
+    for ei, e in enumerate(rest):   # an evo the card may take twice is in rest twice
         opts = [p for p in (paths_of(e) or []) if p] or [None]
         eg: Dict[str, float] = {}
         ec: Dict[str, float] = {}
@@ -1081,7 +1091,7 @@ def _gather(rest: List[dict], paths_of, rules: dict) -> dict:
                     psp_names.add(n)
                 roles.extend(u["roles"])
             if fopt:
-                face_opts.append((e["key"], fopt))
+                face_opts.append((ei, fopt))
             for k, v in pg.items():
                 eg[k] = max(eg.get(k, 0.0), v)
             for lst, attr in ((ovr, "ovr"), (wf, "wf"), (sm, "sm")):
@@ -1259,7 +1269,9 @@ def search_best(st0: State, cands: List[dict], rules: dict, score, bound, key, p
     while stack:
         st, done, chain = stack.pop()
         # the same card reached before with fewer (or the same) evos used and no more steps: nothing new here
-        ck, ds = key(st), frozenset(done)
+        # (evos as a multiset: one the card may take twice counts once per time taken)
+        taken = Counter(done)
+        ck, ds = key(st), frozenset((k, i) for k, n in taken.items() for i in range(n))
         prev = seen.setdefault(ck, [])
         if any(d <= ds and n <= len(chain) for d, n in prev):
             continue
@@ -1268,17 +1280,19 @@ def search_best(st0: State, cands: List[dict], rules: dict, score, bound, key, p
         if max_nodes and nodes > max_nodes:
             complete = False
             break
-        rest = []
+        rest, rest_all = [], []   # rest_all: an evo once per time the card may still take it
         for e in cands:
-            if e["key"] in done or not paths_of(e):
+            left = e.get("per_card", 1) - taken.get(e["key"], 0)
+            if left <= 0 or not paths_of(e):
                 continue
             why = check(e, st, rules)
             if why is None or why[0] == "pre" or (why[0] == "ovr" and e["req"]["min_ovr"] is not None and st.ovr < e["req"]["min_ovr"]):
                 rest.append(e)
+                rest_all.extend([e] * left)
         if rest:
             # the bound covers this card too (the evos only add), so a hopeless branch is left unrated
             prem = sum(1 for c in chain if c[0]["premium"])
-            if chain and hopeless(bound(st, rest), len(chain) - 1, prem):
+            if chain and hopeless(bound(st, rest_all), len(chain) - 1, prem):
                 continue
         offer(st, chain, score(st))
         if not rest:
@@ -1302,8 +1316,10 @@ def search_best(st0: State, cands: List[dict], rules: dict, score, bound, key, p
     return best, nodes, complete
 
 
-def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_nodes: int = 20000) -> dict:
-    """Best order of the live evos for this card, with the evos it misses and why."""
+def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dict, max_nodes: int = 20000,
+              quick: bool = False) -> dict:
+    """Best order of the live evos for this card, with the evos it misses and why.
+    quick: only the fast search (when the run is short of time; the full search is done next run)."""
     cands, near, unchecked = [], [], []
     for e in evos:
         r = e["req"]
@@ -1348,18 +1364,30 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         lv = max((v for pos in role_pos for v in (st.roles.get(pos) or {}).values()), default=-1)
         return (tuple(st.attrs.values()), st.ovr, tuple(sorted(st.ps)), tuple(sorted(st.psp)), st.wf, st.sm, lv)
     paths_of = lambda e: plan_paths(e, ev.g, rules)
-    ends = search_ends(st0, cands, rules, max_nodes, key=rating_key,
+    # short of time: a smaller version of the fast search only (the full search is done next run)
+    ends = search_ends(st0, cands, rules, min(max_nodes, QUICK_NODES) if quick else max_nodes, key=rating_key,
                        best_path=lambda e, st, allowed=None: _best_path(e, st, ev.g, ev.cfg, allowed),
                        paths_of=paths_of)
     primary = (p.position or "").upper()
     use_rpp = rules.get("roles_plus_plus", True)
 
+    rated: Dict[tuple, tuple] = {}   # the same card for the rating is rated once
+
+    def rate_end(st: State) -> tuple:
+        """(details, the card after Roles++, Roles++ added?) for a plan's end state."""
+        k = rating_key(st)
+        hit = rated.get(k)
+        if hit is None:
+            fin, rpp = roles_plus_plus(st, primary) if use_rpp else (st, False)
+            d = ev.fast.detail(fin)
+            ev.calls += 1
+            d["def"] = def_value(fin.attrs, ev.g, rules)
+            hit = rated[k] = (d, fin, rpp)
+        return hit
+
     def score(st: State) -> dict:
-        fin = roles_plus_plus(st, primary)[0] if use_rpp else st
-        d = ev.fast.detail(fin)
-        ev.calls += 1
-        return {"igr": d["igr"], "run": d.get("run"), "feel": d.get("feel"), "stp": d.get("stp"),
-                "def": def_value(fin.attrs, ev.g, rules)}
+        d = rate_end(st)[0]
+        return {"igr": d["igr"], "run": d.get("run"), "feel": d.get("feel"), "stp": d.get("stp"), "def": d["def"]}
 
     ps_cap = int(rules.get("ps_cap", 8))
     acc_inputs = {"acceleration", "agility", "strength"}
@@ -1378,6 +1406,8 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         # evos with options that give different attributes: the bound for each choice, and the highest of them
         multi = [e for e in rest if stat_options(e)]
         combos = [()]
+        if len({e["key"] for e in multi}) < len(multi):
+            multi = []   # an evo taken twice may get two different choices: per attribute the best option (safe)
         for e in multi:
             combos = [c + ((e["key"], i),) for c in combos for i in range(len(stat_options(e)))]
             if len(combos) > 24:   # too many: per attribute the best option (still safe, a bit looser)
@@ -1407,7 +1437,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     # the old search's plans as a start, then the full search; its best plans are the ones to choose from
     best, nodes, complete = search_best(st0, cands, rules, score, bound, rating_key, paths_of,
                                         seeds=list(ends.values()),
-                                        max_nodes=int(rules.get("plan_search_nodes", SEARCH_MAX_NODES)))
+                                        max_nodes=1 if quick else int(rules.get("plan_search_nodes", SEARCH_MAX_NODES)))
 
     def replay(steps: list) -> Optional[list]:
         st, out = st0, []
@@ -1445,14 +1475,9 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     # the best end state for IGR, and also for Løps-AI and for feel (often the same plan)
     scored = []
     for st, chain in ends.values():
-        fin, rpp = roles_plus_plus(st, primary) if rules.get("roles_plus_plus", True) else (st, False)
-        d = ev.fast.detail(fin)
-        ev.calls += 1
+        d, fin, rpp = rate_end(st)   # with Forsvar for CB, backs and CDM (the plan for «best forsvar»)
         cost = (len(chain), sum(1 for c in chain if c[0]["premium"]))
         scored.append((d, fin, chain, cost, rpp, st))
-
-    for t in scored:  # Forsvar for CB, backs and CDM (the plan for «best forsvar»)
-        t[0]["def"] = def_value(t[1].attrs, ev.g, rules)
 
     def pick(metric):
         return max(scored, key=lambda t: ((t[0].get(metric) if t[0].get(metric) is not None else -1), t[0]["igr"],
@@ -1501,7 +1526,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         cat = Counter(c for _, c in lst).most_common(1)[0][0]
         tips.append(f"{chain[i][0]['name']} før {names} (ellers {REASON_WORDS.get(cat, cat)})")
     return {"igr": round(v, 1), "ovr": fin.ovr, "steps": steps, "roles": rpp, "skip": skipped, "tips": tips[:3],
-            "proven": bool(complete),
+            "proven": bool(complete) and not quick, "quick": bool(quick),
             "near": near[:4], "chk": unchecked, "acc": d_best["acc"], "feel": d_best["feel"], "run": d_best["run"],
             "vil": d_best.get("vil"), "eff": d_best.get("eff"), "pace": d_best.get("pace"), "alt": alt,
             "stp": d_best.get("stp"), "stb": d_best.get("stb"), "stl": d_best.get("stl"), "def": d_best.get("def"),
@@ -1712,8 +1737,9 @@ def card_group(p: Player) -> Optional[str]:
 
 
 def simulate_card(p: Player, cfg: dict, lab: dict, live: List[dict], universes: Dict[int, List[List[dict]]],
-                  want: Sequence[int], prev: Optional[dict] = None) -> dict:
-    """Cache entry for one card: live plan, IGR per wave in each universe, and the median build."""
+                  want: Sequence[int], prev: Optional[dict] = None, quick: bool = False) -> dict:
+    """Cache entry for one card: live plan, IGR per wave in each universe, and the median build.
+    quick: the live plan from the fast search only (redone in full next run)."""
     rules = lab["rules"]
     g = card_group(p) or "ST"
     ev = Evaluator(p, g, cfg, rules)
@@ -1723,7 +1749,7 @@ def simulate_card(p: Player, cfg: dict, lab: dict, live: List[dict], universes: 
         live_state = _state_from_entry(st0, entry["live"])
     else:
         now = ev.igr(st0)
-        plan = plan_live(p, st0, live, ev, rules)
+        plan = plan_live(p, st0, live, ev, rules, quick=quick)
         live_state = plan.pop("_state")
         entry = {"g": g, "now": now, "ovr": st0.ovr, "live": plan, "mc": {}, "tally": {}, "med": None,
                  "_ld": _state_delta(st0, live_state)}
@@ -1788,6 +1814,8 @@ def card_fingerprint(p: Player) -> str:
 
 def config_fingerprint(cfg: dict, lab: dict, live: List[dict]) -> str:
     sim = {k: v for k, v in lab.items() if k not in ("op", "favorites", "live")}
+    # how long a run may take and on how many cores does not change the results
+    sim["future"] = {k: v for k, v in (lab.get("future") or {}).items() if k not in ("max_minutes", "workers")}
     return _fingerprint([CACHE_VERSION, sim, live, cfg["weights"], cfg["playstyles"]])
 
 
@@ -1801,36 +1829,84 @@ def _universes(lab: dict, n_u: int) -> Dict[int, List[List[dict]]]:
     return _UNIVERSES[k]
 
 
-def _simulate_many(jobs: list, cfg: dict, lab: dict, live: List[dict], n_u: int, want: List[int]) -> Dict[str, dict]:
+def _simulate_many(jobs: list, cfg: dict, lab: dict, live: List[dict], n_u: int, want: List[int],
+                   quick: bool = False) -> Dict[str, dict]:
     universes = _universes(lab, n_u)
-    return {p.uid: simulate_card(p, cfg, lab, live, universes, want, prev) for p, prev in jobs}
+    return {p.uid: simulate_card(p, cfg, lab, live, universes, want, prev, quick=quick) for p, prev in jobs}
 
 
 def _workers(setting) -> int:
     import os
     if isinstance(setting, int):
         return max(1, setting)
-    return max(1, min(8, (os.cpu_count() or 2) - 1))
+    return max(1, min(8, os.cpu_count() or 1))   # the main process only waits, so every core simulates
 
 
-def _simulate_jobs(jobs: list, cfg: dict, lab: dict, live: List[dict], n_u: int, want: List[int], workers: int
-                   ) -> Dict[str, dict]:
-    """Run the simulations, split over several processes when there are many cards.
-    Falls back to one process if that is not possible on this machine."""
-    if workers <= 1 or len(jobs) < 600:
-        return _simulate_many(jobs, cfg, lab, live, n_u, want)
-    size = max(100, len(jobs) // (workers * 4) + 1)
+def _simulate_jobs(jobs: list, cfg: dict, lab: dict, live: List[dict], n_u: int, want: List[int], workers: int,
+                   quick: bool = False, deadline: Optional[float] = None, on_part=None) -> Tuple[Dict[str, dict], list]:
+    """Run the simulations, split over several processes when there are many cards (one process if that is
+    not possible on this machine). With a deadline (time.time()), no new card is started after it: returns
+    (entries, the jobs not done). on_part(entries so far) is called every few minutes (to save progress)."""
+    import time
+    out: Dict[str, dict] = {}
+    last = [time.time()]
+
+    def progress():
+        if on_part and time.time() - last[0] > 240:
+            on_part(out)
+            last[0] = time.time()
+
+    def one_process(todo: list) -> list:
+        for i, (p, prev) in enumerate(todo):
+            if deadline is not None and time.time() >= deadline:
+                return todo[i:]
+            out.update(_simulate_many([(p, prev)], cfg, lab, live, n_u, want, quick))
+            progress()
+        return []
+    if not jobs:
+        return out, []
+    if workers <= 1 or len(jobs) < 300:
+        return out, one_process(jobs)
+    # small chunks, so the deadline is kept and a few slow cards do not hold up one process at the end
+    size = max(10, min(60, len(jobs) // (workers * 12) + 1))
     chunks = [jobs[i:i + size] for i in range(0, len(jobs), size)]
+    left: list = []
     try:
-        from concurrent.futures import ProcessPoolExecutor
-        out: Dict[str, dict] = {}
+        from concurrent.futures import ProcessPoolExecutor, as_completed
         with ProcessPoolExecutor(max_workers=workers) as ex:
-            for part in ex.map(_simulate_many, chunks, *[[x] * len(chunks) for x in (cfg, lab, live, n_u, want)]):
-                out.update(part)
-        return out
+            futs = {ex.submit(_simulate_many, ch, cfg, lab, live, n_u, want, quick): ch for ch in chunks}
+            stopped = False
+            for f in as_completed(futs):
+                if f.cancelled():   # not started before the deadline: in left already
+                    continue
+                out.update(f.result())
+                progress()
+                if not stopped and deadline is not None and time.time() >= deadline:
+                    stopped = True
+                    for g, ch in futs.items():
+                        if g.cancel():
+                            left.extend(ch)
+        return out, left
     except Exception as err:  # e.g. no permission to start processes
         print(f"  (kjører Evo Lab i én prosess: {type(err).__name__})")
-        return _simulate_many(jobs, cfg, lab, live, n_u, want)
+        todo = [(p, prev) for p, prev in jobs if p.uid not in out]
+        return out, one_process(todo)
+
+
+def _deadline(fut: dict) -> Optional[float]:
+    """When Evo Lab stops starting full plan searches (time.time()): future.max_minutes from now, and never
+    after FC_FRIST (seconds since 1970, set by the workflow so the whole run stays within its time limit)."""
+    import os
+    import time
+    ends = []
+    if fut.get("max_minutes"):
+        ends.append(time.time() + 60 * float(fut["max_minutes"]))
+    try:
+        if os.environ.get("FC_FRIST"):
+            ends.append(float(os.environ["FC_FRIST"]))
+    except ValueError:
+        pass
+    return min(ends) if ends else None
 
 
 def run(players: List[Player], results: List[dict], cfg: dict, lab: Optional[dict] = None,
@@ -1876,14 +1952,52 @@ def run(players: List[Player], results: List[dict], cfg: dict, lab: Optional[dic
         fps[p.uid] = fp
         prev = cache.get(fp)
         if prev and all(str(u) in prev["mc"] for u in stage1):
-            entries[p.uid] = prev
+            entries[p.uid] = prev   # a plan from the fast search only is done in full below, when there is time
             continue
-        jobs.append((p, prev))
-    if len(jobs) > 500 and not quiet:
-        print(f"Evo Lab: simulerer {len(jobs)} kort med {workers} prosess{'er' if workers > 1 else ''} "
-              f"(bare nye og endrede kort neste gang) ...", flush=True)
-    entries.update(_simulate_jobs(jobs, cfg, lab, live, n_u, stage1, workers))
+        jobs.append((p, prev if prev and not prev["live"].get("quick") else None))
+    deadline = _deadline(fut)
+
+    def save(extra: Optional[Dict[str, dict]] = None) -> None:
+        cards = {fps[uid]: e for uid, e in entries.items()}
+        for uid, e in (extra or {}).items():
+            cards[fps[uid]] = e
+        try:
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = cache_path.with_suffix(".tmp")
+            with open(tmp, "wb") as f:
+                pickle.dump({"cfg": fp_cfg, "saved": date.today().isoformat(), "cards": cards}, f,
+                            protocol=pickle.HIGHEST_PROTOCOL)
+            tmp.replace(cache_path)
+        except OSError:
+            pass
+    # 1) every new or changed card gets a plan from the fast search first (a fraction of the time of the full
+    #    search), so every card has a plan whatever happens later in the run
+    if jobs:
+        if len(jobs) > 500 and not quiet:
+            print(f"Evo Lab: raskt plansøk for {len(jobs)} kort med {workers} prosess{'er' if workers > 1 else ''} ...", flush=True)
+        entries.update(_simulate_jobs(jobs, cfg, lab, live, n_u, stage1, workers, quick=True, on_part=save)[0])
+        save()
     new = len(jobs)
+    # 2) the full search (every way to use the evos), the cards that end highest in their position first, until the
+    #    deadline. The rest keep the fast plan this run and are done first in the next.
+    by_group: Dict[str, List[float]] = {}
+    for p in cands:
+        by_group.setdefault(entries[p.uid]["g"], []).append(entries[p.uid]["live"]["igr"])
+    for v in by_group.values():
+        v.sort()
+
+    def share_above(p: Player) -> float:
+        v = by_group[entries[p.uid]["g"]]
+        return (len(v) - bisect.bisect_right(v, entries[p.uid]["live"]["igr"])) / len(v)
+    todo = sorted((p for p in cands if entries[p.uid]["live"].get("quick")), key=share_above)
+    if len(todo) > 500 and not quiet:
+        print(f"Evo Lab: fullt plansøk for {len(todo)} kort, de som ender høyest først"
+              + (f" (til kl. {datetime.fromtimestamp(deadline).strftime('%H:%M')})" if deadline else "") + " ...", flush=True)
+    done, left = _simulate_jobs([(p, None) for p in todo], cfg, lab, live, n_u, stage1, workers, deadline=deadline,
+                                on_part=save)
+    entries.update(done)
+    quick = len(left)
+    save()
     # stage 2: every future for the best cards per position and OVR
     per = int(fut.get("stage2_per_bucket", 15))
     buckets: Dict[Tuple[str, int], List[Tuple[float, Player]]] = {}
@@ -1896,25 +2010,23 @@ def run(players: List[Player], results: List[dict], cfg: dict, lab: Optional[dic
         lst.sort(key=lambda t: t[0], reverse=True)
         full.update(p.uid for _, p in lst[:per])
     by_uid = {p.uid: p for p in cands}
-    jobs = [(by_uid[uid], entries[uid]) for uid in sorted(full)
+    jobs = [(by_uid[uid], entries[uid]) for uid in sorted(full, key=lambda u: share_above(by_uid[u]))
             if not all(str(u) in entries[uid]["mc"] for u in range(n_u))]
-    entries.update(_simulate_jobs(jobs, cfg, lab, live, n_u, list(range(n_u)), workers))
-    more = len(jobs)
-    out_cache = {"cfg": fp_cfg, "saved": date.today().isoformat(), "cards": {fps[uid]: e for uid, e in entries.items()}}
-    try:
-        cache_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(cache_path, "wb") as f:
-            pickle.dump(out_cache, f, protocol=pickle.HIGHEST_PROTOCOL)
-    except OSError:
-        pass
+    # after the deadline the rest keep the quick estimate from two futures (marked «grovt anslag»)
+    done2, left2 = _simulate_jobs(jobs, cfg, lab, live, n_u, list(range(n_u)), workers, deadline=deadline, on_part=save)
+    entries.update(done2)
+    more = len(done2)
+    save()
     if not quiet:
-        print(f"Evo Lab: {len(cands)} kort ({new} simulert nå, {more} med alle {n_u} fremtider, resten fra hurtigbufferen) "
-              f"på {time.time() - t0:.0f} s")
+        print(f"Evo Lab: {len(cands)} kort ({new} nye eller endret, {len(done)} med fullt plansøk nå, {more} med alle {n_u} "
+              f"fremtider) på {time.time() - t0:.0f} s"
+              + (f". {quick} kort har bare planen fra det raske søket (tidsgrensen), de tas neste kjøring" if quick else "")
+              + (f". {len(left2)} kort rakk ikke alle fremtidene" if left2 else ""))
         if expired:
             print(f"  {len(expired)} live-evoer har gått ut ({', '.join(expired[:4])}{' ...' if len(expired) > 4 else ''}). "
                   f"Legg inn nye med: py -m fcrating evo-import")
     return {"entries": entries, "live": live, "expired": expired, "used": used_names, "skipped": skipped, "universes": n_u,
-            "full": full, "lab": lab}
+            "full": full, "lab": lab, "quick": quick}
 
 
 # ---------------------------------------------------------------- summary per card
@@ -2075,17 +2187,22 @@ def summarize(lab_run: dict, players: List[Player], results: List[dict], cfg: di
         blockers = sorted(((k, tally.get(k, 0)) for k in ("pace", "ps", "pos", "psp")), key=lambda t: t[1], reverse=True)
         dn = dna(r, cfg)
         dna_vals.setdefault(g, []).append(dn["pts"])
-        fav = []
-        if favs and rc and g != "GK" and e.get("med"):
-            pseudo = {"attributes": dict(r["attributes"]), "height_cm": r.get("height_cm"), "work_rate_att": r.get("work_rate_att")}
-            for k, b, a in e["med"]["d"]:
-                pseudo["attributes"][k] = a
-            for f in favs:
-                if f["uid"] == uid:
-                    continue  # the favourite itself
-                d = distance(pseudo, f, sim_stats, rc)
-                if d is not None:
-                    fav.append([f["name"], similarity_pct(d)])
+        fav, fav_live = [], []
+        if favs and rc and g != "GK":
+            def likeness(changed: Dict[str, float]) -> list:
+                pseudo = {"attributes": dict(r["attributes"], **changed), "height_cm": r.get("height_cm"),
+                          "work_rate_att": r.get("work_rate_att")}
+                out_l = []
+                for f in favs:
+                    if f["uid"] == uid:
+                        continue  # the favourite itself
+                    d = distance(pseudo, f, sim_stats, rc)
+                    if d is not None:
+                        out_l.append([f["name"], similarity_pct(d)])
+                return out_l
+            if e.get("med"):   # after a typical year
+                fav = likeness({k: a for k, b, a in e["med"]["d"]})
+            fav_live = likeness(dict(e["live"]["ld"]["a"]))   # with the plan for the evos out now
         # profile categories now, after the live plan and after a typical year (top % in the position)
         cats = {"now": None, "live": None, "end": None}
         if has_prof and g != "GK":
@@ -2118,7 +2235,7 @@ def summarize(lab_run: dict, players: List[Player], results: List[dict], cfg: di
             "like": [like["name"], like.get("rarity") or ""] if like and like is not r else None,
             "access": round(100.0 * tally.get("applied", 0) / offered) if offered > 0 else None,
             "block": [[k, round(100.0 * n / offered)] for k, n in blockers if n and offered > 0][:2],
-            "dna": dn, "fav": fav, "live": e["live"], "med": e.get("med"),
+            "dna": dn, "fav": fav, "fav_live": fav_live, "live": e["live"], "med": e.get("med"),
             "ps_est": bool(r["by_group"][g].get("ps_estimated")),
         }
     for g in dna_vals:

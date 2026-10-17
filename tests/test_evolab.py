@@ -129,6 +129,16 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(evolab.check(e, st2, RULES)[0], "done")
         self.assertEqual([x["key"] for x in evolab._plan_orders([e])[0]], ["intro_repeatable"])
 
+    def test_evo_the_same_card_may_take_twice(self):
+        # if EA lets one card take an evo again («per_card»), the plan may use it that many times, never more
+        e = evo("twice", {"max_ovr": 79, "positions": ["ST"]}, {"ovr": [1, 80], "stats": {"finishing": [3, 90]}}, per_card=2)
+        st = evolab.state_from(low_striker(ovr=70, pace=(70, 70)))
+        st2 = evolab.apply(e, st, RULES)
+        self.assertIsNone(evolab.check(e, st2, RULES))
+        st3 = evolab.apply(e, st2, RULES)
+        self.assertEqual(evolab.check(e, st3, RULES)[0], "done")
+        self.assertEqual([x["key"] for x in evolab._plan_orders([e])[0]], ["twice", "twice"])
+
     def test_fast_rater_matches_rate(self):
         rng = random.Random(4)
         players = [copy.deepcopy(p) for p in BASE] + [low_striker(i, ovr=60 + i) for i in range(8)]
@@ -219,6 +229,33 @@ class PlanTests(unittest.TestCase):
         self.assertAlmostEqual(plan["igr"], self.brute_best(p, evos), places=6)
         self.assertNotIn("nothing", [s["key"] for s in plan["steps"]])    # gives nothing: not in the plan
         self.assertTrue(plan["proven"])
+
+    def test_search_with_an_evo_taken_twice(self):
+        # an evo one card may take twice, with options (the bound must count it twice, per option)
+        p = low_striker(ovr=70, pace=(78, 78), ps=())
+        evos = [
+            evo("again", {"max_ovr": 74, "positions": ["ST"]}, {"ovr": [1, 76], "paths": [
+                {"label": "A", "stats": {"finishing": [5, 82]}}, {"label": "B", "stats": {"positioning": [5, 84]}}]}, per_card=2),
+            evo("cap73", {"max_ovr": 73, "positions": ["ST"]}, {"ovr": [2, 75], "stats": {"shot_power": [8, 85]}}),
+            evo("pace_lock", {"max_ovr": 80, "max_pace": 80, "positions": ["ST"]}, {"stats": {"acceleration": [6, 90]}}),
+        ]
+        plan = self.plan(p, evos)
+        self.assertAlmostEqual(plan["igr"], self.brute_best(p, evos), places=6)
+        self.assertTrue(plan["proven"])
+        self.assertLessEqual([s["key"] for s in plan["steps"]].count("again"), 2)
+
+    def test_quick_plan_is_valid_and_marked(self):
+        p = low_striker(ovr=70, pace=(78, 78), ps=())
+        evos = [evo("a", {"max_ovr": 72, "positions": ["ST"]}, {"ovr": [3, 74], "stats": {"finishing": [10, 80]}}),
+                evo("b", {"max_ovr": 75, "positions": ["ST"]}, {"ovr": [2, 76], "stats": {"positioning": [6, 85]}})]
+        g = position_group(p.position)
+        quick = evolab.plan_live(p, evolab.state_from(p), evos, evolab.Evaluator(p, g, CFG, RULES), RULES, quick=True)
+        self.assertTrue(quick["quick"])
+        self.assertFalse(quick["proven"])
+        self.assertEqual([s["key"] for s in quick["steps"]], ["a", "b"])
+        full = self.plan(p, evos)
+        self.assertFalse(full["quick"])
+        self.assertLessEqual(quick["igr"], full["igr"] + 1e-9)
 
     def test_pace_trap(self):
         # B raises the pace above A's limit, so A must come first
@@ -356,6 +393,29 @@ class RunTests(unittest.TestCase):
             self.assertEqual(again["entries"][uid]["mc"], e["mc"])
         self.assertEqual(sum(e.get("calls", 0) for e in again["entries"].values()),
                          sum(e.get("calls", 0) for e in self.lab_run["entries"].values()))  # nothing simulated again
+
+    def test_time_limit_gives_quick_plans_and_the_next_run_does_them_in_full(self):
+        import os
+        cache = Path(self.tmp.name) / "frist.pkl"
+        old = os.environ.get("FC_FRIST")
+        os.environ["FC_FRIST"] = "1"   # long past: no full search is started
+        try:
+            short = evolab.run(self.players, self.results, CFG, cache_path=cache, today=date(2026, 10, 11), quiet=True,
+                               user_file=Path(self.tmp.name) / "none.json", used_file=Path(self.tmp.name) / "none_used.json")
+        finally:
+            if old is None:
+                del os.environ["FC_FRIST"]
+            else:
+                os.environ["FC_FRIST"] = old
+        self.assertEqual(short["quick"], len(short["entries"]))
+        self.assertTrue(all(e["live"]["quick"] for e in short["entries"].values()))
+        self.assertTrue(cache.exists())
+        again = evolab.run(self.players, self.results, CFG, cache_path=cache, today=date(2026, 10, 11), quiet=True,
+                           user_file=Path(self.tmp.name) / "none.json", used_file=Path(self.tmp.name) / "none_used.json")
+        self.assertEqual(again["quick"], 0)
+        for uid, e in again["entries"].items():
+            self.assertFalse(e["live"].get("quick"))
+            self.assertEqual(e["live"]["igr"], self.lab_run["entries"][uid]["live"]["igr"])
 
     def test_used_evos_are_left_out(self):
         used = Path(self.tmp.name) / "brukt.json"

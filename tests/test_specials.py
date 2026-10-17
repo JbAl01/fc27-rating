@@ -343,6 +343,12 @@ class PoliteFetcherTests(unittest.TestCase):
         self.assertTrue(f.allowed("https://example.com/totw.php?pageNum=1"))
         self.assertFalse(f.allowed("https://example.com/private/x"))
 
+    def test_stops_at_the_time_limit(self):
+        from fcrating.net import Blocked
+        f = PoliteFetcher(deadline=1.0)   # long past
+        with self.assertRaises(Blocked):
+            f.get("https://example.com/x")
+
     def test_robots_wildcards(self):
         from fcrating.net import Robots
         r = Robots("User-agent: Other\nDisallow:\n\nUser-agent: *\nDisallow: /api/*\nAllow: /club/$\nDisallow: /club/")

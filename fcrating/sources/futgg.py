@@ -199,6 +199,7 @@ def card_colors(html: str, card: Optional[str]) -> Optional[str]:
     return None
 
 
+_BORN = re.compile(r'(?:dateOfBirth:|"birthDate":)"(\d{4}-\d{2}-\d{2})"')
 PARSE_VERSION = 2   # 2: colours from the drawn card, the card's attributes; older records are read again once
 _ATTR = re.compile(r'attribute([A-Z][A-Za-z]+):(\d{1,2})\b')
 _FACE = re.compile(r'face(Pace|Shooting|Passing|Dribbling|Defending|Physicality):(\d{1,2})\b')
@@ -253,6 +254,10 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
     attrs = card_attributes(html, card, game)
     if attrs:
         rec.update(attrs)
+    # date of birth (evos with an age requirement, such as Future Stars Academy, need it)
+    b = _BORN.search(html)
+    if b:
+        rec["born"] = b.group(1)
     rec["v"] = PARSE_VERSION
     if not started:
         rec["no_ps"] = True   # the icons were not found: keep the card's own PlayStyles
@@ -401,5 +406,7 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             p.ps_from_base = False
         if rec.get("height") and not p.height_cm:
             p.height_cm = float(rec["height"])
+        if rec.get("born") and not p.birthdate:
+            p.birthdate = rec["born"]
         n += 1
     return n
