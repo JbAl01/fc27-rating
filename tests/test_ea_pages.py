@@ -93,6 +93,24 @@ class ClubInfoTests(unittest.TestCase):
         self.assertEqual(special.birthdate, "2000-06-04")
         self.assertEqual(icon.league, "Icons")
 
+    def test_every_card_gets_a_face(self):
+        from fcrating.cli import _fill_faces
+        from fcrating.schema import Player
+        g = "https://game-assets.fut.gg/x/2027/player-item/27-231747.ab.webp"
+        mb = Player(name="Mbappé", position="ST", attributes={}, id="231747", image=g)
+        promo = Player(name="Mbappé", position="ST", attributes={}, id="50563395", base_id="231747",
+                       image="https://ratings-images-prod.pulse.ea.com/FC25/full/player-portraits/p231747.png")
+        silver = Player(name="Leo Stucki", position="GK", attributes={}, id="87528",
+                        image="https://ratings-images-prod.pulse.ea.com/FC25/full/player-portraits/p87528.png")
+        none = Player(name="Ny", position="CB", attributes={}, id="277072")
+        odd = Player(name="Uten id", position="CB", attributes={})
+        _fill_faces([mb, promo, silver, none, odd])
+        self.assertEqual(mb.image, g)
+        self.assertEqual(promo.image, g)   # base card's FUT.GG face before anything else
+        self.assertEqual(silver.image, "https://cdn.futbin.com/content/fifa27/img/players/87528.png")
+        self.assertEqual(none.image, "https://cdn.futbin.com/content/fifa27/img/players/277072.png")
+        self.assertIsNone(odd.image)
+
     def test_birthdate_with_time_as_ea_sends_it(self):
         from fcrating.schema import parse_birthdate
         self.assertEqual(parse_birthdate("12/20/1998 0:00"), "1998-12-20")

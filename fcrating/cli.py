@@ -57,7 +57,31 @@ def _load_players(files: List[str]) -> List[Player]:
     n = futgg.apply(players, futgg.load_cards(str(ROOT / "data" / "cache" / "futgg")), futgg.load_role_positions())
     if n:
         print(f"FUT.GG (PlayStyles, roller, høyde) brukt på {n} kort.")
+    _fill_faces(players)
     return players
+
+
+FUTBIN_FACE = "https://cdn.futbin.com/content/fifa27/img/players/{id}.png"
+
+
+def _fill_faces(players: List[Player]) -> None:
+    """Every card gets a face. Best is the card's own picture from FUT.GG; then the base card's
+    FUT.GG picture; then FUTBIN's FC 27 picture of the player, which has a fixed address from the
+    EA player id and exists for every player (also the silver and bronze ones FUT.GG has not been
+    read for yet, and the new ones EA's FC 25 portraits miss)."""
+    futgg_host = "https://game-assets.fut.gg/"
+    base_face = {}
+    for p in players:
+        if p.image and p.image.startswith(futgg_host) and str(p.base_id or p.id) == str(p.id):
+            base_face.setdefault(str(p.id), p.image)
+    for p in players:
+        if p.image and p.image.startswith(futgg_host):
+            continue
+        pid = str(p.base_id or p.id or "")
+        if pid in base_face:
+            p.image = base_face[pid]
+        elif pid.isdigit():
+            p.image = FUTBIN_FACE.format(id=pid)
 
 
 def _fill_club_info(players: List[Player]) -> None:
