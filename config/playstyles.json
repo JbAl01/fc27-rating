@@ -92,21 +92,13 @@
         "short_passing",
         "vision"
       ],
-      "relevance": {
-        "ST": 0.3,
-        "W": 0.45,
-        "CAM": 0.9,
-        "CM": 1.0,
-        "CDM": 1.0,
-        "FB": 0.7,
-        "CB": 0.5,
-        "GK": 0.2
-      },
+      "relevance": {"ST": 0.25, "W": 0.5, "CAM": 1.125, "CM": 1.125, "CDM": 1.125, "FB": 0.708, "CB": 0.708, "GK": 0.0},
       "_info": "FC 27: effekten som ga mottakeren bedre førstetouch er fjernet. Fortsatt høyest verdi for sentrale midtbanespillere (raske bakkepasninger slår press), men mindre verdt for spiss og kant."
     },
     "Incisive Pass": {
       "plus": 1.7,
       "base": 0.85,
+      "relevance": {"ST": 0.353, "W": 0.529, "CAM": 1.412, "CM": 1.412, "CDM": 0.824, "FB": 0.824, "CB": 0.529, "GK": 0.0},
       "category": "passing",
       "synergy": [
         "vision",
@@ -121,19 +113,12 @@
       "synergy": [
         "acceleration"
       ],
-      "relevance": {
-        "ST": 1.0,
-        "W": 1.0,
-        "CAM": 0.9,
-        "CM": 0.8,
-        "CDM": 0.8,
-        "FB": 1.0,
-        "CB": 0.9
-      }
+      "relevance": {"ST": 1.267, "W": 1.267, "CAM": 1.267, "CM": 0.933, "CDM": 0.933, "FB": 1.6, "CB": 0.933, "GK": 0.0}
     },
     "Low Driven Shot": {
       "plus": 2.4,
       "base": 1.2,
+      "relevance": {"ST": 1.125, "W": 1.125, "CAM": 1.125, "CM": 0.5, "CDM": 0.15, "FB": 0.1, "CB": 0.05, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -143,6 +128,7 @@
     "Intercept": {
       "plus": 1.7,
       "base": 0.89,
+      "relevance": {"ST": 0.053, "W": 0.1, "CAM": 0.153, "CM": 0.824, "CDM": 1.412, "FB": 1.412, "CB": 1.412, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "interceptions"
@@ -158,6 +144,7 @@
     "Anticipate": {
       "plus": 1.6,
       "base": 0.85,
+      "relevance": {"ST": 0.05, "W": 0.1, "CAM": 0.15, "CM": 0.875, "CDM": 1.187, "FB": 1.187, "CB": 1.5, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "standing_tackle"
@@ -166,6 +153,7 @@
     "Finesse Shot": {
       "plus": 1.2,
       "base": 0.75,
+      "relevance": {"ST": 1.583, "W": 1.583, "CAM": 1.583, "CM": 1.167, "CDM": 0.15, "FB": 0.1, "CB": 0.05, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -175,6 +163,7 @@
     "Rapid": {
       "plus": 2.3,
       "base": 0.95,
+      "relevance": {"ST": 1.174, "W": 1.174, "CAM": 0.957, "CM": 0.957, "CDM": 0.261, "FB": 0.957, "CB": 0.2, "GK": 0.0},
       "_fc27_nerf": "FC 27 Gameplay Deep Dive: 'slightly reduced the speed boost to dribbling animations'. Var 0.7 / 1.4.",
       "category": "ball",
       "synergy": [
@@ -185,6 +174,7 @@
     "Jockey": {
       "plus": 1.2,
       "base": 0.6,
+      "relevance": {"ST": 0.05, "W": 0.1, "CAM": 0.15, "CM": 0.75, "CDM": 1.167, "FB": 1.583, "CB": 1.583, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "def_awareness"
@@ -193,6 +183,7 @@
     "First Touch": {
       "plus": 1.5,
       "base": 0.81,
+      "relevance": {"ST": 0.933, "W": 1.267, "CAM": 0.933, "CM": 0.933, "CDM": 0.6, "FB": 0.6, "CB": 0.2, "GK": 0.0},
       "category": "ball",
       "synergy": [
         "ball_control"
@@ -201,6 +192,7 @@
     "Tiki Taka": {
       "plus": 2.2,
       "base": 1.0,
+      "relevance": {"ST": 0.773, "W": 0.773, "CAM": 1.227, "CM": 1.227, "CDM": 1.0, "FB": 0.773, "CB": 0.545, "GK": 0.0},
       "category": "passing",
       "synergy": [
         "short_passing"
@@ -209,6 +201,7 @@
     "Technical": {
       "plus": 1.5,
       "base": 1.2,
+      "relevance": {"ST": 1.267, "W": 1.267, "CAM": 1.267, "CM": 1.267, "CDM": 0.6, "FB": 0.6, "CB": 0.2, "GK": 0.0},
       "category": "ball",
       "synergy": [
         "dribbling"
@@ -221,15 +214,7 @@
       "synergy": [
         "stamina"
       ],
-      "relevance": {
-        "ST": 0.5,
-        "W": 0.7,
-        "CAM": 0.6,
-        "CM": 1.0,
-        "CDM": 0.9,
-        "FB": 1.0,
-        "CB": 0.5
-      }
+      "relevance": {"ST": 0.5, "W": 0.7, "CAM": 0.6, "CM": 2.0, "CDM": 2.0, "FB": 2.0, "CB": 1.286, "GK": 0.0}
     },
     "Bruiser": {
       "plus": 1.4,
@@ -238,19 +223,12 @@
       "synergy": [
         "strength"
       ],
-      "relevance": {
-        "ST": 0.4,
-        "W": 0.3,
-        "CAM": 0.3,
-        "CM": 0.7,
-        "CDM": 1.0,
-        "FB": 0.8,
-        "CB": 1.0
-      }
+      "relevance": {"ST": 0.4, "W": 0.3, "CAM": 0.3, "CM": 0.643, "CDM": 1.357, "FB": 1.357, "CB": 1.714, "GK": 0.0}
     },
     "Gamechanger": {
       "plus": 1.0,
       "base": 0.5,
+      "relevance": {"ST": 1.4, "W": 1.4, "CAM": 1.4, "CM": 0.4, "CDM": 0.15, "FB": 0.1, "CB": 0.05, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -260,6 +238,7 @@
     "Press Proven": {
       "plus": 0.6,
       "base": 0.33,
+      "relevance": {"ST": 1.0, "W": 1.0, "CAM": 2.333, "CM": 3.167, "CDM": 3.167, "FB": 0.5, "CB": 0.2, "GK": 0.0},
       "category": "ball",
       "synergy": [
         "ball_control",
@@ -269,6 +248,7 @@
     "Block": {
       "plus": 0.9,
       "base": 0.5,
+      "relevance": {"ST": 0.056, "W": 0.1, "CAM": 0.156, "CM": 0.667, "CDM": 1.556, "FB": 1.556, "CB": 2.111, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "def_awareness"
@@ -277,6 +257,7 @@
     "Power Shot": {
       "plus": 2.2,
       "base": 0.9,
+      "relevance": {"ST": 1.0, "W": 1.0, "CAM": 1.0, "CM": 0.273, "CDM": 0.15, "FB": 0.1, "CB": 0.05, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "shot_power",
@@ -286,6 +267,7 @@
     "Precision Header": {
       "plus": 0.2,
       "base": 0.17,
+      "relevance": {"ST": 1.0, "W": 0.9, "CAM": 0.8, "CM": 0.4, "CDM": 0.15, "FB": 0.1, "CB": 0.05, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "heading_accuracy"
@@ -299,15 +281,7 @@
         "jumping",
         "heading_accuracy"
       ],
-      "relevance": {
-        "ST": 0.6,
-        "W": 0.1,
-        "CAM": 0.1,
-        "CM": 0.3,
-        "CDM": 0.6,
-        "FB": 0.5,
-        "CB": 1.0
-      }
+      "relevance": {"ST": 0.6, "W": 0.1, "CAM": 0.1, "CM": 0.3, "CDM": 1.125, "FB": 1.125, "CB": 2.375, "GK": 0.0}
     },
     "Enforcer": {
       "plus": 0.7,
@@ -316,15 +290,7 @@
       "synergy": [
         "strength"
       ],
-      "relevance": {
-        "ST": 1.0,
-        "W": 0.5,
-        "CAM": 0.5,
-        "CM": 0.4,
-        "CDM": 0.3,
-        "FB": 0.2,
-        "CB": 0.2
-      }
+      "relevance": {"ST": 0.857, "W": 0.5, "CAM": 0.5, "CM": 0.4, "CDM": 0.3, "FB": 0.2, "CB": 0.2, "GK": 0.0}
     },
     "Whipped Pass": {
       "plus": 0.6,
@@ -333,19 +299,12 @@
       "synergy": [
         "crossing"
       ],
-      "relevance": {
-        "ST": 0.2,
-        "W": 0.8,
-        "CAM": 0.4,
-        "CM": 0.4,
-        "CDM": 0.2,
-        "FB": 1.0,
-        "CB": 0.1
-      }
+      "relevance": {"ST": 0.2, "W": 2.333, "CAM": 0.4, "CM": 0.4, "CDM": 0.2, "FB": 2.333, "CB": 0.1, "GK": 0.0}
     },
     "Slide Tackle": {
       "plus": 0.6,
       "base": 0.3,
+      "relevance": {"ST": 0.05, "W": 0.1, "CAM": 0.15, "CM": 0.7, "CDM": 1.5, "FB": 1.5, "CB": 2.333, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "sliding_tackle"
@@ -354,6 +313,7 @@
     "Long Ball Pass": {
       "plus": 0.6,
       "base": 0.3,
+      "relevance": {"ST": 0.5, "W": 0.7, "CAM": 1.0, "CM": 1.5, "CDM": 1.5, "FB": 0.8, "CB": 2.333, "GK": 0.0},
       "category": "passing",
       "synergy": [
         "long_passing"
@@ -362,6 +322,7 @@
     "Chip Shot": {
       "plus": 0.9,
       "base": 0.54,
+      "relevance": {"ST": 1.0, "W": 0.667, "CAM": 1.0, "CM": 0.4, "CDM": 0.156, "FB": 0.1, "CB": 0.056, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "finishing"
@@ -370,6 +331,7 @@
     "Inventive": {
       "plus": 1.0,
       "base": 0.6,
+      "relevance": {"ST": 1.4, "W": 0.9, "CAM": 0.9, "CM": 0.9, "CDM": 0.6, "FB": 0.6, "CB": 0.5, "GK": 0.0},
       "category": "passing",
       "synergy": [
         "vision",
@@ -379,6 +341,7 @@
     "Trickster": {
       "plus": 0.5,
       "base": 0.25,
+      "relevance": {"ST": 1.8, "W": 2.8, "CAM": 1.8, "CM": 0.7, "CDM": 0.4, "FB": 0.5, "CB": 0.2, "GK": 0.0},
       "category": "ball",
       "synergy": [
         "dribbling"
@@ -387,6 +350,7 @@
     "Acrobatic": {
       "plus": 0.2,
       "base": 0.1,
+      "relevance": {"ST": 1.0, "W": 0.9, "CAM": 0.8, "CM": 0.4, "CDM": 0.15, "FB": 0.1, "CB": 0.05, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "volleys",
@@ -396,6 +360,7 @@
     "Dead Ball": {
       "plus": 0.3,
       "base": 0.2,
+      "relevance": {"ST": 1.0, "W": 0.9, "CAM": 0.8, "CM": 0.4, "CDM": 0.133, "FB": 0.1, "CB": 0.033, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "fk_accuracy",
@@ -405,6 +370,7 @@
     "Long Throw": {
       "plus": 0.1,
       "base": 0.05,
+      "relevance": {"ST": 0.8, "W": 0.8, "CAM": 0.7, "CM": 0.9, "CDM": 0.9, "FB": 0.9, "CB": 0.9, "GK": 0.0},
       "category": "physical",
       "synergy": [
         "strength"
@@ -459,6 +425,7 @@
       ]
     }
   },
+  "_posisjoner": "Hver PlayStyle har egen relevans per posisjon (relevance), satt slik at PlayStyle+ er verdt det posisjonens tier sier: S+ 2,4, S 1,9, A 1,4, B 0,9, C 0,5, ellers høyst 0,6; S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) får +0,3 ekstra. Rekkefølgen per posisjon er laget 18.10.2026 ut fra posisjonsvise tier-lister (bl.a. Operation Sports) og eierens vurderinger: Low Driven Shot best av skyte-PlayStylene, Finesse Shot svakere enn før, Rapid foran Quick Step. Endre tallene i relevance for å endre rekkefølgen.",
   "_s_tier_bonus": "S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) har +0,4 ekstra i verdien sin over det den ville fått etter tier alene (eierens ønske 18.10.2026). Low Driven Shot er den beste skyte-PlayStylen. Bonusen ganges som alt annet med posisjonens relevans og spillerens attributter, og telles i den samme avtagende summen.",
   "_tier_liste": "Rekkefølgen følger tier-listen eieren bruker (18.10.2026): S Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot. A Incisive Pass, Intercept, Anticipate, Quick Step, First Touch, Technical, Bruiser. B Finesse Shot, Jockey, Gamechanger, Inventive, Chip Shot. C Relentless, Whipped Pass, Press Proven, Trickster. F Acrobatic, Precision Header, Long Throw. Vanlig PlayStyle er skalert med samme faktor som PlayStyle+, så forskjellen mellom dem fra FC 27 består. De andre PlayStylene er ikke endret.",
   "_fc27": "FC 27 (EA Gameplay Deep Dive 29.07.2026 og Closed Beta Feedback Update 03.09.2026): Quick Step, Rapid, Technical, Finesse Shot, Precision Header, Tiki Taka, Jockey, Low Driven Shot og Pinged Pass er svekket eller har mindre forskjell mellom PS og PS+. Bruiser+ er litt svekket. Verdiene er justert, men ikke kalibrert: EA oppgir ingen prosenter."
