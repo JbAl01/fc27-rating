@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-18T17:40:00Z",
+  "_sjekket": "2026-10-18T17:50:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -737,6 +737,108 @@
         "https://www.futbin.com/27/evolutions/52/quick-step",
         "https://www.futnext.com/evolutions/quick-step/2747"
       ]
+    },
+    {
+      "key": "zoomaestro",
+      "name": "Zoomaestro",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Kom 18.10.2026. Fristen for å starte er ukjent: verken Destructoid eller Futmind oppgir dato, og FUTBIN, futnext og FUT.GG har den ikke ennå. Krav som Evo Lab ikke sjekker: maks 74 Defending og maks 4 skill moves (Destructoid sier 4, Futmind 3; eieren bekreftet 4). Oppgraderingene er like hos begge kildene; PlayStyle-taket 3 står hos Destructoid. Roller og svakfot er ikke nevnt. Tallene er summen etter alle tre nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 75,
+        "max_ps": 7,
+        "positions": [
+          "CAM",
+          "CM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          7,
+          83
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "First Touch",
+            3
+          ],
+          [
+            "Technical",
+            3
+          ],
+          [
+            "Rapid",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            5,
+            84
+          ],
+          "short_passing": [
+            10,
+            85
+          ],
+          "balance": [
+            7,
+            82
+          ],
+          "dribbling": [
+            10,
+            83
+          ],
+          "acceleration": [
+            10,
+            83
+          ],
+          "long_shots": [
+            5,
+            83
+          ],
+          "curve": [
+            5,
+            81
+          ],
+          "reactions": [
+            7,
+            82
+          ],
+          "composure": [
+            10,
+            81
+          ],
+          "sprint_speed": [
+            10,
+            83
+          ],
+          "vision": [
+            10,
+            82
+          ],
+          "agility": [
+            7,
+            85
+          ],
+          "ball_control": [
+            10,
+            85
+          ],
+          "stamina": [
+            5,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://www.destructoid.com/best-players-for-fc-27-zoomaestro-evolution/",
+        "https://futmind.com/articles/19919/fc-27-zoomaestro-evolution-guide-best-players-requirements-and-upgrades"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -763,11 +865,6 @@
     {
       "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
       "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
-      "dato": "2026-10-18"
-    },
-    {
-      "navn": "Zoomaestro",
-      "grunn": "Ny 18.10.2026 (CAM/CM, maks 80 OVR, 75 PAC, 74 DEF, 7 PlayStyles; +7 OVR til 83, First Touch/Technical/Rapid). Destructoid og Futmind er enige om oppgraderingene, men uenige om skill moves-kravet (Destructoid maks 4, Futmind maks 3), og ingen oppgir frist. Står ikke på FUTBIN, futnext eller FUT.GG ennå. Legges inn når en tredje kilde avgjør kravet.",
       "dato": "2026-10-18"
     }
   ]
