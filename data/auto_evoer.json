@@ -33,7 +33,10 @@
        ]
       },
       "ps": [
-       "Rapid"
+       [
+        "Rapid",
+        3
+       ]
       ]
      },
      {
@@ -65,7 +68,10 @@
        ]
       },
       "ps": [
-       "Power Shot"
+       [
+        "Power Shot",
+        3
+       ]
       ]
      },
      {
@@ -97,7 +103,10 @@
        ]
       },
       "ps": [
-       "Technical"
+       [
+        "Technical",
+        3
+       ]
       ]
      }
     ]
@@ -247,8 +256,14 @@
      3
     ],
     "ps": [
-     "Jockey",
-     "Incisive Pass"
+     [
+      "Jockey",
+      3
+     ],
+     [
+      "Incisive Pass",
+      3
+     ]
     ],
     "stats": {
      "sprint_speed": [
@@ -463,7 +478,7 @@
    "name": "Speed Bump",
    "cost": "gratis",
    "until": "2026-10-26T18:00Z",
-   "note": "Krav og tall er like hos futnext og Futmind. Fristen 26.10.2026 18:00 UTC er fra Futmind (etter at Storbritannia har gått over til vintertid), futnext sin nedtelling stemmer med den. Taket på PlayStyles (Jockey nivå 2, Intercept nivå 3) er ikke oppgitt. Roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle tre nivåer.",
+   "note": "Krav og tall er like hos futnext og Futmind. Fristen 26.10.2026 18:00 UTC er fra Futmind (etter at Storbritannia har gått over til vintertid), futnext sin nedtelling stemmer med den. PlayStyle-taket er 3 (FUTBIN: «Jockey 3», «Intercept 3»; FUT.GG viser samme tall): en PlayStyle legges bare til når kortet har færre enn 3. Roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle tre nivåer.",
    "req": {
     "max_ovr": 80,
     "max_pace": 75,
@@ -481,8 +496,14 @@
      83
     ],
     "ps": [
-     "Jockey",
-     "Intercept"
+     [
+      "Jockey",
+      3
+     ],
+     [
+      "Intercept",
+      3
+     ]
     ],
     "stats": {
      "acceleration": [
