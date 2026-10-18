@@ -144,8 +144,9 @@ def parse_roles(html: str) -> Optional[dict]:
     if not roles and not rp:
         return None
     ids = lambda t: [int(x) for x in t.split(",") if x]
+    # alt: all the positions the card can play besides its own (EA's ratings page lists at most three of them)
     return {"r": roles, "p": ids(rp.group(1)) if rp else [], "pp": ids(rp.group(2)) if rp else [],
-            "pos": int(pos.group(1)) if pos else None}
+            "pos": int(pos.group(1)) if pos else None, "alt": ids(pos.group(2)) if pos else None}
 
 
 def card_image(html: str, card: Optional[str], game: str = "27") -> Optional[str]:
@@ -283,7 +284,8 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
             break
         old = cache.cards.get(card)
         # cards fetched before the colours and attributes were read are fetched once more
-        again = bool(old) and not old.get("missing") and int(old.get("v") or 1) < PARSE_VERSION
+        again = bool(old) and not old.get("missing") and (int(old.get("v") or 1) < PARSE_VERSION or (
+            kind == "base" and bool(old.get("roles")) and old["roles"].get("alt") is None))   # fetched before the positions were read
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -393,6 +395,11 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             keep = {k: v for k, v in p.attributes.items() if k not in rec["at"]}
             p.attributes = {**{k: float(v) for k, v in rec["at"].items()}, **keep}
             p.estimated = False
+        r0 = rec.get("roles") or {}
+        if r0.get("alt") is not None and EA_POSITIONS.get(r0.get("pos")) == (p.position or "").upper():
+            # FUT.GG has every position the card can play; EA's ratings page only the first three
+            p.alt_positions = [EA_POSITIONS[i] for i in r0["alt"] if i in EA_POSITIONS and EA_POSITIONS[i] != (p.position or "").upper()]
+            p.positions_complete = True
         if rec.get("kind") == "base":
             roles = roles_from(rec, role_positions or {}, p.position)
             if roles:

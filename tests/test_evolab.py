@@ -276,6 +276,24 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(plan["chk"], [["Y", "født etter 2003"]])
         self.assertEqual(plan["steps"], [])
 
+    def test_positions_unconfirmed_when_ea_lists_three(self):
+        # EA's ratings page lists at most three alternative positions: a card with three may play more
+        no_cdm = evo("S", {"max_ovr": 80, "not_positions": ["CDM"]}, {"ovr": [3, 80], "stats": {"finishing": [8, 90]}})
+        p = low_striker(ovr=76)
+        p.alt_positions = ["CM", "RB", "CAM"]
+        plan = self.plan(p, [no_cdm])
+        self.assertEqual(plan["steps"], [])                       # not in the plan ...
+        self.assertEqual(plan["chk"][0][0], "S")                  # ... but «sjekk selv»
+        self.assertIn("EA oppgir bare tre", plan["chk"][0][1])
+        p.positions_complete = True                               # FUT.GG confirmed the list: no CDM, so it is in
+        self.assertEqual([s["key"] for s in self.plan(p, [no_cdm])["steps"]], ["S"])
+        p.alt_positions = ["CM", "RB", "CAM", "CDM"]              # with the CDM FUT.GG lists it is out
+        why = evolab.check(no_cdm, evolab.state_from(p), RULES)
+        self.assertEqual(why[0], "pos")
+        few = low_striker(ovr=76)                                 # two alternatives: the list is complete
+        few.alt_positions = ["CM", "RB"]
+        self.assertEqual([s["key"] for s in self.plan(few, [no_cdm])["steps"]], ["S"])
+
     def test_age_requirement_uses_birthdate(self):
         req = {"max_ovr": 80, "positions": ["ST"], "born_from": "2003-10-09"}
         y = evo("Y", req, {"ovr": [3, 80], "stats": {"finishing": [8, 90]}})

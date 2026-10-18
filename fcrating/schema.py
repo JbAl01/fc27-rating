@@ -224,6 +224,7 @@ class Player:
     id: Optional[str] = None
     ovr: Optional[int] = None
     alt_positions: List[str] = field(default_factory=list)
+    positions_complete: bool = False   # True when the list of positions is confirmed in full (EA's page lists at most 3 alternatives)
     gender: str = "M"
     height_cm: Optional[float] = None
     weight_kg: Optional[float] = None
@@ -360,6 +361,7 @@ class Player:
             price=intnum(data.get("price")),
             source=data.get("source"),
             notes=data.get("notes"),
+            positions_complete=bool(data.get("positions_complete", False)),
             playstyles_complete=bool(data.get("playstyles_complete", True)),
             roles_complete=bool(data.get("roles_complete", True)),
             face_stats={str(k).lower(): float(v) for k, v in (data.get("face_stats") or {}).items()

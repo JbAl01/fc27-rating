@@ -300,7 +300,7 @@ def active_live(lab: dict, today: Optional[date] = None, user_file: Optional[Pat
 # ---------------------------------------------------------------- card state
 
 class State:
-    __slots__ = ("attrs", "ovr", "ps", "psp", "wf", "sm", "roles", "positions", "done", "rarity", "ps_unknown", "born")
+    __slots__ = ("attrs", "ovr", "ps", "psp", "wf", "sm", "roles", "positions", "done", "rarity", "ps_unknown", "born", "pos_unsure")
 
     def copy(self) -> "State":
         s = State.__new__(State)
@@ -309,13 +309,25 @@ class State:
         s.wf, s.sm = self.wf, self.sm
         s.roles = {k: dict(v) for k, v in self.roles.items()}
         s.positions, s.done, s.rarity, s.ps_unknown = self.positions, list(self.done), self.rarity, self.ps_unknown
-        s.born = self.born
+        s.born, s.pos_unsure = self.born, self.pos_unsure
         return s
 
     def key(self) -> tuple:
         # attrs keep their key order through copies (evos never add keys), so values() is enough
         return (tuple(self.attrs.values()), self.ovr, tuple(sorted(self.ps)), tuple(sorted(self.psp)), self.wf, self.sm,
                 tuple(sorted((p, tuple(sorted(r.items()))) for p, r in self.roles.items())))
+
+
+def positions_unsure(p: Player) -> bool:
+    """EA's ratings page lists at most three alternative positions, so a card with three may play more (a CDM
+    the list lacks, say). Until FUT.GG has confirmed the full list, the evos that depend on positions are «sjekk selv»."""
+    return len(p.alt_positions or []) >= 3 and not p.positions_complete
+
+
+def pos_unsure_text(r: dict) -> str:
+    what = (f"må kunne spille {'/'.join(r['positions'])}" if r["positions"]
+            else f"kortet kan ikke spille {', '.join(r['not_positions'])}" if r["not_positions"] else f"maks {r['max_positions']} posisjoner")
+    return f"{what}. Vi kjenner kanskje ikke alle posisjonene hans (EA oppgir bare tre alternative), sjekk i spillet"
 
 
 def state_from(p: Player) -> State:
@@ -329,6 +341,7 @@ def state_from(p: Player) -> State:
     s.done, s.rarity = [], p.rarity or ""
     s.ps_unknown = not (p.playstyles or p.playstyles_plus or p.playstyles_complete)
     s.born = p.birthdate or None
+    s.pos_unsure = positions_unsure(p)
     return s
 
 
@@ -386,12 +399,14 @@ def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
     """None if the card can enter the evo now, else (category, Norwegian reason)."""
     r = evo["req"]
     if r["positions"] and not any(p in r["positions"] for p in st.positions):
-        return "pos", "feil posisjon"
+        return ("pos?", pos_unsure_text(r)) if st.pos_unsure else ("pos", "feil posisjon")
     bad = [p for p in st.positions if p in r["not_positions"]]
     if bad:
         return "pos", f"har posisjonen {bad[0]}"
     if r["max_positions"] is not None and len(st.positions) > r["max_positions"]:
         return "pos", f"{len(st.positions)} posisjoner (maks {r['max_positions']})"
+    if st.pos_unsure and (r["not_positions"] or r["max_positions"] is not None):
+        return "pos?", pos_unsure_text(r)
     age = birth_block(r, st.born)
     if age:
         return age
@@ -1324,11 +1339,13 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
     for e in evos:
         r = e["req"]
         if r["positions"] and not any(x in r["positions"] for x in st0.positions):
+            if st0.pos_unsure:
+                unchecked.append([e["name"], pos_unsure_text(r)])
             continue
         why = check(e, st0, rules)
         if why and why[0] in ("pos", "age"):
             continue
-        if why and why[0] == "age?":
+        if why and why[0] in ("age?", "pos?"):
             unchecked.append([e["name"], why[1]])
             continue
         if e["unchecked"] and not rules.get("include_unchecked", False):
@@ -1809,7 +1826,7 @@ def _fingerprint(obj) -> str:
 def card_fingerprint(p: Player) -> str:
     return _fingerprint([p.name, p.rarity, p.ovr, p.position, p.alt_positions, p.attributes, p.playstyles, p.playstyles_plus,
                          p.playstyles_complete, p.weak_foot, p.skill_moves, p.roles, p.height_cm, p.gender, p.body_type,
-                         p.status, p.accelerate_source, p.off_balance_dribbling, p.work_rate_att, p.birthdate])
+                         p.status, p.accelerate_source, p.off_balance_dribbling, p.work_rate_att, p.birthdate, positions_unsure(p)])
 
 
 def config_fingerprint(cfg: dict, lab: dict, live: List[dict]) -> str:

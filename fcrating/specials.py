@@ -313,8 +313,10 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 # cards EA has no identical copy of first: their attributes can only come from FUT.GG
                 eac = ea_cards or {}
                 ea_ok = lambda e: same_card(eac.get(str(e.get("player_id"))), e.get("ovr"), e.get("face"))
+                # EA's page lists at most three alternative positions: cards with three are fetched early, for the full list
+                trunc = lambda e: len(getattr(eac.get(str(e.get("player_id"))), "alt_positions", None) or []) >= 3
                 base = [(str(e.get("player_id") or fid), fid) for fid, e in
-                        sorted(unique_entries(fr_cache), key=lambda t: (ea_ok(t[1]), str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
+                        sorted(unique_entries(fr_cache), key=lambda t: (ea_ok(t[1]) and not trunc(t[1]), str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
                         if fr.is_base_version(e["version"])]
                 # a time limit, so the whole run stays within the workflow's limit (the rest comes next run)
                 deadline = _time.time() + 60 * float(gcfg.get("max_minutes", 35))
