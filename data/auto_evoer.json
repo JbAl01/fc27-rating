@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-18T11:50:00Z",
+  "_sjekket": "2026-10-18T17:40:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -763,6 +763,11 @@
     {
       "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
       "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
+      "dato": "2026-10-18"
+    },
+    {
+      "navn": "Zoomaestro",
+      "grunn": "Ny 18.10.2026 (CAM/CM, maks 80 OVR, 75 PAC, 74 DEF, 7 PlayStyles; +7 OVR til 83, First Touch/Technical/Rapid). Destructoid og Futmind er enige om oppgraderingene, men uenige om skill moves-kravet (Destructoid maks 4, Futmind maks 3), og ingen oppgir frist. Står ikke på FUTBIN, futnext eller FUT.GG ennå. Legges inn når en tredje kilde avgjør kravet.",
       "dato": "2026-10-18"
     }
   ]
