@@ -406,3 +406,5 @@ svg.psi.plus path.f{fill:#e2b84b}
 /* detaljvisning: kortet midt på, PlayStyles rett under */
 .dethead .top>figure{display:flex;flex-direction:column;align-items:center;margin:0 auto}
 .dethead .top>figure>.psrow{margin-left:auto;margin-right:auto}
+/* høye bilder (promo og spesialkort) fyller hele kortet, også på de små kortene i listene; må stå sist, ellers vinner regelen for små kort */
+.fcard.real .pic.tall,.fcard.real.mini .pic.tall{left:0;right:0;top:0;bottom:auto;width:100%;height:100%;object-fit:contain;object-position:50% 100%}

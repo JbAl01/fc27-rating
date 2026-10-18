@@ -361,13 +361,17 @@ else{const drop=o0.p50-p50;p10=pyRound(o.p10-drop,1);m=pyRound(o.p50-drop,1);p90
 m=Math.max(p50,m);p10=Math.min(m,Math.max(p50,p10));p90=Math.max(m,p90);
 d.h[j]={...o,p10,p50:m,p90,op,ovr,rank:rankIn(pool,m),adj:pyRound(o.p50-m,1)}}}
 function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;
-d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._lr=null;d._obj=0;d._tw=""}
+d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._ak="";d._lr=null;d._obj=0;d._tw=""}
 /* bring one card up to date with the used evos and the chosen goal */
 function refreshCard(d){restore(d);
-if(USED.size&&d.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))){d.plans=searchPlans(d);d.lm.tips=[];d._re=true;forecastFrom(d,liveFields(d,d.plans[0]))}
+if(aff(d)){const uk=usedKey(),pc=d._upc||(d._upc=new Map());let pl=pc.get(uk);if(!pl){pl=searchPlans(d);if(pc.size>=6)pc.delete(pc.keys().next().value);pc.set(uk,pl)}d.plans=pl.slice();d.lm.tips=[];d._re=true;d._ak=uk;forecastFrom(d,liveFields(d,d.plans[0]))}
 d._tw=twinKey();if(d._tw)d.plans[5]=twinPlan(d);
 const w=want(d);if(w)liveFields(d,d.plans[w]);d._obj=w;d._lr=null}
-const needsWork=d=>d._re||d._obj!==want(d)||(OBJ&&OBJ<5&&d._orig.plans[OBJ]&&d._obj!==OBJ)||(d._tw||"")!==twinKey()||PLANSEL[d.i]!=null||(USED.size&&d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei))));
+const usedKey=()=>[...USED].sort().join("|");
+/* does one of the evos marked as used take part in a plan of the card? (the evos of the plans never change: found once) */
+const planEvs=d=>d._pe||(d._pe=new Set(d._orig.plans.flatMap(p=>p?p[0].map(x=>x[0]):[])));
+const aff=d=>{if(!USED.size)return false;for(const ei of planEvs(d))if(isUsed(ei))return true;return false};
+const needsWork=d=>(aff(d)?usedKey():"")!==(d._ak||"")||d._obj!==want(d)||(OBJ&&OBJ<5&&d._orig.plans[OBJ]&&d._obj!==OBJ)||(d._tw||"")!==twinKey()||PLANSEL[d.i]!=null;
 let usedJob=0;
 /* Works through every card whose plan changes (evos marked as used, or another goal in the sort). Cards in the
    current view and high in the current sort come first, and the table is redrawn while it works, so the top
@@ -381,7 +385,7 @@ let todo=D.filter(needsWork);
 const key=d=>[pass(d,q)?0:1,f(d)];
 const ks=new Map(todo.map(d=>[d,key(d)]));todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);if(x[0]!==y[0])return x[0]-y[0];
 const u=x[1],v=y[1];if(u===v)return 0;if(u==null)return 1;if(v==null)return -1;return(u>v?1:-1)*dir});
-if(OBJ===5){const tk=twinKey(),only=todo.filter(d=>(d._tw||"")!==tk&&!d._re&&PLANSEL[d.i]==null&&!(USED.size&&d._orig.plans.some(p=>p&&p[0].some(([ei])=>isUsed(ei)))));
+if(OBJ===5){const tk=twinKey(),only=todo.filter(d=>(d._tw||"")!==tk&&!aff(d)&&PLANSEL[d.i]==null);
 const keep=new Set(only.filter(d=>ks.get(d)[0]===0).slice(0,TWIN_TOP));todo=todo.filter(d=>!only.includes(d)||keep.has(d));twinMore=false}
 let k=0,drawn=performance.now();
 const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40)refreshCard(todo[k++]);
@@ -447,13 +451,19 @@ return`<td><div class="who">${cardHtml(d,"",d.ovr,[],true)}<div><div class="nm">
 <td class="num">${s&&s[0]!=null?fmt(s[0])+delta(s[0]-(d.stops.now[0]??s[0])):"–"}</td>
 ${TWIN?`<td class="num">${(()=>{const t=twinSim(d);return t!=null?Math.round(t)+" %":"–"})()}</td>`:""}`}
 let open=null;
-function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
+/* rows already built: a row whose html is the same is moved into place as it is (its pictures are not loaded again),
+   so the table does not blink while the plans are recalculated */
+const RC=new Map();let lastHead="";
+function render(){const hh=COLS().map(c=>c[0]+c[1]).join("|")+F.sort+dir;if(hh!==lastHead){lastHead=hh;head()}const rows=rowsNow(),tb=$("rows");
 $("count").textContent=`${n0(rows.length)} av ${n0(D.length)} kort`;
-const ncol=COLS().length;
-rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.i?" open":"");tr.tabIndex=0;tr.innerHTML=rowHtml(d);
-const tog=()=>{open=open===d.i?null:d.i;render()};tr.onclick=tog;tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};tb.appendChild(tr);
-if(open===d.i){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${detail(d)}</td>`;tb.appendChild(dt);wireDetail(dt,d)}});
-if(!rows.length)tb.innerHTML=`<tr><td colspan="${ncol}" class="l" style="padding:18px">Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».</td></tr>`;
+const ncol=COLS().length,out=[];if(RC.size>1500)RC.clear();
+rows.slice(0,shown).forEach(d=>{const h=rowHtml(d),isOpen=open===d.i,key=h+"|"+isOpen;let c=RC.get(d.i);
+if(!c||c.k!==key){const tr=document.createElement("tr");tr.className="row"+(isOpen?" open":"");tr.tabIndex=0;tr.innerHTML=h;
+const tog=()=>{open=open===d.i?null:d.i;render()};tr.onclick=tog;tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};c={k:key,tr,dt:null};RC.set(d.i,c)}
+out.push(c.tr);
+if(isOpen){const dh=detail(d);if(!c.dt||c.dt.h!==dh||c.dt.n!==ncol){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${dh}</td>`;wireDetail(dt,d);c.dt={h:dh,n:ncol,el:dt}}out.push(c.dt.el)}else c.dt=null});
+if(!rows.length){const tr=document.createElement("tr");tr.innerHTML=`<td colspan="${ncol}" class="l" style="padding:18px">Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».</td>`;out.push(tr)}
+tb.replaceChildren(...out);
 const m=$("morerows");m.hidden=rows.length<=shown;m.textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til`;renderCompare();
 if(OBJ===5&&!twinMore&&rows.slice(0,shown).some(d=>(d._tw||"")!==twinKey())){twinMore=true;setTimeout(recompute,50)}}
 function reset(){shown=PAGE;render()}
