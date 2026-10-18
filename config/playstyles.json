@@ -105,8 +105,8 @@
       "_info": "FC 27: effekten som ga mottakeren bedre førstetouch er fjernet. Fortsatt høyest verdi for sentrale midtbanespillere (raske bakkepasninger slår press), men mindre verdt for spiss og kant."
     },
     "Incisive Pass": {
-      "plus": 2.0,
-      "base": 1.0,
+      "plus": 1.7,
+      "base": 0.85,
       "category": "passing",
       "synergy": [
         "vision",
@@ -114,8 +114,8 @@
       ]
     },
     "Quick Step": {
-      "plus": 1.3,
-      "base": 0.7,
+      "plus": 1.5,
+      "base": 0.81,
       "_fc27_nerf": "FC 27 Gameplay Deep Dive: fartsøkningen ved dribling og akselerasjon er redusert for både PlayStyle og PlayStyle+, særlig for å jevne ut nivåene, så Acceleration teller mer. Var 0.8 / 1.6.",
       "category": "physical",
       "synergy": [
@@ -132,8 +132,8 @@
       }
     },
     "Low Driven Shot": {
-      "plus": 1.6,
-      "base": 0.9,
+      "plus": 1.9,
+      "base": 1.07,
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -141,8 +141,8 @@
       ]
     },
     "Intercept": {
-      "plus": 1.9,
-      "base": 1.0,
+      "plus": 1.7,
+      "base": 0.89,
       "category": "defending",
       "synergy": [
         "interceptions"
@@ -156,16 +156,16 @@
       "_info": "FC 27: spillere uten PlayStyle men med høy Interceptions får lengre rekkevidde, så PlayStylen er mindre verdt for dem."
     },
     "Anticipate": {
-      "plus": 1.7,
-      "base": 0.9,
+      "plus": 1.6,
+      "base": 0.85,
       "category": "defending",
       "synergy": [
         "standing_tackle"
       ]
     },
     "Finesse Shot": {
-      "plus": 1.6,
-      "base": 1.0,
+      "plus": 1.2,
+      "base": 0.75,
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -173,8 +173,8 @@
       ]
     },
     "Rapid": {
-      "plus": 1.2,
-      "base": 0.6,
+      "plus": 1.9,
+      "base": 0.95,
       "_fc27_nerf": "FC 27 Gameplay Deep Dive: 'slightly reduced the speed boost to dribbling animations'. Var 0.7 / 1.4.",
       "category": "ball",
       "synergy": [
@@ -183,40 +183,40 @@
       ]
     },
     "Jockey": {
-      "plus": 1.0,
-      "base": 0.5,
+      "plus": 1.2,
+      "base": 0.6,
       "category": "defending",
       "synergy": [
         "def_awareness"
       ]
     },
     "First Touch": {
-      "plus": 1.3,
-      "base": 0.7,
+      "plus": 1.5,
+      "base": 0.81,
       "category": "ball",
       "synergy": [
         "ball_control"
       ]
     },
     "Tiki Taka": {
-      "plus": 0.8,
-      "base": 0.5,
+      "plus": 1.8,
+      "base": 1.12,
       "category": "passing",
       "synergy": [
         "short_passing"
       ]
     },
     "Technical": {
-      "plus": 1.0,
-      "base": 0.8,
+      "plus": 1.5,
+      "base": 1.2,
       "category": "ball",
       "synergy": [
         "dribbling"
       ]
     },
     "Relentless": {
-      "plus": 1.1,
-      "base": 0.6,
+      "plus": 0.7,
+      "base": 0.38,
       "category": "physical",
       "synergy": [
         "stamina"
@@ -232,8 +232,8 @@
       }
     },
     "Bruiser": {
-      "plus": 0.9,
-      "base": 0.5,
+      "plus": 1.4,
+      "base": 0.78,
       "category": "physical",
       "synergy": [
         "strength"
@@ -258,8 +258,8 @@
       ]
     },
     "Press Proven": {
-      "plus": 0.9,
-      "base": 0.5,
+      "plus": 0.6,
+      "base": 0.33,
       "category": "ball",
       "synergy": [
         "ball_control",
@@ -275,8 +275,8 @@
       ]
     },
     "Power Shot": {
-      "plus": 0.8,
-      "base": 0.4,
+      "plus": 1.8,
+      "base": 0.9,
       "category": "shooting",
       "synergy": [
         "shot_power",
@@ -284,8 +284,8 @@
       ]
     },
     "Precision Header": {
-      "plus": 0.7,
-      "base": 0.6,
+      "plus": 0.2,
+      "base": 0.17,
       "category": "shooting",
       "synergy": [
         "heading_accuracy"
@@ -327,8 +327,8 @@
       }
     },
     "Whipped Pass": {
-      "plus": 0.7,
-      "base": 0.4,
+      "plus": 0.6,
+      "base": 0.34,
       "category": "passing",
       "synergy": [
         "crossing"
@@ -360,16 +360,16 @@
       ]
     },
     "Chip Shot": {
-      "plus": 0.5,
-      "base": 0.3,
+      "plus": 0.9,
+      "base": 0.54,
       "category": "shooting",
       "synergy": [
         "finishing"
       ]
     },
     "Inventive": {
-      "plus": 0.5,
-      "base": 0.3,
+      "plus": 1.0,
+      "base": 0.6,
       "category": "passing",
       "synergy": [
         "vision",
@@ -377,16 +377,16 @@
       ]
     },
     "Trickster": {
-      "plus": 0.4,
-      "base": 0.2,
+      "plus": 0.5,
+      "base": 0.25,
       "category": "ball",
       "synergy": [
         "dribbling"
       ]
     },
     "Acrobatic": {
-      "plus": 0.4,
-      "base": 0.2,
+      "plus": 0.2,
+      "base": 0.1,
       "category": "shooting",
       "synergy": [
         "volleys",
@@ -459,5 +459,6 @@
       ]
     }
   },
+  "_tier_liste": "Rekkefølgen følger tier-listen eieren bruker (18.10.2026): S Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot. A Incisive Pass, Intercept, Anticipate, Quick Step, First Touch, Technical, Bruiser. B Finesse Shot, Jockey, Gamechanger, Inventive, Chip Shot. C Relentless, Whipped Pass, Press Proven, Trickster. F Acrobatic, Precision Header, Long Throw. Vanlig PlayStyle er skalert med samme faktor som PlayStyle+, så forskjellen mellom dem fra FC 27 består. De andre PlayStylene er ikke endret.",
   "_fc27": "FC 27 (EA Gameplay Deep Dive 29.07.2026 og Closed Beta Feedback Update 03.09.2026): Quick Step, Rapid, Technical, Finesse Shot, Precision Header, Tiki Taka, Jockey, Low Driven Shot og Pinged Pass er svekket eller har mindre forskjell mellom PS og PS+. Bruiser+ er litt svekket. Verdiene er justert, men ikke kalibrert: EA oppgir ingen prosenter."
 }
