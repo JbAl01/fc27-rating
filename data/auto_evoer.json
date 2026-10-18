@@ -1,599 +1,769 @@
 {
- "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
- "_sjekket": "2026-10-16T17:50:00Z",
- "evos": [
-  {
-   "key": "future_stars_academy_3",
-   "name": "Future Stars Academy III",
-   "cost": "gratis",
-   "until": "2026-10-26T17:00Z",
-   "note": "Kommer etter Future Stars Academy II (krever 82 OVR og Future Stars-kort). PlayStyle i hvert valg (Rapid, Power Shot, Technical) står bare hos én kilde (Futmind), og taket på dem er ukjent. Tallene i parentes er regnet som maks, som i de andre evoene. Fristen er fra Futmind, og 1 time tidligere enn Academy I og II for å være på den trygge siden.",
-   "req": {
-    "min_ovr": 82,
-    "max_ovr": 82,
-    "max_ps": 7,
-    "requires_evo": "future_stars_academy_2"
-   },
-   "up": {
-    "paths": [
-     {
-      "label": "Valg A: Rapid, fart",
-      "ovr": [
-       1,
-       83
-      ],
-      "stats": {
-       "sprint_speed": [
-        3,
-        87
-       ],
-       "acceleration": [
-        3,
-        87
-       ]
+  "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
+  "_sjekket": "2026-10-18T11:50:00Z",
+  "evos": [
+    {
+      "key": "future_stars_academy_3",
+      "name": "Future Stars Academy III",
+      "cost": "gratis",
+      "until": "2026-10-26T17:00Z",
+      "note": "Kommer etter Future Stars Academy II (krever 82 OVR og Future Stars-kort). PlayStyle i hvert valg (Rapid, Power Shot, Technical) står bare hos én kilde (Futmind), og taket på dem er ukjent. Tallene i parentes er regnet som maks, som i de andre evoene. Fristen er fra Futmind, og 1 time tidligere enn Academy I og II for å være på den trygge siden.",
+      "req": {
+        "min_ovr": 82,
+        "max_ovr": 82,
+        "max_ps": 7,
+        "requires_evo": "future_stars_academy_2"
       },
-      "ps": [
-       [
-        "Rapid",
-        3
-       ]
-      ]
-     },
-     {
-      "label": "Valg B: Power Shot, skudd",
-      "ovr": [
-       1,
-       83
-      ],
-      "stats": {
-       "finishing": [
-        4,
-        88
-       ],
-       "shot_power": [
-        3,
-        88
-       ],
-       "long_shots": [
-        3,
-        84
-       ],
-       "volleys": [
-        5,
-        82
-       ],
-       "composure": [
-        3,
-        85
-       ]
+      "up": {
+        "paths": [
+          {
+            "label": "Valg A: Rapid, fart",
+            "ovr": [
+              1,
+              83
+            ],
+            "stats": {
+              "sprint_speed": [
+                3,
+                87
+              ],
+              "acceleration": [
+                3,
+                87
+              ]
+            },
+            "ps": [
+              [
+                "Rapid",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: Power Shot, skudd",
+            "ovr": [
+              1,
+              83
+            ],
+            "stats": {
+              "finishing": [
+                4,
+                88
+              ],
+              "shot_power": [
+                3,
+                88
+              ],
+              "long_shots": [
+                3,
+                84
+              ],
+              "volleys": [
+                5,
+                82
+              ],
+              "composure": [
+                3,
+                85
+              ]
+            },
+            "ps": [
+              [
+                "Power Shot",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Valg C: Technical, dribling",
+            "ovr": [
+              1,
+              83
+            ],
+            "stats": {
+              "agility": [
+                4,
+                89
+              ],
+              "balance": [
+                2,
+                85
+              ],
+              "reactions": [
+                3,
+                86
+              ],
+              "ball_control": [
+                5,
+                89
+              ],
+              "dribbling": [
+                5,
+                89
+              ]
+            },
+            "ps": [
+              [
+                "Technical",
+                3
+              ]
+            ]
+          }
+        ]
       },
-      "ps": [
-       [
-        "Power Shot",
-        3
-       ]
+      "sources": [
+        "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
+        "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
       ]
-     },
-     {
-      "label": "Valg C: Technical, dribling",
-      "ovr": [
-       1,
-       83
-      ],
-      "stats": {
-       "agility": [
-        4,
-        89
-       ],
-       "balance": [
-        2,
-        85
-       ],
-       "reactions": [
-        3,
-        86
-       ],
-       "ball_control": [
-        5,
-        89
-       ],
-       "dribbling": [
-        5,
-        89
-       ]
-      },
-      "ps": [
-       [
-        "Technical",
-        3
-       ]
-      ]
-     }
-    ]
-   },
-   "sources": [
-    "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
-    "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
-   ]
-  },
-  {
-   "key": "side_step",
-   "name": "Side Step",
-   "cost": "gratis",
-   "until_ukjent": true,
-   "note": "Fristen for å starte er ukjent: ingen kilde oppgir dato (FUTBIN viser bare «utløper om 2 uker», åpnet 14.10.2026). Evoen er merket repeterbar hos FUTBIN, men hvor mange ganger står ikke. Roller og skill moves er ikke nevnt. Fordeler på nivå: nivå 1 OVR/Crossing/Long Passing/Long Shots/Def. Awareness/Sprint Speed/svakfot, nivå 2 Curve/Finishing/FK/Stand Tackle/Volleys/Tiki Taka, nivå 3 Acceleration/Interceptions/Short Passing/Shot Power/Slide Tackle/Vision. Tallene her er summen etter alle tre nivåer.",
-   "req": {
-    "max_ovr": 80,
-    "max_pace": 85,
-    "max_ps": 7,
-    "positions": [
-     "LB",
-     "RB"
-    ],
-    "not_positions": [
-     "CB",
-     "CM"
-    ]
-   },
-   "up": {
-    "ovr": [
-     7,
-     81
-    ],
-    "wf": [
-     2,
-     3
-    ],
-    "ps": [
-     [
-      "Tiki Taka",
-      3
-     ]
-    ],
-    "stats": {
-     "acceleration": [
-      5,
-      83
-     ],
-     "sprint_speed": [
-      5,
-      83
-     ],
-     "crossing": [
-      7,
-      81
-     ],
-     "curve": [
-      7,
-      77
-     ],
-     "finishing": [
-      7,
-      78
-     ],
-     "interceptions": [
-      7,
-      78
-     ],
-     "long_passing": [
-      7,
-      76
-     ],
-     "long_shots": [
-      7,
-      78
-     ],
-     "def_awareness": [
-      7,
-      78
-     ],
-     "short_passing": [
-      7,
-      80
-     ],
-     "fk_accuracy": [
-      7,
-      78
-     ],
-     "shot_power": [
-      7,
-      77
-     ],
-     "sliding_tackle": [
-      7,
-      81
-     ],
-     "standing_tackle": [
-      7,
-      81
-     ],
-     "vision": [
-      7,
-      78
-     ],
-     "volleys": [
-      7,
-      76
-     ]
-    }
-   },
-   "sources": [
-    "https://www.futbin.com/27/evolutions/50/side-step",
-    "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/"
-   ]
-  },
-  {
-   "key": "centre_stage",
-   "name": "Centre Stage",
-   "cost": "gratis",
-   "until": "2026-10-25T17:00Z",
-   "note": "Fristen for å starte (25.10.2026) står bare hos Futmind; FUT.GG oppgir ingen dato og FUTBIN bare «utløper om 2 uker». Tidligste tid (17:00 UTC) er brukt. Krav og oppgraderinger er like hos FUTBIN, FUT.GG og Futmind. Tallene er summen etter alle fire nivåer. Taket på PlayStyles (Jockey nivå 2, Incisive Pass nivå 3) er ikke oppgitt. Roller er ikke nevnt.",
-   "req": {
-    "max_ovr": 81,
-    "max_pace": 85,
-    "max_ps": 7,
-    "positions": [
-     "CDM",
-     "CM"
-    ],
-    "not_positions": [
-     "CB",
-     "ST",
-     "CAM"
-    ]
-   },
-   "up": {
-    "ovr": [
-     10,
-     85
-    ],
-    "wf": [
-     2,
-     3
-    ],
-    "sm": [
-     2,
-     3
-    ],
-    "ps": [
-     [
-      "Jockey",
-      3
-     ],
-     [
-      "Incisive Pass",
-      3
-     ]
-    ],
-    "stats": {
-     "sprint_speed": [
-      7,
-      77
-     ],
-     "acceleration": [
-      7,
-      77
-     ],
-     "short_passing": [
-      10,
-      82
-     ],
-     "heading_accuracy": [
-      10,
-      81
-     ],
-     "jumping": [
-      30,
-      85
-     ],
-     "vision": [
-      10,
-      83
-     ],
-     "long_passing": [
-      10,
-      83
-     ],
-     "def_awareness": [
-      10,
-      80
-     ],
-     "stamina": [
-      30,
-      84
-     ],
-     "crossing": [
-      10,
-      82
-     ],
-     "curve": [
-      10,
-      82
-     ],
-     "standing_tackle": [
-      10,
-      81
-     ],
-     "strength": [
-      30,
-      85
-     ],
-     "fk_accuracy": [
-      10,
-      82
-     ],
-     "interceptions": [
-      10,
-      82
-     ],
-     "sliding_tackle": [
-      10,
-      82
-     ],
-     "aggression": [
-      30,
-      85
-     ]
-    }
-   },
-   "sources": [
-    "https://www.futbin.com/27/evolutions/51/centre-stage",
-    "https://www.fut.gg/evolutions/2556-centre-stage/",
-    "https://futmind.com/articles/19098/centre-stage-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
-   ]
-  },
-  {
-   "key": "future_stars_academy_4",
-   "name": "Future Stars Academy IV",
-   "cost": "gratis",
-   "until": "2026-10-26T17:00Z",
-   "note": "Siste steg etter Future Stars Academy III (krever 83 OVR og Future Stars Academy-kort; at Academy III må være gjort først står hos timesaver/FUT.GG-artikkelen, futnext og Futmind sier bare rarity Future Stars). Tallene er like hos futnext og Futmind. Fristen er fra Futmind (17:00 UTC). Taket 4 på Low Driven Shot er bare vist hos futnext (umerket «4»).",
-   "req": {
-    "min_ovr": 83,
-    "max_ovr": 83,
-    "max_ps": 7,
-    "requires_evo": "future_stars_academy_3"
-   },
-   "up": {
-    "ovr": [
-     2,
-     85
-    ],
-    "stats": {
-     "long_shots": [
-      3,
-      78
-     ],
-     "penalties": [
-      8,
-      75
-     ],
-     "composure": [
-      3,
-      80
-     ],
-     "jumping": [
-      5,
-      70
-     ],
-     "strength": [
-      4,
-      72
-     ],
-     "shot_power": [
-      3,
-      80
-     ],
-     "volleys": [
-      4,
-      76
-     ],
-     "crossing": [
-      6,
-      80
-     ],
-     "heading_accuracy": [
-      4,
-      72
-     ],
-     "stamina": [
-      3,
-      83
-     ],
-     "aggression": [
-      6,
-      60
-     ]
     },
-    "paths": [
-     {
-      "label": "Valg A: Low Driven Shot, skudd",
-      "ps": [
-       [
-        "Low Driven Shot",
-        4
-       ]
-      ],
-      "stats": {
-       "finishing": [
-        1,
-        84
-       ],
-       "shot_power": [
-        3,
-        86
-       ],
-       "long_shots": [
-        2,
-        82
-       ],
-       "volleys": [
-        4,
-        82
-       ],
-       "composure": [
-        3,
-        84
-       ]
-      }
-     },
-     {
-      "label": "Valg B: pasning",
-      "stats": {
-       "vision": [
-        3,
-        88
-       ],
-       "short_passing": [
-        3,
-        88
-       ],
-       "long_passing": [
-        4,
-        86
-       ],
-       "reactions": [
-        4,
-        86
-       ],
-       "ball_control": [
-        2,
-        84
-       ],
-       "composure": [
-        4,
-        85
-       ]
-      }
-     }
-    ]
-   },
-   "sources": [
-    "https://www.futnext.com/evolutions/future-stars-academy-iv/2756",
-    "https://futmind.com/articles/19104/future-stars-academy-iv-evolution-guide-ea-sports-fc-27-ultimate-team"
-   ]
-  },
-  {
-   "key": "speed_bump",
-   "name": "Speed Bump",
-   "cost": "gratis",
-   "until": "2026-10-26T18:00Z",
-   "note": "Krav og tall er like hos futnext og Futmind. Fristen 26.10.2026 18:00 UTC er fra Futmind (etter at Storbritannia har gått over til vintertid), futnext sin nedtelling stemmer med den. PlayStyle-taket er 3 (FUTBIN: «Jockey 3», «Intercept 3»; FUT.GG viser samme tall): en PlayStyle legges bare til når kortet har færre enn 3. Roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle tre nivåer.",
-   "req": {
-    "max_ovr": 80,
-    "max_pace": 75,
-    "max_ps": 7,
-    "positions": [
-     "CB"
-    ],
-    "not_positions": [
-     "CDM"
-    ]
-   },
-   "up": {
-    "ovr": [
-     10,
-     83
-    ],
-    "ps": [
-     [
-      "Jockey",
-      3
-     ],
-     [
-      "Intercept",
-      3
-     ]
-    ],
-    "stats": {
-     "acceleration": [
-      10,
-      77
-     ],
-     "long_passing": [
-      4,
-      76
-     ],
-     "composure": [
-      14,
-      81
-     ],
-     "def_awareness": [
-      7,
-      82
-     ],
-     "jumping": [
-      10,
-      85
-     ],
-     "sprint_speed": [
-      10,
-      77
-     ],
-     "reactions": [
-      7,
-      80
-     ],
-     "interceptions": [
-      7,
-      82
-     ],
-     "standing_tackle": [
-      12,
-      82
-     ],
-     "strength": [
-      7,
-      86
-     ],
-     "short_passing": [
-      11,
-      80
-     ],
-     "ball_control": [
-      5,
-      76
-     ],
-     "heading_accuracy": [
-      5,
-      80
-     ],
-     "sliding_tackle": [
-      7,
-      82
-     ],
-     "aggression": [
-      5,
-      84
-     ]
+    {
+      "key": "side_step",
+      "name": "Side Step",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Fristen for å starte er ukjent: ingen kilde oppgir dato (FUTBIN viser bare «utløper om 2 uker», åpnet 14.10.2026). Evoen er merket repeterbar hos FUTBIN, men hvor mange ganger står ikke. Roller og skill moves er ikke nevnt. Fordeler på nivå: nivå 1 OVR/Crossing/Long Passing/Long Shots/Def. Awareness/Sprint Speed/svakfot, nivå 2 Curve/Finishing/FK/Stand Tackle/Volleys/Tiki Taka, nivå 3 Acceleration/Interceptions/Short Passing/Shot Power/Slide Tackle/Vision. Tallene her er summen etter alle tre nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 85,
+        "max_ps": 7,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CB",
+          "CM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          7,
+          81
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Tiki Taka",
+            3
+          ]
+        ],
+        "stats": {
+          "acceleration": [
+            5,
+            83
+          ],
+          "sprint_speed": [
+            5,
+            83
+          ],
+          "crossing": [
+            7,
+            81
+          ],
+          "curve": [
+            7,
+            77
+          ],
+          "finishing": [
+            7,
+            78
+          ],
+          "interceptions": [
+            7,
+            78
+          ],
+          "long_passing": [
+            7,
+            76
+          ],
+          "long_shots": [
+            7,
+            78
+          ],
+          "def_awareness": [
+            7,
+            78
+          ],
+          "short_passing": [
+            7,
+            80
+          ],
+          "fk_accuracy": [
+            7,
+            78
+          ],
+          "shot_power": [
+            7,
+            77
+          ],
+          "sliding_tackle": [
+            7,
+            81
+          ],
+          "standing_tackle": [
+            7,
+            81
+          ],
+          "vision": [
+            7,
+            78
+          ],
+          "volleys": [
+            7,
+            76
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/50/side-step",
+        "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/"
+      ]
+    },
+    {
+      "key": "centre_stage",
+      "name": "Centre Stage",
+      "cost": "gratis",
+      "until": "2026-10-25T17:00Z",
+      "note": "Fristen for å starte (25.10.2026) står bare hos Futmind; FUT.GG oppgir ingen dato og FUTBIN bare «utløper om 2 uker». Tidligste tid (17:00 UTC) er brukt. Krav og oppgraderinger er like hos FUTBIN, FUT.GG og Futmind. Tallene er summen etter alle fire nivåer. Taket på PlayStyles (Jockey nivå 2, Incisive Pass nivå 3) er ikke oppgitt. Roller er ikke nevnt.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 85,
+        "max_ps": 7,
+        "positions": [
+          "CDM",
+          "CM"
+        ],
+        "not_positions": [
+          "CB",
+          "ST",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          85
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Jockey",
+            3
+          ],
+          [
+            "Incisive Pass",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            7,
+            77
+          ],
+          "acceleration": [
+            7,
+            77
+          ],
+          "short_passing": [
+            10,
+            82
+          ],
+          "heading_accuracy": [
+            10,
+            81
+          ],
+          "jumping": [
+            30,
+            85
+          ],
+          "vision": [
+            10,
+            83
+          ],
+          "long_passing": [
+            10,
+            83
+          ],
+          "def_awareness": [
+            10,
+            80
+          ],
+          "stamina": [
+            30,
+            84
+          ],
+          "crossing": [
+            10,
+            82
+          ],
+          "curve": [
+            10,
+            82
+          ],
+          "standing_tackle": [
+            10,
+            81
+          ],
+          "strength": [
+            30,
+            85
+          ],
+          "fk_accuracy": [
+            10,
+            82
+          ],
+          "interceptions": [
+            10,
+            82
+          ],
+          "sliding_tackle": [
+            10,
+            82
+          ],
+          "aggression": [
+            30,
+            85
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/51/centre-stage",
+        "https://www.fut.gg/evolutions/2556-centre-stage/",
+        "https://futmind.com/articles/19098/centre-stage-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
+      ]
+    },
+    {
+      "key": "future_stars_academy_4",
+      "name": "Future Stars Academy IV",
+      "cost": "gratis",
+      "until": "2026-10-26T17:00Z",
+      "note": "Siste steg etter Future Stars Academy III (krever 83 OVR og Future Stars Academy-kort; at Academy III må være gjort først står hos timesaver/FUT.GG-artikkelen, futnext og Futmind sier bare rarity Future Stars). Tallene er like hos futnext og Futmind. Fristen er fra Futmind (17:00 UTC). Taket 4 på Low Driven Shot er bare vist hos futnext (umerket «4»).",
+      "req": {
+        "min_ovr": 83,
+        "max_ovr": 83,
+        "max_ps": 7,
+        "requires_evo": "future_stars_academy_3"
+      },
+      "up": {
+        "ovr": [
+          2,
+          85
+        ],
+        "stats": {
+          "long_shots": [
+            3,
+            78
+          ],
+          "penalties": [
+            8,
+            75
+          ],
+          "composure": [
+            3,
+            80
+          ],
+          "jumping": [
+            5,
+            70
+          ],
+          "strength": [
+            4,
+            72
+          ],
+          "shot_power": [
+            3,
+            80
+          ],
+          "volleys": [
+            4,
+            76
+          ],
+          "crossing": [
+            6,
+            80
+          ],
+          "heading_accuracy": [
+            4,
+            72
+          ],
+          "stamina": [
+            3,
+            83
+          ],
+          "aggression": [
+            6,
+            60
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Low Driven Shot, skudd",
+            "ps": [
+              [
+                "Low Driven Shot",
+                4
+              ]
+            ],
+            "stats": {
+              "finishing": [
+                1,
+                84
+              ],
+              "shot_power": [
+                3,
+                86
+              ],
+              "long_shots": [
+                2,
+                82
+              ],
+              "volleys": [
+                4,
+                82
+              ],
+              "composure": [
+                3,
+                84
+              ]
+            }
+          },
+          {
+            "label": "Valg B: pasning",
+            "stats": {
+              "vision": [
+                3,
+                88
+              ],
+              "short_passing": [
+                3,
+                88
+              ],
+              "long_passing": [
+                4,
+                86
+              ],
+              "reactions": [
+                4,
+                86
+              ],
+              "ball_control": [
+                2,
+                84
+              ],
+              "composure": [
+                4,
+                85
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/future-stars-academy-iv/2756",
+        "https://futmind.com/articles/19104/future-stars-academy-iv-evolution-guide-ea-sports-fc-27-ultimate-team"
+      ]
+    },
+    {
+      "key": "speed_bump",
+      "name": "Speed Bump",
+      "cost": "gratis",
+      "until": "2026-10-26T18:00Z",
+      "note": "Krav og tall er like hos futnext og Futmind. Fristen 26.10.2026 18:00 UTC er fra Futmind (etter at Storbritannia har gått over til vintertid), futnext sin nedtelling stemmer med den. PlayStyle-taket er 3 (FUTBIN: «Jockey 3», «Intercept 3»; FUT.GG viser samme tall): en PlayStyle legges bare til når kortet har færre enn 3. Roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle tre nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 75,
+        "max_ps": 7,
+        "positions": [
+          "CB"
+        ],
+        "not_positions": [
+          "CDM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          83
+        ],
+        "ps": [
+          [
+            "Jockey",
+            3
+          ],
+          [
+            "Intercept",
+            3
+          ]
+        ],
+        "stats": {
+          "acceleration": [
+            10,
+            77
+          ],
+          "long_passing": [
+            4,
+            76
+          ],
+          "composure": [
+            14,
+            81
+          ],
+          "def_awareness": [
+            7,
+            82
+          ],
+          "jumping": [
+            10,
+            85
+          ],
+          "sprint_speed": [
+            10,
+            77
+          ],
+          "reactions": [
+            7,
+            80
+          ],
+          "interceptions": [
+            7,
+            82
+          ],
+          "standing_tackle": [
+            12,
+            82
+          ],
+          "strength": [
+            7,
+            86
+          ],
+          "short_passing": [
+            11,
+            80
+          ],
+          "ball_control": [
+            5,
+            76
+          ],
+          "heading_accuracy": [
+            5,
+            80
+          ],
+          "sliding_tackle": [
+            7,
+            82
+          ],
+          "aggression": [
+            5,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futnext.com/evolutions/speed-bump/2763",
+        "https://futmind.com/articles/19106/speed-bump-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
+      ]
+    },
+    {
+      "key": "middle_management",
+      "name": "Middle Management",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-10-22T17:00Z",
+      "note": "Krav og tall er like hos FUTBIN og futnext. Fristen er futnext sin nedtelling «unlock within 4d5h» (samme som Touchline Magic og Nine Duty). Power Shot-taket (3) står ikke på noen av sidene; 3 er brukt fordi alle andre PlayStyle-evoer i FC 27 har tak 3. Roller og skill moves er ikke nevnt. Tallene er summen etter alle fire nivåer.",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 83,
+        "max_ps": 7,
+        "positions": [
+          "CDM",
+          "CM"
+        ],
+        "not_positions": [
+          "CAM",
+          "CB",
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          40,
+          80
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Power Shot",
+            3
+          ]
+        ],
+        "stats": {
+          "finishing": [
+            40,
+            76
+          ],
+          "vision": [
+            50,
+            81
+          ],
+          "long_passing": [
+            50,
+            81
+          ],
+          "standing_tackle": [
+            40,
+            77
+          ],
+          "aggression": [
+            40,
+            75
+          ],
+          "shot_power": [
+            40,
+            77
+          ],
+          "crossing": [
+            50,
+            80
+          ],
+          "curve": [
+            50,
+            79
+          ],
+          "sliding_tackle": [
+            40,
+            76
+          ],
+          "acceleration": [
+            40,
+            75
+          ],
+          "long_shots": [
+            40,
+            76
+          ],
+          "fk_accuracy": [
+            50,
+            80
+          ],
+          "interceptions": [
+            40,
+            77
+          ],
+          "jumping": [
+            40,
+            75
+          ],
+          "sprint_speed": [
+            40,
+            75
+          ],
+          "volleys": [
+            40,
+            75
+          ],
+          "short_passing": [
+            50,
+            81
+          ],
+          "def_awareness": [
+            40,
+            76
+          ],
+          "strength": [
+            40,
+            76
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/62/middle-management",
+        "https://www.futnext.com/evolutions/middle-management/2762"
+      ]
+    },
+    {
+      "key": "gamechanger_ps",
+      "name": "Gamechanger",
+      "cost": "gratis",
+      "until": "2026-10-27T18:00Z",
+      "note": "Krav og PlayStyle er like hos FUTBIN og futnext. Fristen er futnext sin nedtelling «unlock within 9d6h» på listesiden (detaljsiden sier 11 dager, FUTBIN «1 uke»); den tidligste er brukt. Taket 3 står ved PlayStylen hos begge.",
+      "req": {
+        "max_ovr": 80,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Gamechanger",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/60/gamechanger",
+        "https://www.futnext.com/evolutions/gamechanger/2761"
+      ]
+    },
+    {
+      "key": "quick_step_ps",
+      "name": "Quick Step",
+      "cost": "gratis",
+      "until": "2027-09-29T17:00Z",
+      "note": "Krav og PlayStyle er like hos FUTBIN og futnext (taket 3 står ved PlayStylen hos begge). Begge viser ca. 12 måneder igjen; fristen er satt til tidligste tid, samme som Intro-evoene.",
+      "req": {
+        "max_ovr": 83,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/52/quick-step",
+        "https://www.futnext.com/evolutions/quick-step/2747"
+      ]
     }
-   },
-   "sources": [
-    "https://www.futnext.com/evolutions/speed-bump/2763",
-    "https://futmind.com/articles/19106/speed-bump-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
-   ]
-  }
- ],
- "_hoppet_over": [
-  {
-   "navn": "Ones to Watch Retro 18/19/20",
-   "grunn": "Gir et bestemt ferdig kort (f.eks. Retro 20 = Alexia Putellas 92), ikke økte tall på spillerens eget kort. Passer ikke i Evo Lab.",
-   "dato": "2026-10-14"
-  },
-  {
-   "navn": "Season Ladder Excellence",
-   "grunn": "Bare futnext (side 2), ingen detaljer funnet hos andre kilder.",
-   "dato": "2026-10-16"
-  },
-  {
-   "navn": "Frontline Flair",
-   "grunn": "Står allerede i config/evolab.json (frontline_flair).",
-   "dato": "2026-10-16"
-  },
-  {
-   "navn": "Gamechanger",
-   "grunn": "Bare futnext (maks 80 OVR, maks 2 PlayStyles, gir Gamechanger, umerket «3»). Ikke funnet hos FUT.GG, FUTBIN, Futmind eller andre.",
-   "dato": "2026-10-16"
-  }
- ]
+  ],
+  "_hoppet_over": [
+    {
+      "navn": "Ones to Watch Retro 18/19/20",
+      "grunn": "Gir et bestemt ferdig kort (f.eks. Retro 20 = Alexia Putellas 92), ikke økte tall på spillerens eget kort. Passer ikke i Evo Lab.",
+      "dato": "2026-10-14"
+    },
+    {
+      "navn": "Season Ladder Excellence",
+      "grunn": "FUTBIN: «No player upgrades», bare kortdesign (rarity). Passer ikke i Evo Lab.",
+      "dato": "2026-10-18"
+    },
+    {
+      "navn": "Frontline Flair",
+      "grunn": "Står allerede i config/evolab.json (frontline_flair).",
+      "dato": "2026-10-16"
+    },
+    {
+      "navn": "Gallery Excellence",
+      "grunn": "FUTBIN: «No player upgrades», bare kortdesign (rarity).",
+      "dato": "2026-10-18"
+    },
+    {
+      "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
+      "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
+      "dato": "2026-10-18"
+    }
+  ]
 }
