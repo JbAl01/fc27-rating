@@ -326,8 +326,11 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                     ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log, deadline=deadline)
                     left = sum(1 for _, c in todo if c not in fg.cards)
                     log(f"FUT.GG: leste PlayStyles for {ng} spesialkort, {left} gjenstår")
+                    cut = {fid for fid, e in unique_entries(fr_cache) if trunc(e)}   # EA's list of positions may be cut
                     nb = futgg.fetch_cards(gfetch, fg, base, int(gcfg.get("base_limit_per_run", 250)), log=log, kind="base",
-                                           deadline=deadline)
+                                           deadline=deadline, refetch=cut)
+                    nc = sum(1 for fid in cut if (fg.cards.get(fid) or {}).get("roles", {}).get("alt") is None)
+                    log(f"FUT.GG: {nc} kort med mulig avkortet posisjonsliste gjenstår")
                     left = sum(1 for _, c in base if c not in fg.cards)
                     log(f"FUT.GG: leste roller for {nb} basekort, {left} gjenstår")
                 except Blocked as exc:

@@ -327,7 +327,7 @@ def positions_unsure(p: Player) -> bool:
 def pos_unsure_text(r: dict) -> str:
     what = (f"må kunne spille {'/'.join(r['positions'])}" if r["positions"]
             else f"kortet kan ikke spille {', '.join(r['not_positions'])}" if r["not_positions"] else f"maks {r['max_positions']} posisjoner")
-    return f"{what}. Vi kjenner kanskje ikke alle posisjonene hans (EA oppgir bare tre alternative), sjekk i spillet"
+    return f"{what}. Venter på den fulle posisjonslisten fra FUT.GG (EA oppgir bare tre alternative), den hentes automatisk"
 
 
 def state_from(p: Player) -> State:

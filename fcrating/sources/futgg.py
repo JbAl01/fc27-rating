@@ -268,7 +268,8 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
 
 
 def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], limit: int, game: str = "27",
-                log=print, kind: Optional[str] = None, deadline: Optional[float] = None) -> int:
+                log=print, kind: Optional[str] = None, deadline: Optional[float] = None,
+                refetch: Optional[set] = None) -> int:
     """cards: (player id, card id) pairs in the order to fetch. Each card is fetched once.
     A page without PlayStyles is remembered as missing; a network error is tried again next run."""
     import urllib.error
@@ -285,7 +286,7 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
         old = cache.cards.get(card)
         # cards fetched before the colours and attributes were read are fetched once more
         again = bool(old) and not old.get("missing") and (int(old.get("v") or 1) < PARSE_VERSION or (
-            kind == "base" and bool(old.get("roles")) and old["roles"].get("alt") is None))   # fetched before the positions were read
+            kind == "base" and card in (refetch or ()) and bool(old.get("roles")) and old["roles"].get("alt") is None))   # fetched before the positions were read, and EA's list may be cut
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
