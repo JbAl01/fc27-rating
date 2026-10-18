@@ -85,7 +85,7 @@
   },
   "playstyles": {
     "Pinged Pass": {
-      "plus": 2.0,
+      "plus": 2.4,
       "base": 1.1,
       "category": "passing",
       "synergy": [
@@ -132,8 +132,8 @@
       }
     },
     "Low Driven Shot": {
-      "plus": 1.9,
-      "base": 1.07,
+      "plus": 2.4,
+      "base": 1.2,
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -173,7 +173,7 @@
       ]
     },
     "Rapid": {
-      "plus": 1.9,
+      "plus": 2.3,
       "base": 0.95,
       "_fc27_nerf": "FC 27 Gameplay Deep Dive: 'slightly reduced the speed boost to dribbling animations'. Var 0.7 / 1.4.",
       "category": "ball",
@@ -199,8 +199,8 @@
       ]
     },
     "Tiki Taka": {
-      "plus": 1.8,
-      "base": 1.12,
+      "plus": 2.2,
+      "base": 1.0,
       "category": "passing",
       "synergy": [
         "short_passing"
@@ -275,7 +275,7 @@
       ]
     },
     "Power Shot": {
-      "plus": 1.8,
+      "plus": 2.2,
       "base": 0.9,
       "category": "shooting",
       "synergy": [
@@ -459,6 +459,7 @@
       ]
     }
   },
+  "_s_tier_bonus": "S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) har +0,4 ekstra i verdien sin over det den ville fått etter tier alene (eierens ønske 18.10.2026). Low Driven Shot er den beste skyte-PlayStylen. Bonusen ganges som alt annet med posisjonens relevans og spillerens attributter, og telles i den samme avtagende summen.",
   "_tier_liste": "Rekkefølgen følger tier-listen eieren bruker (18.10.2026): S Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot. A Incisive Pass, Intercept, Anticipate, Quick Step, First Touch, Technical, Bruiser. B Finesse Shot, Jockey, Gamechanger, Inventive, Chip Shot. C Relentless, Whipped Pass, Press Proven, Trickster. F Acrobatic, Precision Header, Long Throw. Vanlig PlayStyle er skalert med samme faktor som PlayStyle+, så forskjellen mellom dem fra FC 27 består. De andre PlayStylene er ikke endret.",
   "_fc27": "FC 27 (EA Gameplay Deep Dive 29.07.2026 og Closed Beta Feedback Update 03.09.2026): Quick Step, Rapid, Technical, Finesse Shot, Precision Header, Tiki Taka, Jockey, Low Driven Shot og Pinged Pass er svekket eller har mindre forskjell mellom PS og PS+. Bruiser+ er litt svekket. Verdiene er justert, men ikke kalibrert: EA oppgir ingen prosenter."
 }
