@@ -179,6 +179,17 @@
     "limits": {"ST": [-3.0, 6.0], "W": [-3.5, 6.5], "CAM": [-3.0, 6.5], "CM": [-2.0, 4.5], "CDM": [-1.5, 3.0], "FB": [-2.0, 4.5], "CB": [-2.0, 2.5], "GK": [0.0, 0.0]}
   },
 
+  "hidden_gem": {
+    "_info": "Skjult perle: kortet spiller mye bedre enn OVR-en tilsier. Forventet IGR ved hver OVR = snittet av kortene i samme posisjon med omtrent samme OVR (+-ovr_window). Kortet er en perle når det er blant de max_top_pct % beste over forventet i posisjonen og minst min_res over. Siden viser hva som løfter det (kropp, PlayStyles, følelse, fart ...), målt mot de samme kortene. Det er dette som gjør at kort med vanlig OVR blir utsolgt på markedet.",
+    "ovr_window": 1, "min_same_ovr": 8, "min_pool_size": 30, "max_top_pct": 2, "min_res": 4.0, "min_part": 0.5
+  },
+
+  "position_calibration": {
+    "_info": "Fast justering per posisjon, så IGR kan sammenlignes på tvers av posisjoner og med OVR. Uten den lå forsvarere og sentrale midtbanespillere 2-4 lavere enn OVR i snitt og angripere rundt OVR, fordi angripere får flere bonuser (PlayStyles, svakfot, skill moves, kropp) og forsvarere trekkes ned av lav Standing Tackle. Tallet er minus medianen av (IGR - OVR) for kortene som har posisjonen som hovedposisjon, avrundet til 0,1. Endrer ikke rekkefølgen innen en posisjon, bare nivået. Kalibreres på nytt når formelen endres (se kalibrer-posisjon).",
+    "offsets": {"ST": 0.9, "W": -2.4, "CAM": -0.9, "CM": 1.1, "CDM": 3.3, "FB": 1.1, "CB": 3.8, "GK": -1.1},
+    "_kalibrert": "19.10.2026 på 21 146 kort, da kroppstypen var kjent for 2 676 av dem. Kalibreres på nytt når alle kroppstyper er hentet (python -m fcrating kalibrer-posisjon data/ea_players.json data/spesialkort.json --lagre)."
+  },
+
   "off_balance": {
     "_info": "FC 27 (EA): off-balance dribbling lar driblere holde kontrollen når de blir dyttet eller taklet skulder mot skulder, styrt av Balance, Agility og Dribbling. Verdien er snittet av de tre (som EasySBC viser per kort). Kort med snitt fra 75 kommer inn i mekanikken, og jo høyere snitt, jo bedre. Den slår bare inn ved kontakt, så bonusen er moderat.",
     "start": 75, "per_point": 0.12, "max": 1.8,

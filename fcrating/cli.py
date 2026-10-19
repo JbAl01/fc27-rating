@@ -210,6 +210,20 @@ def print_tables(results: List[dict], group: Optional[str], top: int) -> None:
         print_position_table(results, g, top)
 
 
+def _add_usage(results: List[dict]) -> None:
+    """What pros and the FUT.GG community play (FUT.GG 'Most Used Players'), and a check of the model
+    against it: the cards people choose should be high in our ranking too."""
+    from .sources import futgg_usage
+    data = futgg_usage.load(str(ROOT / "data" / "cache" / "futgg"))
+    if not data:
+        return
+    for r in results:
+        u = futgg_usage.usage_of(data, r.get("id"))
+        if u:
+            r["usage"] = u
+    futgg_usage.check_model(results)
+
+
 def _run_evolab(players, results, evos, cfg, out_dir, ignore_used=False):
     """Simulate evo paths for every card and write output/evolab.html. Returns the paths or None."""
     from . import evolab, evolab_report
@@ -230,6 +244,7 @@ def cmd_rate(args) -> int:
     chem = _chem_arg(args.chem)
     results = [rate(p, cfg, chem=chem) for p in players]
     rank_by_position(results, cfg)
+    _add_usage(results)
     from . import meta as meta_mod
     meta_info = meta_mod.apply(results, cfg, save=getattr(args, "lagre_meta_start", False))
     if meta_info.get("saved"):
@@ -1040,6 +1055,39 @@ def _specials(cfg_src: dict, full=None, detail_limit=None, leaks=True, fifaroste
     return str(out)
 
 
+def cmd_calibrate_positions(args) -> int:
+    """Work out position_calibration.offsets: minus the median of (IGR - OVR) for the cards that have the
+    position as main position (leaks left out), with today's formula. --lagre writes them to weights.json."""
+    import re
+    import statistics
+    from .model import position_offset
+    cfg = load_config()
+    players = _load_players(args.files)
+    results = [rate(p, cfg) for p in players]
+    from .schema import position_group
+    diffs: dict = {}
+    for r in results:
+        g = position_group(r.get("position"))
+        e = r["by_group"].get(g or "")
+        if not e or r.get("status") == "lekket" or not r.get("ovr"):
+            continue
+        diffs.setdefault(g, []).append(e["igr"] - position_offset(g, cfg["weights"]) - r["ovr"])
+    offsets = {g: round(-statistics.median(v), 1) for g, v in diffs.items() if len(v) >= 30}
+    for g in GROUP_ORDER:
+        if g in offsets:
+            print(f"  {g:4} {len(diffs[g]):6} kort, median IGR-OVR uten justering {-offsets[g]:+.1f}, justering {offsets[g]:+.1f}")
+    if args.lagre:
+        path = ROOT / "config" / "weights.json"
+        text = path.read_text(encoding="utf-8")
+        order = ["ST", "W", "CAM", "CM", "CDM", "FB", "CB", "GK"]
+        line = '"offsets": {' + ", ".join(f'"{g}": {offsets.get(g, 0.0)}' for g in order) + "}"
+        text, n = re.subn(r'"offsets": \{[^}]*\}', line, text, count=1)
+        if n:
+            path.write_text(text, encoding="utf-8")
+            print(f"Lagret i {path}")
+    return 0
+
+
 def cmd_fetch_bodies(args) -> int:
     from . import specials
     from .sources import ea_ratings
@@ -1278,6 +1326,11 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--offline", action="store_true", help="bygg fra lagrede data uten å hente noe")
     sp.add_argument("--promo", nargs="*", help="ekstra kampanjesider på FIFA Rosters, f.eks. fut-future-stars onestowatch")
     sp.set_defaults(func=cmd_fetch_specials)
+
+    kp = sub.add_parser("kalibrer-posisjon", help="regn ut posisjonsjusteringen (IGR mot OVR per posisjon)")
+    kp.add_argument("files", nargs="+")
+    kp.add_argument("--lagre", action="store_true", help="skriv justeringen til config/weights.json")
+    kp.set_defaults(func=cmd_calibrate_positions)
 
     kb = sub.add_parser("hent-kropp", help="hent kroppstype og vekt fra FUT.GG for basekort som mangler det")
     kb.add_argument("--minutter", type=float, default=60.0, help="hvor lenge det hentes (standard 60)")

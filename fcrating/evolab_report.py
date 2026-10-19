@@ -68,7 +68,8 @@ def rate_meta(cfg: dict) -> dict:
                 "sh": sh.get(g, sh["default"]), "rp": w["roles"]["group_positions"].get(g, []),
                 "wf": w["weak_foot"]["group_factor"].get(g, 0.0), "sm": w["skill_moves"]["group_factor"].get(g, 0.0),
                 "ob": (w.get("off_balance") or {}).get("group_factor", {}).get(g, 0.0),
-                "st": st.get("group_factor", {}).get(g, 0.0) if st else 0.0}
+                "st": st.get("group_factor", {}).get(g, 0.0) if st else 0.0,
+                "cal": float(((w.get("position_calibration") or {}).get("offsets") or {}).get(g, 0.0))}
     ps = {}
     relc = psc["category_relevance"]
     for name, e in psc["playstyles"].items():

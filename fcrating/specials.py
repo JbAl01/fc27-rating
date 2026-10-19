@@ -323,6 +323,9 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 if stop_at is not None:
                     deadline = min(deadline, stop_at)
                 try:
+                    # what pros and the FUT.GG community actually play (one page): shown on the cards, checks the model
+                    from .sources import futgg_usage
+                    futgg_usage.fetch(gfetch, str(Path(cache_dir) / "futgg"), log=log)
                     ng = futgg.fetch_cards(gfetch, fg, todo, int(gcfg.get("limit_per_run", 150)), log=log, deadline=deadline)
                     left = sum(1 for _, c in todo if c not in fg.cards)
                     log(f"FUT.GG: leste PlayStyles for {ng} spesialkort, {left} gjenstår")

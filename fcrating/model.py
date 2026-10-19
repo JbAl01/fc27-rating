@@ -273,6 +273,11 @@ def stand_tackle_bonus(attrs: Dict[str, float], group: str, wcfg: dict) -> float
     return pts * factor
 
 
+def position_offset(group: str, wcfg: dict) -> float:
+    """The fixed level adjustment for the position (weights.json position_calibration)."""
+    return float(((wcfg.get("position_calibration") or {}).get("offsets") or {}).get(group, 0.0))
+
+
 def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Optional[str],
                feel: Optional[float], cfg: dict, obd: Optional[float] = None,
                run_score: Optional[float] = None, stop_score: Optional[float] = None) -> Optional[dict]:
@@ -314,7 +319,8 @@ def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Op
     body = bc.detail(attrs, player.playstyles, player.playstyles_plus)
     body_pts = bc.points(attrs, player.playstyles, player.playstyles_plus) if body else 0.0
 
-    igr = core + ps_pts + role_pts + wf_pts + sm_pts + gk_adj + ob_pts + st_pts + body_pts
+    cal = position_offset(group, wcfg)
+    igr = core + ps_pts + role_pts + wf_pts + sm_pts + gk_adj + ob_pts + st_pts + body_pts + cal
     return {
         "group": group,
         "igr": round(igr, 1),
@@ -337,6 +343,7 @@ def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Op
         "stand_tackle": round(st_pts, 2),
         "body": round(body_pts, 2),
         "body_detail": body,
+        "calibration": cal,
     }
 
 
@@ -505,6 +512,8 @@ def rank_by_position(results: List[dict], cfg: dict) -> List[dict]:
         else:
             r["pos_igr"] = r["pos_rank"] = r["pos_of"] = r["pos_top_pct"] = r["pos_tier"] = None
     add_explanations(pools, cfg)
+    from .gems import add_gems
+    add_gems(pools, cfg)
     if "run_ai" in wcfg:
         from .runs import add_run_ai
         add_run_ai(results, cfg)

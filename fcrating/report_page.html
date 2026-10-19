@@ -62,7 +62,8 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 <label class="check"><input type="checkbox" data-f="psPlus"> bare PS+</label>
 </fieldset>
 <fieldset><legend>Vis bare</legend>
-<label class="check"><input type="checkbox" data-f="gem"> skjulte perler (løper mye bedre enn OVR-en)</label>
+<label class="check"><input type="checkbox" data-f="gem"> skjulte perler (spiller mye bedre enn OVR-en)</label>
+<label class="check"><input type="checkbox" data-f="meta"> meta i spillet (mest brukt av proffene og FUT.GG-lagene)</label>
 <label class="check"><input type="checkbox" data-f="evo"> evo-kandidater</label>
 <label class="check"><input type="checkbox" data-f="wf4"> svakfot 4 eller 5</label>
 <label class="check"><input type="checkbox" data-f="sm4"> skill moves 4 eller 5</label>
@@ -91,10 +92,10 @@ const RAW=__DATA__,META=__META__,PAGE=200,STR=META.strings;let key="top_pct",dir
 const DATA=RAW.map((r,i)=>{const groups={};for(const g in r[22]){const a=r[22][g],ps=[];for(let j=0;j<a[14].length;j+=2)ps.push([STR[a[14][j]],a[14][j+1]]);
 const ru=a[16],tri=x=>{const o=[];for(let j=0;j<x.length;j+=3)o.push([STR[x[j]],x[j+1],x[j+2]]);return o};
 groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6],core:a[7],playstyles:a[8],role:a[9],role_name:STR[a[10]],wfp:a[11],smp:a[12],gkh:a[13],ps,pse:a[15],
-run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null,bd:a[22]||null,bdp:a[22]?a[22][0]:0}}
+run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null,bd:a[22]||null,bdp:a[22]?a[22][0]:0,cal:a[23]||0,gm:a[24]?{res:a[24][0],top:a[24][1],on:a[24][2],why:a[24][3].map(i=>STR[i])}:null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||""}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||"",use:r[42]||null}});
 const ALTIMG={};DATA.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};DATA.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});DATA.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 
@@ -189,7 +190,9 @@ const kvd=(label,desc,val,extra)=>`<tr><th>${label}${desc?`<small>${desc}</small
 const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
 function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
 const dr=mdrift(g),since=META.meta&&META.meta.since;
-const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.run&&e.run.gem?"skjult perle: løper mye bedre enn OVR-en tilsier":""].filter(Boolean);
+const tags=[d.status==="lekket"?"lekket kort, ikke bekreftet av EA":"",d.estimated?"noen tall er anslått":"",e.gm&&e.gm.on?`skjult perle: spiller ${sg(e.gm.res)} over kort med samme OVR (topp ${e.gm.top} %)${e.gm.why.length?", mest pga. "+esc(list(e.gm.why)):""}`:"",
+e.run&&e.run.gem?"løper mye bedre enn OVR-en tilsier":"",
+d.use?`meta i spillet: ${[d.use[0]!=null?`${String(d.use[0]).replace(".",",")} % av proffene bruker ham som ${d.use[1]}`:"",d.use[2]!=null?`${String(d.use[2]).replace(".",",")} % av FUT.GG-lagene som ${d.use[3]}`:""].filter(Boolean).join(", ")} (FUT.GG, ${esc(d.use[4])})`:""].filter(Boolean);
 let h=`<div class="det"><div class="dethead"><div class="top"><figure>${cardHtml({...d,gk},(d.positions||"").split("/")[0]||g)}${psRow(d.ps)}</figure></div><div class="info"><h2>${esc(d.name)} <span class="muted">${esc(d.version)}</span></h2>${(d.club||d.lg)?`<p class="sub2">${esc([d.club,d.lg].filter(Boolean).join(", "))}</p>`:""}${d.fg?`<p class="ext"><a href="${esc(d.fg)}" target="_blank" rel="noopener">Se kortet på FUT.GG ↗</a></p>`:""}</div></div>${attrGrid({...d,gk})}
 ${e.meta!=null&&since&&dr>0.05?`<p class="x">Meta ${fmt(e.meta)}, fordi toppen blant ${esc(pl)} har blitt ${dr.toFixed(1)} bedre siden ${dno(since)}.</p>`:""}
 ${d.style||d.likes.length?`<p class="x">${d.style?esc(d.style)+".":""}${d.likes.length?` Passer hvis du liker ${esc(list(d.likes))}.`:""}</p>`:""}
@@ -229,8 +232,8 @@ const v=d.evo;if(v){h+=v.x!==undefined?"":(META.evolab?`<p><a href="evolab.html"
 const share=k=>B[k]?Math.round(B[k]*100)+" %":"";
 const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${share("feel")}`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${share("pace")}`);core.push(`ferdigheter ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løp uten ball ${fmt(e.rs)} × ${share("run")}`);if(B.stop&&e.ss!=null)core.push(`vanskelig å stoppe ${fmt(e.ss)} × ${share("stop")}`);
 const bon=[];if(e.role)bon.push(`rolle${e.role_name?" "+e.role_name:""} ${sg(e.role)}`);if(d.wf&&e.wfp)bon.push(`svakfot ${d.wf} ${sg(e.wfp)}`);if(d.sm&&e.smp)bon.push(`skill moves ${d.sm} ${sg(e.smp)}`);
-if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);if(e.bdp)bon.push(`kroppstype ${d.bt?esc(d.bt)+" ":""}${sg(e.bdp)}`);
-const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0)+(e.bdp||0);
+if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);if(e.bdp)bon.push(`kroppstype ${d.bt?esc(d.bt)+" ":""}${sg(e.bdp)}`);if(e.cal)bon.push(`posisjonsjustering ${sg(e.cal)}`);
+const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0)+(e.bdp||0)+(e.cal||0);
 const per=Object.entries(d.groups).sort((a,b)=>b[1].igr-a[1].igr).map(([k,x])=>`${esc(k)} ${x.igr.toFixed(1)} (plass ${x.rank} av ${x.of})`).join(", ");
 const mg=META.meta&&META.meta.groups&&META.meta.groups[g];
 h+=`<details style="margin-top:12px"><summary>Utregning og kilde</summary><p class="muted">IGR ${fmt(e.igr)} = kjerne ${fmt(e.core)} (${core.join(" + ")}) ${sg(e.playstyles||0)} PlayStyles ${sg(bonus)} bonuser.</p>
@@ -244,7 +247,7 @@ ${META.run&&META.run.calibrated?`<p class="muted">Løp uten ball er kalibrert mo
 return h}
 /* --- filters --- */
 const kind=d=>d.status==="lekket"?"leak":/icon/i.test(d.version)?"icon":/hero/i.test(d.version)?"hero":d.status?"special":"base";
-const F0={ovrMin:"",ovrMax:"",hMax:"",feelMin:"",obMin:"",stopMin:"",runMin:"",vilMin:"",effMin:"",type:"",gender:"",lg:"",na:"",acc:"",ps:"",psPlus:false,gem:false,evo:false,wf4:false,sm4:false,combo:[]};
+const F0={ovrMin:"",ovrMax:"",hMax:"",feelMin:"",obMin:"",stopMin:"",runMin:"",vilMin:"",effMin:"",type:"",gender:"",lg:"",na:"",acc:"",ps:"",psPlus:false,gem:false,meta:false,evo:false,wf4:false,sm4:false,combo:[]};
 let F={...F0};
 try{const s=JSON.parse(localStorage.getItem("fc27-filter2")||"null");if(s)F={...F0,...(s.F||{})}}catch(err){}
 if(!Array.isArray(F.combo))F.combo=[];F.combo=F.combo.filter(k=>PROF.order.includes(k));
@@ -265,17 +268,18 @@ $("combo").querySelectorAll("input").forEach(b=>b.checked=F.combo.includes(b.dat
 $("tbl").classList.toggle("combo",F.combo.length>0);$("combohint").hidden=F.combo.length>0;
 const n=Object.keys(F0).filter(k=>JSON.stringify(F[k])!==JSON.stringify(F0[k])).length;$("fsum").textContent=n?`Filtre (${n} på)`:"Filtre";saveF()}
 $("freset").onclick=()=>{F={...F0};if(key==="combo"){key="top_pct";dir=1;$("sort").value=key}syncF();reset()};
-const anyGem=d=>Object.values(d.groups).some(e=>e.run&&e.run.gem);
+const isGem=e=>!!(e&&((e.gm&&e.gm.on)||(e.run&&e.run.gem)));
+const anyGem=d=>Object.values(d.groups).some(isGem);
 function pass(d,v,g){if(F.ovrMin!==""&&(d.ovr??0)<+F.ovrMin)return false;if(F.ovrMax!==""&&(d.ovr??0)>+F.ovrMax)return false;
 if(F.hMax!==""&&(!d.h||d.h>+F.hMax))return false;if(F.feelMin!==""&&(d.feel==null||d.feel<+F.feelMin))return false;if(F.obMin!==""&&(d.obd==null||d.obd<+F.obMin))return false;if(F.stopMin!==""&&(!d.hs||d.hs.score<+F.stopMin))return false;
 if(F.runMin!==""&&(v.run_ai==null||v.run_ai<+F.runMin))return false;
 if(F.vilMin!==""&&(v.dec==null||v.dec<+F.vilMin))return false;if(F.effMin!==""&&(v.exe==null||v.exe<+F.effMin))return false;
 if(F.type&&kind(d)!==F.type)return false;if(F.gender&&d.gender!==F.gender)return false;if(F.lg&&d.lg!==F.lg&&!(d.lg==="Icons"))return false;if(F.na&&d.na!==F.na)return false;if(F.acc&&d.accelerate!==F.acc)return false;
 if(F.ps&&!d.ps.some(n=>F.psPlus?n===F.ps+"+":(n===F.ps||n===F.ps+"+")))return false;
-if(F.gem&&!(g?v.gem:anyGem(d)))return false;if(F.evo&&d.evo_after==null)return false;if(F.wf4&&!(d.wf>=4))return false;if(F.sm4&&!(d.sm>=4))return false;return true}
+if(F.gem&&!(g?isGem(d.groups[g]):anyGem(d)))return false;if(F.meta&&!d.use)return false;if(F.evo&&d.evo_after==null)return false;if(F.wf4&&!(d.wf>=4))return false;if(F.sm4&&!(d.sm>=4))return false;return true}
 /* --- table --- */
 function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null;
-return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:!!(ru&&ru.gem),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,playstyles:e.playstyles,role:e.role}}
+return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:isGem(e),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,playstyles:e.playstyles,role:e.role}}
 function rowsNow(){const q=$("q").value.trim().toLowerCase(),g=gs.value;
 let rows=DATA.filter(d=>(d.name+" "+d.version).toLowerCase().includes(q)&&(!g||g in d.groups)).map(d=>view(d,g)).filter(v=>pass(v,v,g));
 rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return 0;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}

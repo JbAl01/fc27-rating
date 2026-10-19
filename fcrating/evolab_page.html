@@ -138,7 +138,7 @@ if(R.ob&&G.ob&&obd!=null)igr+=Math.max(0,Math.min(R.ob.max,(obd-R.ob.start)*R.ob
 if(G.st){const v=a[AI.standing_tackle];if(v!=null){let p=0;for(const[t,val]of R.stT){if(v>=t)p=val}igr+=p*G.st}}
 if(c.bd&&R.bd){const B=c.bd,ag0=weighted(a,R.bd.w),ag=ag0==null?null:Math.max(0,Math.min(R.bd.cap,(ag0-R.bd.floor)/R.bd.span));
 const bp=Math.max(B[3],Math.min(B[4],B[0]+(ag!=null?B[1]*ag:0)+psBonus(B[2],st.ps,st.psp,R.bd.comboCap)));igr+=bp;out.body=pyRound(bp,2)}
-out.igr=pyRound(igr,1);return out};return d._rt}
+igr+=G.cal||0;out.igr=pyRound(igr,1);return out};return d._rt}
 function faceVal(a,w){const xs=[];for(const[i,v]of RU.face[w]){if(a[i]==null)return null;xs.push(a[i]*v)}return Math.floor(psum(xs)+0.5+1e-9)}
 function psCount(st){const n=st.ps.length+st.psp.length;return st.psu&&n===0?Math.max(n,RU.assume):n}
 function stateOf(d){return{a:d.base.slice(),ovr:d.ovr||0,ps:d.ps.slice(),psp:d.psp.slice(),wf:d.wf,sm:d.sm,role:d.c.role,done:[],psu:!!d.c.psu,pos:d.positions,g:d.c.g,born:d.born}}

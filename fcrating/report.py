@@ -162,7 +162,14 @@ def _group_array(gr: dict, intern: _Interner) -> list:
             intern(gr.get("role_name") or ""), _r1(gr.get("weak_foot")), _r1(gr.get("skill_moves")),
             _r1(gr.get("gk_height")), ps, 1 if gr.get("ps_estimated") else 0, _run_array(gr.get("run"), intern),
             _r1(gr.get("off_balance")), _r1(gr.get("stand_tackle")), gr.get("run_score"), gr.get("stop_score"),
-            gr.get("meta"), _body_array(gr.get("body_detail"))]
+            gr.get("meta"), _body_array(gr.get("body_detail")), gr.get("calibration") or 0, _gem_array(gr.get("gem"), intern)]
+
+
+def _gem_array(gm: Optional[dict], intern: "_Interner"):
+    """[IGR over cards with the same OVR, top % of the position, hidden gem 0/1, what lifts it]."""
+    if not gm:
+        return 0
+    return [gm["res"], gm["top"], 1 if gm["on"] else 0, [intern(x) for x in gm.get("why", [])]]
 
 
 def _body_array(b: Optional[dict]):
@@ -221,7 +228,16 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         r.get("foot") or "",
         r.get("card_color") or "",
         intern(_body_label(r)),
+        _usage_array(r.get("usage")),
     ]
+
+
+def _usage_array(u: Optional[dict]):
+    """[pros %, position, FUT.GG community %, position, date] from FUT.GG 'Most Used Players'."""
+    if not u:
+        return 0
+    pro, com = u.get("pro") or [None, ""], u.get("com") or [None, ""]
+    return [pro[0], pro[1], com[0], com[1], u.get("t") or ""]
 
 
 def _body_label(r: dict) -> str:

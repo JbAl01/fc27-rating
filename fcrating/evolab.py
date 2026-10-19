@@ -614,6 +614,8 @@ class FastRater:
         self.st_f = (st or {}).get("group_factor", {}).get(group, 0.0) if st else 0.0
         from .body import BodyCard
         self.body = BodyCard(p, group, w.get("body_profile"))   # body type: fixed per card, the agility part moves with evos
+        from .model import position_offset
+        self.cal = position_offset(group, w)
         self.st_tiers = st["tiers"] if st else []
         run = w.get("run_ai")
         self.run_w = {k: v for k, v in _clean(run["weights"]).items() if v} if run else {}
@@ -804,6 +806,7 @@ class FastRater:
             igr += bp
             if detail:
                 out["body"] = round(bp, 2)
+        igr += self.cal
         if detail:
             out["igr"] = round(igr, 1)
             return out

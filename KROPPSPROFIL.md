@@ -32,6 +32,14 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Meta:** startnivået lagrer nå startkortene (`data/meta_start.json` → `cards`, fra 16.10) og regnes på nytt med dagens formel. Endringer i formelen ser dermed ikke lenger ut som at metaen beveger seg. Før var ST-nivået blåst opp med ca. 2,9.
 - **Ny keeper-PlayStyle:** 1v1 Close Down (FC 27, erstatter Rush Out) er lagt inn. Før ga den 0.
 
+## Lagt til 19.10 kveld (sammenheng)
+- **Posisjonsjustering** (`weights.json` → `position_calibration`): IGR flyttes per posisjon, så medianen av IGR minus OVR blir 0 overalt. Rekkefølgen innen hver posisjon endres ikke. Justeringen er kalibrert 19.10 med kroppstype kjent for bare 2 676 kort, så den må kalibreres på nytt når alle er hentet: `python -m fcrating kalibrer-posisjon data/ea_players.json data/spesialkort.json --lagre`. Den brukes i model, FastRater og JS, på siden («posisjonsjustering» i utregningen) og i explain.
+- **Skjult perle** (`fcrating/gems.py`, `weights.json` → `hidden_gem`): IGR mot snittet av kort med samme OVR (±1) i posisjonen. Et kort er perle når det er blant topp 2 % og minst +4 over snittet. Siden viser hva som løfter kortet. Filteret «skjulte perler» bruker både dette og løps-perlene.
+- **Meta i spillet** (`fcrating/sources/futgg_usage.py`): FUT.GG «Most Used Players», med proffene (ca. 195 lag) og FUT.GG-lagene (ca. 335 000). Siden hentes én gang per kjøring i FUT.GG-delen av `fetch-specials` og lagres i `data/cache/futgg/bruk.json`. Den vises på kortene med eget filter. Den er ikke med i IGR, fordi bruk også styres av pris og hvor mange kort som finnes, men hver kjøring skriver en «Modellsjekk».
+  - **Modellsjekk 19.10:** 85 kort proffene bruker hadde median topp 0,9 % i posisjonen hos oss, og ingen lå utenfor topp 10 %. 78 kort FUT.GG-lagene bruker hadde median topp 1,0 %.
+  - **Kort vi ikke fant:** 86 av de brukte kortene fantes ikke hos oss, trolig nye promokort eller annen ID. Bør undersøkes.
+- Om-siden har fått en egen del, «Slik regnes IGR».
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

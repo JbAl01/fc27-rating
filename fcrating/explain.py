@@ -203,7 +203,7 @@ def why_lines(r: dict, g: str, blend: Optional[dict] = None) -> List[str]:
             text += f" Trekkes ned av {join(down)}."
         lines.append(text)
     bonus = (e.get("role", 0) + e.get("weak_foot", 0) + e.get("skill_moves", 0) + e.get("gk_height", 0)
-             + e.get("off_balance", 0) + e.get("stand_tackle", 0) + e.get("body", 0))
+             + e.get("off_balance", 0) + e.get("stand_tackle", 0) + e.get("body", 0) + e.get("calibration", 0))
     core_parts = []
     if blend.get("feel") and e.get("feel") is not None:
         core_parts.append(f"følelse {e['feel']:.1f} x {blend['feel'] * 100:.0f} %")
@@ -264,8 +264,22 @@ def why_lines(r: dict, g: str, blend: Optional[dict] = None) -> List[str]:
         st = r.get("attributes", {}).get("standing_tackle", 0)
         extras.append(f"Standing Tackle {st:.0f} ({'alle' if st >= 85 else 'bare enkle'} taklingsanimasjoner, "
                       f"{e['stand_tackle']:+.1f})")
+    if e.get("calibration"):
+        extras.append(f"posisjonsjustering ({e['calibration']:+.1f}, så IGR kan sammenlignes på tvers av posisjoner)")
     if extras:
         lines.append("Bonuser: " + ", ".join(extras))
+    gm = e.get("gem")
+    if gm and gm.get("on"):
+        lines.append(f"Skjult perle: {gm['res']:+.1f} over kort med samme OVR i posisjonen (topp {gm['top']} %)"
+                     + (f", mest pga. {', '.join(gm['why'])}" if gm.get("why") else ""))
+    u = r.get("usage")
+    if u:
+        bits = []
+        if u.get("pro"):
+            bits.append(f"{u['pro'][0]} % av proffene som {u['pro'][1]}")
+        if u.get("com"):
+            bits.append(f"{u['com'][0]} % av FUT.GG-lagene som {u['com'][1]}")
+        lines.append("Meta i spillet (FUT.GG): " + ", ".join(bits))
     if w.get("s"):
         lines.append("Skiller seg også ut: " + attr_list(w["s"]))
     if w.get("w"):
