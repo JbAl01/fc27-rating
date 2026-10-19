@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-18T17:50:00Z",
+  "_sjekket": "2026-10-19T17:15:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -120,8 +120,7 @@
       "key": "side_step",
       "name": "Side Step",
       "cost": "gratis",
-      "until_ukjent": true,
-      "note": "Fristen for å starte er ukjent: ingen kilde oppgir dato (FUTBIN viser bare «utløper om 2 uker», åpnet 14.10.2026). Evoen er merket repeterbar hos FUTBIN, men hvor mange ganger står ikke. Roller og skill moves er ikke nevnt. Fordeler på nivå: nivå 1 OVR/Crossing/Long Passing/Long Shots/Def. Awareness/Sprint Speed/svakfot, nivå 2 Curve/Finishing/FK/Stand Tackle/Volleys/Tiki Taka, nivå 3 Acceleration/Interceptions/Short Passing/Shot Power/Slide Tackle/Vision. Tallene her er summen etter alle tre nivåer.",
+      "note": "Fristen for å starte (24.10.2026) er futnext sin nedtelling på listesiden («unlock within 4d23h» 19.10 kl. 17:12 UTC), og FUTBIN viser «5 days» igjen; det stemmer med at evoen åpnet 14.10 og har 10 dager. futnext sin detaljside sier «8d15h», så den tidligste er brukt (17:00 UTC). Evoen er merket repeterbar hos FUTBIN, men hvor mange ganger står ikke. Roller og skill moves er ikke nevnt. Fordeler på nivå: nivå 1 OVR/Crossing/Long Passing/Long Shots/Def. Awareness/Sprint Speed/svakfot, nivå 2 Curve/Finishing/FK/Stand Tackle/Volleys/Tiki Taka, nivå 3 Acceleration/Interceptions/Short Passing/Shot Power/Slide Tackle/Vision. Tallene her er summen etter alle tre nivåer (like hos FUTBIN, Destructoid og futnext).",
       "req": {
         "max_ovr": 80,
         "max_pace": 85,
@@ -219,8 +218,10 @@
       },
       "sources": [
         "https://www.futbin.com/27/evolutions/50/side-step",
-        "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/"
-      ]
+        "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/",
+        "https://www.futnext.com/evolutions/side-step/2757"
+      ],
+      "until": "2026-10-24T17:00Z"
     },
     {
       "key": "centre_stage",
@@ -742,8 +743,7 @@
       "key": "zoomaestro",
       "name": "Zoomaestro",
       "cost": "gratis",
-      "until_ukjent": true,
-      "note": "Kom 18.10.2026. Fristen for å starte er ukjent: verken Destructoid eller Futmind oppgir dato, og FUTBIN, futnext og FUT.GG har den ikke ennå. Krav som Evo Lab ikke sjekker: maks 74 Defending og maks 4 skill moves (Destructoid sier 4, Futmind 3; eieren bekreftet 4). Oppgraderingene er like hos begge kildene; PlayStyle-taket 3 står hos Destructoid. Roller og svakfot er ikke nevnt. Tallene er summen etter alle tre nivåer.",
+      "note": "Kom 18.10.2026. Fristen for å starte er futnext sin nedtelling («unlock within 9d» 19.10 kl. 17:12 UTC, både liste og detaljside), som gir 28.10 kl. 18:00 UTC (etter at Storbritannia har gått over til vintertid); FUTBIN viser «1 Weeks». Krav som Evo Lab ikke sjekker: maks 74 Defending og maks skill moves (Destructoid sier 4, Futmind og futnext 3; eieren bekreftet 4 tidligere). Oppgraderingene er like hos Destructoid, Futmind og futnext; PlayStyle-taket 3 står hos Destructoid. Roller og svakfot er ikke nevnt. Tallene er summen etter alle tre nivåer.",
       "req": {
         "max_ovr": 80,
         "max_pace": 75,
@@ -837,8 +837,10 @@
       },
       "sources": [
         "https://www.destructoid.com/best-players-for-fc-27-zoomaestro-evolution/",
-        "https://futmind.com/articles/19919/fc-27-zoomaestro-evolution-guide-best-players-requirements-and-upgrades"
-      ]
+        "https://futmind.com/articles/19919/fc-27-zoomaestro-evolution-guide-best-players-requirements-and-upgrades",
+        "https://www.futnext.com/evolutions/zoomaestro/2764"
+      ],
+      "until": "2026-10-28T18:00Z"
     }
   ],
   "_hoppet_over": [
@@ -866,6 +868,11 @@
       "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
       "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
       "dato": "2026-10-18"
+    },
+    {
+      "navn": "Poor Sophia (GK)",
+      "grunn": "Står bare hos futnext (gratis, maks 81 OVR, GK, ingen PlayStyle+; unlock within 10d). Ingen andre kilder (FUTBIN, FUT.GG, guider) har den, og futnext-siden er selvmotsigende om skill moves/svakfot. Venter på en andre kilde.",
+      "dato": "2026-10-19"
     }
   ]
 }
