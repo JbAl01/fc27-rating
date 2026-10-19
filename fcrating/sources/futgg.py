@@ -38,6 +38,9 @@ _SVG = re.compile(r'<div(?: class="([^"]*)")? title="([^"]+)"><svg([^>]*)>(.*?)<
 _SVG_D = re.compile(r'<path[^>]*?\sd="([MmLlHhVvCcSsQqTtAaZz0-9.,\-\s]{1,20000})"')
 _SVG_VB = re.compile(r'viewBox="([\d.\s\-]{3,40})"')
 _HEIGHT = re.compile(r"Height</[^>]+>\s*<[^>]+>\s*(\d{3})\s*cm", re.I)
+_WEIGHT = re.compile(r"Weight</[^>]+>\s*<[^>]+>\s*(\d{2,3})\s*kg", re.I)
+_BODY = re.compile(r"Body Type</[^>]+>\s*<[^>]+>\s*([^<]{2,60}?)\s*<", re.I)
+_BODY_CODE = re.compile(r"bodytypeCode:(\d+)")
 
 
 _FR_PLAYER = re.compile(r"[?&]player=(\d+)")
@@ -78,11 +81,15 @@ class FutggCache:
         self.icons: Dict[str, dict] = load_icons(folder)
 
     def save(self) -> None:
+        """Written to a temporary file and moved into place, so a run reading the cache at the same
+        time (Evo Lab's deep search while bodies are fetched) never sees half a file."""
+        import os
         self.dir.mkdir(parents=True, exist_ok=True)
-        with open(self.dir / "kort.json", "w", encoding="utf-8") as f:
-            json.dump(self.cards, f, ensure_ascii=False)
-        with open(self.dir / "ikoner.json", "w", encoding="utf-8") as f:
-            json.dump(self.icons, f, ensure_ascii=False)
+        for name, data in (("kort.json", self.cards), ("ikoner.json", self.icons)):
+            tmp = self.dir / (name + ".tmp")
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False)
+            os.replace(tmp, self.dir / name)
 
 
 def load_icons(folder: str) -> Dict[str, dict]:
@@ -250,7 +257,7 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
         return None
     h = _HEIGHT.search(html)
     rec = {"ps": [x for x in ps if x not in psp], "psp": psp,
-           "height": int(h.group(1)) if h else None, "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html), "cc": card_colors(html, card),
+           "height": int(h.group(1)) if h else None, **parse_body(html), "img": card_image(html, card, game), "face": face_image(html, card, game), "lg": league_image(html), "cc": card_colors(html, card),
            "t": datetime.now(timezone.utc).strftime("%Y-%m-%d")}
     attrs = card_attributes(html, card, game)
     if attrs:
@@ -265,6 +272,32 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
     if roles:
         rec["roles"] = roles
     return rec
+
+
+def parse_body(html: str) -> dict:
+    """Body type and weight from the card page: {"bt": "Lean Medium" | the unique model's name | None, "wt": kg}.
+    The nine standard bodies are read from bodytypeCode (1-9), unique models from the 'Body Type' text
+    (FUT.GG shows the player's name there). "bt" is always set (None when the page has none), so a page
+    without a body type is not fetched again for it."""
+    import html as _html
+    from ..body import CODES, LABEL_NO
+    out: dict = {"bt": None}
+    c = _BODY_CODE.search(html)
+    t = _BODY.search(html)
+    code = int(c.group(1)) if c else None
+    if code in CODES:
+        b, sz = CODES[code]
+        out["bt"] = f"{LABEL_NO[b]} {LABEL_NO[sz]}"
+    elif t:
+        out["bt"] = _html.unescape(t.group(1)).strip() or None
+    elif code is not None and code >= 10:
+        out["bt"] = "Unique"
+    if code is not None:
+        out["bc"] = code
+    w = _WEIGHT.search(html)
+    if w:
+        out["wt"] = int(w.group(1))
+    return out
 
 
 def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], limit: int, game: str = "27",
@@ -286,7 +319,8 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
         old = cache.cards.get(card)
         # cards fetched before the colours and attributes were read are fetched once more
         again = bool(old) and not old.get("missing") and (int(old.get("v") or 1) < PARSE_VERSION or (
-            kind == "base" and card in (refetch or ()) and bool(old.get("roles")) and old["roles"].get("alt") is None))   # fetched before the positions were read, and EA's list may be cut
+            kind == "base" and card in (refetch or ()) and bool(old.get("roles")) and old["roles"].get("alt") is None)   # fetched before the positions were read, and EA's list may be cut
+            or (kind == "base" and "bt" not in old))   # fetched before body type and weight were read
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -414,6 +448,10 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             p.ps_from_base = False
         if rec.get("height") and not p.height_cm:
             p.height_cm = float(rec["height"])
+        if rec.get("bt") and not p.body_type:
+            p.body_type = rec["bt"]
+        if rec.get("wt") and not p.weight_kg:
+            p.weight_kg = float(rec["wt"])
         if rec.get("born") and not p.birthdate:
             p.birthdate = rec["born"]
         n += 1

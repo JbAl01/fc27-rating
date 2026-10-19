@@ -103,8 +103,18 @@ def rate_meta(cfg: dict) -> dict:
         "ob": {"start": ob["start"], "per_point": ob["per_point"], "max": ob["max"]} if ob else 0,
         "obdW": [[ATTR_INDEX[k], v] for k, v in _clean(w["off_balance_dribbling"]["weights"]).items()],
         "stT": st.get("tiers", []) if st else [], "runW": run_w, "hs": hsm,
+        "bd": _body_meta(w.get("body_profile")),
         "pysum": sys.version_info >= (3, 12),  # Python 3.12+ adds floats with compensation; the page does the same
     }
+
+
+def _body_meta(bp: Optional[dict]):
+    """The body profile's agility formula for the page (the per-card numbers are in card_consts)."""
+    if not bp:
+        return 0
+    amp = bp["agility_amp"]
+    return {"w": [[ATTR_INDEX[k], v] for k, v in _clean(amp["attributes"]).items() if k in ATTR_INDEX],
+            "floor": amp["floor"], "span": amp["span"], "cap": amp["cap"], "comboCap": (bp.get("combos") or {}).get("cap", 1.5)}
 
 
 def rules_meta(lab: dict) -> dict:
@@ -154,7 +164,9 @@ def card_consts(p: Player, g: str, cfg: dict) -> list:
     return [g, fr.feel_h, fr.feel_b, fr.gk, fr.run_const.get("kort_kropp"), fr.run_const.get("arbeidsrate"),
             fr.obd_off[0] if fr.obd_off else None, fr.obd_off[1] if fr.obd_off else None, p.accelerate_source or "",
             p.height_cm, best, 1 if cur and all(v >= 2 for v in cur.values()) else 0, 1 if st.ps_unknown else 0, prim,
-            p.gender or "M"]
+            p.gender or "M",
+            # body profile: [fixed points, agility amplification, [[PlayStyle, base, plus]], low, high, label]
+            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"]] if fr.body.on else 0]
 
 
 def _seq(seq, idx, live_by_key):

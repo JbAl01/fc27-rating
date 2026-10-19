@@ -1,6 +1,6 @@
 # Dypsøk i Evo Lab: finner og beviser den beste evo-planen for kortene som bare har den raske planen,
 # de som ender høyest først, og legger siden ut på nytt. Starter av seg selv når «Oppdater siden» er ferdig.
-# Fremdriften lagres i cachen, så hver runde fortsetter der forrige slapp. Ingen henting fra nettet her.
+# Fremdriften lagres i cachen, så hver runde fortsetter der forrige slapp. Samtidig hentes kroppstyper fra FUT.GG.
 name: Dypsøk Evo Lab
 
 on:
@@ -61,8 +61,14 @@ jobs:
             [ -f "$f" ] && files="$files $f"
           done
           if [ -z "$files" ]; then echo "Ingen kortdata i cachen."; exit 1; fi
+          # Kroppstype og vekt hentes fra FUT.GG mens dypsøket regner (det henter ingenting selv), så tiden ikke går til spille.
+          # Brukes fra neste kjøring. Lagres trygt (midlertidig fil), så ratingen under aldri leser en halv fil.
+          python -m fcrating hent-kropp --minutter 60 > kropp.log 2>&1 &
+          kp=$!
           python -m fcrating rate $files --ignorer-brukte --lagre-meta-start --top 5
           python -m fcrating publiser
+          wait $kp || echo "Kroppshentingen feilet (prøver igjen neste gang)"
+          tail -n 5 kropp.log
 
       - name: Lagre fremdriften
         if: always()

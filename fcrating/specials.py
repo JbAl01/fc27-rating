@@ -361,3 +361,34 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
         except Blocked as exc:
             log(f"RealSport101 stoppet: {exc}")
     return fr_cache, leak_cache
+
+
+def fetch_bodies(cfg_sources: dict, cache_dir: str, minutes: float, log=print) -> int:
+    """Body type and weight for base cards, from FUT.GG's card pages (one page per player: promo and evo
+    cards share the base card's body). Cards never read and cards read before body type was saved,
+    players with a special card first, then the best. Runs beside Evo Lab's deep search, which does
+    not fetch, so the time is otherwise unused. Returns how many pages were read."""
+    import time as _time
+    sc = cfg_sources["specials"]
+    gcfg = sc.get("futgg") or {}
+    fr_cache = fr.FifaRostersCache(str(Path(cache_dir) / "fifarosters"))
+    fg = futgg.FutggCache(str(Path(cache_dir) / "futgg"))
+    entries = unique_entries(fr_cache)
+    has_special = {str(e.get("player_id")) for _, e in entries if not fr.is_base_version(e["version"])}
+    base = [(str(e.get("player_id") or fid), fid) for fid, e in
+            sorted(entries, key=lambda t: (str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
+            if fr.is_base_version(e["version"])]
+    todo = [(pl, c) for pl, c in base if not (fg.cards.get(c) or {}).get("missing") and "bt" not in (fg.cards.get(c) or {})]
+    log(f"FUT.GG kroppstype: {len(todo)} basekort mangler kroppstype, henter i opptil {minutes:.0f} minutter")
+    fetcher = PoliteFetcher(user_agent=gcfg.get("user_agent") or sc.get("user_agent") or "fc27-rating",
+                            delay_seconds=float(gcfg.get("body_delay_seconds", gcfg.get("delay_seconds", 3.0))), log=log)
+    n = 0
+    try:
+        n = futgg.fetch_cards(fetcher, fg, todo, 10 ** 6, log=log, kind="base", deadline=_time.time() + 60 * minutes)
+    except Blocked as exc:
+        log(f"FUT.GG stoppet: {exc}")
+    finally:
+        fg.save()
+    left = sum(1 for _, c in base if "bt" not in (fg.cards.get(c) or {}) and not (fg.cards.get(c) or {}).get("missing"))
+    log(f"FUT.GG kroppstype: leste {n} kortsider, {left} basekort gjenstår")
+    return n

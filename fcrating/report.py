@@ -162,7 +162,14 @@ def _group_array(gr: dict, intern: _Interner) -> list:
             intern(gr.get("role_name") or ""), _r1(gr.get("weak_foot")), _r1(gr.get("skill_moves")),
             _r1(gr.get("gk_height")), ps, 1 if gr.get("ps_estimated") else 0, _run_array(gr.get("run"), intern),
             _r1(gr.get("off_balance")), _r1(gr.get("stand_tackle")), gr.get("run_score"), gr.get("stop_score"),
-            gr.get("meta")]
+            gr.get("meta"), _body_array(gr.get("body_detail"))]
+
+
+def _body_array(b: Optional[dict]):
+    """Body profile in one position: [points, fixed points for the body, agility amplification, body + PlayStyle]."""
+    if not b:
+        return 0
+    return [round(b["points"], 1), round(b["frame"], 1), round(b["amp"], 1), round(b["combo"], 1)]
 
 
 def _run_array(run: Optional[dict], intern: "_Interner"):
@@ -213,7 +220,17 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         r.get("league_image") or "",
         r.get("foot") or "",
         r.get("card_color") or "",
+        intern(_body_label(r)),
     ]
+
+
+def _body_label(r: dict) -> str:
+    """The card's body type as shown on the page ('' when not fetched yet)."""
+    for gr in r.get("by_group", {}).values():
+        b = gr.get("body_detail")
+        if b:
+            return b["label"]
+    return ""
 
 
 def _ps_names(r: dict, intern: "_Interner") -> list:

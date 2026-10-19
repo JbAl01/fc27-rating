@@ -305,8 +305,12 @@ def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Op
 
     ob_pts = off_balance_bonus(obd, group, wcfg)
     st_pts = stand_tackle_bonus(attrs, group, wcfg)
+    from .body import BodyCard
+    bc = BodyCard(player, group, wcfg.get("body_profile"))
+    body = bc.detail(attrs, player.playstyles, player.playstyles_plus)
+    body_pts = bc.points(attrs, player.playstyles, player.playstyles_plus) if body else 0.0
 
-    igr = core + ps_pts + role_pts + wf_pts + sm_pts + gk_adj + ob_pts + st_pts
+    igr = core + ps_pts + role_pts + wf_pts + sm_pts + gk_adj + ob_pts + st_pts + body_pts
     return {
         "group": group,
         "igr": round(igr, 1),
@@ -327,6 +331,8 @@ def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Op
         "stop_score": round(stop_used, 1) if stop_used is not None else None,
         "off_balance": round(ob_pts, 2),
         "stand_tackle": round(st_pts, 2),
+        "body": round(body_pts, 2),
+        "body_detail": body,
     }
 
 
@@ -373,6 +379,10 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         warnings.append(f"mangler {names}" + (f" og {len(missing) - 3} til" if len(missing) > 3 else ""))
     if player.height_cm is None:
         warnings.append("høyde mangler (påvirker følelse og AcceleRATE)")
+    if not player.body_type and player.position != "GK" and wcfg.get("body_profile"):
+        from .body import frame_of
+        warnings.append("kroppstype ikke hentet ennå (" + ("anslått fra høyde og vekt" if frame_of(player, wcfg["body_profile"])
+                                                         else "teller 0 i kroppsprofilen") + ")")
     if not player.playstyles_complete:
         warnings.append("PlayStyle-listen er ufullstendig")
     if not player.roles_complete:
@@ -419,6 +429,8 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "feel_parts": feel_parts,
         "attributes": {k: v for k, v in attrs.items() if v},
         "height_cm": player.height_cm,
+        "weight_kg": player.weight_kg,
+        "body_type": player.body_type,
         "gender": player.gender,
         "weak_foot": player.weak_foot,
         "skill_moves": player.skill_moves,

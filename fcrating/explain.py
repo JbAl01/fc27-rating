@@ -203,7 +203,7 @@ def why_lines(r: dict, g: str, blend: Optional[dict] = None) -> List[str]:
             text += f" Trekkes ned av {join(down)}."
         lines.append(text)
     bonus = (e.get("role", 0) + e.get("weak_foot", 0) + e.get("skill_moves", 0) + e.get("gk_height", 0)
-             + e.get("off_balance", 0) + e.get("stand_tackle", 0))
+             + e.get("off_balance", 0) + e.get("stand_tackle", 0) + e.get("body", 0))
     core_parts = []
     if blend.get("feel") and e.get("feel") is not None:
         core_parts.append(f"følelse {e['feel']:.1f} x {blend['feel'] * 100:.0f} %")
@@ -231,6 +231,16 @@ def why_lines(r: dict, g: str, blend: Optional[dict] = None) -> List[str]:
         body.append(f"{r['height_cm']:.0f} cm" + (f" ({fp.get('height', 0):+.1f} følelse)" if fp.get("height") else ""))
     if r.get("accelerate"):
         body.append(f"{r['accelerate']}" + (f" ({fp.get('accelerate', 0):+.1f} følelse)" if fp.get("accelerate") else ""))
+    bd = e.get("body_detail")
+    if bd:
+        part = [f"{bd['frame']:+.1f} for kroppen"]
+        if bd["amp"]:
+            part.append(f"{bd['amp']:+.1f} fordi kroppen forsterker smidigheten")
+        if bd["combo"]:
+            part.append(f"{bd['combo']:+.1f} sammen med PlayStyles")
+        body.insert(0, f"{bd['label']} ({e['body']:+.1f}: {', '.join(part)})")
+    elif g != "GK":
+        body.insert(0, "kroppstype ikke hentet ennå")
     if body:
         lines.append("Kropp: " + ", ".join(body))
     if e.get("ps_estimated"):

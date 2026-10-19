@@ -91,10 +91,10 @@ const RAW=__DATA__,META=__META__,PAGE=200,STR=META.strings;let key="top_pct",dir
 const DATA=RAW.map((r,i)=>{const groups={};for(const g in r[22]){const a=r[22][g],ps=[];for(let j=0;j<a[14].length;j+=2)ps.push([STR[a[14][j]],a[14][j+1]]);
 const ru=a[16],tri=x=>{const o=[];for(let j=0;j<x.length;j+=3)o.push([STR[x[j]],x[j+1],x[j+2]]);return o};
 groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6],core:a[7],playstyles:a[8],role:a[9],role_name:STR[a[10]],wfp:a[11],smp:a[12],gkh:a[13],ps,pse:a[15],
-run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null}}
+run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null,bd:a[22]||null,bdp:a[22]?a[22][0]:0}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||""}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||""}});
 const ALTIMG={};DATA.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};DATA.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});DATA.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 
@@ -184,6 +184,7 @@ function attrGrid(d){if(d.gk){const get=l=>{const i=META.labels.indexOf(l);retur
 return`<div class="attrwrap">${attrBlock(FK.map(k=>({k,v:faceOf(d,k),dv:0,rows:aord(META.face[k].map(([a])=>{const i=META.idx[a];return{l:META.labels[i],v:d.at[i]||null,dv:0}})),extra:k==="PAC"&&d.accelerate?`<div class="accr"><span>AcceleRATE</span><b>${esc(d.accelerate)}</b></div>`:""})))}</div>`}
 const psChip=(n,isNew)=>{const plus=n.endsWith("+"),nm=plus?n.slice(0,-1):n;return`<span class="psc${plus?" plus":""}${isNew?" new":""}" title="${esc(nm)}${plus?" (PlayStyle+)":" (PlayStyle)"}${isNew?", ny med evo":""}">${psIcon(n)||'<i aria-hidden="true"></i>'}${esc(nm)}${plus?"<b>+</b>":""}</span>`};
 const psChips=(names,fresh,max,cls)=>{const s=[...names].sort((a,b)=>(b.endsWith("+")-a.endsWith("+"))||0);const shown=max&&s.length>max?s.slice(0,max):s;return`<span class="pscs${cls?" "+cls:""}">${shown.map(n=>psChip(n,fresh&&fresh.has(n))).join("")}${shown.length<s.length?`<span class="psc more">+${s.length-shown.length}</span>`:""}</span>`};
+const bodyTxt=e=>{if(!e.bd)return"teller ikke før kroppstypen er hentet fra FUT.GG";const[p,f,a,c]=e.bd,t=[`${sg(f)} for kroppen`];if(a)t.push(`${sg(a)} fordi kroppen forsterker smidigheten`);if(c)t.push(`${sg(c)} sammen med PlayStyles`);return t.join(", ")};
 const kvd=(label,desc,val,extra)=>`<tr><th>${label}${desc?`<small>${desc}</small>`:""}</th><td>${val}</td><td class="note">${extra||""}</td></tr>`;
 const nameList=items=>list(items.map(x=>`${esc(lab(x[0]))} ${x[1]}`));
 function detail(d,g){const e=d.groups[g]||{},w=whyData(d,g),B=META.blend[g]||{},pl=META.plural[g]||g,rg=runGroup(d,g),gk=g===META.gk,gl=esc(g===g.toUpperCase()?g:g.toLowerCase());
@@ -201,6 +202,7 @@ h+=`<div class="cols"><section><table class="kv"><tbody>
 ${!gk?kvd("Følelse","hvor kvikk og lett han er å styre",fmt(d.feel),pct(w.fp)):""}
 ${kvd("Fart","Acceleration og Sprint Speed",fmt(e.pace),pct(w.pp))}
 ${kvd("Ferdigheter",`det som betyr mest for en ${gl}: ${esc(list(skillTop(g)))}`,fmt(e.skill),pct(w.sp))}
+${!gk?kvd("Kroppstype",bodyTxt(e),d.bt?esc(d.bt):"ikke hentet ennå",e.bd?sg(e.bdp):""):""}
 ${B.run&&e.rs!=null?kvd("Løp uten ball","hvor smart og nyttig han løper når laget har ballen",fmt(e.rs),pct(w.rp)):""}
 ${B.stop&&e.ss!=null?kvd("Vanskelig å stoppe","med ball og på løp: fart, styrke og balanse",fmt(e.ss),pct(w.ssp)):""}
 ${extra.length?kvd("Gir også ekstra",esc(list(extra)),"","").replace("<tr>","<tr class=\"x\">"):""}
@@ -227,8 +229,8 @@ const v=d.evo;if(v){h+=v.x!==undefined?"":(META.evolab?`<p><a href="evolab.html"
 const share=k=>B[k]?Math.round(B[k]*100)+" %":"";
 const core=[];if(B.feel&&d.feel!=null)core.push(`følelse ${fmt(d.feel)} × ${share("feel")}`);if(B.pace&&e.pace!=null)core.push(`fart ${fmt(e.pace)} × ${share("pace")}`);core.push(`ferdigheter ${fmt(e.skill)} × ${Math.round((B.skill??1)*100)} %`);if(B.run&&e.rs!=null)core.push(`løp uten ball ${fmt(e.rs)} × ${share("run")}`);if(B.stop&&e.ss!=null)core.push(`vanskelig å stoppe ${fmt(e.ss)} × ${share("stop")}`);
 const bon=[];if(e.role)bon.push(`rolle${e.role_name?" "+e.role_name:""} ${sg(e.role)}`);if(d.wf&&e.wfp)bon.push(`svakfot ${d.wf} ${sg(e.wfp)}`);if(d.sm&&e.smp)bon.push(`skill moves ${d.sm} ${sg(e.smp)}`);
-if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);
-const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0);
+if(e.obb)bon.push(`off-balance ${sg(e.obb)}`);if(e.stb)bon.push(`Standing Tackle ${sg(e.stb)}`);if(e.gkh)bon.push(`høyde ${sg(e.gkh)}`);if(e.bdp)bon.push(`kroppstype ${d.bt?esc(d.bt)+" ":""}${sg(e.bdp)}`);
+const bonus=(e.role||0)+(e.wfp||0)+(e.smp||0)+(e.gkh||0)+(e.obb||0)+(e.stb||0)+(e.bdp||0);
 const per=Object.entries(d.groups).sort((a,b)=>b[1].igr-a[1].igr).map(([k,x])=>`${esc(k)} ${x.igr.toFixed(1)} (plass ${x.rank} av ${x.of})`).join(", ");
 const mg=META.meta&&META.meta.groups&&META.meta.groups[g];
 h+=`<details style="margin-top:12px"><summary>Utregning og kilde</summary><p class="muted">IGR ${fmt(e.igr)} = kjerne ${fmt(e.core)} (${core.join(" + ")}) ${sg(e.playstyles||0)} PlayStyles ${sg(bonus)} bonuser.</p>

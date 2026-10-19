@@ -57,8 +57,37 @@ def _load_players(files: List[str]) -> List[Player]:
     n = futgg.apply(players, futgg.load_cards(str(ROOT / "data" / "cache" / "futgg")), futgg.load_role_positions())
     if n:
         print(f"FUT.GG (PlayStyles, roller, høyde) brukt på {n} kort.")
+    _fill_body(players)
     _fill_faces(players)
     return players
+
+
+def _fill_body(players: List[Player]) -> None:
+    """Body type, height and weight belong to the player, not the card: promo, special and evo cards
+    get them from any card of the same player that has them (usually the base card from FUT.GG)."""
+    table: dict = {}
+    for p in players:
+        if p.body_type or p.weight_kg or p.height_cm:
+            t = table.setdefault(str(p.base_id or p.id), {})
+            if p.body_type:
+                t.setdefault("bt", p.body_type)
+            if p.weight_kg:
+                t.setdefault("wt", p.weight_kg)
+            if p.height_cm:
+                t.setdefault("h", p.height_cm)
+    n = 0
+    for p in players:
+        t = table.get(str(p.base_id or p.id)) or table.get(str(p.id))
+        if not t:
+            continue
+        if not p.body_type and t.get("bt"):
+            p.body_type, n = t["bt"], n + 1
+        if not p.weight_kg and t.get("wt"):
+            p.weight_kg = t["wt"]
+        if not p.height_cm and t.get("h"):
+            p.height_cm = t["h"]
+    known = sum(1 for p in players if p.body_type)
+    print(f"Kroppstype kjent for {known} av {len(players)} kort ({n} arvet fra spillerens andre kort).")
 
 
 FUTBIN_FACE = "https://cdn.futbin.com/content/fifa27/img/players/{id}.png"
@@ -1009,6 +1038,14 @@ def _specials(cfg_src: dict, full=None, detail_limit=None, leaks=True, fifaroste
     return str(out)
 
 
+def cmd_fetch_bodies(args) -> int:
+    from . import specials
+    from .sources import ea_ratings
+    cfg_src = ea_ratings.load_sources_config()
+    specials.fetch_bodies(cfg_src, str(ROOT / "data" / "cache"), args.minutter)
+    return 0
+
+
 def cmd_fetch_specials(args) -> int:
     from .sources import ea_ratings
     cfg_src = ea_ratings.load_sources_config()
@@ -1239,6 +1276,10 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--offline", action="store_true", help="bygg fra lagrede data uten å hente noe")
     sp.add_argument("--promo", nargs="*", help="ekstra kampanjesider på FIFA Rosters, f.eks. fut-future-stars onestowatch")
     sp.set_defaults(func=cmd_fetch_specials)
+
+    kb = sub.add_parser("hent-kropp", help="hent kroppstype og vekt fra FUT.GG for basekort som mangler det")
+    kb.add_argument("--minutter", type=float, default=60.0, help="hvor lenge det hentes (standard 60)")
+    kb.set_defaults(func=cmd_fetch_bodies)
 
     w = sub.add_parser("watch", help="hent og rater automatisk med jevne mellomrom")
     w.add_argument("--interval", type=int, help="minutter mellom hver oppdatering")

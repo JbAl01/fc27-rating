@@ -610,6 +610,8 @@ class FastRater:
             self.obd_off = (p.off_balance_dribbling, before)
         st = w.get("stand_tackle_tiers")
         self.st_f = (st or {}).get("group_factor", {}).get(group, 0.0) if st else 0.0
+        from .body import BodyCard
+        self.body = BodyCard(p, group, w.get("body_profile"))   # body type: fixed per card, the agility part moves with evos
         self.st_tiers = st["tiers"] if st else []
         run = w.get("run_ai")
         self.run_w = {k: v for k, v in _clean(run["weights"]).items() if v} if run else {}
@@ -794,6 +796,12 @@ class FastRater:
                     if v >= threshold:
                         pts = val
                 igr += pts * self.st_f
+        if self.body.on:
+            # upper bound for the plan search: every body + PlayStyle combo the card could still get counts
+            bp = self.body.upper(a) if ub_ps is not None else self.body.points(a, st.ps, st.psp)
+            igr += bp
+            if detail:
+                out["body"] = round(bp, 2)
         if detail:
             out["igr"] = round(igr, 1)
             return out
@@ -1825,7 +1833,7 @@ def _fingerprint(obj) -> str:
 
 def card_fingerprint(p: Player) -> str:
     return _fingerprint([p.name, p.rarity, p.ovr, p.position, p.alt_positions, p.attributes, p.playstyles, p.playstyles_plus,
-                         p.playstyles_complete, p.weak_foot, p.skill_moves, p.roles, p.height_cm, p.gender, p.body_type,
+                         p.playstyles_complete, p.weak_foot, p.skill_moves, p.roles, p.height_cm, p.gender, p.body_type, p.weight_kg,
                          p.status, p.accelerate_source, p.off_balance_dribbling, p.work_rate_att, p.birthdate, positions_unsure(p)])
 
 
