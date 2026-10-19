@@ -173,10 +173,11 @@ def _gem_array(gm: Optional[dict], intern: "_Interner"):
 
 
 def _body_array(b: Optional[dict]):
-    """Body profile in one position: [points, fixed points for the body, agility amplification, body + PlayStyle]."""
+    """Body profile in one position: [points, fixed points for the body, agility amplification, body + PlayStyle,
+    of the fixed points: what the players' choices added]."""
     if not b:
         return 0
-    return [round(b["points"], 1), round(b["frame"], 1), round(b["amp"], 1), round(b["combo"], 1)]
+    return [round(b["points"], 1), round(b["frame"], 1), round(b["amp"], 1), round(b["combo"], 1), round(b.get("learn") or 0.0, 1)]
 
 
 def _run_array(run: Optional[dict], intern: "_Interner"):

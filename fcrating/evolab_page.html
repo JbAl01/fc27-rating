@@ -500,7 +500,7 @@ return`<li><div class="hd">${esc(e[1])}${closed?' <span class="closedtag">stengt
 <div class="meta2">${closed?"Har stengt":(()=>{const c=closeText(e[3]);return c==="hele sesongen"||c==="ingen sluttdato"?"Hele sesongen":"Til "+esc(c)})()}</div>
 ${s.path?`<p class="muted">${choiceText(e,s.path)}</p>`:""}
 ${g.ps.length?`<div class="gains">${psChips(g.ps,new Set(g.ps))}</div>`:""}
-${eff||gt||e[9]?`<details class="why"><summary>Hvorfor</summary>${eff||gt?`<p>${eff?eff+".":""} ${gt}</p>`:""}${e[9]?`<p class="muted">${esc(e[9])}</p>`:""}</details>`:""}</li>`}
+${eff||gt?`<details class="why"><summary>Hvorfor</summary><p>${eff?eff+".":""} ${gt}</p></details>`:""}</li>`}
 function planHtml(d){const mi=want(d),plan=d.plans[mi]||d.plans[0],lm=d.lm;let h="";
 const alts=[0,1,2,3,4,5].filter(i=>i===0||d.plans[i]);
 if(!d._re&&mi===0)h+=`<p class="muted" style="margin:0 0 8px;font-size:13px">${d.lm.pv?"Alle måter å ta evoene på er prøvd (rekkefølge, valg og å hoppe over): dette er den beste.":d.lm.qk?"Bare det raske søket rakk å kjøre for dette kortet i denne oppdateringen. Neste oppdatering prøver alle måter.":"Mange kombinasjoner er prøvd, men ikke alle rakk å bli sjekket for dette kortet. Planen er den beste som ble funnet."}</p>`;
@@ -512,7 +512,7 @@ if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
 if(plan[0].length>1)h+=`<p class="muted">Ta dem i denne rekkefølgen.</p>`;
 const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"går ikke etter planen, "))}</li>`).join("")}</ul>`:"";
-const more=ul("Kan passe, men sjekk selv:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+(mi===0&&!d._re?ul("Ikke med i planen:",lm.skip.slice(0,6),"muted"):"");
+const more=ul("Usikkert om kortet kan ta:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+(mi===0&&!d._re?ul("Ikke med i planen:",lm.skip.slice(0,6),"muted"):"");
 if(more)h+=`<details class="why"><summary>Evoer som ikke er med</summary>${more}</details>`;
 return h}
 function kvRow(label,vals,dg=1,better=1){const cells=vals.map((v,j)=>{if(v==null||v==="")return"<td>–</td>";if(typeof v==="string")return`<td>${esc(v)}</td>`;
@@ -659,8 +659,8 @@ $("evosum").textContent=`Evoene som er ute nå (${open.length})`;
 /* the cards that end best (IGR with today's evos) with this evo in their plan, as FUT.GG's «best players» per evo */
 const best=new Map();for(const d of D){const ps=d.plans[0];if(!ps||!ps[0].length)continue;const v=d.h[0].p50;for(const[ei]of ps[0]){let a=best.get(ei);if(!a)best.set(ei,a=[]);if(!a.some(x=>x[0]===d))a.push([d,v])}}
 for(const a of best.values()){a.sort((x,y)=>y[1]-x[1]);a.length=Math.min(a.length,3)}
-let t=`<p class="muted x" style="margin:8px 0 0">Huk av evoer du allerede har brukt opp på andre kort, så regnes planene uten dem. «Blir best med den» er kortene som ender høyest (IGR med evoene nå) og har evoen i planen sin.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Blir best med den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
-for(const[e,ei]of open){const c=false,bb=(best.get(ei)||[]).map(([d,v])=>`${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}, ${fmt(v)}</span>`).join("<br>");t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas av ${e[6]} spillere)</span>`:""}${e[5]?`<br><span class="muted">Sjekk selv: ${esc(e[5])}</span>`:""}${e[9]?`<br><span class="muted">${esc(e[9])}</span>`:""}</td>
+let t=`<p class="muted x" style="margin:8px 0 0">Huk av evoer du har brukt, så regnes planene uten dem.</p><div class="tw" style="border:0"><table><thead><tr><th>Brukt</th><th>Evo</th><th>Hvem kan ta den</th><th>Blir best med den</th><th>Koster</th><th>Kan startes til</th><th>Kilder</th></tr></thead><tbody>`;
+for(const[e,ei]of open){const c=false,bb=(best.get(ei)||[]).map(([d,v])=>`${esc(d.name)} <span class="muted">${esc(String(d.ver).replace(/^FC 27 /,""))}, ${fmt(v)}</span>`).join("<br>");t+=`<tr><td><input type="checkbox" data-used="${esc(e[0])}"${USED.has(e[0])?" checked":""} aria-label="Jeg har brukt ${esc(e[1])}"></td><td><b>${esc(e[1])}</b>${e[6]>1?` <span class="muted">(kan tas av ${e[6]} spillere)</span>`:""}</td>
 <td>${esc(reqText(e))}</td><td style="white-space:normal;min-width:180px">${bb||'<span class="muted">–</span>'}</td><td>${esc(e[2]||"gratis")}</td><td class="when">${esc(closeText(e[3]))}</td><td class="src">${(e[10]||[]).map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener">${SRCNAME(u)}</a>`).join("")}</td></tr>`}
 t+=`</tbody></table></div>`;
 $("evobody").innerHTML=t;

@@ -148,7 +148,7 @@ def evos_meta(live: List[dict]):
             [r["min_ovr"], r["max_ovr"], r["max_pace"], r["max_ps"], r["max_psp"], r["max_positions"], r["positions"],
              r["not_positions"], r["requires_evo"] or "", r.get("born_from") or "", r.get("born_to") or ""],
             upg(u) + [[[pa["label"]] + upg(pa) for pa in u["paths"]]],
-            e.get("note") or "", e.get("sources") or [], e.get("per_card", 1),
+            "", e.get("sources") or [], e.get("per_card", 1),   # the source notes stay in auto_evoer.json, not on the page
         ])
     return out, idx
 

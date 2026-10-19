@@ -245,6 +245,11 @@ def cmd_rate(args) -> int:
     results = [rate(p, cfg, chem=chem) for p in players]
     rank_by_position(results, cfg)
     _add_usage(results)
+    from . import selfcal
+    if any(r.get("usage") for r in results):
+        selfcal.update(results, cfg)
+        Path(args.out).mkdir(parents=True, exist_ok=True)
+        (Path(args.out) / "testliste.txt").write_text("\n".join(selfcal.test_list(results)) + "\n", encoding="utf-8")
     from . import meta as meta_mod
     meta_info = meta_mod.apply(results, cfg, save=getattr(args, "lagre_meta_start", False))
     if meta_info.get("saved"):

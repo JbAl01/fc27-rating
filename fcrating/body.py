@@ -112,7 +112,11 @@ class BodyCard:
             u = bcfg["unique"]
             amp = min(u["max_amp"], amp + u["amp_bonus"])
             const += u["points"].get(group, 0.0)
-        self.const = const * f
+        from .selfcal import learned_points, frame_key
+        learn = learned_points(bcfg, group, fr)   # what the players' choices add or take away (selvkalibrering, 50/50)
+        self.key = frame_key(fr)
+        self.learn = learn * f
+        self.const = (const + learn) * f
         self.amp = amp * amp_cfg["scale"].get(group, 0.0) * f
         self.syn_w = _clean(amp_cfg["attributes"])
         self.floor, self.span, self.cap = amp_cfg["floor"], amp_cfg["span"], amp_cfg["cap"]
@@ -169,6 +173,7 @@ class BodyCard:
             return None
         a = self.agility(attrs)
         return {"label": self.frame["label"], "unique": self.frame["unique"], "estimated": self.frame["estimated"],
+                "key": self.key, "learn": round(self.learn, 2),
                 "frame": round(self.const, 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
                 "agility": round(a, 2) if a is not None else None, "combo": round(self.combo(ps, psp), 2),
                 "points": round(self.points(attrs, ps, psp), 2)}

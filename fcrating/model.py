@@ -37,6 +37,9 @@ def load_config(config_dir: Optional[Path] = None) -> dict:
     if "run_ai" in weights:
         from .runs import load_calibration
         load_calibration(cfg, d)
+    if config_dir is None:   # the adjustments learned from what people play (data/cache/kalibrering.json)
+        from .selfcal import apply as apply_selfcal
+        apply_selfcal(cfg)
     return cfg
 
 

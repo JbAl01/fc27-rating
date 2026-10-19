@@ -40,6 +40,18 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
   - **Kort vi ikke fant:** 86 av de brukte kortene fantes ikke hos oss, trolig nye promokort eller annen ID. Bør undersøkes.
 - Om-siden har fått en egen del, «Slik regnes IGR».
 
+## Lagt til 19.10 sent (selvkalibrering)
+- **Kilde:** FUT.GG «pros» er 195 vanlige FUT-lag (Rare Gold, OTW, TOTW og Heroes), ikke lag fra turneringer med kortregler. FUT.GG-lagene er 335 000 vanlige FUT-lag. Begge teller like mye.
+- **Kroppspoeng** (`fcrating/selfcal.py`): hver kjøring tilpasser en logistisk modell (sjanse for å bli spilt gitt IGR, per posisjon og kilde) med ett tillegg per kroppstype, felles og per familie (angrep / midtbane og back / midtstopper).
+  - Modellen bruker én rad per spiller og posisjon, med IGR uten tidligere lærte poeng, og bare kroppstyper som er hentet (ikke anslåtte).
+  - Tilleggene krymper mot 0 når få kort støtter dem (krever minst 4 spilte spillere med kroppen), og de sentreres. Halvparten brukes (50/50 hypotese/data), med tak ±1,0.
+  - Tallene glattes over kjøringene og endres bare ved utslag på minst 0,2.
+  - De lagres i `data/cache/kalibrering.json` og brukes fra neste kjøring via `load_config`, i `body_profile.learned`, `BodyCard.const` og `learn` i detaljene. Siden viser «(+x av det fra hva folk spiller)».
+- **Posisjonsnivå:** regnes også automatisk hver kjøring (median IGR − OVR = 0, endres ved utslag på minst 0,3) og overstyrer `weights.json`. `kalibrer-posisjon` trengs ikke lenger.
+- **Testliste:** `output/testliste.txt` (på siden som `/testliste.txt`, ikke lenket) har to deler: kort som spilles mye men ligger utenfor topp 5 % hos oss, og vanlige gullkort i topp 1 % som ingen spiller. Eieren tester bare disse.
+- **Første måling 19.10:** 94 spilte spillere med kroppstype. Data sier at høye kropper (Average og Lean Tall) spilles mer enn IGR tilsier, særlig på midtbane og back (+0,6 etter halvering), og at unike kropper i angrep er litt overvurdert (−0,3).
+- **Evo Lab:** de lange kildenotatene og «Sjekk selv» under evoene er fjernet fra siden. Notatene står fortsatt i `auto_evoer.json`.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

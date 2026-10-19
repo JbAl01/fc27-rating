@@ -206,6 +206,8 @@ def publish(out_dir=None, site_dir=None, cfg: Optional[dict] = None) -> Dict[str
         elif name == "evolab.html":
             warnings.append("evolab.html mangler (kjørte du rate med --uten-evolab?). Lenken til Evo Lab vil ikke virke.")
     shutil.copy2(dest / "rapport.html", dest / "index.html")
+    if (src / "testliste.txt").exists():   # for the owner: where the model and the players disagree (not linked)
+        shutil.copy2(src / "testliste.txt", dest / "testliste.txt")
     write_assets(dest, cfg)
     (dest / "robots.txt").write_text(ROBOTS, encoding="utf-8")
     (dest / "_headers").write_text(HEADERS, encoding="utf-8")

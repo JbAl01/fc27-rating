@@ -233,7 +233,7 @@ def why_lines(r: dict, g: str, blend: Optional[dict] = None) -> List[str]:
         body.append(f"{r['accelerate']}" + (f" ({fp.get('accelerate', 0):+.1f} følelse)" if fp.get("accelerate") else ""))
     bd = e.get("body_detail")
     if bd:
-        part = [f"{bd['frame']:+.1f} for kroppen"]
+        part = [f"{bd['frame']:+.1f} for kroppen" + (f" ({bd['learn']:+.1f} av det fra hva folk spiller)" if round(bd.get("learn") or 0, 1) else "")]
         if bd["amp"]:
             part.append(f"{bd['amp']:+.1f} fordi kroppen forsterker smidigheten")
         if bd["combo"]:
