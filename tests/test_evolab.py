@@ -142,6 +142,10 @@ class RuleTests(unittest.TestCase):
     def test_fast_rater_matches_rate(self):
         rng = random.Random(4)
         players = [copy.deepcopy(p) for p in BASE] + [low_striker(i, ovr=60 + i) for i in range(8)]
+        bodies = ["Lean Medium", "Stocky Tall", "Kylian Mbappé", "Average Short", "Lean Tall", None]
+        for i, p in enumerate(players):   # the body profile (fixed per card, agility part moves with evos) too
+            p.body_type, p.weight_kg = bodies[i % len(bodies)], 70.0 + i
+            p.height_cm = p.height_cm or 175.0 + i
         uni = evolab.generate_universe(LAB, 1)
         n = 0
         for p in players:

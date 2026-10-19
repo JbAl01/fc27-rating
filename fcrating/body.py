@@ -81,6 +81,14 @@ def frame_of(player, bcfg: dict) -> Optional[dict]:
     return {"build": b, "size": s, "unique": False, "estimated": True, "label": f"{LABEL_NO[b]} {LABEL_NO[s]} (anslått)"}
 
 
+def is_lean(player, bcfg: Optional[dict]) -> bool:
+    """A Lean body (from the body type, or for unique models and cards without one, from height and weight)."""
+    if not bcfg:
+        return False
+    fr = frame_of(player, bcfg)
+    return bool(fr and fr["build"] == "lean")
+
+
 class BodyCard:
     """Everything fixed for one card in one position group; points(attrs, ps, psp) adds the rest.
     model.rate and evolab.FastRater both use this, and the Evo Lab page gets the same numbers
@@ -153,7 +161,8 @@ class BodyCard:
             return 0.0
         a = self.agility(attrs)
         best = min(self.combo_cap, sum(c[2] for c in self.combos))
-        return max(self.lo, min(self.hi, self.const + (self.amp * a if a is not None else 0.0) + best))
+        # a body that dampens agility (negative amp) gives the most with the least agility
+        return max(self.lo, min(self.hi, self.const + max(0.0, self.amp * a if a is not None else 0.0) + best))
 
     def detail(self, attrs: Dict[str, float], ps, psp) -> Optional[dict]:
         if not self.on:

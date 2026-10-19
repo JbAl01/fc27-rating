@@ -23,6 +23,15 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Gammel kroppstypejustering:** `feel.body_type` (±0,5) er satt til 0, så kroppen ikke telles to ganger.
 - **Brukes overalt:** `model.rate_group` (feltene `body` og `body_detail`), `evolab.FastRater` (inkludert øvre grense med alle kombinasjoner), JS-rateren i `evolab_page.html` (`c.bd` og `R.bd`), Players-siden (raden «Kroppstype» og bonusene i utregningen), Evo Lab-detaljen (raden «Kroppstype»), `explain.py` (linjen «Kropp:») og fingeravtrykket i evolab-cachen (nå også med vekt).
 
+## Endret 19.10 kveld (gjennomgang)
+- **Forsterkning målt mot vanlig kropp:** forsterkningen måles nå mot en vanlig kropp (Average Medium = 0). Agility og Balance telles allerede i følelsen og off-balance, så kroppspoengene måler bare det kroppen legger til eller trekker fra.
+  - Lean Medium +0,5, Lean Short +0,35, Lean Tall +0,3, Average Short +0,2, Average Tall −0,15, Stocky −0,1 til −0,3, unike modeller +0,4 (maks 0,7).
+- **Mindre høydestraff for Lean:** Lean-kropper får bare halve høydestraffen i følelsen (`feel.height.lean_penalty_factor` 0,5).
+- **Icons og Heroes:** de har ikke basekort, så kroppstypen hentes fra det beste spesialkortet deres (`fetch_bodies`), og kortene deles per spiller via `futgg.player_key`.
+- **Evo Lab:** raden «Kroppstype» i Evo Lab regnes nå i nettleseren og viser tall før og etter evo.
+- **Meta:** startnivået lagrer nå startkortene (`data/meta_start.json` → `cards`, fra 16.10) og regnes på nytt med dagens formel. Endringer i formelen ser dermed ikke lenger ut som at metaen beveger seg. Før var ST-nivået blåst opp med ca. 2,9.
+- **Ny keeper-PlayStyle:** 1v1 Close Down (FC 27, erstatter Rush Out) er lagt inn. Før ga den 0.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

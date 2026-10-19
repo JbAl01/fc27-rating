@@ -104,7 +104,7 @@ PLAYSTYLES = [
     # Physical
     "Quick Step", "Relentless", "Bruiser", "Enforcer", "Long Throw",
     # Goalkeeper
-    "Far Reach", "Rush Out", "Footwork", "Deflector", "Cross Claimer", "Far Throw",
+    "Far Reach", "1v1 Close Down", "Rush Out", "Footwork", "Deflector", "Cross Claimer", "Far Throw",
 ]
 _PS_EXTRA_ALIASES = {
     "lowdriven": "Low Driven Shot", "lowdrivenshot": "Low Driven Shot",
@@ -115,6 +115,7 @@ _PS_EXTRA_ALIASES = {
     "technicaldribbler": "Technical", "quickstep": "Quick Step", "presproven": "Press Proven",
     "slidetackle": "Slide Tackle", "aerialfortress": "Aerial Fortress", "aerial": "Aerial Fortress",
     "acrobatic": "Acrobatic", "deadball": "Dead Ball", "precisionheader": "Precision Header",
+    "1v1closedown": "1v1 Close Down", "closedown": "1v1 Close Down",
 }
 PLAYSTYLE_ALIASES: Dict[str, str] = {norm_key(p): p for p in PLAYSTYLES}
 PLAYSTYLE_ALIASES.update(_PS_EXTRA_ALIASES)

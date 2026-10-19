@@ -379,12 +379,28 @@ def fetch_bodies(cfg_sources: dict, cache_dir: str, minutes: float, log=print) -
             sorted(entries, key=lambda t: (str(t[1].get("player_id") or t[0]) not in has_special, -t[1]["ovr"]))
             if fr.is_base_version(e["version"])]
     todo = [(pl, c) for pl, c in base if not (fg.cards.get(c) or {}).get("missing") and "bt" not in (fg.cards.get(c) or {})]
-    log(f"FUT.GG kroppstype: {len(todo)} basekort mangler kroppstype, henter i opptil {minutes:.0f} minutter")
+    # players without a base card on FUT.GG (Icons, Heroes, and base pages FUT.GG does not have):
+    # the body comes from their best special card instead (the body is the same on every card)
+    base_ok = {pl for pl, c in base if not (fg.cards.get(c) or {}).get("missing")}
+    known = {str(e.get("player_id") or fid) for fid, e in entries if (fg.cards.get(fid) or {}).get("bt")}
+    spec, seen = [], set()
+    for fid, e in sorted(entries, key=lambda t: -t[1]["ovr"]):
+        pl = str(e.get("player_id") or fid)
+        if fr.is_base_version(e["version"]) or pl in base_ok or pl in known or pl in seen:
+            continue
+        if (fg.cards.get(fid) or {}).get("missing"):
+            continue
+        seen.add(pl)
+        spec.append((pl, fid))
+    log(f"FUT.GG kroppstype: {len(todo)} basekort og {len(spec)} spillere uten basekort (Icons, Heroes ...) mangler "
+        f"kroppstype, henter i opptil {minutes:.0f} minutter")
     fetcher = PoliteFetcher(user_agent=gcfg.get("user_agent") or sc.get("user_agent") or "fc27-rating",
                             delay_seconds=float(gcfg.get("body_delay_seconds", gcfg.get("delay_seconds", 3.0))), log=log)
     n = 0
+    end = _time.time() + 60 * minutes
     try:
-        n = futgg.fetch_cards(fetcher, fg, todo, 10 ** 6, log=log, kind="base", deadline=_time.time() + 60 * minutes)
+        n = futgg.fetch_cards(fetcher, fg, spec, 10 ** 6, log=log, deadline=end, body=True)
+        n += futgg.fetch_cards(fetcher, fg, todo, 10 ** 6, log=log, kind="base", deadline=end)
     except Blocked as exc:
         log(f"FUT.GG stoppet: {exc}")
     finally:

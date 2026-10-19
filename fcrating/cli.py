@@ -65,10 +65,11 @@ def _load_players(files: List[str]) -> List[Player]:
 def _fill_body(players: List[Player]) -> None:
     """Body type, height and weight belong to the player, not the card: promo, special and evo cards
     get them from any card of the same player that has them (usually the base card from FUT.GG)."""
+    from .sources.futgg import player_key
     table: dict = {}
     for p in players:
-        if p.body_type or p.weight_kg or p.height_cm:
-            t = table.setdefault(str(p.base_id or p.id), {})
+        if (p.body_type or p.weight_kg or p.height_cm) and player_key(p):
+            t = table.setdefault(player_key(p), {})
             if p.body_type:
                 t.setdefault("bt", p.body_type)
             if p.weight_kg:
@@ -77,7 +78,8 @@ def _fill_body(players: List[Player]) -> None:
                 t.setdefault("h", p.height_cm)
     n = 0
     for p in players:
-        t = table.get(str(p.base_id or p.id)) or table.get(str(p.id))
+        key = player_key(p)
+        t = table.get(key) if key else None
         if not t:
             continue
         if not p.body_type and t.get("bt"):

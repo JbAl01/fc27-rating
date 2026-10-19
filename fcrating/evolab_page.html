@@ -525,7 +525,9 @@ let t=`<table class="kv">${isNow()?"":"<thead><tr><th></th><th></th><th></th><th
 const hd=t;
 t+=kvRow("Følelse",pick(d.nowx.feel,d.lv.feel,d.med.feel));
 t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
-if(d.c.bd)t+=kvRow(`Kroppstype ${esc(d.c.bd[5])}`,pick(d.nowx.body,d.lv.body,d.med&&d.med.body));
+if(d.c.bd){/* body points now, after the live plan and in the forecast (the agility part moves with the evos) */
+const rt=rater(d),s0=stateOf(d),b0=rt(s0).body,b1=liveRun(d).det.body,b2=isNow()?null:rt({...s0,a:buildEnd(d),ps:d.med.ps,psp:d.med.psp}).body;
+t+=kvRow(`Kroppstype ${esc(d.c.bd[5])}`,pick(b0,b1,b2))}
 if(d.runcard)t+=kvRow("Løp uten ball",pick(d.runs.now[0],d.runs.live[0],d.runs.end[0]));
 if(d.stops)t+=kvRow("Vanskelig å stoppe",pick(d.stops.now[0],d.stops.live[0],d.stops.end[0]));
 if(DEFW[d.c.g])t+=kvRow("Forsvar",A.map(a=>defOf(a,d.c.g)));

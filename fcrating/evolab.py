@@ -578,7 +578,9 @@ class FastRater:
         f = w["feel"]
         self.feel_w = _clean(f["attributes"])
         self.feel_tot = sum(self.feel_w.values())
-        self.feel_h, self.feel_b = height_adjust(p, f["height"]), body_type_adjust(p, f["body_type"])
+        from .body import is_lean
+        self.feel_h = height_adjust(p, f["height"], is_lean(p, w.get("body_profile")))
+        self.feel_b = body_type_adjust(p, f["body_type"])
         self.feel_acc = f["accelerate"]
         self.acc_rules = w["accelerate_rules"]
         pc = w["pace"]

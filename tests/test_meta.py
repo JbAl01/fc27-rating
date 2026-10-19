@@ -71,6 +71,35 @@ class MetaTests(unittest.TestCase):
         self.assertEqual(info["groups"]["CB"]["drift"], 0.0)
 
 
+class MetaStartCardsTests(unittest.TestCase):
+    """The start keeps the cards, so a new IGR formula is not mistaken for the meta moving."""
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self.tmp.name) / "meta_start.json"
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def cards(self, shift=0.0, extra=()):
+        out = [dict(card(90 + shift), uid="a"), dict(card(88 + shift), uid="b"), dict(card(86 + shift), uid="c")]
+        return out + [dict(card(v), uid=u) for u, v in extra]
+
+    def test_new_formula_does_not_move_meta(self):
+        meta.apply(self.cards(), CFG, path=self.path, save=True)
+        saved = json.loads(self.path.read_text(encoding="utf-8"))
+        self.assertEqual(sorted(saved["cards"]["ST"]), ["a", "b", "c"])
+        later = self.cards(shift=3.0)   # every card 3 higher: a new formula, no new cards
+        info = meta.apply(later, CFG, path=self.path, save=True)
+        self.assertEqual(info["groups"]["ST"]["drift"], 0.0)
+        self.assertEqual(later[0]["by_group"]["ST"]["meta"], 93.0)
+
+    def test_new_better_cards_still_move_meta(self):
+        meta.apply(self.cards(), CFG, path=self.path, save=True)
+        later = self.cards(shift=3.0, extra=[("x", 99.0), ("y", 98.0), ("z", 97.0)])
+        info = meta.apply(later, CFG, path=self.path, save=True)
+        self.assertEqual(info["groups"]["ST"]["drift"], 7.0)   # 98 now vs 91 for the start cards today
+
+
 class MetaPageTests(unittest.TestCase):
     def test_report_has_meta_column_and_data(self):
         from fcrating.cli import main

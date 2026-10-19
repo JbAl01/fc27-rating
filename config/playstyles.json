@@ -384,6 +384,16 @@
         "gk_diving"
       ]
     },
+    "1v1 Close Down": {
+      "_info": "FC 27-keeper-PlayStyle (EA 'What are PlayStyles', FC 27): går mer aggressivt ut mot gjennomspill, raskere utløp, egne reflekssredninger og leser skudd på nært hold bedre. Erstatter i praksis Rush Out (som ikke står på EAs FC 27-liste), så samme verdi.",
+      "plus": 1.8,
+      "base": 0.9,
+      "category": "goalkeeper",
+      "synergy": [
+        "gk_speed",
+        "gk_reflexes"
+      ]
+    },
     "Rush Out": {
       "plus": 1.8,
       "base": 0.9,

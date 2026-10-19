@@ -96,13 +96,16 @@ def effective_height(player: Player, hcfg: dict) -> Optional[float]:
     return player.height_cm + (hcfg["female_offset_cm"] if player.gender == "F" else 0)
 
 
-def height_adjust(player: Player, hcfg: dict) -> float:
+def height_adjust(player: Player, hcfg: dict, lean: bool = False) -> float:
+    """lean: the card has a Lean body (known or worked out from height and weight). Lean bodies move
+    better than their height says (owner's experience, Lean Tall with Technical+; FUT.GG and SI on tall
+    lean players), so they get only part of the penalty for height (lean_penalty_factor)."""
     h = effective_height(player, hcfg)
     if h is None:
         return 0.0
     adj = 0.0
     if h > hcfg["neutral_cm"]:
-        adj -= (h - hcfg["neutral_cm"]) * hcfg["penalty_per_cm_above"]
+        adj -= (h - hcfg["neutral_cm"]) * hcfg["penalty_per_cm_above"] * (hcfg.get("lean_penalty_factor", 1.0) if lean else 1.0)
     if h < hcfg["short_cm"]:
         adj += (hcfg["short_cm"] - h) * hcfg["bonus_per_cm_below"]
     return clamp(adj, hcfg["min_adjust"], hcfg["max_adjust"])
@@ -134,7 +137,8 @@ def feel_score(player: Player, attrs: Dict[str, float], acc_type: Optional[str],
     base, completeness = weighted(attrs, fcfg["attributes"])
     if base is None:
         return None, {"completeness": 0.0}
-    h_adj = height_adjust(player, fcfg["height"])
+    from .body import is_lean
+    h_adj = height_adjust(player, fcfg["height"], is_lean(player, wcfg.get("body_profile")))
     a_adj = fcfg["accelerate"].get(acc_type or "", 0.0)
     b_adj = body_type_adjust(player, fcfg["body_type"])
     return base + h_adj + a_adj + b_adj, {

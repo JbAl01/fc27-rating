@@ -46,6 +46,15 @@ _BODY_CODE = re.compile(r"bodytypeCode:(\d+)")
 _FR_PLAYER = re.compile(r"[?&]player=(\d+)")
 
 
+def player_key(p: Player) -> str:
+    """The player (not the card): the base card's id, the player id in the FIFA Rosters address (Icons and
+    Heroes have no base card), or the card's own id. Cards with the same key are the same player."""
+    if str(p.base_id or "").strip():
+        return str(p.base_id)
+    m = _FR_PLAYER.search(p.url or "")
+    return m.group(1) if m else str(p.id or "")
+
+
 def player_page(p: Player, game: str = "27") -> Optional[str]:
     """The card's public page on FUT.GG: /players/<player id>/27-<card id>/. The player id is the base card's id
     (special cards), the player id in the FIFA Rosters address (Icons and Heroes have no base card here), or the
@@ -302,7 +311,7 @@ def parse_body(html: str) -> dict:
 
 def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], limit: int, game: str = "27",
                 log=print, kind: Optional[str] = None, deadline: Optional[float] = None,
-                refetch: Optional[set] = None) -> int:
+                refetch: Optional[set] = None, body: bool = False) -> int:
     """cards: (player id, card id) pairs in the order to fetch. Each card is fetched once.
     A page without PlayStyles is remembered as missing; a network error is tried again next run."""
     import urllib.error
@@ -320,7 +329,7 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
         # cards fetched before the colours and attributes were read are fetched once more
         again = bool(old) and not old.get("missing") and (int(old.get("v") or 1) < PARSE_VERSION or (
             kind == "base" and card in (refetch or ()) and bool(old.get("roles")) and old["roles"].get("alt") is None)   # fetched before the positions were read, and EA's list may be cut
-            or (kind == "base" and "bt" not in old))   # fetched before body type and weight were read
+            or ((kind == "base" or body) and "bt" not in old))   # fetched before body type and weight were read
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
