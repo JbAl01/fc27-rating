@@ -192,7 +192,9 @@
 
   "hidden_gem": {
     "_info": "Skjult perle: kortet spiller mye bedre enn OVR-en tilsier. Forventet IGR ved hver OVR = snittet av kortene i samme posisjon med omtrent samme OVR (+-ovr_window). Kortet er en perle når det er blant de max_top_pct % beste over forventet i posisjonen og minst min_res over. Siden viser hva som løfter det (kropp, PlayStyles, følelse, fart ...), målt mot de samme kortene. Det er dette som gjør at kort med vanlig OVR blir utsolgt på markedet.",
-    "ovr_window": 1, "min_same_ovr": 8, "min_pool_size": 30, "max_top_pct": 2, "min_res": 4.0, "min_part": 0.5
+    "ovr_window": 1, "min_same_ovr": 8, "min_pool_size": 30, "max_top_pct": 2, "min_res": 4.0, "min_part": 0.5,
+    "ovr_not_top_pct": 2,
+    "_ovr_not_top_info": "Skjult betyr at OVR-en ikke viser det: et kort hvis OVR alene setter det i topp ovr_not_top_pct % av posisjonen (Dembélé 90, Pedri 90) er ikke en perle, og heller ikke et kort proffene eller FUT.GG-lagene bruker (det er kjent). Gjelder også løpsperler."
   },
 
   "position_calibration": {

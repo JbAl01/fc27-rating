@@ -33,6 +33,24 @@ def _parts(e: dict, blend: dict) -> Dict[str, float]:
     return out
 
 
+def ovr_share(ovrs_asc: List[int], ovr: int) -> float:
+    """Per cent of the position's cards with this OVR or higher: how high the OVR alone puts the card."""
+    import bisect
+    return 100.0 * (len(ovrs_asc) - bisect.bisect_left(ovrs_asc, ovr)) / len(ovrs_asc) if ovrs_asc else 100.0
+
+
+def not_hidden_when_used(results: List[dict]) -> None:
+    """A card the pros or the FUT.GG teams play is known, so it is no hidden gem (IGR or runs)."""
+    for r in results:
+        if not r.get("usage"):
+            continue
+        for e in r["by_group"].values():
+            if (e.get("gem") or {}).get("on"):
+                e["gem"]["on"] = False
+            if (e.get("run") or {}).get("gem"):
+                e["run"]["gem"] = False
+
+
 def add_gems(pools: Dict[str, List[dict]], cfg: dict) -> None:
     """Adds by_group[g]["gem"] = {"res", "top", "on", "why"} to every card in every position."""
     c = {k: v for k, v in (cfg["weights"].get("hidden_gem") or {}).items() if not k.startswith("_")}
@@ -64,6 +82,8 @@ def add_gems(pools: Dict[str, List[dict]], cfg: dict) -> None:
         if not res_of:
             continue
         import bisect
+        ovrs = sorted(int(r["ovr"]) for r in cards)
+        ovr_cut = float(c.get("ovr_not_top_pct", 0))
         ranked = sorted(res_of.values())
         n = len(ranked)
         labels = dict(PARTS)
@@ -73,6 +93,7 @@ def add_gems(pools: Dict[str, List[dict]], cfg: dict) -> None:
                 continue
             better = n - bisect.bisect_right(ranked, res)
             top = round(100.0 * (better + 1) / n, 1)
-            on = top <= c.get("max_top_pct", 5) and res >= c.get("min_res", 2.5)
+            on = (top <= c.get("max_top_pct", 5) and res >= c.get("min_res", 2.5)
+                  and ovr_share(ovrs, int(r["ovr"])) > ovr_cut)   # the OVR alone does not show it
             r["by_group"][g]["gem"] = {"res": round(res, 1), "top": top, "on": bool(on),
                                        "why": [labels[k] for k in why_of.get(id(r), [])]}

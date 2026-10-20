@@ -233,6 +233,8 @@ def _add_usage(results: List[dict]) -> None:
         u = futgg_usage.usage_of(data, r.get("id"))
         if u:
             r["usage"] = u
+    from .gems import not_hidden_when_used
+    not_hidden_when_used(results)
     futgg_usage.check_model(results)
 
 

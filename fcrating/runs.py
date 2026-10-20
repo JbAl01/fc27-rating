@@ -206,6 +206,9 @@ def add_run_ai(results: List[dict], cfg: dict) -> None:
                 means[k] = statistics.fmean(vals)
         runs = sorted((r["run_ai"]["score"] for r in pool), reverse=True)
         ovrs = sorted((r["ovr"] or 0 for r in pool), reverse=True)
+        from .gems import ovr_share
+        ovrs_asc = sorted(int(r["ovr"] or 0) for r in pool)
+        ovr_cut = float(((cfg["weights"].get("hidden_gem") or {}).get("ovr_not_top_pct")) or 0)
         # expected Løps-AI for each OVR = average of cards in the position with OVR within the window
         by_ovr: Dict[int, List[float]] = {}
         for r in pool:
@@ -232,7 +235,8 @@ def add_run_ai(results: List[dict], cfg: dict) -> None:
                 "res": round(res, 1), "res_top_pct": res_top,
                 "gem": bool(n >= gem["min_pool_size"] and same[int(r["ovr"] or 0)] >= gem.get("min_same_ovr", 8)
                             and res_top <= gem["max_res_top_pct"]
-                            and res >= gem["min_res"] and top <= gem["max_run_top_pct"]),
+                            and res >= gem["min_res"] and top <= gem["max_run_top_pct"]
+                            and ovr_share(ovrs_asc, int(r["ovr"] or 0)) > ovr_cut),
                 "up": [[k, round(f[k]), round(means[k])] for k, c in lift[:3] if c > 0.05],
                 "down": [[k, round(f[k]), round(means[k])] for k, c in lift[::-1][:2] if c < -0.05],
             }
