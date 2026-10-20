@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-19T17:15:00Z",
+  "_sjekket": "2026-10-20T17:15:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -841,6 +841,84 @@
         "https://www.futnext.com/evolutions/zoomaestro/2764"
       ],
       "until": "2026-10-28T18:00Z"
+    },
+    {
+      "key": "poor_sophia",
+      "name": "Poor Sophia",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Fristen for å starte er ukjent: FUT.GG har tomt «Submit by», FUTBIN sier bare «Unlock 1 Weeks», og futnext viser nedtelling «unlock within 9d21h» (20.10 kl. 17:13 UTC, detaljsiden «10 days»), som ikke stemmer med EAs vanlige byttetid, så ingen dato er satt. Krav og oppgraderinger er like hos FUT.GG, FUTBIN og futnext. Positioning er keeper-posisjonering. PlayStyles: Cross Claimer (nivå 1), Footwork og Far Throw (nivå 2) står hos FUTBIN («PlayStyles ... | 3») og som ikoner ved nivåene hos futnext; taket 3 er det umerkede tallet hos FUTBIN, futnext og FUT.GG. Svakfot, roller og repeterbar er ikke oppgitt. Tallene er summen etter begge nivåer.",
+      "req": {
+        "max_ovr": 81,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          5,
+          83
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Cross Claimer",
+            3
+          ],
+          [
+            "Footwork",
+            3
+          ],
+          [
+            "Far Throw",
+            3
+          ]
+        ],
+        "stats": {
+          "acceleration": [
+            30,
+            50
+          ],
+          "sprint_speed": [
+            30,
+            50
+          ],
+          "reactions": [
+            6,
+            82
+          ],
+          "gk_kicking": [
+            6,
+            81
+          ],
+          "gk_reflexes": [
+            6,
+            84
+          ],
+          "gk_positioning": [
+            6,
+            80
+          ],
+          "gk_diving": [
+            6,
+            80
+          ],
+          "gk_handling": [
+            6,
+            82
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2603-poor-sophia/",
+        "https://www.futbin.com/27/evolutions/100/poor-sophia",
+        "https://www.futnext.com/evolutions/poor-sophia/2813"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -868,11 +946,6 @@
       "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
       "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
       "dato": "2026-10-18"
-    },
-    {
-      "navn": "Poor Sophia (GK)",
-      "grunn": "Står bare hos futnext (gratis, maks 81 OVR, GK, ingen PlayStyle+; unlock within 10d). Ingen andre kilder (FUTBIN, FUT.GG, guider) har den, og futnext-siden er selvmotsigende om skill moves/svakfot. Venter på en andre kilde.",
-      "dato": "2026-10-19"
     }
   ]
 }
