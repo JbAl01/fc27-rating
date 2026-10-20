@@ -52,6 +52,15 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Første måling 19.10:** 94 spilte spillere med kroppstype. Data sier at høye kropper (Average og Lean Tall) spilles mer enn IGR tilsier, særlig på midtbane og back (+0,6 etter halvering), og at unike kropper i angrep er litt overvurdert (−0,3).
 - **Evo Lab:** de lange kildenotatene og «Sjekk selv» under evoene er fjernet fra siden. Notatene står fortsatt i `auto_evoer.json`.
 
+## Lagt til 20.10 (filtre)
+- **Players:** to nye filtergrupper som kan kombineres med alle de andre filtrene.
+  - **Kropp:** bygning (Lean, Average, Stocky eller unik modell), størrelse og laveste kroppspoeng.
+  - **PlayStyles:** knapper for hver PlayStyle. Ett klikk betyr at kortet har den, to klikk betyr PS+ og tre klikk slår den av. Alle valgte må finnes.
+  - Kolonnen og sorteringen «Kropp» er lagt til, og «Kroppspoeng» kan brukes i «Ranger etter snittet av».
+- **Evo Lab:** bygning og størrelse, og PlayStyle-knapper som regnes etter evoene (planen nå eller anslaget). Kolonnen og sorteringen «Kroppspoeng etter evo» er lagt til.
+- **Likhet:** «Ligner på» og «Lignende» tar nå med bygningen (Lean 100, Average 50, Stocky 0) og om kortet har en unik modell (`run_ai.similar.features` kropp 1,2 og unik 0,6). «Lignende» på Players viser prosent.
+- **Data:** `rate()` gir feltet `frame` (`body.frame_code`: bygning, størrelse, unik, anslått). Det ligger som r[43] i Players-dataene og som c[16] i Evo Lab-dataene.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

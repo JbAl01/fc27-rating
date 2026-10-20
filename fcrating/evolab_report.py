@@ -21,6 +21,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from .body import frame_code
 from .evolab import BLOCK_WORDS, FastRater, _clean, _favorites, horizons, state_from
 from .model import group_label
 from .report import ATTR_INDEX, ATTR_KEYS, _Interner
@@ -167,7 +168,9 @@ def card_consts(p: Player, g: str, cfg: dict) -> list:
             p.height_cm, best, 1 if cur and all(v >= 2 for v in cur.values()) else 0, 1 if st.ps_unknown else 0, prim,
             p.gender or "M",
             # body profile: [fixed points, agility amplification, [[PlayStyle, base, plus]], low, high, label]
-            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"]] if fr.body.on else 0]
+            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"]] if fr.body.on else 0,
+            frame_code(fr.body.frame)]   # [build, size, unique, estimated] for the filters and 'Ligner på'
+
 
 
 def _seq(seq, idx, live_by_key):
@@ -210,6 +213,7 @@ def targets_meta(results: List[dict], lab: dict, cfg: dict):
         out.append([r["name"], r.get("rarity") or "", group_label(g), feats, 1 if r["uid"] in favs else 0])
     return out, {"keys": keys, "st": [[round(m, 4), round(sd, 4), fw.get(k, 0.0)] for k, (m, sd) in stats.items()],
                  "sumw": sum(fw.values()),
+                 "bv": rc["similar"].get("build_values", [100, 50, 0]),
                  "accv": _clean(rc["similar"].get("accelerate_values", {}))}
 
 

@@ -81,6 +81,14 @@ def frame_of(player, bcfg: dict) -> Optional[dict]:
     return {"build": b, "size": s, "unique": False, "estimated": True, "label": f"{LABEL_NO[b]} {LABEL_NO[s]} (anslått)"}
 
 
+def frame_code(fr: Optional[dict]):
+    """[build 0 lean / 1 average / 2 stocky, size 0 short / 1 medium / 2 tall, unique 0/1, estimated 0/1] or 0:
+    what the pages filter on and what 'Ligner på' compares (runs._sim_value)."""
+    if not fr:
+        return 0
+    return [BUILDS.index(fr["build"]), SIZES.index(fr["size"]), 1 if fr["unique"] else 0, 1 if fr["estimated"] else 0]
+
+
 def is_lean(player, bcfg: Optional[dict]) -> bool:
     """A Lean body (from the body type, or for unique models and cards without one, from height and weight)."""
     if not bcfg:

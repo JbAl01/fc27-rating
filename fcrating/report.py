@@ -230,6 +230,7 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         r.get("card_color") or "",
         intern(_body_label(r)),
         _usage_array(r.get("usage")),
+        r.get("frame") or 0,
     ]
 
 
@@ -328,6 +329,7 @@ def _run_meta(results: List[dict], cfg: dict) -> Optional[dict]:
         "gem": {k: v for k, v in rc["gem"].items() if not k.startswith("_")},
         "wrv": {k: v for k, v in rc["work_rate_values"].items() if not k.startswith("_")},
         "accv": {k: v for k, v in rc["similar"].get("accelerate_values", {}).items() if not k.startswith("_")},
+        "bv": rc["similar"].get("build_values", [100, 50, 0]),
         "sim": [[k, round(m, 4), round(sd, 4), fw[k]] for k, (m, sd) in stats.items()],
         "calibrated": rc.get("calibrated"),
         "dropped": list(rc.get("dropped", {}).values()),

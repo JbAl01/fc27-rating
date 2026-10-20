@@ -17,6 +17,12 @@ td.cmb{color:var(--link)}
 table:not(.combo) .cmb{display:none}
 .noprice .price{display:none}
 table.data th.wrap{white-space:normal;line-height:1.15;min-width:72px}
+.pschips{display:flex;flex-wrap:wrap;gap:6px}
+.psb{font:500 13px var(--text);padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;min-height:32px}
+.psb.on{border-color:var(--link);color:var(--link);font-weight:600}
+.psb.plus{background:var(--link);color:var(--bg);border-color:var(--link)}
+.filters .wide2{grid-column:1/-1}
+.filters .hint{color:var(--muted);font-size:13px;font-weight:400}
 table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--faint);margin-top:2px;max-width:34ch}
 </style></head><body>
 <div class="page">
@@ -28,7 +34,7 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 <label class="f wide">Søk<input id="q" type="search" placeholder="Navn eller versjon" autocomplete="off"></label>
 <label class="f">Posisjon<select id="g"><option value="">Alle, i sin egen posisjon</option></select></label>
 <label class="f">Sorter etter<select id="sort">
-<option value="top_pct">Plass i posisjonen</option><option value="meta">Meta (mot kortene som finnes nå)</option><option value="igr">IGR</option><option value="feel">Følelse</option><option value="obd">Off-balance</option>
+<option value="top_pct">Plass i posisjonen</option><option value="meta">Meta (mot kortene som finnes nå)</option><option value="igr">IGR</option><option value="feel">Følelse</option><option value="body">Kroppspoeng</option><option value="obd">Off-balance</option>
 <option value="run_ai">Løp uten ball</option><option value="dec">Smarte løp</option><option value="exe">Får avstand på løp</option><option value="stop">Vanskelig å stoppe</option>
 <option value="run_vs">Løper best for OVR-en</option><option value="evo_after">Beste evo-kandidater</option><option value="evo_gain">Størst evo-økning</option>
 <option value="combo">Kombinasjon (velg i filtrene)</option><option value="ovr">OVR</option><option class="price" value="price">Pris</option></select></label>
@@ -57,10 +63,12 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 <label class="f">Smarte løp<input class="small" type="number" data-f="vilMin" placeholder="85"></label>
 <label class="f">Får avstand<input class="small" type="number" data-f="effMin" placeholder="85"></label>
 </fieldset>
-<fieldset><legend>PlayStyle</legend>
-<label class="f">Har<select data-f="ps" id="pssel"><option value="">Alle</option></select></label>
-<label class="check"><input type="checkbox" data-f="psPlus"> bare PS+</label>
+<fieldset><legend>Kropp</legend>
+<label class="f">Bygning<select data-f="build"><option value="">Alle</option><option value="0">Lean</option><option value="1">Average</option><option value="2">Stocky</option><option value="u">Unik modell</option></select></label>
+<label class="f">Størrelse<select data-f="size"><option value="">Alle</option><option value="0">Short</option><option value="1">Medium</option><option value="2">Tall</option></select></label>
+<label class="f">Kroppspoeng minst<input class="small" type="number" step="0.5" data-f="bodyMin" placeholder="1"></label>
 </fieldset>
+<fieldset class="wide2"><legend>PlayStyles <span class="hint">– ett klikk: har den, to: PS+, tre: av. Alle du velger må finnes.</span></legend><div class="pschips" id="pschips"></div></fieldset>
 <fieldset><legend>Vis bare</legend>
 <label class="check"><input type="checkbox" data-f="gem"> skjulte perler (spiller mye bedre enn OVR-en)</label>
 <label class="check"><input type="checkbox" data-f="meta"> meta i spillet (mest brukt av proffene og FUT.GG-lagene)</label>
@@ -76,7 +84,7 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 
 <div class="tw"><table class="data" id="tbl"><thead><tr>
 <th data-k="name">Spiller</th><th class="cmb" data-k="combo" title="Snittet av plassen i kategoriene du valgte (100 = best i posisjonen)">Kombo</th><th class="l" data-k="group">Pos</th><th data-k="ovr">OVR</th><th data-k="igr">IGR</th><th data-k="meta" title="IGR målt mot kortene som finnes nå. Synker når bedre kort kommer i posisjonen.">Meta</th><th data-k="top_pct">Plass</th>
-<th data-k="feel" title="Hvor kvikk og lett kortet er å styre med ball">Følelse</th><th data-k="pace" title="Acceleration og Sprint Speed">Fart</th><th data-k="skill" title="Tallene som betyr mest for posisjonen">Ferdigheter</th><th class="wrap" data-k="run_ai" title="Hvor smart og nyttig kortet løper når laget har ballen (spiss, kant og CAM)">Løp uten<br>ball</th><th class="wrap" data-k="stop" title="Hvor vanskelig kortet er å stoppe, med ball og på løp">Vanskelig<br>å stoppe</th>
+<th data-k="feel" title="Hvor kvikk og lett kortet er å styre med ball">Følelse</th><th data-k="pace" title="Acceleration og Sprint Speed">Fart</th><th data-k="skill" title="Tallene som betyr mest for posisjonen">Ferdigheter</th><th data-k="body" title="Poeng for kroppstypen i posisjonen: bygning, størrelse og hvor mye kroppen forsterker smidigheten">Kropp</th><th class="wrap" data-k="run_ai" title="Hvor smart og nyttig kortet løper når laget har ballen (spiss, kant og CAM)">Løp uten<br>ball</th><th class="wrap" data-k="stop" title="Hvor vanskelig kortet er å stoppe, med ball og på løp">Vanskelig<br>å stoppe</th>
 <th class="l" data-k="accelerate" title="Hvordan kortet kommer opp i fart">AcceleRATE</th><th data-k="evo_after" title="IGR med evoene som er ute nå (fra Evo Lab)">Etter evo</th><th class="price" data-k="price">Pris</th></tr></thead><tbody id="rows"></tbody></table></div>
 <button type="button" class="more-rows" id="more" hidden></button>
 
@@ -95,7 +103,7 @@ groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6
 run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null,bd:a[22]||null,bdp:a[22]?a[22][0]:0,cal:a[23]||0,gm:a[24]?{res:a[24][0],top:a[24][1],on:a[24][2],why:a[24][3].map(i=>STR[i])}:null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||"",use:r[42]||null}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||"",use:r[42]||null,bf:r[43]||0}});
 const ALTIMG={};DATA.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};DATA.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});DATA.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 
@@ -143,7 +151,7 @@ const tierD=d=>{const v=String(d.ver||d.version||"").replace(/^fc \d+ /i,"").tri
 const ppHtml=pp=>pp&&pp.length?`<span class="pps">${pp.slice(0,3).map(n=>`<span title="${esc(n)}+">${psIcon(n+"+")||'<i class="pdia"></i>'}</span>`).join("")}</span>`:"";
 const ccStyle=d=>{const c=/^([0-9a-f]{6})\/([0-9a-f]{6})\/([0-9a-f]{6})$/.exec(d.cc||"");return c?` style="--ct:#${c[1]};--co:#${c[2]};--cl:#${c[3]}"`:""};
 const cardHtml=(d,pos,mini)=>`<div class="fcard${bgUrl(d,tierD(d))?" real":""} ${tierD(d)} ${posClass(d.group)}${mini?" mini":""}${picImg(d)?"":" nopic"}"${ccStyle(d)}>${bgImg(d,tierD(d))}${ppHtml((d.ps||[]).filter(n=>n.endsWith("+")).map(n=>n.slice(0,-1)))}<b class="o">${Math.round(d.ovr)}</b>${mini?"":`<span class="p">${esc(pos)}</span>${String(d.positions||"").split("/").slice(1,4).map(x=>`<i class="alt">${esc(x)}</i>`).join("")}${d.fo?`<span class="ft">${d.fo}</span>`:""}${d.sm&&d.wf?`<span class="sw">${d.sm}<em>★</em>${d.wf}</span>`:""}<span class="bds">${badge(d.ni,"ni")}${badge(d.li,"li")}${badge(d.cl,"cl")}</span>`}${picImg(d)}${mini?"":`<div class="nme">${esc(cardName(d.name))}</div><div class="st">${FK.map(k=>`<span><i>${k}</i>${d.gk?"–":(faceOf(d,k)??"–")}</span>`).join("")}</div>`}</div>`;
-function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="accelerate")return META.run.accv[d.accelerate]??null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
+function simVal(d,k){if(k==="height_cm")return d.h||null;if(k==="kropp")return d.bf?(META.run.bv||[100,50,0])[d.bf[0]]:null;if(k==="unik")return d.bf?(d.bf[2]?100:0):null;if(k==="accelerate")return META.run.accv[d.accelerate]??null;if(k==="arbeidsrate"){const w=d.ra?d.ra.wr.split("/")[0]:"?";return META.run.wrv[w]??null}
 const i=META.idx[k];return i===undefined||!d.at[i]?null:d.at[i]}
 function similarTo(d,g,n){const S=META.run.sim,tot=S.reduce((a,x)=>a+x[3],0),ref=S.map(([k])=>simVal(d,k)),res=[];
 for(const o of DATA){if(o===d||!o.ra||!o.groups[g]||!o.groups[g].run||o.name===d.name)continue;let t=0,u=0;
@@ -154,7 +162,8 @@ res.sort((a,b)=>a[1]-b[1]);return res.slice(0,n)}
 const PROF=META.prof||{order:[],labels:[]},PCACHE={};
 function profPool(g,i){const k=g+"|"+i;if(PCACHE[k])return PCACHE[k];const a=[];for(const d of DATA){if(d.groups[g]&&d.prof[i]!=null)a.push(d.prof[i])}a.sort((x,y)=>x-y);return PCACHE[k]=a}
 function profPct(d,g,i){const v=d.prof[i];if(v==null)return null;const a=profPool(g,i);return a.length>=30?topPct(a,v):null}
-function comboScore(d,g){if(!F.combo.length)return null;let t=0;for(const k of F.combo){const i=PROF.order.indexOf(k);const p=profPct(d,g,i);if(p==null)return null;t+=p}return Math.round(10*(100-t/F.combo.length))/10}
+function bodyPct(d,g){const e=d.groups[g];if(!e||!e.bd)return null;const k=g+"|body";if(!PCACHE[k]){const a=[];for(const o of DATA){const x=o.groups[g];if(x&&x.bd)a.push(x.bdp)}a.sort((x,y)=>x-y);PCACHE[k]=a}const a=PCACHE[k];return a.length>=30?topPct(a,e.bdp):null}
+function comboScore(d,g){if(!F.combo.length)return null;let t=0;for(const k of F.combo){const p=k==="body"?bodyPct(d,g):profPct(d,g,PROF.order.indexOf(k));if(p==null)return null;t+=p}return Math.round(10*(100-t/F.combo.length))/10}
 /* --- off-balance --- */
 const OB=META.ob||{start:75,gf:{}},obIn=v=>v!=null&&Math.round(v)>=OB.start,obUsed=g=>(OB.gf[g]||0)>0;
 /* --- card view --- */
@@ -219,7 +228,7 @@ ${rg&&d.ra&&d.ra.exe!=null?kvd("Får avstand","om løpet faktisk gir rom (fart, 
 ${d.accelerate?kvd("AcceleRATE",ACCTXT[d.accelerate]||"",esc(d.accelerate),""):""}
 ${d.h?kvd("Høyde",d.ra&&d.ra.body?esc(d.ra.body.toLowerCase()):"",Math.round(d.h)+" cm",""):""}
 </tbody></table></details>`;
-if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Lignende: ${list(sims.map(([o])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a>`))}.</p>`}
+if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Lignende: ${list(sims.map(([o,dd])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a> (${Math.round(100*Math.exp(-dd/1.2))} % lik)`))}.</p>`}
 h+=`</section></div>`;
 const profBars=PROF.order.map((k,i)=>d.prof[i]==null||!(PROF.panel||PROF.order).includes(k)?"":bar(plab(i),d.prof[i],profPct(d,g,i),"Plass blant alle som kan spille posisjonen")).join("");
 if(profBars)h+=`<div class="bars" style="margin-top:20px">${profBars}</div>`;
@@ -247,16 +256,18 @@ ${META.run&&META.run.calibrated?`<p class="muted">Løp uten ball er kalibrert mo
 return h}
 /* --- filters --- */
 const kind=d=>d.status==="lekket"?"leak":/icon/i.test(d.version)?"icon":/hero/i.test(d.version)?"hero":d.status?"special":"base";
-const F0={ovrMin:"",ovrMax:"",hMax:"",feelMin:"",obMin:"",stopMin:"",runMin:"",vilMin:"",effMin:"",type:"",gender:"",lg:"",na:"",acc:"",ps:"",psPlus:false,gem:false,meta:false,evo:false,wf4:false,sm4:false,combo:[]};
-let F={...F0};
-try{const s=JSON.parse(localStorage.getItem("fc27-filter2")||"null");if(s)F={...F0,...(s.F||{})}}catch(err){}
-if(!Array.isArray(F.combo))F.combo=[];F.combo=F.combo.filter(k=>PROF.order.includes(k));
+const F0={ovrMin:"",ovrMax:"",hMax:"",feelMin:"",obMin:"",stopMin:"",runMin:"",vilMin:"",effMin:"",type:"",gender:"",lg:"",na:"",acc:"",build:"",size:"",bodyMin:"",pss:{},gem:false,meta:false,evo:false,wf4:false,sm4:false,combo:[]};
+let F={...F0,pss:{}};
+try{const s=JSON.parse(localStorage.getItem("fc27-filter2")||"null");if(s){const o=s.F||{};F={...F0,...o,pss:{...(o.pss||{})}};if(o.ps&&!o.pss)F.pss[o.ps]=o.psPlus?2:1;delete F.ps;delete F.psPlus}}catch(err){}
+if(!F.pss||typeof F.pss!=="object")F.pss={};
+if(!Array.isArray(F.combo))F.combo=[];F.combo=F.combo.filter(k=>PROF.order.includes(k)||k==="body");
 const saveF=()=>{try{localStorage.setItem("fc27-filter2",JSON.stringify({F}))}catch(err){}};
-$("combo").innerHTML=PROF.order.map((k,i)=>(PROF.use||PROF.order).includes(k)?`<label class="check"><input type="checkbox" data-k="${k}"> ${esc(PROF.labels[i])}</label>`:"").join("");
+$("combo").innerHTML=PROF.order.map((k,i)=>(PROF.use||PROF.order).includes(k)?`<label class="check"><input type="checkbox" data-k="${k}"> ${esc(PROF.labels[i])}</label>`:"").join("")+`<label class="check"><input type="checkbox" data-k="body"> Kroppspoeng</label>`;
 $("combo").onchange=ev=>{const k=ev.target.dataset.k;if(!k)return;F.combo=ev.target.checked?[...F.combo,k]:F.combo.filter(x=>x!==k);
 if(F.combo.length){key="combo";dir=-1}else if(key==="combo"){key="top_pct";dir=1}$("sort").value=key;syncF();reset()};
 const psNames=[...new Set(DATA.flatMap(d=>d.ps.map(n=>n.endsWith("+")?n.slice(0,-1):n)))].sort((a,b)=>a.localeCompare(b,"no"));
-$("pssel").innerHTML='<option value="">Alle</option>'+psNames.map(n=>`<option>${esc(n)}</option>`).join("");
+function psFilterChips(){$("pschips").innerHTML=psNames.map(n=>{const v=F.pss[n]||0;return`<button type="button" class="psb${v?" on":""}${v===2?" plus":""}" data-ps="${esc(n)}" aria-pressed="${v?"true":"false"}">${esc(n)}${v===2?"+":""}</button>`}).join("")}
+$("pschips").onclick=ev=>{const b=ev.target.closest("[data-ps]");if(!b)return;const n=b.dataset.ps,v=((F.pss[n]||0)+1)%3;if(v)F.pss[n]=v;else delete F.pss[n];F.pss={...F.pss};syncF();reset()};
 /* the top leagues first (META.toplg, in that order), then the rest alphabetically */
 const optsOf=(k,first=[])=>{const all=[...new Set(DATA.map(d=>d[k]).filter(Boolean))],top=first.filter(x=>all.includes(x)),
 rest=all.filter(x=>!top.includes(x)).sort((a,b)=>a.localeCompare(b,"no")),o=n=>`<option>${esc(n)}</option>`;
@@ -264,10 +275,10 @@ return'<option value="">Alle</option>'+top.map(o).join("")+(top.length&&rest.len
 $("lgsel").innerHTML=optsOf("lg",META.toplg||[]);$("nasel").innerHTML=optsOf("na");
 document.querySelectorAll("#fp [data-f]").forEach(el=>{el.addEventListener(el.type==="checkbox"||el.tagName==="SELECT"?"change":"input",()=>{F[el.dataset.f]=el.type==="checkbox"?el.checked:el.value;syncF();reset()})});
 function syncF(){document.querySelectorAll("#fp [data-f]").forEach(el=>{if(el.type==="checkbox")el.checked=!!F[el.dataset.f];else if(el.value!==String(F[el.dataset.f]))el.value=F[el.dataset.f]});
-$("combo").querySelectorAll("input").forEach(b=>b.checked=F.combo.includes(b.dataset.k));
+$("combo").querySelectorAll("input").forEach(b=>b.checked=F.combo.includes(b.dataset.k));psFilterChips();
 $("tbl").classList.toggle("combo",F.combo.length>0);$("combohint").hidden=F.combo.length>0;
 const n=Object.keys(F0).filter(k=>JSON.stringify(F[k])!==JSON.stringify(F0[k])).length;$("fsum").textContent=n?`Filtre (${n} på)`:"Filtre";saveF()}
-$("freset").onclick=()=>{F={...F0};if(key==="combo"){key="top_pct";dir=1;$("sort").value=key}syncF();reset()};
+$("freset").onclick=()=>{F={...F0,pss:{}};if(key==="combo"){key="top_pct";dir=1;$("sort").value=key}syncF();reset()};
 const isGem=e=>!!(e&&((e.gm&&e.gm.on)||(e.run&&e.run.gem)));
 const anyGem=d=>Object.values(d.groups).some(isGem);
 function pass(d,v,g){if(F.ovrMin!==""&&(d.ovr??0)<+F.ovrMin)return false;if(F.ovrMax!==""&&(d.ovr??0)>+F.ovrMax)return false;
@@ -275,18 +286,20 @@ if(F.hMax!==""&&(!d.h||d.h>+F.hMax))return false;if(F.feelMin!==""&&(d.feel==nul
 if(F.runMin!==""&&(v.run_ai==null||v.run_ai<+F.runMin))return false;
 if(F.vilMin!==""&&(v.dec==null||v.dec<+F.vilMin))return false;if(F.effMin!==""&&(v.exe==null||v.exe<+F.effMin))return false;
 if(F.type&&kind(d)!==F.type)return false;if(F.gender&&d.gender!==F.gender)return false;if(F.lg&&d.lg!==F.lg&&!(d.lg==="Icons"))return false;if(F.na&&d.na!==F.na)return false;if(F.acc&&d.accelerate!==F.acc)return false;
-if(F.ps&&!d.ps.some(n=>F.psPlus?n===F.ps+"+":(n===F.ps||n===F.ps+"+")))return false;
+for(const n in F.pss){if(F.pss[n]===2?!d.ps.includes(n+"+"):!(d.ps.includes(n)||d.ps.includes(n+"+")))return false}
+if(F.build!==""&&!(d.bf&&(F.build==="u"?d.bf[2]===1:(d.bf[2]===0&&d.bf[0]===+F.build))))return false;if(F.size!==""&&!(d.bf&&d.bf[2]===0&&d.bf[1]===+F.size))return false;
+if(F.bodyMin!==""&&(v.body==null||v.body<+F.bodyMin))return false;
 if(F.gem&&!(g?isGem(d.groups[g]):anyGem(d)))return false;if(F.meta&&!d.use)return false;if(F.evo&&d.evo_after==null)return false;if(F.wf4&&!(d.wf>=4))return false;if(F.sm4&&!(d.sm>=4))return false;return true}
 /* --- table --- */
 function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null;
-return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:isGem(e),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,playstyles:e.playstyles,role:e.role}}
+return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:isGem(e),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,body:e.bd?e.bdp:null,playstyles:e.playstyles,role:e.role}}
 function rowsNow(){const q=$("q").value.trim().toLowerCase(),g=gs.value;
 let rows=DATA.filter(d=>(d.name+" "+d.version).toLowerCase().includes(q)&&(!g||g in d.groups)).map(d=>view(d,g)).filter(v=>pass(v,v,g));
 rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return 0;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}
 function head(){document.querySelectorAll("#tbl th").forEach(th=>{if(th.dataset.k===key)th.setAttribute("aria-sort",dir<0?"descending":"ascending");else th.removeAttribute("aria-sort")})}
 function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
 $("count").textContent=rows.length===DATA.length?`${n0(DATA.length)} kort`:`${n0(rows.length)} av ${n0(DATA.length)} kort`;
-const ncol=13+(F.combo.length?1:0)+(HASPRICE?1:0);
+const ncol=14+(F.combo.length?1:0)+(HASPRICE?1:0);
 rows.slice(0,shown).forEach(d=>{const tr=document.createElement("tr");tr.className="row"+(open===d.uid?" open":"");tr.tabIndex=0;
 const sub=[String(d.version).replace(/^FC 27 /,""),d.status==="lekket"?"lekket":"",d.estimated?"estimert":"",d.gem?"skjult perle":""].filter(Boolean).join(", ");
 const code=d.alt?(d.positions.split("/").find(p=>(META.pg||{})[p]===GCODE[d.group])||GCODE[d.group]||d.group):(d.positions.split("/")[0]||"");
@@ -294,7 +307,7 @@ tr.innerHTML=`<td><div class="who">${cardHtml(d,"",true)}<div><div class="nm">${
 <td class="l"><span class="pos ${posClass(d.group)}">${esc(code)}</span>${d.alt?'<small class="muted" style="display:block;font-size:12px">alternativ</small>':""}</td>
 <td class="num">${fmt(d.ovr,0)}</td><td class="num">${fmt(d.igr)}</td><td class="num">${fmt(d.meta)}</td><td class="num">${d.rank?n0(d.rank):"–"}</td>
 <td class="num">${fmt(d.feel)}</td>
-<td class="num">${fmt(d.pace)}</td><td class="num">${fmt(d.skill)}</td>
+<td class="num">${fmt(d.pace)}</td><td class="num">${fmt(d.skill)}</td><td class="num">${d.body!=null?sg(d.body):"–"}</td>
 <td class="num">${d.run_ai!=null?fmt(d.run_ai):"–"}</td>
 <td class="num">${d.stop!=null?fmt(d.stop):"–"}</td>
 <td class="l">${esc(d.accelerate||"–")}</td>

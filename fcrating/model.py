@@ -350,6 +350,12 @@ def rate_group(player: Player, attrs: Dict[str, float], group: str, acc_type: Op
     }
 
 
+def _frame_code(player: Player, wcfg: dict):
+    from .body import frame_code, frame_of
+    bcfg = wcfg.get("body_profile")
+    return frame_code(frame_of(player, bcfg)) if bcfg else 0
+
+
 def _futgg_page(player: Player) -> Optional[str]:
     from .sources.futgg import player_page
     return player_page(player)
@@ -445,6 +451,7 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "height_cm": player.height_cm,
         "weight_kg": player.weight_kg,
         "body_type": player.body_type,
+        "frame": _frame_code(player, wcfg),
         "gender": player.gender,
         "weak_foot": player.weak_foot,
         "skill_moves": player.skill_moves,

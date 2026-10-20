@@ -273,6 +273,11 @@ def _sim_value(r: dict, key: str, rc: dict) -> Optional[float]:
     if key == "accelerate":
         v = _clean(rc["similar"].get("accelerate_values", {})).get(r.get("accelerate") or "")
         return float(v) if v is not None else None
+    if key in ("kropp", "unik"):   # body type (body.frame_code): build on a 0-100 scale, and unique model or not
+        fc = r.get("frame")
+        if not fc:
+            return None
+        return float(rc["similar"]["build_values"][fc[0]]) if key == "kropp" else (100.0 if fc[2] else 0.0)
     return (r.get("attributes") or {}).get(key)
 
 

@@ -271,7 +271,7 @@ class ExplainTests(unittest.TestCase):
         evos = {p.uid: evo_potential(p, CFG) for p in players}
         rank_evos(evos, results)
         page = render_html(results, evos, CFG)
-        for text in ("Ratingen", "Sterkest", "Utregning og kilde", "Nullstill filtre", "skjulte perler", "bare PS+"):
+        for text in ("Ratingen", "Sterkest", "Utregning og kilde", "Nullstill filtre", "skjulte perler", "to: PS+", "Kroppspoeng"):
             self.assertIn(text, page)
         self.assertIn('"stats":', page)          # position averages for the explanation
         self.assertIn("Beste evo-kandidater", page)
