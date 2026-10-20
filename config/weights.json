@@ -162,8 +162,8 @@
       "community": {"Lionel Messi": 0.5, "Neymar Jr": 0.5, "Ronaldo|Icon": 0.5, "Ronaldinho": 0.5, "Maradona": 0.5}
     },
     "unique": {
-      "_info": "Unike/signaturmodeller (egen skannet kropp og egne bevegelser). Fra 20.10 uten eget tillegg (eier: en unik kropp kan også føles dårlig): de vurderes som bygningen og størrelsen høyden og vekten gir, og rykte legges i reputation. Tunge eller høye unike modeller (f.eks. Haaland) får fortsatt lite, fordi størrelse og bygning tas fra høyde og BMI.",
-      "amp_bonus": 0.0, "max_amp": 0.7,
+      "_info": "Unike/signaturmodeller (egen skannet kropp og egne bevegelser). Fra 20.10 uten fast tillegg (eier: en unik kropp kan også føles dårlig), men den forsterker smidigheten litt mer enn en vanlig kropp med samme bygning (amp_bonus): et smidig kort med unik modell får en bonus, et tregt eller tungt (Haaland) nesten ingenting. Ellers vurderes den som bygningen og størrelsen høyden og vekten gir, og kjente kropper får rykte i reputation. Tunge eller høye unike modeller (f.eks. Haaland) får fortsatt lite, fordi størrelse og bygning tas fra høyde og BMI.",
+      "amp_bonus": 0.25, "max_amp": 0.7,
       "points": {"ST": 0.0, "W": 0.0, "CAM": 0.0, "CM": 0.0, "CDM": 0.0, "FB": 0.0, "CB": 0.0, "GK": 0.0}
     },
     "derive": {

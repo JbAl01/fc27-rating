@@ -115,11 +115,15 @@ class BodyModelTwoTests(unittest.TestCase):
         self.assertAlmostEqual(pts(good) - pts(plain), 2.0, places=6)
         self.assertAlmostEqual(pts(hero) - pts(other), -1.5, places=6)
 
-    def test_unique_model_gets_no_bonus_for_being_unique(self):
+    def test_unique_model_pays_only_on_an_agile_card(self):
         from fcrating.body import BodyCard
-        bp = CFG["weights"]["body_profile"]
-        uniq, std = self._card(name="U", body="Unik Spiller"), self._card(name="S", body="Lean Medium")
-        std.weight_kg = uniq.weight_kg = 66.0   # BMI under 22.5 at 178 cm: the unique model is read as Lean Medium
-        a = BodyCard(uniq, "W", bp).points(uniq.attributes, [], [])
-        b = BodyCard(std, "W", bp).points(std.attributes, [], [])
-        self.assertLessEqual(a, b + 0.35)   # only the self-calibration may separate them
+        bp = copy.deepcopy(CFG["weights"]["body_profile"])
+        bp.pop("learned", None)
+        pts = lambda p: BodyCard(p, "W", bp).points(p.attributes, [], [])
+        for w in (66.0, 74.0):   # read as Lean Medium and as Average Medium at 178 cm
+            fast_u, fast_s = self._card(name="U", body="Unik Spiller", agi=92), self._card(name="S", body="Lean Medium" if w < 70 else "Average Medium", agi=92)
+            slow_u, slow_s = self._card(name="U", body="Unik Spiller", agi=66), self._card(name="S", body="Lean Medium" if w < 70 else "Average Medium", agi=66)
+            for c in (fast_u, fast_s, slow_u, slow_s):
+                c.weight_kg = w
+            self.assertGreater(pts(fast_u) - pts(fast_s), 0.2)          # agile: the unique model gives a bonus
+            self.assertAlmostEqual(pts(slow_u), pts(slow_s), places=6)  # slow: nothing for being unique

@@ -76,7 +76,9 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
   - Positive grunnpoeng gis med 35 % fast. Resten ganges med smidigheten fra 65 til 90 (`body_profile.flex`). En god kropp er altså verdt litt også på et lavt kort, og Evo Lab gir resten når evoene øker Agility og Balance.
   - Negative grunnpoeng gis alltid fullt.
 - **Rykte** (`body_profile.reputation`, eierens liste): poeng uansett tall, ganget med posisjonsfaktoren. Nå står Mbappé +2,0, Dembélé +1,5, Kim Little +1,5 og Kanu (FUT Heroes) −1,5. Nye navn legges inn når eieren sier fra.
-- **Unik modell:** ikke noe eget tillegg lenger. Den vurderes ut fra høyde og vekt, og ryktet tar resten.
+- **Unik modell:** ingen fast bonus.
+  - Den forsterker smidigheten litt mer enn en vanlig kropp med samme bygning (`unique.amp_bonus` 0,25). Et smidig kort med unik modell får derfor ca. +0,6 til +0,8 på kant eller spiss, mens et tregt eller tungt kort får 0.
+  - Kjente kropper får i tillegg rykte.
 - **Press Proven** (EA: «close control … at jog speed»):
   - Relevansen er hevet til A/S, og synergien er Ball Control, Dribbling og Agility, så gode driblere får mest.
   - Den har fått en egen kombinasjon med kroppen, 0,3/0,8.
