@@ -154,6 +154,7 @@ FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
 - **Spesialkort** (ikoner, helter, promo) brukte bare EAs regel «++ i hovedposisjonen», så Zidane hadde 0 i rolle på CM og Beckenbauer 0 på CDM. Nå brukes FUT.GG sine ekte roller for alle kort som er hentet (500+ spesialkort), og regelen gjelder alle posisjonene for de andre.
 - **Skjulte perler**: et kort er ikke skjult når OVR-en alene setter det i topp 2 % av posisjonen (Dembélé 90, Pedri 90, Formiga), eller når proffene eller FUT.GG-lagene bruker det. Gjelder både IGR-perler og løpsperler.
 - **Kropp lest fra høyde og vekt** (unike modeller og kort uten kroppstype) er målt mot kortene der EA har satt kroppstypen. Kvinner fikk mennenes BMI-grenser og ble nesten alle lest som Lean (36 % treff, EA har 62 % som Average). Nå har de egne grenser (63 % treff). Caicedo og Debinha gikk fra +4,8/+4,6 til ca. +1,9/+1,8, og Dembélé er nr. 1 på kropp. Høydegrensene ble 171/184 (98 % treff for begge kjønn).
+- **Midtstopper som henger på deg** (eier 20.10): fart 0,24 → 0,36 av IGR og Aggression 4 → 8 i ferdighetene. Testet mot proffenes og FUT.GG-lagenes midtstoppere: snitt topp 1,30 % → 1,10 %. Mer Strength eller «rask og sterk» ga ikke bedre treff. Backer uendret.
 - **Løp uten ball** vises nå for alle utespillere unntatt midtstoppere. Det teller fortsatt bare i IGR for spiss, kant og CAM.
 - **Sortering**: like verdier (Plass 0,1 % for nr. 4–9) sorteres etter IGR.
 

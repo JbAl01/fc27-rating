@@ -64,7 +64,7 @@
     "CM":  {"short_passing": 0.18, "long_passing": 0.10, "vision": 0.12, "ball_control": 0.10, "reactions": 0.08, "composure": 0.10, "interceptions": 0.08, "standing_tackle": 0.06, "def_awareness": 0.04, "stamina": 0.08, "long_shots": 0.03, "dribbling": 0.03},
     "CDM": {"interceptions": 0.16, "def_awareness": 0.14, "standing_tackle": 0.14, "short_passing": 0.12, "long_passing": 0.06, "vision": 0.04, "reactions": 0.08, "composure": 0.06, "strength": 0.07, "stamina": 0.07, "ball_control": 0.04, "aggression": 0.02},
     "FB":  {"def_awareness": 0.14, "standing_tackle": 0.14, "interceptions": 0.12, "stamina": 0.10, "short_passing": 0.10, "crossing": 0.08, "reactions": 0.08, "ball_control": 0.06, "sliding_tackle": 0.04, "strength": 0.04, "composure": 0.05, "dribbling": 0.05},
-    "CB":  {"def_awareness": 0.18, "standing_tackle": 0.16, "interceptions": 0.14, "strength": 0.10, "jumping": 0.06, "heading_accuracy": 0.07, "reactions": 0.08, "composure": 0.06, "sliding_tackle": 0.05, "short_passing": 0.06, "aggression": 0.04},
+    "CB":  {"def_awareness": 0.18, "standing_tackle": 0.16, "interceptions": 0.14, "strength": 0.10, "jumping": 0.06, "heading_accuracy": 0.07, "reactions": 0.08, "composure": 0.06, "sliding_tackle": 0.05, "short_passing": 0.06, "aggression": 0.08},
     "GK":  {"gk_diving": 0.20, "gk_reflexes": 0.25, "gk_handling": 0.15, "gk_positioning": 0.20, "gk_kicking": 0.10, "gk_speed": 0.10}
   },
 
@@ -78,7 +78,8 @@
     "CM":  {"feel": 0.26, "pace": 0.12, "skill": 0.62},
     "CDM": {"feel": 0.20, "pace": 0.14, "skill": 0.66},
     "FB":  {"feel": 0.16, "pace": 0.30, "skill": 0.54},
-    "CB":  {"feel": 0.15, "pace": 0.24, "skill": 0.61},
+    "CB":  {"feel": 0.15, "pace": 0.36, "skill": 0.49},
+    "_CB_20_10": "Midtstopper som henger på løperen (eier 20.10): fart holder kontakten, Aggression (EA: hvor ofte og hvor hardt spilleren går i nærkamper og taklinger) gjør at den går inn i duellen. Testet mot hva proffene og FUT.GG-lagene bruker (Lacroix 26 %, Carreras 17 %): fart 0,24 -> 0,36 og Aggression 4 -> 8 flyttet de brukte midtstopperne fra snitt topp 1,30 % til 1,10 % (median 1,23 -> 1,02 %). Mer Strength eller en egen «rask og sterk»-del ga ikke bedre treff. Backer: ingen endring (1,16 -> 1,12 % med mer fart, for lite).",
     "_defenders_info": "FC 27: mindre automatisk AI-forsvar og raskere manuell jockey, så attributtene til forsvareren du styrer (Agility, Acceleration) betyr mer for CB/CDM. For backer brukes farten mest til å ta igjen terreng (EA), så følelse teller litt mindre der.",
     "GK":  {"feel": 0.00, "pace": 0.00, "skill": 1.00}
   },
