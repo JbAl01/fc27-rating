@@ -156,8 +156,8 @@
       "share": 0.35, "floor": 65, "span": 25, "cap": 1.2
     },
     "reputation": {
-      "_info": "Kropper med rykte (eierens erfaring og tester): poeng som gis uansett tall, på kantskala, ganget med posisjonsfaktoren i combos.group_factor. Nøkkel: spillernavn, eller 'Navn|Nasjon' / 'Navn|versjon' når navnet er delt av flere. Gjelder alle kort av spilleren. Kilder: eieren 19.-20.10 (Mbappé-kroppen er noe eget, Dembélé fortjener mer, Little er smooth, Kanu føles dårlig).",
-      "points": {"Kylian Mbappé": 2.0, "Ousmane Dembélé": 1.5, "Kim Little": 1.5, "Kanu|FUT Heroes": -1.5},
+      "_info": "Kropper med rykte (eierens erfaring og tester): poeng som gis uansett tall, på kantskala, ganget med posisjonsfaktoren i combos.group_factor. Nøkkel: spillernavn, eller 'Navn|Nasjon' / 'Navn|versjon' når navnet er delt av flere. Gjelder alle kort av spilleren. Kilder: eieren 19.-20.10 (Mbappé-kroppen er noe eget, Dembélé fortjener mer, Little er smooth, Aimar (Hero) har bra kropp, Kanu føles dårlig).",
+      "points": {"Kylian Mbappé": 2.0, "Ousmane Dembélé": 1.5, "Kim Little": 1.5, "Aimar|FUT Heroes": 1.5, "Kanu|FUT Heroes": -1.5},
       "_community_info": "Svakere belegg (nivå C: community-anekdoter, Reddit 2026, samlet i eierens dokument 'EA FC 27 Bodytype Community Tier System' 20.10): kandidater med kjent god kroppsfølelse, små poeng til eierens egne tester sier noe annet. Står spilleren i points, gjelder bare det.",
       "community": {"Lionel Messi": 0.5, "Neymar Jr": 0.5, "Ronaldo|Icon": 0.5, "Ronaldinho": 0.5, "Maradona": 0.5}
     },
