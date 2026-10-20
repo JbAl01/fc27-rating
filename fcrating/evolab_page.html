@@ -194,7 +194,7 @@ like:r[13]>=0?S(r[13]).split("|"):null,acc:r[14],block:r[15],dna:{pts:r[16][0],t
 lm:{tips:r[18][0],skip:r[18][1],near:r[18][2],chk:r[18][3],pv:r[18][4]===1,qk:r[18][4]===2},plans:r[19],
 med:{d:r[20][0],ps:r[20][1].map(S),psp:r[20][2].map(S),wf:r[20][3],sm:r[20][4],ovr:r[20][5],acc:r[20][6],feel:r[20][7],pace:r[20][8]},
 nowx:{acc:r[21][0],feel:r[21][1],pace:r[21][2]},runs:{now:r[22][0],live:r[22][1],end:r[22][2]},cats:r[23]||null,pse:r[24],base:r[25],
-c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14],bd:r[26][15]||0,fb:r[26][16]||0},
+c:{g:r[26][0],feelH:r[26][1],feelB:r[26][2],gk:r[26][3],hb:r[26][4],wrv:r[26][5],obdData:r[26][6],obdBefore:r[26][7],accSrc:r[26][8],h:r[26][9],role:r[26][10],primPP:r[26][11],psu:r[26][12],prim:r[26][13],gender:r[26][14],bd:r[26][15]||0,fb:r[26][16]||0,wkg:r[26][17]||null},
 ps:r[27].map(S),psp:r[28].map(S),wf:r[29],sm:r[30],off:r[31],runcard:r[32],lv:{feel:r[33][0],acc:r[33][1],pace:r[33][2]},stops:r[34]?{now:r[34][0]||[],live:r[34][1]||[],end:r[34][2]||[]}:null}));
 const ALTIMG={};D.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};D.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});D.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
@@ -242,16 +242,21 @@ function soonest(d){let m=null;for(const[ei]of activePlan(d)[0]){const t=untilMs
 const hasLive=d=>activePlan(d)[0].length>0;
 
 /* "ligner på": movement profile distance, as in runs.distance */
-const SK=META.sim.keys||[],SST=META.sim.st||[],SW=META.sim.sumw||SST.reduce((s,x)=>s+x[2],0);
-function simVal(d,a,k){if(k==="accelerate"){const t=classify(a,d.c.h,d.c.gender)||d.c.accSrc;return t?(META.sim.accv||{})[t]??null:null}if(k==="height_cm")return d.c.h;if(k==="arbeidsrate")return d.c.wrv;if(k==="kort_kropp")return d.c.hb;if(k==="kropp")return d.c.fb?(META.sim.bv||[100,50,0])[d.c.fb[0]]:null;if(k==="unik")return d.c.fb?(d.c.fb[2]?100:0):null;
+const SIMP=new Set(META.sim.imp||[]),SK=META.sim.keys||[],SST=META.sim.st||[],SW=META.sim.sumw||SST.reduce((s,x)=>s+x[2],0);
+function simVal(d,a,k){if(k==="accelerate"){const t=classify(a,d.c.h,d.c.gender)||d.c.accSrc;return t?(META.sim.accv||{})[t]??null:null}if(k==="height_cm")return d.c.h;if(k==="arbeidsrate")return d.c.wrv;if(k==="kort_kropp")return d.c.hb;if(k==="vekt")return d.c.wkg;if(k==="kropp")return d.c.fb?(META.sim.bv||[100,50,0])[d.c.fb[0]]:null;if(k==="unik")return d.c.fb?(d.c.fb[2]?100:0):null;
 if(k==="kvikk_sterk")return a[AI.agility]!=null&&a[AI.strength]!=null?Math.min(a[AI.agility],a[AI.strength]):null;return a[AI[k]]??null}
 let TWIN=null;const TWC=new Map();
 /* Unrounded, so the sort is not decided by rounding. After the evos many cards end on the same capped values, so
    equal likeness is common: rowsNow then sorts those by Plass etter evo instead of list order (which put the same
    card on top for every target). Other versions of the target player itself are left out. */
-function simOf(d,a){let tot=0,used=0;SK.forEach((key,j)=>{const va=simVal(d,a,key),vb=TWIN[3][j];if(va==null||vb==null)return;const[m,sd,w]=SST[j];tot+=w*((va-vb)/sd)**2;used+=w});
+/* a: attributes, fe: følelse, pst: {ps,psp} – all after the evos (runs.distance does the same in Python) */
+function simOf(d,a,fe,pst){let tot=0,used=0;SK.forEach((key,j)=>{const[m,sd,w]=SST[j];let z=null;
+if(key==="playstyles"){const A=new Set([...(pst?pst.ps:[]),...(pst?pst.psp:[])]),B=TWIN[5]||[];if(A.size&&B.length){let n=0;for(const x of B)if(A.has(x))n++;z=(1-n/(A.size+B.length-n))/sd}}
+else{let va=key==="folelse"?fe:simVal(d,a,key),vb=TWIN[3][j];if(SIMP.has(key)){if(va==null)va=m;if(vb==null)vb=m}if(va!=null&&vb!=null)z=(va-vb)/sd}
+if(z==null)return;z=Math.min(Math.abs(z),META.sim.zmax||3);tot+=w*z*z;used+=w});
 return used<0.5*SW?null:100*Math.exp(-Math.sqrt(tot/used)/1.2)}
-function twinSim(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);const v=simOf(d,buildAt(d));TWC.set(k,v);return v}
+function twinSim(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return null;const k=d.i+"|"+F.h;if(TWC.has(k))return TWC.get(k);
+const v=isNow()?simOf(d,buildLive(d),liveRun(d).det.feel,liveRun(d).st):simOf(d,buildEnd(d),d.med.feel,d.med);TWC.set(k,v);return v}
 const twinName=t=>t[0]+" ("+(t[1]||t[2])+")";
 
 /* ---------- state ---------- */
@@ -358,10 +363,10 @@ for(const[,chain]of searchEnds(d,C,1500).values())cands.push([chain,rpp]);
 const sig=c=>c.map(x=>x.join(":")).join(",");let best=null;const seen=new Set();
 for(const plan of cands){const k=sig(plan[0])+"|"+plan[1];if(seen.has(k))continue;seen.add(k);
 let st=stateOf(d),ok=true;for(const[ei,pi]of plan[0]){const e=EV[ei];if(check(e,st)){ok=false;break}st=apply(e,st,pi>=0?e[8][8][pi]:null)}if(!ok)continue;
-if(plan[1]&&!d.c.primPP)st=rolesPP(st);const sm=simOf(d,st.a);if(sm==null)continue;const t={plan,sm,igr:rt(st).igr,len:plan[0].length};
+if(plan[1]&&!d.c.primPP)st=rolesPP(st);const dt=rt(st),sm=simOf(d,st.a,dt.feel,st);if(sm==null)continue;const t={plan,sm,igr:dt.igr,len:plan[0].length};
 if(!best||t.sm>best.sm+1e-9||(Math.abs(t.sm-best.sm)<=1e-9&&(t.igr>best.igr||(t.igr===best.igr&&t.len<best.len))))best=t}
 if(!best)return 0;const p0=d.plans[0];let s0=stateOf(d);for(const[ei,pi]of p0[0])s0=apply(EV[ei],s0,pi>=0?EV[ei][8][8][pi]:null);if(p0[1]&&!d.c.primPP)s0=rolesPP(s0);
-const sm0=simOf(d,s0.a);return sig(best.plan[0])===sig(p0[0])||(sm0!=null&&best.sm<=sm0+0.5)?0:best.plan}
+const sm0=simOf(d,s0.a,rt(s0).feel,s0);return sig(best.plan[0])===sig(p0[0])||(sm0!=null&&best.sm<=sm0+0.5)?0:best.plan}
 /* live columns (IGR, plass, følelse, løp, stopp, kategorier) from one plan */
 function liveFields(d,plan){const res=runPlan(d,plan),det=res.det,p50=pyRound(det.igr+d.off,1),pool=META.pools[d.g]||[];
 d.h[0]={...d._orig.h0,p10:p50,p50,p90:p50,ovr:res.st.ovr,rank:rankIn(pool,p50)};d.lv={feel:det.feel,acc:det.acc,pace:det.pace};
@@ -379,34 +384,58 @@ d.h[j]={...o,p10,p50:m,p90,op,ovr,rank:rankIn(pool,m),adj:pyRound(o.p50-m,1)}}}
 function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.runs.live=o.rl.slice();if(d.stops)d.stops.live=o.sl.slice();if(d.cats)d.cats[1]=o.c1;
 d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._ak="";d._lr=null;d._obj=0;d._tw=""}
 /* bring one card up to date with the used evos and the chosen goal */
-function refreshCard(d){restore(d);
-if(aff(d)){const uk=usedKey(),pc=d._upc||(d._upc=new Map());let pl=pc.get(uk);if(!pl){pl=searchPlans(d);if(pc.size>=6)pc.delete(pc.keys().next().value);pc.set(uk,pl)}d.plans=pl.slice();d.lm.tips=[];d._re=true;d._ak=uk;forecastFrom(d,liveFields(d,d.plans[0]))}
+function refreshCard(d){restore(d);for(let j=0;j<H.length;j++)TWC.delete(d.i+"|"+j);d._bdE=null;
+if(aff(d)){const uk=usedKey(),pc=d._upc||(d._upc=new Map());let pl=pc.get(uk),ak=uk;
+/* sorted by «Likhet» the plan that counts is the one for likeness (searched in full below), so the IGR plan is the
+   card's plan without the used evos (fast); the full search follows when the sort goes back to IGR */
+if(!pl){if(OBJ===5){pl=[repairPlan(d,d._orig.plans[0]),0,0,0,0];ak=uk+"~"}else{pl=searchPlans(d);if(pc.size>=6)pc.delete(pc.keys().next().value);pc.set(uk,pl)}}
+d.plans=pl.slice();d.lm.tips=[];d._re=true;d._ak=ak;forecastFrom(d,liveFields(d,d.plans[0]))}
 d._tw=twinKey();if(d._tw)d.plans[5]=twinPlan(d);
 const w=want(d);if(w)liveFields(d,d.plans[w]);d._obj=w;d._lr=null}
 const usedKey=()=>[...USED].sort().join("|");
+/* the plan without the used evos (and the evos that can no longer be taken after that), in the same order */
+function repairPlan(d,plan){let st=stateOf(d);const out=[];for(const[ei,pi]of plan[0]){if(isUsed(ei))continue;const e=EV[ei];if(check(e,st))continue;st=apply(e,st,pi>=0?e[8][8][pi]:null);out.push([ei,pi])}return[out,plan[1]]}
+const akOk=d=>{if(!aff(d))return!d._ak;const uk=usedKey();return d._ak===uk||(OBJ===5&&d._ak===uk+"~")};
 /* does one of the evos marked as used take part in a plan of the card? (the evos of the plans never change: found once) */
 const planEvs=d=>d._pe||(d._pe=new Set(d._orig.plans.flatMap(p=>p?p[0].map(x=>x[0]):[])));
 const aff=d=>{if(!USED.size)return false;for(const ei of planEvs(d))if(isUsed(ei))return true;return false};
-const needsWork=d=>(aff(d)?usedKey():"")!==(d._ak||"")||d._obj!==want(d)||(OBJ&&OBJ<5&&d._orig.plans[OBJ]&&d._obj!==OBJ)||(d._tw||"")!==twinKey()||PLANSEL[d.i]!=null;
+/* out of date: other used evos, another plan wanted (goal in the sort or the plan picked in the card), or another «Ligner på» */
+const needsWork=d=>!akOk(d)||d._obj!==want(d)||(d._tw||"")!==twinKey();
 let usedJob=0;
-/* Works through every card whose plan changes (evos marked as used, or another goal in the sort). Cards in the
-   current view and high in the current sort come first, and the table is redrawn while it works, so the top
-   settles quickly. */
-/* The plan for likeness is worked out for the cards at the top of the list (TWIN_TOP in the current filters); the
-   rest keep the IGR plan until they come up (render() asks for more when the visible rows lack it). */
-const TWIN_TOP=400;let twinMore=false;
-function recompute(){const job=++usedJob;OBJ=objNow();const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
+/* Brings the cards up to date when evos are marked as used, the goal in the sort changes or a card is picked under
+   «Ligner på». A card whose plans must be searched again is expensive (about 40 ms, over 10 000 cards when a common
+   evo is used), so only what the table needs is worked out: an evo that is used up can only make the best plan worse
+   (or as good), so the card's value with all evos is a ceiling. The cards are taken from the top of the sort; once
+   the rows above the next ceiling fill the page (plus a margin for the sorts where the ceiling is only a guide, like
+   «Likhet»), the rest can not reach the page and wait until they are needed: render() asks for more when a row on
+   the page is out of date (scrolling with «Vis 100 til», another filter). Cards that only switch plan are cheap and
+   are all done. */
+const MONO=new Set(["rel","p50","gain","feel","run","stop","def"]);let running=false,pendingRe=false;
+function recompute(){const job=++usedJob;running=true;pendingRe=false;OBJ=objNow();const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
+const tk=twinKey(),ukey=usedKey();
+const dear=d=>(aff(d)&&!akOk(d)&&!(d._upc&&d._upc.has(ukey))&&OBJ!==5)||(!!tk&&(d._tw||"")!==tk&&d.c.g!=="GK"&&d.name!==TWIN[0]);
 let todo=D.filter(needsWork);
-/* in the order the table shows them (as rowsNow: the sort direction, empty values last), cards in the view first */
-const key=d=>[pass(d,q)?0:1,f(d)];
-const ks=new Map(todo.map(d=>[d,key(d)]));todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);if(x[0]!==y[0])return x[0]-y[0];
-const u=x[1],v=y[1];if(u===v)return 0;if(u==null)return 1;if(v==null)return -1;return(u>v?1:-1)*dir});
-if(OBJ===5){const tk=twinKey(),only=todo.filter(d=>(d._tw||"")!==tk&&!aff(d)&&PLANSEL[d.i]==null);
-const keep=new Set(only.filter(d=>ks.get(d)[0]===0).slice(0,TWIN_TOP));todo=todo.filter(d=>!only.includes(d)||keep.has(d));twinMore=false}
-let k=0,drawn=performance.now();
-const step=()=>{if(job!==usedJob)return;const t0=performance.now();while(k<todo.length&&performance.now()-t0<40)refreshCard(todo[k++]);
-const busy=k<todo.length;usedInfo(busy?Math.round(100*k/todo.length):null);if(!busy)twinMore=false;
-if(!busy||performance.now()-drawn>400){drawn=performance.now();TWC.clear();render()}
+/* stale cards back to their plans with all evos, so what the table shows for them is the ceiling */
+for(const d of todo)if(dear(d)&&(d._re||d._tw))restore(d);
+const vf=d=>{const v=f(d);return v==null?-Infinity:v};
+const ks=new Map(todo.map(d=>[d,pass(d,q)?[0,vf(d)]:[1,-Infinity]]));
+todo.sort((a,b)=>{const x=ks.get(a),y=ks.get(b);if(x[0]!==y[0])return x[0]-y[0];const u=x[1],v=y[1];return u===v?0:(u>v?1:-1)*dir});
+/* «Likhet» has no ceiling (a plan made for likeness can beat the IGR plan), so it takes a fixed number of cards from the top */
+const lazy=dir<0&&F.sort!=="name",tw=F.sort==="twin",need=shown+(MONO.has(F.sort)?10:tw?30:150);
+/* the values that are already right, for the cards in the view (sorted, to count how many are above a ceiling) */
+const tset=new Set(todo),ex=[];for(const d of D)if(!tset.has(d)&&pass(d,q))ex.push(vf(d));ex.sort((a,b)=>a-b);
+const ins=v=>{let lo=0,hi=ex.length;while(lo<hi){const m=(lo+hi)>>1;if(ex[m]<v)lo=m+1;else hi=m}ex.splice(lo,0,v)};
+const above=v=>{let lo=0,hi=ex.length;while(lo<hi){const m=(lo+hi)>>1;if(ex[m]<=v)lo=m+1;else hi=m}return ex.length-lo};
+const dearView=todo.filter(d=>ks.get(d)[0]===0&&dear(d)).length;
+let k=0,stop=false,doneDear=0,drawn=performance.now();
+const step=()=>{if(job!==usedJob)return;const t0=performance.now();
+while(k<todo.length&&performance.now()-t0<40){const d=todo[k],kv=ks.get(d);
+if(dear(d)){if(kv[0]===1||stop){k++;continue}if(lazy&&(tw?doneDear>=need:above(kv[1])>=need)){stop=true;k++;continue}doneDear++}
+k++;refreshCard(d);if(kv[0]===0)ins(vf(d))}
+const busy=k<todo.length;let prog=null;
+if(busy&&!stop){const nx=todo[k],kv=ks.get(nx);if(kv[0]===0&&dear(nx))prog=lazy?Math.min(99,Math.floor(100*(tw?doneDear:above(kv[1]))/need)):Math.floor(100*doneDear/Math.max(1,dearView))}
+usedInfo(prog);if(!busy)running=false;
+if(!busy||performance.now()-drawn>400){drawn=performance.now();render()}
 if(busy)setTimeout(step,0)};step()}
 const applyUsed=recompute;
 function usedInfo(progress){const names=EV.filter(e=>USED.has(e[0])).map(e=>e[1]);let h="";
@@ -487,7 +516,7 @@ if(isOpen){const dh=detail(d);if(!c.dt||c.dt.h!==dh||c.dt.n!==ncol){const dt=doc
 if(!rows.length){const tr=document.createElement("tr");tr.innerHTML=`<td colspan="${ncol}" class="l" style="padding:18px">Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».</td>`;out.push(tr)}
 tb.replaceChildren(...out);
 const m=$("morerows");m.hidden=rows.length<=shown;m.textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til`;renderCompare();
-if(OBJ===5&&!twinMore&&rows.slice(0,shown).some(d=>(d._tw||"")!==twinKey())){twinMore=true;setTimeout(recompute,50)}}
+if(!running&&!pendingRe&&rows.slice(0,shown).some(needsWork)){pendingRe=true;setTimeout(recompute,50)}}
 function reset(){shown=PAGE;render()}
 
 /* ---------- detail ---------- */
@@ -613,7 +642,7 @@ ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget.
 <div class="cols"><section>${planHtml(d)}</section>
 <section>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
-function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{const v=+sel.value;if(v===(OBJ&&d.plans[OBJ]?OBJ:0))delete PLANSEL[d.i];else PLANSEL[d.i]=v;refreshCard(d);TWC.clear();render()});
+function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{const v=+sel.value;if(v===(OBJ&&d.plans[OBJ]?OBJ:0))delete PLANSEL[d.i];else PLANSEL[d.i]=v;refreshCard(d);render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
 dt.querySelector("[data-act=sbx]").onclick=ev=>{ev.stopPropagation();if(SBX[d.i]&&SBX[d.i].open)SBX[d.i].open=false;else{if(!SBX[d.i])SBX[d.i]={items:activePlan(d)[0].map(([ei,pi])=>({ei,pi})),rpp:!!d.plans[0][1],open:true};SBX[d.i].open=true}render()};
 dt.onclick=ev=>ev.stopPropagation();

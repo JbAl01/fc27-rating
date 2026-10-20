@@ -61,6 +61,16 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Likhet:** «Ligner på» og «Lignende» tar nå med bygningen (Lean 100, Average 50, Stocky 0) og om kortet har en unik modell (`run_ai.similar.features` kropp 1,2 og unik 0,6). «Lignende» på Players viser prosent.
 - **Data:** `rate()` gir feltet `frame` (`body.frame_code`: bygning, størrelse, unik, anslått). Det ligger som r[43] i Players-dataene og som c[16] i Evo Lab-dataene.
 
+## Rettet 20.10 (Evo Lab-omregning og likhet)
+- **Omregning:** med «Ligner på» startet omregningen på nytt fra 0 % hvert 0,4 sekund, og ble aldri ferdig på mobil. Nå regnes bare det tabellen trenger.
+  - En brukt evo kan aldri gjøre planen bedre, så verdien med alle evoer er et tak. Kortene regnes ovenfra og ned, og siden stopper når de 100 øverste er sikre. Resten regnes når de trengs, for eksempel ved «Vis 100 til» eller et nytt filter.
+  - Ved sortering på «Likhet» får IGR-planen en rask reparasjon: planen uten de brukte evoene.
+  - Målt med 6 brukte evoer (blant dem Technical, som berører 11 329 kort), på mobil-hastighet: «Plass etter evo» ca. 67 s og «Ligner på» Dembélé ca. 36 s, mot aldri ferdig før.
+- **Likhet:** «Ligner på» og «Lignende» sammenligner nå hele kortet.
+  - Bevegelse, følelse, høyde (den hadde falt ut via `run_ai.dropped`), vekt, bygning, unik modell, AcceleRATE, posisjonstall og hvor mange PlayStyles som er felles.
+  - Mangler kortet høyde, vekt eller kroppstype, regnes det som et gjennomsnittskort på det punktet.
+  - Kroppen har faste skalaer, og hvert tall kan bidra med høyst 3 standardavvik.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

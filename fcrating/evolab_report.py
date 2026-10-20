@@ -169,7 +169,8 @@ def card_consts(p: Player, g: str, cfg: dict) -> list:
             p.gender or "M",
             # body profile: [fixed points, agility amplification, [[PlayStyle, base, plus]], low, high, label]
             [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"]] if fr.body.on else 0,
-            frame_code(fr.body.frame)]   # [build, size, unique, estimated] for the filters and 'Ligner på'
+            frame_code(fr.body.frame),   # [build, size, unique, estimated] for the filters and 'Ligner på'
+            p.weight_kg]
 
 
 
@@ -189,15 +190,16 @@ def targets_meta(results: List[dict], lab: dict, cfg: dict):
     rc = cfg["weights"].get("run_ai")
     if not rc:
         return [], {"keys": [], "st": []}
-    from .runs import _sim_value, similarity_stats
+    from .runs import _sim_value, ps_set, similarity_stats
     stats = similarity_stats(results, rc)
     keys = list(stats)
     fw = _clean(rc["similar"]["features"])
     favs = {r["uid"] for r in _favorites(lab, results)}
     # every outfield card can be a target (not only the run positions): the movement profile is attributes,
     # height and work rate, which all outfield cards have
+    attr_keys = [k for k in keys if k in ATTR_INDEX]
     pool = [r for r in results if (r.get("position") or "").upper() != "GK" and any(g != "GK" for g in r["by_group"])
-            and sum(1 for k in keys if _sim_value(r, k, rc) is not None) >= 0.8 * len(keys)]
+            and sum(1 for k in attr_keys if _sim_value(r, k, rc) is not None) >= 0.8 * len(attr_keys)]
     chosen = {}
     for r in pool:
         v = (r.get("rarity") or "").lower()
@@ -210,10 +212,11 @@ def targets_meta(results: List[dict], lab: dict, cfg: dict):
     for r in sorted(chosen.values(), key=lambda r: (r["uid"] not in favs, -(r.get("ovr") or 0), r["name"]))[:2000]:
         feats = [_r1(_sim_value(r, k, rc)) for k in keys]
         g = r.get("position_group") or r.get("best_group")
-        out.append([r["name"], r.get("rarity") or "", group_label(g), feats, 1 if r["uid"] in favs else 0])
+        out.append([r["name"], r.get("rarity") or "", group_label(g), feats, 1 if r["uid"] in favs else 0, sorted(ps_set(r))])
     return out, {"keys": keys, "st": [[round(m, 4), round(sd, 4), fw.get(k, 0.0)] for k, (m, sd) in stats.items()],
                  "sumw": sum(fw.values()),
                  "bv": rc["similar"].get("build_values", [100, 50, 0]),
+                 "imp": list(rc["similar"].get("impute", [])), "zmax": rc["similar"].get("max_z", 3.0),
                  "accv": _clean(rc["similar"].get("accelerate_values", {}))}
 
 

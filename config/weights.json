@@ -298,12 +298,21 @@
       "quick": 80, "strong": 80, "small_cm": 175, "big_cm": 188, "heavy_gap": 15
     },
     "similar": {
-      "_info": "Hvilke tall som teller når kort med lignende løpsprofil finnes, og hvor mye.",
+      "_info": "Hvilke tall som teller når kort som spiller likt finnes («Ligner på» i Evo Lab, «Lignende» på Players), og hvor mye. Helhetlig: bevegelse og følelse, kroppen (høyde, vekt, bygning, unik modell), AcceleRATE, ferdighetene som gir spillestil, og hvilke PlayStyles kortet har.",
       "features": {
-        "positioning": 1.5, "acceleration": 1.2, "sprint_speed": 1.0, "reactions": 0.8, "agility": 1.0,
-        "balance": 0.8, "strength": 0.8, "ball_control": 0.6, "composure": 0.5, "height_cm": 0.8, "stamina": 0.4, "arbeidsrate": 0.5, "accelerate": 1.2,
-        "kropp": 1.2, "unik": 0.6
+        "acceleration": 1.2, "sprint_speed": 1.0, "agility": 1.2, "balance": 1.0, "reactions": 0.8, "ball_control": 0.9,
+        "dribbling": 1.0, "composure": 0.5, "strength": 1.0, "stamina": 0.3, "positioning": 0.8,
+        "height_cm": 1.2, "vekt": 0.6, "kropp": 1.2, "unik": 0.6, "accelerate": 1.0, "folelse": 1.2,
+        "finishing": 0.5, "shot_power": 0.3, "long_shots": 0.3, "short_passing": 0.5, "vision": 0.4, "crossing": 0.3,
+        "def_awareness": 0.5, "standing_tackle": 0.4, "interceptions": 0.3, "heading_accuracy": 0.3, "jumping": 0.2, "aggression": 0.2,
+        "playstyles": 1.0
       },
+      "impute": ["height_cm", "vekt", "kropp", "unik"],
+      "fixed_sd": {"kropp": 50, "unik": 100},
+      "max_z": 3.0,
+      "_scale_info": "Kroppen får faste skalaer (Lean mot Stocky = 2 standardavvik, unik mot vanlig = 1), ellers ville en sjelden ja/nei-egenskap som unik modell overstyre alt annet. Hvert tall teller høyst max_z standardavvik.",
+      "_impute_info": "Mangler kortet høyde, vekt eller kroppstype, regnes det som et gjennomsnittskort på det punktet (ellers ville kort uten kroppstype sluppet unna sammenligningen og havnet øverst).",
+      "_features_info": "folelse = vår følelse-score (etter evo i Evo Lab). vekt = kg. playstyles = hvor mange av PlayStyles som er felles (felles delt på alle de to kortene har til sammen; PS+ teller som samme PlayStyle).",
       "accelerate_values": {"Explosive": 100, "Controlled": 50, "Lengthy": 0},
       "build_values": [100, 50, 0],
       "_accelerate_info": "AcceleRATE som tall (Explosive - Controlled - Lengthy i like steg), så kort som beveger seg likt ligger nær hverandre.",

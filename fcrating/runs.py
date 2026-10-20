@@ -248,15 +248,41 @@ def _sim_keys(rc: dict) -> List[str]:
     return list(_clean(rc["similar"]["features"]))
 
 
+PS_SD = 0.5   # 'playstyles': (1 - share in common) / PS_SD, so no PlayStyle in common = 2 standard deviations
+
+
 def similarity_stats(results: List[dict], rc: dict) -> Dict[str, Tuple[float, float]]:
-    keys = [k for k in _sim_keys(rc) if k not in rc.get("dropped", {})]
+    """Mean and spread of every similarity number over all outfield cards. (The run calibration's dropped
+    features are about the run score, not about how alike two cards are, so they stay in.)"""
+    keys = _sim_keys(rc)
+    pool = [r for r in results if (r.get("position") or "").upper() != "GK"]
     out = {}
     for k in keys:
-        vals = [_sim_value(r, k, rc) for r in results if r.get("run_ai")]
+        if k == "playstyles":
+            if any(ps_set(r) for r in pool[:2000]):
+                out[k] = (0.0, PS_SD)
+            continue
+        vals = [_sim_value(r, k, rc) for r in pool]
         vals = [v for v in vals if v is not None]
         if len(vals) >= 2:
-            out[k] = (statistics.fmean(vals), statistics.pstdev(vals) or 1.0)
+            fixed = (rc["similar"].get("fixed_sd") or {}).get(k)
+            out[k] = (statistics.fmean(vals), float(fixed) if fixed else (statistics.pstdev(vals) or 1.0))
     return out
+
+
+def ps_set(r: dict) -> set:
+    """The card's PlayStyles (PS+ as the same PlayStyle), empty when unknown."""
+    if not r.get("ps_known", True):
+        return set()
+    for v in (r.get("by_group") or {}).values():
+        return {d["name"].rstrip("+") for d in v.get("playstyle_details", [])}
+    return set()
+
+
+def ps_overlap_z(a: set, b: set) -> Optional[float]:
+    if not a or not b:
+        return None
+    return (1.0 - len(a & b) / len(a | b)) / PS_SD
 
 
 def _sim_value(r: dict, key: str, rc: dict) -> Optional[float]:
@@ -273,6 +299,12 @@ def _sim_value(r: dict, key: str, rc: dict) -> Optional[float]:
     if key == "accelerate":
         v = _clean(rc["similar"].get("accelerate_values", {})).get(r.get("accelerate") or "")
         return float(v) if v is not None else None
+    if key == "folelse":
+        return r.get("feel")
+    if key == "vekt":
+        return r.get("weight_kg")
+    if key == "playstyles":
+        return None   # a set, compared in distance()
     if key in ("kropp", "unik"):   # body type (body.frame_code): build on a 0-100 scale, and unique model or not
         fc = r.get("frame")
         if not fc:
@@ -283,12 +315,21 @@ def _sim_value(r: dict, key: str, rc: dict) -> Optional[float]:
 
 def distance(a: dict, b: dict, stats: Dict[str, Tuple[float, float]], rc: dict) -> Optional[float]:
     fw = _clean(rc["similar"]["features"])
+    zmax = float(rc["similar"].get("max_z", 3.0))
     total, used = 0.0, 0.0
     for k, (m, sd) in stats.items():
+        if k == "playstyles":
+            z = ps_overlap_z(ps_set(a), ps_set(b))
+            if z is not None:
+                total += fw[k] * min(z, zmax) ** 2
+                used += fw[k]
+            continue
         va, vb = _sim_value(a, k, rc), _sim_value(b, k, rc)
+        if k in rc["similar"].get("impute", ()):   # unknown body or weight: an average card there, not a free pass
+            va, vb = (m if va is None else va), (m if vb is None else vb)
         if va is None or vb is None:
             continue
-        total += fw[k] * ((va - vb) / sd) ** 2
+        total += fw[k] * min(abs(va - vb) / sd, zmax) ** 2
         used += fw[k]
     if used < 0.5 * sum(fw.values()):
         return None
