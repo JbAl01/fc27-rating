@@ -174,7 +174,10 @@ class FC27BaseTests(unittest.TestCase):
         self.assertIn("FC 27", msg)
         other = Player(name="Andre", position="ST", id="1", attributes={}, source="ea-ratings")
         self.assertEqual(specials.prefer_fc27_base([old_ea, base, other], min_cards=10)[0], [base, other])
-        self.assertEqual(specials.prefer_fc27_base([old_ea, base, other], min_cards=1)[0], [base])
+        kept = specials.prefer_fc27_base([old_ea, base, other], min_cards=1)[0]
+        # a card FIFA Rosters' list lacks is rated from EA's own card, so a whole OVR tier never disappears
+        self.assertEqual([c.name for c in kept], [base.name, "Andre"])
+        self.assertEqual(kept[1].rarity, "FC 27 Common Bronze")
 
 
 class EaAttributeTests(unittest.TestCase):

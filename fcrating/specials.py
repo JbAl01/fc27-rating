@@ -57,8 +57,18 @@ def prefer_fc27_base(players: List[Player], min_cards: int = 5000) -> Tuple[List
     ea = [p for p in players if p.source == EA_SOURCE]
     if len(fc27) >= min_cards:
         kept = [p for p in players if p.source != EA_SOURCE]
+        # a card FIFA Rosters' list is missing (a page skipped in the scan) is rated from EA's own card, so a whole
+        # OVR tier never disappears: same id or same name as an FC 27 base card = already covered
+        have_id = {str(p.id) for p in fc27 if p.id} | {str(p.base_id) for p in fc27 if p.base_id}
+        have_name = {norm_name(p.name) for p in fc27}
+        gaps = [p for p in ea if str(p.id) not in have_id and norm_name(p.name) not in have_name]
+        for p in gaps:
+            tier = "Gold" if (p.ovr or 0) >= 75 else "Silver" if (p.ovr or 0) >= 65 else "Bronze"
+            p.rarity = p.rarity or f"FC 27 {'Rare' if (p.ovr or 0) >= 75 else 'Common'} {tier}"
+        kept += gaps
+        extra = f" {len(gaps)} kort som mangler i FIFA Rosters-listen vurderes fra EAs eget kort." if gaps else ""
         return kept, (f"Basekort: {len(fc27)} FC 27-kort fra FIFA Rosters. De {len(ea)} kortene i EA-filen brukes som mal "
-                      "for attributter, høyde, posisjoner og PlayStyles.")
+                      "for attributter, høyde, posisjoner og PlayStyles." + extra)
     replaced = {str(p.base_id) for p in fc27 if p.base_id} | {str(p.id) for p in fc27 if p.id}
     kept = [p for p in players if not (p.source == EA_SOURCE and str(p.id) in replaced)]
     return kept, f"Basekort: {len(fc27)} FC 27-kort fra FIFA Rosters erstatter de samme spillerne fra EA-filen."
