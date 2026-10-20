@@ -89,6 +89,25 @@ def frame_code(fr: Optional[dict]):
     return [BUILDS.index(fr["build"]), SIZES.index(fr["size"]), 1 if fr["unique"] else 0, 1 if fr["estimated"] else 0]
 
 
+def _norm(s) -> str:
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFKD", str(s or "")) if not unicodedata.combining(c)).lower().strip()
+
+
+def reputation(player, bcfg: dict) -> float:
+    """Points for a body with a known feel (body_profile.reputation), on the winger scale."""
+    pts = {k: v for k, v in ((bcfg.get("reputation") or {}).get("points") or {}).items() if not k.startswith("_")}
+    if not pts:
+        return 0.0
+    name, nation = _norm(getattr(player, "name", "")), _norm(getattr(player, "nation", ""))
+    rarity = _norm(getattr(player, "rarity", ""))
+    for key, v in pts.items():
+        n, _, extra = key.partition("|")   # 'Name', or 'Name|Nation' / 'Name|version' when the name is shared
+        if _norm(n) == name and (not extra or _norm(extra) == nation or _norm(extra) in rarity):
+            return float(v)
+    return 0.0
+
+
 def is_lean(player, bcfg: Optional[dict]) -> bool:
     """A Lean body (from the body type, or for unique models and cards without one, from height and weight)."""
     if not bcfg:
@@ -124,7 +143,14 @@ class BodyCard:
         learn = learned_points(bcfg, group, fr)   # what the players' choices add or take away (selvkalibrering, 50/50)
         self.key = frame_key(fr)
         self.learn = learn * f
-        self.const = (const + learn) * f
+        # the body amplifies: positive base points come in full only on an agile card (flex), negative ones always
+        fx = bcfg.get("flex") or {}
+        share = fx.get("share", 1.0) if const > 0 else 1.0
+        self.flex = const * (1.0 - share) * f
+        self.fx = (fx.get("floor", 65), fx.get("span", 25), fx.get("cap", 1.2))
+        gf = (bcfg.get("combos") or {}).get("group_factor", {}).get(group, 0.0)
+        self.rep = reputation(player, bcfg) * gf   # known bodies: points whatever the numbers say
+        self.const = (const * share + learn) * f + self.rep
         self.amp = amp * amp_cfg["scale"].get(group, 0.0) * f
         self.syn_w = _clean(amp_cfg["attributes"])
         self.floor, self.span, self.cap = amp_cfg["floor"], amp_cfg["span"], amp_cfg["cap"]
@@ -151,6 +177,16 @@ class BodyCard:
         avg = sum(x * v for x, v in present) / got
         return max(0.0, min(self.cap, (avg - self.floor) / self.span))
 
+    def flexing(self, attrs: Dict[str, float]) -> float:
+        """0 .. cap: how much of the body's flexible base points the card earns (agility on a wider scale)."""
+        present = [(attrs[k], v) for k, v in self.syn_w.items() if attrs.get(k) is not None]
+        got = sum(v for _, v in present)
+        if got <= 0 or not self.flex:
+            return 0.0
+        avg = sum(x * v for x, v in present) / got
+        fl, sp, cap = self.fx
+        return max(0.0, min(cap, (avg - fl) / sp))
+
     def combo(self, ps, psp) -> float:
         t = 0.0
         for name, base, plus in self.combos:
@@ -164,7 +200,7 @@ class BodyCard:
         if not self.on:
             return 0.0
         a = self.agility(attrs)
-        pts = self.const + (self.amp * a if a is not None else 0.0) + self.combo(ps, psp)
+        pts = self.const + self.flex * self.flexing(attrs) + (self.amp * a if a is not None else 0.0) + self.combo(ps, psp)
         return max(self.lo, min(self.hi, pts))
 
     def upper(self, attrs: Dict[str, float]) -> float:
@@ -174,14 +210,15 @@ class BodyCard:
         a = self.agility(attrs)
         best = min(self.combo_cap, sum(c[2] for c in self.combos))
         # a body that dampens agility (negative amp) gives the most with the least agility
-        return max(self.lo, min(self.hi, self.const + max(0.0, self.amp * a if a is not None else 0.0) + best))
+        return max(self.lo, min(self.hi, self.const + self.flex * self.flexing(attrs)
+                                + max(0.0, self.amp * a if a is not None else 0.0) + best))
 
     def detail(self, attrs: Dict[str, float], ps, psp) -> Optional[dict]:
         if not self.on:
             return None
         a = self.agility(attrs)
         return {"label": self.frame["label"], "unique": self.frame["unique"], "estimated": self.frame["estimated"],
-                "key": self.key, "learn": round(self.learn, 2),
-                "frame": round(self.const, 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
+                "key": self.key, "learn": round(self.learn, 2), "rep": round(self.rep, 2),
+                "frame": round(self.const + self.flex * self.flexing(attrs), 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
                 "agility": round(a, 2) if a is not None else None, "combo": round(self.combo(ps, psp), 2),
                 "points": round(self.points(attrs, ps, psp), 2)}

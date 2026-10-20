@@ -224,6 +224,20 @@ def _add_usage(results: List[dict]) -> None:
     futgg_usage.check_model(results)
 
 
+def _owner_tests(results: List[dict]) -> None:
+    """How often the model agrees with the owner's own tests (data/eier_tester.csv), printed by every run."""
+    from . import validate
+    if not validate.OWNER_FILE.exists():
+        return
+    ev = validate.evaluate(validate.load_tests(validate.OWNER_FILE), results)
+    comp = {label: (pct, n) for label, pct, n in ev["comp"]}
+    parts = [f"{k} {comp[k][0]} %" for k in ("Følelse med ball", "IGR") if k in comp]
+    print(f"Eierens tester: {ev['decided']} med vinner" + (": " + ", ".join(parts) + " enig" if parts else "")
+          + (f". Ikke funnet: {', '.join(sorted(set(ev['missing']))[:4])}" if ev["missing"] else ""))
+    for w, l, gap, typ in ev["wrong"][:5]:
+        print(f"  Uenig: {w} skal være bedre enn {l} ({typ}), IGR sier motsatt med {gap}")
+
+
 def _run_evolab(players, results, evos, cfg, out_dir, ignore_used=False):
     """Simulate evo paths for every card and write output/evolab.html. Returns the paths or None."""
     from . import evolab, evolab_report
@@ -245,6 +259,7 @@ def cmd_rate(args) -> int:
     results = [rate(p, cfg, chem=chem) for p in players]
     rank_by_position(results, cfg)
     _add_usage(results)
+    _owner_tests(results)
     from . import selfcal
     if any(r.get("usage") for r in results):
         selfcal.update(results, cfg)

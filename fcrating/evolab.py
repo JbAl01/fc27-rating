@@ -44,7 +44,7 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 17
+CACHE_VERSION = 18
 SEARCH_MAX_NODES = 2000   # per card; when reached, the best plan found so far is used (never worse than the quick search)
 QUICK_NODES = 1500        # the fast search's budget when a run is short of time (the full search is done next run)
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
@@ -1557,7 +1557,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
         tips.append(f"{chain[i][0]['name']} før {names} (ellers {REASON_WORDS.get(cat, cat)})")
     return {"igr": round(v, 1), "ovr": fin.ovr, "steps": steps, "roles": rpp, "skip": skipped, "tips": tips[:3],
             "proven": bool(complete) and not quick, "quick": bool(quick),
-            "near": near[:4], "chk": unchecked, "acc": d_best["acc"], "feel": d_best["feel"], "run": d_best["run"],
+            "near": near[:4], "chk": unchecked, "acc": d_best["acc"], "feel": d_best["feel"], "body": d_best.get("body"), "run": d_best["run"],
             "vil": d_best.get("vil"), "eff": d_best.get("eff"), "pace": d_best.get("pace"), "alt": alt,
             "stp": d_best.get("stp"), "stb": d_best.get("stb"), "stl": d_best.get("stl"), "def": d_best.get("def"),
             "seq": [[c[0]["key"], (c[1] or {}).get("label", "")] for c in chain], "_state": fin}
@@ -1805,7 +1805,7 @@ def simulate_card(p: Player, cfg: dict, lab: dict, live: List[dict], universes: 
         _, _, fin = simulate_universe(live_state, card_waves(universes, int(mid), st0.positions), ev, rules, rate_each=False)
         d = ev.fast.detail(fin)
         ev.calls += 1
-        entry["med"] = {"u": mid, "acc": d["acc"], "feel": d["feel"], "run": d["run"], "vil": d.get("vil"), "eff": d.get("eff"),
+        entry["med"] = {"u": mid, "acc": d["acc"], "feel": d["feel"], "body": d.get("body"), "run": d["run"], "vil": d.get("vil"), "eff": d.get("eff"),
                         "pace": d.get("pace"), "stp": d.get("stp"), "stb": d.get("stb"), "stl": d.get("stl"),
                         "igr": d["igr"], **_changes(st0, fin)}
     entry["calls"] = entry.get("calls", 0) + ev.calls

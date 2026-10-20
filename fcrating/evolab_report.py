@@ -116,7 +116,8 @@ def _body_meta(bp: Optional[dict]):
         return 0
     amp = bp["agility_amp"]
     return {"w": [[ATTR_INDEX[k], v] for k, v in _clean(amp["attributes"]).items() if k in ATTR_INDEX],
-            "floor": amp["floor"], "span": amp["span"], "cap": amp["cap"], "comboCap": (bp.get("combos") or {}).get("cap", 1.5)}
+            "floor": amp["floor"], "span": amp["span"], "cap": amp["cap"], "comboCap": (bp.get("combos") or {}).get("cap", 1.5),
+            "fx": [(bp.get("flex") or {}).get("floor", 65), (bp.get("flex") or {}).get("span", 25), (bp.get("flex") or {}).get("cap", 1.2)]}
 
 
 def rules_meta(lab: dict) -> dict:
@@ -168,7 +169,7 @@ def card_consts(p: Player, g: str, cfg: dict) -> list:
             p.height_cm, best, 1 if cur and all(v >= 2 for v in cur.values()) else 0, 1 if st.ps_unknown else 0, prim,
             p.gender or "M",
             # body profile: [fixed points, agility amplification, [[PlayStyle, base, plus]], low, high, label]
-            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"]] if fr.body.on else 0,
+            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"], fr.body.flex] if fr.body.on else 0,
             frame_code(fr.body.frame),   # [build, size, unique, estimated] for the filters and 'Ligner på'
             p.weight_kg]
 
@@ -253,8 +254,8 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         plans,
         [[x for k, b0, a in med.get("d", []) if k in ATTR_INDEX for x in (ATTR_INDEX[k], _num(a))], [intern(x) for x in med.get("ps", [])],
          [intern(x) for x in med.get("psp", [])], med.get("wf"), med.get("sm"), (med.get("ovr") or [None, None])[1],
-         med.get("acc") or "", _r1(med.get("feel")), _r1(med.get("pace"))],
-        [r.get("accelerate") or "", _r1(r.get("feel")), _r1((r["by_group"].get(g) or {}).get("pace"))],
+         med.get("acc") or "", _r1(med.get("feel")), _r1(med.get("pace")), _r1(med.get("body"))],
+        [r.get("accelerate") or "", _r1(r.get("feel")), _r1((r["by_group"].get(g) or {}).get("pace")), _r1((r["by_group"].get(g) or {}).get("body"))],
         [nowr, liver, endr],
         [cats.get("now"), cats.get("live"), cats.get("end")] if cats.get("now") is not None else 0,
         1 if s.get("ps_est") else 0,
@@ -263,7 +264,7 @@ def row(r: dict, s: dict, p: Player, raw_now: float, intern: _Interner, idx: dic
         [intern(x) for x in p.playstyles], [intern(x) for x in p.playstyles_plus], p.weak_foot, p.skill_moves,
         round(s["now"] - raw_now, 2),
         1 if s.get("runcard") else 0,
-        [_r1(lv.get("feel")), lv.get("acc") or "", _r1(lv.get("pace"))],
+        [_r1(lv.get("feel")), lv.get("acc") or "", _r1(lv.get("pace")), _r1(lv.get("body"))],
         [st.get("now"), st.get("live"), st.get("end")] if st else 0,
         intern(r.get("league") or ""),
         intern(r.get("nation") or ""),

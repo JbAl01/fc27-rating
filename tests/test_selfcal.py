@@ -82,3 +82,44 @@ class SelfCalTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BodyModelTwoTests(unittest.TestCase):
+    """20.10: the body amplifies (a lean body pays in full only on an agile card), known bodies get points
+    whatever the numbers, and a unique model gets nothing for being unique."""
+
+    def _card(self, name="Test", body="Lean Medium", agi=90, nation="X", rarity="FC 27 Rare Gold"):
+        import copy as _c
+        p = _c.deepcopy(next(q for q in BASE if position_group(q.position) == "W"))
+        p.name, p.nation, p.rarity, p.body_type, p.weight_kg, p.height_cm = name, nation, rarity, body, 70.0, 178.0
+        for k in ("agility", "balance", "dribbling", "ball_control"):
+            p.attributes[k] = agi
+        return p
+
+    def test_lean_body_pays_more_on_an_agile_card(self):
+        from fcrating.body import BodyCard
+        bp = CFG["weights"]["body_profile"]
+        slow, fast = self._card(agi=66), self._card(agi=92)
+        b_slow = BodyCard(slow, "W", bp).points(slow.attributes, [], [])
+        b_fast = BodyCard(fast, "W", bp).points(fast.attributes, [], [])
+        self.assertGreater(b_fast - b_slow, 1.5)
+        self.assertGreater(b_slow, 0.0)   # a good body is still worth something on a low card that can be evolved
+
+    def test_reputation_counts_whatever_the_numbers(self):
+        from fcrating.body import BodyCard
+        bp = copy.deepcopy(CFG["weights"]["body_profile"])
+        bp["reputation"] = {"points": {"Rykte Spiller": 2.0, "Kanu|FUT Heroes": -1.5}}
+        good, plain = self._card(name="Rykte Spiller", agi=70), self._card(name="Annen", agi=70)
+        hero, other = self._card(name="Kanu", rarity="FC 27 FUT Heroes"), self._card(name="Kanu", nation="Brazil")
+        pts = lambda p: BodyCard(p, "W", bp).points(p.attributes, [], [])
+        self.assertAlmostEqual(pts(good) - pts(plain), 2.0, places=6)
+        self.assertAlmostEqual(pts(hero) - pts(other), -1.5, places=6)
+
+    def test_unique_model_gets_no_bonus_for_being_unique(self):
+        from fcrating.body import BodyCard
+        bp = CFG["weights"]["body_profile"]
+        uniq, std = self._card(name="U", body="Unik Spiller"), self._card(name="S", body="Lean Medium")
+        std.weight_kg = uniq.weight_kg = 66.0   # BMI under 22.5 at 178 cm: the unique model is read as Lean Medium
+        a = BodyCard(uniq, "W", bp).points(uniq.attributes, [], [])
+        b = BodyCard(std, "W", bp).points(std.attributes, [], [])
+        self.assertLessEqual(a, b + 0.35)   # only the self-calibration may separate them

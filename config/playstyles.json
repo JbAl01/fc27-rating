@@ -236,14 +236,11 @@
       ]
     },
     "Press Proven": {
-      "plus": 0.6,
+      "plus": 0.6, "_eier_20_10": "Eier: Press Proven+ gjør kortet mye smoothere med ball i beinet. EA: Keeps (exceptionally) close control of the ball while dribbling at jog speed. Hevet fra B/A til A/S per posisjon (pluss x relevans: ST/W 1,6, CAM 1,9, CM 2,2, CDM 2,0), og synergien er Ball Control, Dribbling og Agility, så gode driblere får mest. Ekstra kombinasjon med kroppen i body_profile.combos.",
       "base": 0.33,
-      "relevance": {"ST": 1.583, "W": 1.167, "CAM": 2.333, "CM": 3.167, "CDM": 3.167, "FB": 0.833, "CB": 0.833, "GK": 0.0},
+      "relevance": {"ST": 2.667, "W": 2.667, "CAM": 3.167, "CM": 3.667, "CDM": 3.333, "FB": 1.667, "CB": 1.333, "GK": 0.0},
       "category": "ball",
-      "synergy": [
-        "ball_control",
-        "balance"
-      ]
+      "synergy": ["ball_control", "dribbling", "agility"]
     },
     "Block": {
       "plus": 0.9,

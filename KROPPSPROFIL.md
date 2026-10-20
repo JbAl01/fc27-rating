@@ -71,6 +71,18 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
   - Mangler kortet høyde, vekt eller kroppstype, regnes det som et gjennomsnittskort på det punktet.
   - Kroppen har faste skalaer, og hvert tall kan bidra med høyst 3 standardavvik.
 
+## Kroppsmodell 2 (20.10, eierens ønske)
+- **Kroppen forsterker:**
+  - Positive grunnpoeng gis med 35 % fast. Resten ganges med smidigheten fra 65 til 90 (`body_profile.flex`). En god kropp er altså verdt litt også på et lavt kort, og Evo Lab gir resten når evoene øker Agility og Balance.
+  - Negative grunnpoeng gis alltid fullt.
+- **Rykte** (`body_profile.reputation`, eierens liste): poeng uansett tall, ganget med posisjonsfaktoren. Nå står Mbappé +2,0, Dembélé +1,5, Kim Little +1,5 og Kanu (FUT Heroes) −1,5. Nye navn legges inn når eieren sier fra.
+- **Unik modell:** ikke noe eget tillegg lenger. Den vurderes ut fra høyde og vekt, og ryktet tar resten.
+- **Press Proven** (EA: «close control … at jog speed»):
+  - Relevansen er hevet til A/S, og synergien er Ball Control, Dribbling og Agility, så gode driblere får mest.
+  - Den har fått en egen kombinasjon med kroppen, 0,3/0,8.
+- **Følelse med ball:** «Følelse» i tabellene, sorteringen og filtrene (Players og Evo Lab) er følelse + kroppspoeng. I IGR er de fortsatt to deler, så ingenting telles dobbelt.
+- **Eierens tester** (`data/eier_tester.csv`, semikolon): tester med ball kan sammenligne kort fra ulike posisjoner. Hver kjøring skriver «Eierens tester: … enig». Første test: Little > Kanu.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

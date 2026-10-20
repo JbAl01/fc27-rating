@@ -24,9 +24,10 @@ from typing import Dict, List, Optional, Tuple
 
 ROOT = Path(__file__).resolve().parent.parent
 TEST_FILE = ROOT / "data" / "tester.csv"
+OWNER_FILE = ROOT / "data" / "eier_tester.csv"   # the owner's tests, in the repo so every run can check them
 FIELDS = ["dato", "a", "a_versjon", "b", "b_versjon", "vinner", "styrke", "type", "posisjon", "notat"]
 TYPES = {"alt": "alt", "ball": "med ball", "lop": "uten ball", "løp": "uten ball"}
-COMPONENTS = [("igr", "IGR"), ("feel", "Følelse"), ("run", "Løps-AI"), ("pace", "Fart"), ("skill", "Ferdigheter"),
+COMPONENTS = [("igr", "IGR"), ("feel_ball", "Følelse med ball"), ("feel", "Følelse"), ("run", "Løps-AI"), ("pace", "Fart"), ("skill", "Ferdigheter"),
               ("obd", "Off-balance"), ("ovr", "OVR")]
 
 
@@ -61,6 +62,9 @@ def common_group(a: dict, b: dict, wanted: Optional[str] = None) -> Optional[str
 
 
 def component(r: dict, g: str, key: str) -> Optional[float]:
+    if key == "feel_ball":   # feel score + body points, the card in its own position when the test has none
+        own = r["by_group"].get(g or r.get("position_group") or "", {})
+        return None if r.get("feel") is None else r["feel"] + (own.get("body") or 0.0)
     gr = r["by_group"].get(g, {})
     if key == "igr":
         return gr.get("igr")
@@ -134,14 +138,15 @@ def evaluate(tests: List[dict], results: List[dict]) -> dict:
             missing.append(t["a"] if not a else t["b"])
             continue
         g = common_group(a, b, (t.get("posisjon") or "").upper() or None)
-        if not g:
+        typ = TYPES.get((t.get("type") or "alt").lower(), "alt")
+        if not g and typ != "med ball":   # a test with the ball can compare cards from different positions
             missing.append(f"{t['a']} / {t['b']} (ingen felles posisjon)")
             continue
         win = (t.get("vinner") or "").strip().lower()
         if win not in ("a", "b", "lik"):
             continue
         strength = min(3, max(1, int(t.get("styrke") or 1)))
-        rows.append({"a": a, "b": b, "g": g, "win": win, "w": strength, "type": TYPES.get((t.get("type") or "alt").lower(), "alt")})
+        rows.append({"a": a, "b": b, "g": g, "win": win, "w": strength, "type": typ})
     decided = [r for r in rows if r["win"] != "lik"]
     out = {"tests": len(rows), "decided": len(decided), "ties": len(rows) - len(decided), "missing": missing, "comp": [], "gaps": [],
            "bt": [], "rho": None, "wrong": [], "by_type": {}}
@@ -170,6 +175,8 @@ def evaluate(tests: List[dict], results: List[dict]) -> dict:
         agree = n = 0
         for r in decided:
             va, vb = component(r["a"], r["g"], "igr"), component(r["b"], r["g"], "igr")
+            if va is None or vb is None:
+                continue
             gap = abs(va - vb)
             if lo <= gap < hi and va != vb:
                 n += 1
@@ -190,6 +197,7 @@ def evaluate(tests: List[dict], results: List[dict]) -> dict:
     ranked = sorted(bt.items(), key=lambda t: t[1], reverse=True)
     out["bt"] = [[k, v, counts.get(k, 0), component(by[k][0], by[k][1], "igr")] for k, v in ranked]
     enough = [(v, component(by[k][0], by[k][1], "igr")) for k, v in bt.items() if counts.get(k, 0) >= 2]
+    enough = [(x, y) for x, y in enough if y is not None]
     if len(enough) >= 4:
         out["rho"] = spearman([x for x, _ in enough], [y for _, y in enough])
     for r in decided:
