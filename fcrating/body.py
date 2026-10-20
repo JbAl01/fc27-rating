@@ -94,6 +94,24 @@ def _norm(s) -> str:
     return "".join(c for c in unicodedata.normalize("NFKD", str(s or "")) if not unicodedata.combining(c)).lower().strip()
 
 
+def attach_rep_frames(bcfg: Optional[dict], players) -> None:
+    """The bodies with a reputation (standard body types only, read from FUT.GG, not estimated), with height and
+    weight, so other cards with the same body type and about the same height and weight share part of it
+    (body_profile.reputation.spread). A unique model belongs to one player and is not shared."""
+    if not bcfg:
+        return
+    out = []
+    for p in players:
+        pts = reputation(p, bcfg)
+        fr = frame_of(p, bcfg) if pts else None
+        if not fr or fr["unique"] or fr["estimated"] or not p.height_cm:
+            continue
+        k = f"{fr['build']}_{fr['size']}"
+        if not any(x[0] == _norm(p.name) and x[1] == k for x in out):
+            out.append([_norm(p.name), k, float(p.height_cm), float(p.weight_kg) if p.weight_kg else None, p.gender or "M", pts])
+    bcfg["rep_frames"] = out
+
+
 def reputation(player, bcfg: dict) -> float:
     """Points for a body with a known feel (body_profile.reputation), on the winger scale."""
     rc = bcfg.get("reputation") or {}
@@ -151,7 +169,30 @@ class BodyCard:
         self.flex = const * (1.0 - share) * f
         self.fx = (fx.get("floor", 65), fx.get("span", 25), fx.get("cap", 1.2))
         gf = (bcfg.get("combos") or {}).get("group_factor", {}).get(group, 0.0)
-        self.rep = reputation(player, bcfg) * gf   # known bodies: points whatever the numbers say
+        own = reputation(player, bcfg)
+        self.rep = own * gf   # known bodies: points whatever the numbers say
+        # a card with the same standard body type and about the same height and weight as a known body shares part
+        # of its reputation: a good one more the more agile the card is, a bad one always
+        self.spread, neg = 0.0, 0.0
+        if not own and not fr["unique"] and not fr["estimated"] and player.height_cm:
+            sp = (bcfg.get("reputation") or {}).get("spread") or {}
+            key, best = f"{b}_{s}", 0.0
+            for name, k, h0, w0, g0, pts in bcfg.get("rep_frames") or []:
+                if k != key or g0 != (player.gender or "M") or name == _norm(player.name):
+                    continue
+                sim = max(0.0, 1.0 - abs(player.height_cm - h0) / sp.get("height_cm", 4.0))
+                if w0 and getattr(player, "weight_kg", None):
+                    sim *= max(0.0, 1.0 - abs(player.weight_kg - w0) / sp.get("weight_kg", 6.0))
+                else:
+                    sim *= sp.get("no_weight", 0.5)
+                v = sp.get("share", 0.5) * pts * sim
+                if abs(v) > abs(best):
+                    best = v
+            if best > 0:
+                self.spread = best * gf
+            else:
+                neg = best * gf
+        self.rep += neg
         self.const = (const * share + learn) * f + self.rep
         self.amp = amp * amp_cfg["scale"].get(group, 0.0) * f
         self.syn_w = _clean(amp_cfg["attributes"])
@@ -183,7 +224,7 @@ class BodyCard:
         """0 .. cap: how much of the body's flexible base points the card earns (agility on a wider scale)."""
         present = [(attrs[k], v) for k, v in self.syn_w.items() if attrs.get(k) is not None]
         got = sum(v for _, v in present)
-        if got <= 0 or not self.flex:
+        if got <= 0 or not (self.flex or self.spread):
             return 0.0
         avg = sum(x * v for x, v in present) / got
         fl, sp, cap = self.fx
@@ -202,7 +243,8 @@ class BodyCard:
         if not self.on:
             return 0.0
         a = self.agility(attrs)
-        pts = self.const + self.flex * self.flexing(attrs) + (self.amp * a if a is not None else 0.0) + self.combo(ps, psp)
+        fx = self.flexing(attrs)
+        pts = self.const + self.flex * fx + self.spread * fx + (self.amp * a if a is not None else 0.0) + self.combo(ps, psp)
         return max(self.lo, min(self.hi, pts))
 
     def upper(self, attrs: Dict[str, float]) -> float:
@@ -212,7 +254,8 @@ class BodyCard:
         a = self.agility(attrs)
         best = min(self.combo_cap, sum(c[2] for c in self.combos))
         # a body that dampens agility (negative amp) gives the most with the least agility
-        return max(self.lo, min(self.hi, self.const + self.flex * self.flexing(attrs)
+        fx = self.flexing(attrs)
+        return max(self.lo, min(self.hi, self.const + self.flex * fx + self.spread * fx
                                 + max(0.0, self.amp * a if a is not None else 0.0) + best))
 
     def detail(self, attrs: Dict[str, float], ps, psp) -> Optional[dict]:
@@ -220,7 +263,7 @@ class BodyCard:
             return None
         a = self.agility(attrs)
         return {"label": self.frame["label"], "unique": self.frame["unique"], "estimated": self.frame["estimated"],
-                "key": self.key, "learn": round(self.learn, 2), "rep": round(self.rep, 2),
-                "frame": round(self.const + self.flex * self.flexing(attrs), 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
+                "key": self.key, "learn": round(self.learn, 2), "rep": round(self.rep + self.spread * self.flexing(attrs), 2),
+                "frame": round(self.const + (self.flex + self.spread) * self.flexing(attrs), 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
                 "agility": round(a, 2) if a is not None else None, "combo": round(self.combo(ps, psp), 2),
                 "points": round(self.points(attrs, ps, psp), 2)}

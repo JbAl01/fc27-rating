@@ -140,10 +140,17 @@ def _fill_club_info(players: List[Player]) -> None:
         p.league_image = p.league_image or src.league_image
 
 
+def _rep_frames(cfg: dict, players) -> None:
+    """Known bodies (reputation) with their height and weight, so look-alike bodies share part of it."""
+    from .body import attach_rep_frames
+    attach_rep_frames(cfg["weights"].get("body_profile"), players)
+
+
 def _ranked(files: List[str], chem: Optional[str] = None):
     from .model import rank_by_position
     cfg = load_config()
     players = _load_players(files)
+    _rep_frames(cfg, players)
     results = [rate(p, cfg, chem=chem) for p in players]
     rank_by_position(results, cfg)
     return cfg, players, results
@@ -255,6 +262,7 @@ def cmd_rate(args) -> int:
     from .model import rank_by_position
     cfg = load_config()
     players = _load_players(args.files)
+    _rep_frames(cfg, players)
     chem = _chem_arg(args.chem)
     results = [rate(p, cfg, chem=chem) for p in players]
     rank_by_position(results, cfg)
@@ -299,6 +307,7 @@ def cmd_explain(args) -> int:
     from .model import rank_by_position
     cfg = load_config()
     all_players = _load_players(args.files)
+    _rep_frames(cfg, all_players)
     players = _name_matches(all_players, args.name)
     if not players:
         print(f"Fant ingen spiller som matcher '{args.name}'.")
@@ -374,6 +383,7 @@ def cmd_evo(args) -> int:
     from .model import rank_by_position
     cfg = load_config()
     players = _load_players(args.files)
+    _rep_frames(cfg, players)
     results = [rate(p, cfg) for p in players]
     rank_by_position(results, cfg)
     by_uid = {r["uid"]: r for r in results}
@@ -1083,6 +1093,7 @@ def cmd_calibrate_positions(args) -> int:
     from .model import position_offset
     cfg = load_config()
     players = _load_players(args.files)
+    _rep_frames(cfg, players)
     results = [rate(p, cfg) for p in players]
     from .schema import position_group
     diffs: dict = {}

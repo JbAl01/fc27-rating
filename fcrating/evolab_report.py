@@ -169,7 +169,7 @@ def card_consts(p: Player, g: str, cfg: dict) -> list:
             p.height_cm, best, 1 if cur and all(v >= 2 for v in cur.values()) else 0, 1 if st.ps_unknown else 0, prim,
             p.gender or "M",
             # body profile: [fixed points, agility amplification, [[PlayStyle, base, plus]], low, high, label]
-            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"], fr.body.flex] if fr.body.on else 0,
+            [fr.body.const, fr.body.amp, fr.body.combos, fr.body.lo, fr.body.hi, fr.body.frame["label"], fr.body.flex, fr.body.spread] if fr.body.on else 0,
             frame_code(fr.body.frame),   # [build, size, unique, estimated] for the filters and 'Ligner på'
             p.weight_kg]
 

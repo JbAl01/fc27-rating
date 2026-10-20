@@ -127,3 +127,37 @@ class BodyModelTwoTests(unittest.TestCase):
                 c.weight_kg = w
             self.assertGreater(pts(fast_u) - pts(fast_s), 0.2)          # agile: the unique model gives a bonus
             self.assertAlmostEqual(pts(slow_u), pts(slow_s), places=6)  # slow: nothing for being unique
+
+
+class ReputationSpreadTests(unittest.TestCase):
+    """A known standard body shares part of its reputation with cards that have the same body type and about the
+    same height and weight (more the more agile they are); a unique model is not shared."""
+
+    def _p(self, name, body="Average Short", h=170.0, w=65.0, agi=88):
+        import copy as _c
+        p = _c.deepcopy(next(q for q in BASE if position_group(q.position) == "W"))
+        p.name, p.nation, p.rarity, p.body_type, p.height_cm, p.weight_kg, p.gender = name, "X", "FC 27 Rare Gold", body, h, w, "M"
+        for k in ("agility", "balance", "dribbling", "ball_control"):
+            p.attributes[k] = agi
+        return p
+
+    def test_look_alike_bodies_share_the_reputation(self):
+        from fcrating.body import BodyCard, attach_rep_frames
+        bp = copy.deepcopy(CFG["weights"]["body_profile"])
+        bp.pop("learned", None)
+        bp["reputation"] = {"points": {"Kjent": 1.5}, "spread": {"share": 0.5, "height_cm": 4, "weight_kg": 6, "no_weight": 0.5}}
+        known = self._p("Kjent")
+        attach_rep_frames(bp, [known])
+        pts = lambda p: BodyCard(p, "W", bp).points(p.attributes, [], [])
+        base = pts(self._p("Ingen", h=190.0, w=85.0, body="Average Short"))   # same label, far off in size: nothing
+        twin, near, slow = self._p("Tvilling"), self._p("Nær", h=172.0, w=68.0), self._p("Treg", agi=66)
+        plain = copy.deepcopy(bp); plain["rep_frames"] = []
+        ref = lambda p: BodyCard(p, "W", plain).points(p.attributes, [], [])
+        self.assertGreater(pts(twin) - ref(twin), 0.5)                      # same body, agile: a clear share
+        self.assertGreater(pts(twin) - ref(twin), pts(near) - ref(near))    # further off in size: less
+        self.assertLess(pts(slow) - ref(slow), 0.05)                        # a slow card gets (almost) nothing
+        self.assertAlmostEqual(base - ref(self._p("Ingen", h=190.0, w=85.0)), 0.0, places=6)
+        uniq = self._p("Unik", body="Unik Modell")
+        bp2 = copy.deepcopy(bp); bp2["reputation"]["points"] = {"Unik": 2.0}
+        attach_rep_frames(bp2, [uniq])
+        self.assertEqual(bp2["rep_frames"], [])                             # a unique model is not shared

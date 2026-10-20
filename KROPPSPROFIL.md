@@ -79,6 +79,11 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Unik modell:** ingen fast bonus.
   - Den forsterker smidigheten litt mer enn en vanlig kropp med samme bygning (`unique.amp_bonus` 0,25). Et smidig kort med unik modell får derfor ca. +0,6 til +0,8 på kant eller spiss, mens et tregt eller tungt kort får 0.
   - Kjente kropper får i tillegg rykte.
+- **Rykte smitter** (`reputation.spread`): en kjent god eller dårlig *vanlig* kroppstype gir del av ryktet til andre kort med samme kroppstype, samme kjønn og nær høyde og vekt.
+  - Delen er 50 % ved lik høyde og vekt, og 0 ved 4 cm eller 6 kg fra.
+  - Pluss ganges med smidigheten (som flex), mens minus gis fullt.
+  - Unike modeller deles ikke.
+  - `cli._rep_frames` henter de kjente kroppene med høyde og vekt når kortene lastes.
 - **Press Proven** (EA: «close control … at jog speed»):
   - Relevansen er hevet til A/S, og synergien er Ball Control, Dribbling og Agility, så gode driblere får mest.
   - Den har fått en egen kombinasjon med kroppen, 0,3/0,8.
