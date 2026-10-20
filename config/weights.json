@@ -169,9 +169,10 @@
     },
     "derive": {
       "_info": "For unike modeller og kort uten kroppstype: størrelse fra høyde, bygning fra BMI. Grensene er målt mot kortene der EA har satt kroppstypen (20.10: 9 781 menn, 1 461 kvinner). Menn: dagens grenser treffer 60 %, beste mulige 63 %. Kvinner har egne grenser (female): med mennenes grenser ble nesten alle lest som Lean (36 % treff), men EA har 62 % av kvinnene som Average (BMI-median Lean 20,8, Average 21,3, Stocky 21,8). Kvinner er også kortere uten å være Short hos EA på samme måte, så størrelsen har egne grenser.",
-      "short_below_cm": 170, "tall_above_cm": 185, "female_offset_cm": 0,
+      "short_below_cm": 171, "tall_above_cm": 184, "female_offset_cm": 0,
+      "_storrelse_20_10": "Høydegrensene 171/184 treffer EAs Short/Medium/Tall i 98 % for både menn og kvinner (170/185 med +8 cm for kvinner: 90 og 87 %).",
       "lean_below_bmi": 22.5, "stocky_from_bmi": 25.5,
-      "female": {"short_below_cm": 170, "tall_above_cm": 185, "lean_below_bmi": 19.9, "stocky_from_bmi": 25.4},
+      "female": {"short_below_cm": 171, "tall_above_cm": 184, "lean_below_bmi": 19.9, "stocky_from_bmi": 25.4},
       "estimated_factor": 0.5
     },
     "combos": {
