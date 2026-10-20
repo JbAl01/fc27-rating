@@ -95,9 +95,19 @@ class ChemTests(unittest.TestCase):
 
 class ModelTests(unittest.TestCase):
     def test_feel_order_matches_in_game_experience(self):
-        feel = {k: rate(player(k), CFG)["feel"] for k in ["Mbappé", "Messi", "Nagasato", "Ekitiké", "Haaland"]}
+        """Følelse med ball (the feel score + the body, as on the pages) with the cards' real body types: Mbappé's
+        body is what puts him first (owner: his body is something else); Nagasato (164 cm) feels quicker than Messi
+        (169 cm) because real height drives the animations in FC 27. Acceleration and AcceleRATE are in pace, not
+        here (20.10, no double counting)."""
+        bodies = {"Mbappé": ("Kylian Mbappé", 81), "Messi": ("Lionel Messi", 67), "Nagasato": ("Average Short", 58),
+                  "Ekitiké": ("Lean Tall", 76), "Haaland": ("Erling Haaland", 88)}
+        feel = {}
+        for k, (bt, w) in bodies.items():
+            p = player(k)
+            p.body_type, p.weight_kg = bt, w
+            r = rate(p, CFG)
+            feel[k] = r["feel"] + r["by_group"]["ST" if "ST" in r["by_group"] else r["best_group"]]["body"]
         order = sorted(feel, key=feel.get, reverse=True)
-        # FC 27: real height drives animations, so Nagasato (164 cm) now feels quicker than Messi (169 cm)
         self.assertEqual(order, ["Mbappé", "Nagasato", "Messi", "Ekitiké", "Haaland"], feel)
 
     def test_women_use_real_height_for_feel_but_own_accelerate_limits(self):

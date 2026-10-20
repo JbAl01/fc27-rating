@@ -661,6 +661,9 @@ class FastRater:
         run = round(run0 + _acc_off(_clean(hs.get("accelerate_run")), acc_type)
                     + ps_bonus(hs.get("playstyles_run"), ps, psp, hs.get("ps_cap_run", 1.5)), 1)
         share = hs.get("ball_share", 0.5)
+        # the part that goes into IGR leaves out the PlayStyles (counted once, in their own value): stop.core
+        b_core, r_core = round(ball0, 1), round(run0 + _acc_off(_clean(hs.get("accelerate_run")), acc_type), 1)
+        self._stop_core = round(share * b_core + (1 - share) * r_core, 1)
         return round(share * ball + (1 - share) * run, 1), ball, run
 
     def obd(self, a: Dict[str, float]) -> Optional[float]:
@@ -737,7 +740,7 @@ class FastRater:
             core += self.b_run * run
             used += self.b_run
         if self.b_stop and stp is not None:
-            core += self.b_stop * stp
+            core += self.b_stop * self._stop_core
             used += self.b_stop
         core /= used
         items = []

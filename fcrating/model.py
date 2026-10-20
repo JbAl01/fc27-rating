@@ -382,12 +382,14 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
     from .runs import card_run_score
     run_sc = card_run_score(attrs, player.work_rate_att, player.height_cm, cfg)
     from .stop import scores as stop_scores
+    from .stop import core as stop_core
+    stop_igr = stop_core(attrs, acc_type, cfg) if player.position != "GK" else None   # without PlayStyles: no double counting
     stop_sc, stop_ball, stop_run = stop_scores(attrs, acc_type, player.playstyles, player.playstyles_plus, cfg) \
         if player.position != "GK" else (None, None, None)
     rate_groups = groups or player.groups or ALL_GROUPS
     by_group: Dict[str, dict] = {}
     for g in rate_groups:
-        res = rate_group(player, attrs, g, acc_type, feel, cfg, obd=obd, run_score=run_sc, stop_score=stop_sc)
+        res = rate_group(player, attrs, g, acc_type, feel, cfg, obd=obd, run_score=run_sc, stop_score=stop_igr)
         if res:
             by_group[g] = res
 

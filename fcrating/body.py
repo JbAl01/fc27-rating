@@ -155,7 +155,8 @@ class BodyCard:
         b, s = fr["build"], fr["size"]
         const = _clean(bcfg["frame_points"])[group][b][s]
         amp = amp_cfg["frame"][b][s]
-        if fr["unique"]:
+        own = reputation(player, bcfg)
+        if fr["unique"] and not own:   # a body with a reputation is judged as itself, not by the generic unique bonus
             u = bcfg["unique"]
             amp = min(u["max_amp"], amp + u["amp_bonus"])
             const += u["points"].get(group, 0.0)
@@ -163,13 +164,8 @@ class BodyCard:
         learn = learned_points(bcfg, group, fr)   # what the players' choices add or take away (selvkalibrering, 50/50)
         self.key = frame_key(fr)
         self.learn = learn * f
-        # the body amplifies: positive base points come in full only on an agile card (flex), negative ones always
-        fx = bcfg.get("flex") or {}
-        share = fx.get("share", 1.0) if const > 0 else 1.0
-        self.flex = const * (1.0 - share) * f
-        self.fx = (fx.get("floor", 65), fx.get("span", 25), fx.get("cap", 1.2))
+        self.flex = 0.0   # (20.10: folded into the amplification, agility_amp; kept for the page's data layout)
         gf = (bcfg.get("combos") or {}).get("group_factor", {}).get(group, 0.0)
-        own = reputation(player, bcfg)
         self.rep = own * gf   # known bodies: points whatever the numbers say
         # a card with the same standard body type and about the same height and weight as a known body shares part
         # of its reputation: a good one more the more agile the card is, a bad one always
@@ -193,7 +189,7 @@ class BodyCard:
             else:
                 neg = best * gf
         self.rep += neg
-        self.const = (const * share + learn) * f + self.rep
+        self.const = (const + learn) * f + self.rep
         self.amp = amp * amp_cfg["scale"].get(group, 0.0) * f
         self.syn_w = _clean(amp_cfg["attributes"])
         self.floor, self.span, self.cap = amp_cfg["floor"], amp_cfg["span"], amp_cfg["cap"]
@@ -220,15 +216,9 @@ class BodyCard:
         avg = sum(x * v for x, v in present) / got
         return max(0.0, min(self.cap, (avg - self.floor) / self.span))
 
-    def flexing(self, attrs: Dict[str, float]) -> float:
-        """0 .. cap: how much of the body's flexible base points the card earns (agility on a wider scale)."""
-        present = [(attrs[k], v) for k, v in self.syn_w.items() if attrs.get(k) is not None]
-        got = sum(v for _, v in present)
-        if got <= 0 or not (self.flex or self.spread):
-            return 0.0
-        avg = sum(x * v for x, v in present) / got
-        fl, sp, cap = self.fx
-        return max(0.0, min(cap, (avg - fl) / sp))
+    def share(self, a: Optional[float]) -> float:
+        """How much of a look-alike body's good reputation the card earns: its agility index, at most 1."""
+        return min(1.0, a) if a is not None else 0.0
 
     def combo(self, ps, psp) -> float:
         t = 0.0
@@ -243,8 +233,7 @@ class BodyCard:
         if not self.on:
             return 0.0
         a = self.agility(attrs)
-        fx = self.flexing(attrs)
-        pts = self.const + self.flex * fx + self.spread * fx + (self.amp * a if a is not None else 0.0) + self.combo(ps, psp)
+        pts = self.const + self.spread * self.share(a) + (self.amp * a if a is not None else 0.0) + self.combo(ps, psp)
         return max(self.lo, min(self.hi, pts))
 
     def upper(self, attrs: Dict[str, float]) -> float:
@@ -254,8 +243,7 @@ class BodyCard:
         a = self.agility(attrs)
         best = min(self.combo_cap, sum(c[2] for c in self.combos))
         # a body that dampens agility (negative amp) gives the most with the least agility
-        fx = self.flexing(attrs)
-        return max(self.lo, min(self.hi, self.const + self.flex * fx + self.spread * fx
+        return max(self.lo, min(self.hi, self.const + self.spread * self.share(a)
                                 + max(0.0, self.amp * a if a is not None else 0.0) + best))
 
     def detail(self, attrs: Dict[str, float], ps, psp) -> Optional[dict]:
@@ -263,7 +251,7 @@ class BodyCard:
             return None
         a = self.agility(attrs)
         return {"label": self.frame["label"], "unique": self.frame["unique"], "estimated": self.frame["estimated"],
-                "key": self.key, "learn": round(self.learn, 2), "rep": round(self.rep + self.spread * self.flexing(attrs), 2),
-                "frame": round(self.const + (self.flex + self.spread) * self.flexing(attrs), 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
+                "key": self.key, "learn": round(self.learn, 2), "rep": round(self.rep + self.spread * self.share(a), 2),
+                "frame": round(self.const + self.spread * self.share(a), 2), "amp": round(self.amp * a, 2) if a is not None else 0.0,
                 "agility": round(a, 2) if a is not None else None, "combo": round(self.combo(ps, psp), 2),
                 "points": round(self.points(attrs, ps, psp), 2)}

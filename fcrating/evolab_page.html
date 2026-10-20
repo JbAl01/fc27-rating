@@ -123,7 +123,8 @@ function psBonus(list,ps,psp,cap){let t=0;for(const[n,b,p]of list){if(psp.includ
 function stopOf(a,acc,ps,psp){const Hs=R.hs;if(!Hs)return[null,null,null];const f={},sp=a[AI.sprint_speed],sr=a[AI.strength];if(sp&&sr)f.rask_sterk=Math.min(sp,sr);
 const b0=runScore(a,f,Hs.ball),r0=runScore(a,f,Hs.run);if(b0==null||r0==null)return[null,null,null];
 const ball=pyRound(b0+psBonus(Hs.psBall,ps,psp,Hs.capBall),1),run=pyRound(r0+(Hs.acc[acc||""]??0)+psBonus(Hs.psRun,ps,psp,Hs.capRun),1);
-return[pyRound(Hs.share*ball+(1-Hs.share)*run,1),ball,run]}
+/* the 4th value goes into IGR: without the PlayStyles, which count once in their own value (stop.core) */
+return[pyRound(Hs.share*ball+(1-Hs.share)*run,1),ball,run,pyRound(Hs.share*pyRound(b0,1)+(1-Hs.share)*pyRound(r0+(Hs.acc[acc||""]??0),1),1)]}
 function rater(d){if(d._rt)return d._rt;const c=d.c,G=R.G[c.g];
 d._rt=function(st){const a=st.a;let acc=classify(a,c.h,c.gender);if(acc==null&&c.accSrc)acc=c.accSrc;
 const skill=weighted(a,G.sk);let feel=null,pace=null,run=null,vil=null,eff=null;
@@ -133,10 +134,10 @@ if(R.runW.length){const f={};if(c.hb!=null)f.kort_kropp=c.hb;if(c.wrv!=null)f.ar
 if(ag!=null&&sr!=null&&ag&&sr)f.kvikk_sterk=Math.min(ag,sr);if(ba!=null&&sr!=null&&ba&&sr)f.balanse_sterk=Math.min(ba,sr);
 run=runScore(a,f,R.runW);vil=RUN_DEC.length?runScore(a,f,RUN_DEC):null;eff=RUN_EXE.length?runScore(a,f,RUN_EXE):null}
 let obd;if(c.obdData!=null){const after=obdF(a);obd=c.obdBefore!=null&&after!=null?pyRound(c.obdData+after-c.obdBefore,1):c.obdData}else obd=obdF(a);
-const [stp,stb,stl]=c.g!=="GK"&&c.prim!=="GK"?stopOf(a,acc,st.ps,st.psp):[null,null,null];
+const [stp,stb,stl,stc]=c.g!=="GK"&&c.prim!=="GK"?stopOf(a,acc,st.ps,st.psp):[null,null,null,null];
 const out={acc,feel:feel==null?null:pyRound(feel,1),pace:pace==null?null:pyRound(pace,1),run,vil,eff,obd,stp,stb,stl,igr:0};
 if(skill==null)return out;let core=G.b[0]*skill,used=G.b[0];
-if(G.b[1]&&feel!=null){core+=G.b[1]*feel;used+=G.b[1]}if(G.b[2]&&pace!=null){core+=G.b[2]*pace;used+=G.b[2]}if(G.b[3]&&run!=null){core+=G.b[3]*run;used+=G.b[3]}if(G.b[4]&&stp!=null){core+=G.b[4]*stp;used+=G.b[4]}core/=used;
+if(G.b[1]&&feel!=null){core+=G.b[1]*feel;used+=G.b[1]}if(G.b[2]&&pace!=null){core+=G.b[2]*pace;used+=G.b[2]}if(G.b[3]&&run!=null){core+=G.b[3]*run;used+=G.b[3]}if(G.b[4]&&stc!=null){core+=G.b[4]*stc;used+=G.b[4]}core/=used;
 const items=[];for(const[names,plus]of[[st.psp,true],[st.ps,false]]){for(const n of names){const e=R.ps[n];if(!e)continue;const vals=[];for(const k of e[2]){if(a[k]!=null)vals.push(a[k])}
 let syn=0.6;if(vals.length){const s=R.syn;syn=Math.max(s.min,Math.min(s.max,(psum(vals)/vals.length-s.floor)/s.span))}
 let damp=1;const dm=e[3];if(dm&&a[dm[0]]!=null){const t=Math.max(0,Math.min(1,(a[dm[0]]-dm[1])/(dm[2]-dm[1])));damp=1-(1-dm[3])*t}
@@ -146,9 +147,9 @@ let igr=core+Math.min(pst,R.psMax);if(st.role>=0)igr+=R.rolePts[String(st.role)]
 if(st.wf!=null)igr+=(R.wfPts[String(st.wf)]??0)*G.wf;if(st.sm!=null)igr+=(R.smPts[String(st.sm)]??0)*G.sm;igr+=c.gk;
 if(R.ob&&G.ob&&obd!=null)igr+=Math.max(0,Math.min(R.ob.max,(obd-R.ob.start)*R.ob.per_point))*G.ob;
 if(G.st){const v=a[AI.standing_tackle];if(v!=null){let p=0;for(const[t,val]of R.stT){if(v>=t)p=val}igr+=p*G.st}}
-if(c.bd&&R.bd){const B=c.bd,ag0=weighted(a,R.bd.w),ag=ag0==null?null:Math.max(0,Math.min(R.bd.cap,(ag0-R.bd.floor)/R.bd.span)),FX=R.bd.fx||[65,25,1.2],
-fxf=(B[6]||B[7])&&ag0!=null?Math.max(0,Math.min(FX[2],(ag0-FX[0])/FX[1])):0,flx=(B[6]||0)*fxf,spr=(B[7]||0)*fxf;
-const bp=Math.max(B[3],Math.min(B[4],B[0]+flx+spr+(ag!=null?B[1]*ag:0)+psBonus(B[2],st.ps,st.psp,R.bd.comboCap)));igr+=bp;out.body=pyRound(bp,2)}
+if(c.bd&&R.bd){const B=c.bd,ag0=weighted(a,R.bd.w),ag=ag0==null?null:Math.max(0,Math.min(R.bd.cap,(ag0-R.bd.floor)/R.bd.span)),
+spr=(B[7]||0)*(ag!=null?Math.min(1,ag):0);/* a look-alike of a known body: its share of the reputation (body.BodyCard.share) */
+const bp=Math.max(B[3],Math.min(B[4],B[0]+spr+(ag!=null?B[1]*ag:0)+psBonus(B[2],st.ps,st.psp,R.bd.comboCap)));igr+=bp;out.body=pyRound(bp,2)}
 igr+=G.cal||0;out.igr=pyRound(igr,1);return out};return d._rt}
 function faceVal(a,w){const xs=[];for(const[i,v]of RU.face[w]){if(a[i]==null)return null;xs.push(a[i]*v)}return Math.floor(psum(xs)+0.5+1e-9)}
 function psCount(st){const n=st.ps.length+st.psp.length;return st.psu&&n===0?Math.max(n,RU.assume):n}

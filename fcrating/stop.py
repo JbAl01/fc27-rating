@@ -72,3 +72,11 @@ def scores(attrs: Dict[str, float], acc_type: Optional[str], ps: Iterable[str], 
                 + ps_bonus(c.get("playstyles_run"), ps, psp, c.get("ps_cap_run", 1.5)), 1)
     share = c.get("ball_share", 0.5)
     return round(share * ball + (1 - share) * run, 1), ball, run
+
+
+def core(attrs: Dict[str, float], acc_type: Optional[str], cfg: dict) -> Optional[float]:
+    """Vanskelig å stoppe without the PlayStyles: the part that goes into IGR. The PlayStyles (Rapid, Press Proven,
+    Enforcer, Bruiser, Quick Step) are counted once, in their own PlayStyle value; the number shown on the page
+    keeps them, because that is what makes the card hard to stop."""
+    s = scores(attrs, acc_type, (), (), cfg)
+    return s[0]

@@ -9,10 +9,10 @@
       "reactions": 0.18,
       "ball_control": 0.15,
       "balance": 0.17,
-      "acceleration": 0.16,
       "dribbling": 0.06,
       "composure": 0.06
     },
+    "_ingen_dobbel_info": "20.10 (eier: følelse = smooth med ball): Acceleration og AcceleRATE er tatt ut av følelsen. De teller i farten (pace: acceleration_share og accelerate), og telles ikke to ganger. Følelsen er kontroll: Agility, Reactions, Ball Control, Balance, Dribbling, Composure, høyden og (på sidene) kroppen.",
     "_attributes_info": "FC 27: Balance og Acceleration teller mer. EA har lagt til off-balance dribbling (Balance, Agility, Dribbling) og flyttet vekt fra Quick Step og AcceleRATE over på Acceleration.",
     "height": {
       "_info": "Høye spillere har lengre animasjoner og føles tyngre (EA justerte animasjonsfarten etter høyde i FC 26). Faktisk høyde i cm brukes, også for kvinner: EAs kjønnsdelte grenser gjelder bare AcceleRATE, mens animasjonene etter alt å dømme bruker faktisk høyde (NickRTFM, FC 27: små spillere er mye mer responsive). Sett female_offset_cm til 17 for den gamle måten.",
@@ -29,9 +29,10 @@
     },
     "accelerate": {
       "_info": "FC 27: EA har redusert forskjellen mellom AcceleRATE-typene ('closer together'). Halvert fra FC 26-nivå.",
-      "Explosive": 0.75,
+      "Explosive": 0.0,
       "Controlled": 0.0,
-      "Lengthy": -0.75
+      "Lengthy": 0.0,
+      "_20_10": "Satt til 0: AcceleRATE telles i farten (pace.accelerate), ikke også her."
     },
     "body_type": {
       "_info": "Erstattet av body_profile (eget poengledd for kroppstype). Står på 0 så kroppstypen ikke telles to ganger.",
@@ -134,38 +135,36 @@
     "_info": "Kroppsprofil: eget poengledd i IGR for kroppstypen (bygning og størrelse) og hvordan den forsterker Agility, Balance og Dribbling. Eierens erfaring (mange år med FUT): samme Agility føles ulikt på ulike kropper (90 Agility på Mbappé-kroppen er noe annet enn 90 på et vanlig kort), Lean Tall med Technical+ og Rapid føles 'WOW'. Kildene (FUT.GG 'What the Pros Use' FC 27, EA Pitch Notes FC 26/27, Sports Illustrated, FUT.GG-omtaler) støtter at Lean- og unike modeller føles kvikkere enn tallene og at Stocky Tall er tyngst; EA har aldri publisert hva kroppstypen gjør, så tallene er en hypotese som kan justeres her. Poengene er på samme skala som OVR og legges til IGR slik PlayStyles gjør. Spennet mellom beste og verste kropp er ca. 7 poeng for kant/CAM/spiss, ca. 4 for CM og back, mindre for CDM og CB (der teller høyde, se tabellen). En vanlig kropp (Average Medium) gir omtrent 0, så poengene måler kroppen, ikke smidigheten en gang til.",
     "_data_info": "Kroppstypen hentes fra kortets FUT.GG-side (bodytypeCode og teksten 'Body Type'). Den er lik for alle kort av samme spiller, så promo- og evokort arver basekortets kropp. Evoer endrer aldri kroppstype eller høyde. Unike modeller (FUT.GG viser spillerens navn, f.eks. 'Kylian Mbappé') får størrelse fra høyden og bygning fra BMI, pluss et eget unik-tillegg. Mangler kroppstypen, men høyde og vekt finnes, anslås kroppen fra dem med halv vekt.",
     "frame_points": {
-      "_info": "Grunnpoeng per bygning (lean/average/stocky) og størrelse (short/medium/tall) og posisjonsgruppe. 20.10: korte, lette kropper litt opp for driblerne (W, ST, CAM), etter community-hypotesen i eierens dokument (Short/Lean og Short/Average mest responsive i tight dribling). Selvkalibreringen retter mot hva som spilles.",
-      "W":   {"lean": {"short": 1.2, "medium": 1.3, "tall": 0.6}, "average": {"short": 0.7, "medium": 0.0, "tall": -1.2}, "stocky": {"short": -0.6, "medium": -1.2, "tall": -2.6}},
-      "ST":  {"lean": {"short": 0.6, "medium": 1.0, "tall": 1.0}, "average": {"short": 0.2, "medium": 0.2, "tall": 0.2}, "stocky": {"short": -0.6, "medium": -0.5, "tall": -1.2}},
-      "CAM": {"lean": {"short": 1.3, "medium": 1.3, "tall": 0.5}, "average": {"short": 0.8, "medium": 0.1, "tall": -1.0}, "stocky": {"short": -0.4, "medium": -0.9, "tall": -2.2}},
-      "CM":  {"lean": {"short": 0.5, "medium": 0.9, "tall": 0.6}, "average": {"short": 0.4, "medium": 0.3, "tall": -0.2}, "stocky": {"short": -0.3, "medium": -0.3, "tall": -1.0}},
-      "CDM": {"lean": {"short": -0.2, "medium": 0.5, "tall": 0.8}, "average": {"short": -0.3, "medium": 0.4, "tall": 0.5}, "stocky": {"short": -0.6, "medium": 0.1, "tall": -0.2}},
-      "FB":  {"lean": {"short": 0.7, "medium": 1.0, "tall": 0.4}, "average": {"short": 0.5, "medium": 0.3, "tall": -0.6}, "stocky": {"short": -0.3, "medium": -0.6, "tall": -1.6}},
-      "CB":  {"lean": {"short": -1.4, "medium": -0.3, "tall": 1.0}, "average": {"short": -1.4, "medium": 0.0, "tall": 0.9}, "stocky": {"short": -1.5, "medium": -0.2, "tall": 0.5}},
-      "GK":  {"lean": {"short": 0.0, "medium": 0.0, "tall": 0.0}, "average": {"short": 0.0, "medium": 0.0, "tall": 0.0}, "stocky": {"short": 0.0, "medium": 0.0, "tall": 0.0}}
+      "_info": "Grunnpoeng per bygning (lean/average/stocky), størrelse (short/medium/tall) og posisjonsgruppe. 20.10, ingen dobbel telling: størrelsen er høyden, og høyden teller i følelsen (EA: animasjonsfart), så størrelsen gir bare forskjell for midtstopper (rekkevidde). Lean gir bare en fast del her (35 %), resten kommer gjennom forsterkningen av smidigheten (agility_amp), så en Lean-kropp gir fullt bare på et smidig kort.",
+      "W":    {"lean": {"short": 0.45, "medium": 0.45, "tall": 0.45}, "average": {"short": 0.0, "medium": 0.0, "tall": 0.0}, "stocky": {"short": -1.2, "medium": -1.2, "tall": -1.2}},
+      "ST":   {"lean": {"short": 0.35, "medium": 0.35, "tall": 0.35}, "average": {"short": 0.2, "medium": 0.2, "tall": 0.2}, "stocky": {"short": -0.5, "medium": -0.5, "tall": -0.5}},
+      "CAM":  {"lean": {"short": 0.45, "medium": 0.45, "tall": 0.45}, "average": {"short": 0.1, "medium": 0.1, "tall": 0.1}, "stocky": {"short": -0.9, "medium": -0.9, "tall": -0.9}},
+      "CM":   {"lean": {"short": 0.32, "medium": 0.32, "tall": 0.32}, "average": {"short": 0.3, "medium": 0.3, "tall": 0.3}, "stocky": {"short": -0.3, "medium": -0.3, "tall": -0.3}},
+      "CDM":  {"lean": {"short": 0.17, "medium": 0.17, "tall": 0.17}, "average": {"short": 0.4, "medium": 0.4, "tall": 0.4}, "stocky": {"short": 0.1, "medium": 0.1, "tall": 0.1}},
+      "FB":   {"lean": {"short": 0.35, "medium": 0.35, "tall": 0.35}, "average": {"short": 0.3, "medium": 0.3, "tall": 0.3}, "stocky": {"short": -0.6, "medium": -0.6, "tall": -0.6}},
+      "CB":   {"lean": {"short": -1.4, "medium": -0.3, "tall": 1.0}, "average": {"short": -1.4, "medium": 0.0, "tall": 0.9}, "stocky": {"short": -1.5, "medium": -0.2, "tall": 0.5}},
+      "GK":   {"lean": {"short": 0.0, "medium": 0.0, "tall": 0.0}, "average": {"short": 0.0, "medium": 0.0, "tall": 0.0}, "stocky": {"short": 0.0, "medium": 0.0, "tall": 0.0}}
     },
     "agility_amp": {
       "_info": "Hvor mye kroppen forsterker (eller demper) smidigheten, målt mot en vanlig kropp (Average Medium = 0). Poeng = forsterkning x smidighet x posisjonsskala. Smidighet = (vektet snitt av attributtene under - floor) / span, mellom 0 og cap (90 i snitt gir 1,0). Agility og Balance teller allerede i følelsen og off-balance, så her teller bare det kroppen legger til eller trekker fra: 90 i snitt gir +1,5 på en Lean Medium-kant, 0 på en Average Medium og -0,9 på en Stocky Tall. Regnes på attributtene etter kjemi og evo.",
       "attributes": {"agility": 0.4, "balance": 0.3, "dribbling": 0.15, "ball_control": 0.15},
       "floor": 72, "span": 18, "cap": 1.4,
-      "frame": {"lean": {"short": 0.35, "medium": 0.5, "tall": 0.3}, "average": {"short": 0.2, "medium": 0.0, "tall": -0.15}, "stocky": {"short": -0.1, "medium": -0.2, "tall": -0.3}},
+      "frame": {"lean": {"short": 0.8, "medium": 0.8, "tall": 0.8}, "average": {"short": 0.0, "medium": 0.0, "tall": 0.0}, "stocky": {"short": -0.2, "medium": -0.2, "tall": -0.2}},
+      "_frame_20_10": "Én forsterkning, uavhengig av størrelse (høyden teller i følelsen). Lean 0,8 = den gamle forsterkningen 0,5 pluss den delen av Lean-grunnpoengene som nå bare gis til smidige kort.",
       "scale": {"ST": 2.6, "W": 3.0, "CAM": 2.8, "CM": 1.8, "CDM": 1.0, "FB": 1.8, "CB": 0.6, "GK": 0.0}
-    },
-    "flex": {
-      "_info": "Kroppen forsterker (eier 20.10): de positive grunnpoengene gis bare fullt ut når kortet faktisk er smidig. share = andelen som alltid gis (en god kropp er verdt noe også på et lavt kort som kan evolveres), resten ganges med smidigheten (samme attributter som agility_amp) regnet fra floor til floor+span (0 til cap). Negative grunnpoeng (Stocky, høye kropper på kanten) gis alltid fullt. Evo Lab regner dette etter evoene, så et lavt kort med god kropp stiger når evoene øker Agility og Balance.",
-      "share": 0.35, "floor": 65, "span": 25, "cap": 1.2
     },
     "reputation": {
       "_info": "Kropper med rykte (eierens erfaring og tester): poeng som gis uansett tall, på kantskala, ganget med posisjonsfaktoren i combos.group_factor. Nøkkel: spillernavn, eller 'Navn|Nasjon' / 'Navn|versjon' når navnet er delt av flere. Gjelder alle kort av spilleren. Kilder: eieren 19.-20.10 (Mbappé-kroppen er noe eget, Dembélé fortjener mer, Little er smooth, Aimar (Hero) har bra kropp, Kanu føles dårlig).",
       "points": {"Kylian Mbappé": 2.0, "Ousmane Dembélé": 1.5, "Kim Little": 1.5, "Aimar|FUT Heroes": 1.5, "Kanu|FUT Heroes": -1.5},
       "_community_info": "Svakere belegg (nivå C: community-anekdoter, Reddit 2026, samlet i eierens dokument 'EA FC 27 Bodytype Community Tier System' 20.10): kandidater med kjent god kroppsfølelse, små poeng til eierens egne tester sier noe annet. Står spilleren i points, gjelder bare det.",
-      "community": {"Lionel Messi": 0.5, "Neymar Jr": 0.5, "Ronaldo|Icon": 0.5, "Ronaldinho": 0.5, "Maradona": 0.5},
+      "community": {"Lionel Messi": 0.8, "Neymar Jr": 0.8, "Ronaldo|Icon": 0.8, "Ronaldinho": 0.8, "Maradona": 0.8},
+      "_ingen_dobbel_info": "Et rykte er vurderingen av akkurat den kroppen, så en spiller med rykte (eierens eller communityens) får ikke i tillegg den generelle bonusen for unik modell (unique.amp_bonus). Community-ryktet er derfor 0,8, omtrent det den generelle bonusen gir et smidig kort.",
       "_spread_info": "Eier 20.10: en kjent god vanlig kroppstype skal gi pluss også på andre kort med samme kropp, når høyde og vekt er nær og kortet er smidig. Andel = share x likhet (1 ved samme høyde og vekt, 0 ved height_cm cm / weight_kg kg fra; uten vekt: no_weight). Pluss ganges med smidigheten (som flex), minus gis fullt. Unike modeller deles ikke.",
       "spread": {"share": 0.5, "height_cm": 4, "weight_kg": 6, "no_weight": 0.5}
     },
     "unique": {
       "_info": "Unike/signaturmodeller (egen skannet kropp og egne bevegelser). Fra 20.10 uten fast tillegg (eier: en unik kropp kan også føles dårlig), men den forsterker smidigheten litt mer enn en vanlig kropp med samme bygning (amp_bonus): et smidig kort med unik modell får en bonus, et tregt eller tungt (Haaland) nesten ingenting. Ellers vurderes den som bygningen og størrelsen høyden og vekten gir, og kjente kropper får rykte i reputation. Tunge eller høye unike modeller (f.eks. Haaland) får fortsatt lite, fordi størrelse og bygning tas fra høyde og BMI.",
-      "amp_bonus": 0.25, "max_amp": 0.7,
+      "amp_bonus": 0.25, "max_amp": 1.05,
       "points": {"ST": 0.0, "W": 0.0, "CAM": 0.0, "CM": 0.0, "CDM": 0.0, "FB": 0.0, "CB": 0.0, "GK": 0.0}
     },
     "derive": {
@@ -182,7 +181,6 @@
         {"ps": "Quick Step", "frames": ["lean_short", "lean_medium", "average_short", "unique"], "points": [0.2, 0.4]},
         {"ps": "Trickster", "frames": ["lean_short", "lean_medium", "average_short", "unique"], "points": [0.1, 0.3]},
         {"ps": "First Touch", "frames": ["lean_tall", "average_tall", "stocky_tall"], "points": [0.2, 0.4]},
-        {"ps": "Press Proven", "frames": ["lean_short", "lean_medium", "lean_tall", "average_short", "average_medium", "average_tall", "stocky_short", "unique"], "points": [0.3, 0.8]},
         {"ps": "Bruiser", "frames": ["stocky_short", "stocky_medium", "stocky_tall", "average_tall"], "points": [0.2, 0.4], "groups": {"ST": 0.6, "CM": 0.8, "CDM": 1.0, "FB": 0.6, "CB": 1.0}},
         {"ps": "Jockey", "frames": ["lean_tall", "lean_medium", "average_medium", "average_tall"], "points": [0.2, 0.4], "groups": {"CM": 0.5, "CDM": 1.0, "FB": 1.0, "CB": 1.0}}
       ],

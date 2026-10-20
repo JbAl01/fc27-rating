@@ -117,7 +117,7 @@ def _body_meta(bp: Optional[dict]):
     amp = bp["agility_amp"]
     return {"w": [[ATTR_INDEX[k], v] for k, v in _clean(amp["attributes"]).items() if k in ATTR_INDEX],
             "floor": amp["floor"], "span": amp["span"], "cap": amp["cap"], "comboCap": (bp.get("combos") or {}).get("cap", 1.5),
-            "fx": [(bp.get("flex") or {}).get("floor", 65), (bp.get("flex") or {}).get("span", 25), (bp.get("flex") or {}).get("cap", 1.2)]}
+            }
 
 
 def rules_meta(lab: dict) -> dict:

@@ -57,7 +57,7 @@ def apply(cfg: dict, data: Optional[dict] = None) -> None:
     if not data:
         return
     w = cfg["weights"]
-    if data.get("body") and w.get("body_profile"):
+    if data.get("body") and w.get("body_profile") and data.get("model") == model_signature(cfg):   # not learned on an old model
         w["body_profile"]["learned"] = data["body"]
     if data.get("pos") and w.get("position_calibration"):
         w["position_calibration"]["offsets"] = dict(data["pos"])
@@ -185,10 +185,29 @@ def fit_positions(results: List[dict]) -> Dict[str, float]:
 
 # ---------------------------------------------------------------- update
 
+def model_signature(cfg: dict) -> str:
+    """The model the adjustments were learned on (everything but the adjustments themselves). When the model
+    changes, the old adjustments are thrown away: they corrected the old model, not this one."""
+    import copy
+    import hashlib
+    w = copy.deepcopy(cfg["weights"])
+    bp = w.get("body_profile") or {}
+    for k in ("learned", "rep_frames"):
+        bp.pop(k, None)
+    (w.get("position_calibration") or {}).pop("offsets", None)
+    w.pop("self_calibration", None)
+    return hashlib.sha1(json.dumps([w, cfg.get("playstyles")], sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:12]
+
+
 def update(results: List[dict], cfg: dict, path: Path = PATH, log=print) -> Optional[dict]:
     """Fit, smooth, save (only when something moved enough). Used from the next run on."""
     s = _settings(cfg)
     old = load(path) or {}
+    sig = model_signature(cfg)
+    fresh = old.get("model") != sig
+    if fresh and old:
+        log("Selvkalibrering: modellen er endret siden sist, så de gamle justeringene er forkastet og læres på nytt.")
+        old = {"pos": old.get("pos")}
     rows = _rows(results)
     raw, used_n = fit_body(rows, s)
     smooth_old = old.get("body_raw") or {}
@@ -210,9 +229,9 @@ def update(results: List[dict], cfg: dict, path: Path = PATH, log=print) -> Opti
     pos = fit_positions(results)
     old_pos = old.get("pos") or dict(((cfg["weights"].get("position_calibration") or {}).get("offsets")) or {})
     pos_moved = max([abs(pos.get(g, 0.0) - old_pos.get(g, 0.0)) for g in pos] or [0.0])
-    new_pos = pos if pos and pos_moved >= s["pos_step"] else old_pos
+    new_pos = pos if pos and (pos_moved >= s["pos_step"] or fresh) else old_pos
 
-    data = {"t": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"), "body": new_body, "body_raw": smooth,
+    data = {"t": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"), "model": sig, "body": new_body, "body_raw": smooth,
             "body_used": used_n, "pos": new_pos, "rows": len(rows)}
     if new_body != old_body or new_pos != (old.get("pos") or {}) or not path.exists():
         data["changed"] = data["t"]

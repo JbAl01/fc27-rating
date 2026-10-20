@@ -99,6 +99,54 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
   - Første prioritet fra communityen står i `reputation.community` med +0,5 (Messi, Neymar, R9, Ronaldinho, Maradona). Eierens egne vurderinger går foran.
 - **Ikke tatt inn:** de sju animasjonskomponentene (left-stick, vending, stride og så videre). De kan ikke måles fra kortdata, bare testes i spillet. Testplanen i dokumentet er det samme som eierens tester (`data/eier_tester.csv`).
 
+## Én modell, ingen dobbel telling (20.10)
+Revisjonen fant 7 steder der samme effekt ble telt flere ganger. Alle er rettet, og `tests/test_ingen_dobbel.py` passer på at det ikke skjer igjen.
+
+| Hva | Før | Nå (telles ett sted) |
+|---|---|---|
+| Høyde | i følelsen (EA: animasjonsfart) og i kroppstypens størrelse | bare i følelsen. Størrelsen gir forskjell bare for CB (rekkevidde) |
+| Smidighet × kropp | forsterkning og fleks-regel | én forsterkning (Lean 0,8, Average 0, Stocky −0,2). Lean har 35 % fast grunn |
+| Press Proven | PlayStyle-verdi, kroppskombinasjon og «vanskelig å stoppe» | bare PlayStyle-verdien |
+| Rapid, Enforcer, Bruiser, Quick Step | PlayStyle-verdi og «vanskelig å stoppe» | bare PlayStyle-verdien. Stopp-tallet på siden viser dem fortsatt |
+| Acceleration og AcceleRATE | i følelsen og i farten | bare i farten. Følelsen er kontroll med ball |
+| Unik modell med rykte | generell unik-bonus og ryktet | bare ryktet. Community-rykte 0,8, omtrent som den generelle bonusen |
+| Selvkalibrering | tall lært på en gammel modell ble brukt videre | forkastes når modellen endres (`model_signature`) |
+
+Effektiv vekt per attributt i IGR (målt):
+```
+IGR-økning per attributtpoeng (80 -> 90, Lean Medium 178 cm, uten PlayStyles), i % av summen per posisjon
+                      ST     W   CAM    CM   CDM    FB    CB
+Agility             13.7  15.1  14.9  10.6   6.8   8.6   5.6
+Acceleration         9.7  11.1   6.6   6.2   6.8  13.8  11.1
+Balance             11.3  11.9  11.6   8.0   5.1   6.0   2.8
+Reactions            8.9   7.9   9.1   8.8   8.5   6.0   7.4
+Ball Control         8.1   9.5  10.7  10.6   5.9   6.0   2.8
+Standing Tackle      0.0   0.0   0.0   7.1  16.1  12.9  17.6
+Sprint Speed         7.3   7.9   5.0   3.5   5.1  11.2  11.1
+Dribbling            8.1  11.1  10.7   5.3   2.5   5.2   0.9
+Short Passing        1.6   3.2   6.6   9.7   6.8   4.3   2.8
+Composure            4.8   4.0   5.8   7.1   4.2   3.4   3.7
+Interceptions        0.0   0.0   0.0   4.4   9.3   5.2   7.4
+Def. Awareness       0.0   0.0   0.0   1.8   7.6   6.0  10.2
+Att. Position        8.1   4.8   4.1   0.0   0.0   0.0   0.0
+Strength             3.2   1.6   0.8   0.0   4.2   1.7   5.6
+Vision               0.0   1.6   5.8   6.2   2.5   0.0   0.0
+Stamina              0.8   0.8   0.0   4.4   4.2   4.3   0.0
+Finishing            6.5   3.2   3.3   0.0   0.0   0.0   0.0
+Long Passing         0.0   0.0   0.8   5.3   3.4   0.0   0.0
+Long Shots           1.6   2.4   3.3   0.9   0.0   0.0   0.0
+Crossing             0.0   1.6   0.0   0.0   0.0   3.4   0.0
+Heading Accuracy     1.6   0.0   0.0   0.0   0.0   0.0   3.7
+Sliding Tackle       0.0   0.0   0.0   0.0   0.0   1.7   2.8
+Shot Power           3.2   0.0   0.0   0.0   0.0   0.0   0.0
+Curve                0.0   2.4   0.8   0.0   0.0   0.0   0.0
+Jumping              0.0   0.0   0.0   0.0   0.0   0.0   2.8
+Aggression           0.0   0.0   0.0   0.0   0.8   0.0   1.9
+Volleys              1.6   0.0   0.0   0.0   0.0   0.0   0.0
+Penalties            0.0   0.0   0.0   0.0   0.0   0.0   0.0
+FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
+```
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.
