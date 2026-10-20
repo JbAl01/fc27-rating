@@ -83,6 +83,15 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Følelse med ball:** «Følelse» i tabellene, sorteringen og filtrene (Players og Evo Lab) er følelse + kroppspoeng. I IGR er de fortsatt to deler, så ingenting telles dobbelt.
 - **Eierens tester** (`data/eier_tester.csv`, semikolon): tester med ball kan sammenligne kort fra ulike posisjoner. Hver kjøring skriver «Eierens tester: … enig». Første test: Little > Kanu.
 
+## Eierens dokument 20.10 (ChatGPT: «Bodytype Community Tier System»)
+- **Hva dokumentet er:** et forskningsopplegg med kandidater å teste, ikke en fasit. Det sier selv at belegget for spillerne er svakt (nivå C, Reddit-anekdoter).
+- **Tatt inn:**
+  - Unik betyr ikke best (var allerede gjort).
+  - Kroppen vurderes per rolle (allerede `frame_points` per posisjon).
+  - Korte, lette kropper er litt opp for W, ST og CAM.
+  - Første prioritet fra communityen står i `reputation.community` med +0,5 (Messi, Neymar, R9, Ronaldinho, Maradona). Eierens egne vurderinger går foran.
+- **Ikke tatt inn:** de sju animasjonskomponentene (left-stick, vending, stride og så videre). De kan ikke måles fra kortdata, bare testes i spillet. Testplanen i dokumentet er det samme som eierens tester (`data/eier_tester.csv`).
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

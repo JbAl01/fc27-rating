@@ -134,10 +134,10 @@
     "_info": "Kroppsprofil: eget poengledd i IGR for kroppstypen (bygning og størrelse) og hvordan den forsterker Agility, Balance og Dribbling. Eierens erfaring (mange år med FUT): samme Agility føles ulikt på ulike kropper (90 Agility på Mbappé-kroppen er noe annet enn 90 på et vanlig kort), Lean Tall med Technical+ og Rapid føles 'WOW'. Kildene (FUT.GG 'What the Pros Use' FC 27, EA Pitch Notes FC 26/27, Sports Illustrated, FUT.GG-omtaler) støtter at Lean- og unike modeller føles kvikkere enn tallene og at Stocky Tall er tyngst; EA har aldri publisert hva kroppstypen gjør, så tallene er en hypotese som kan justeres her. Poengene er på samme skala som OVR og legges til IGR slik PlayStyles gjør. Spennet mellom beste og verste kropp er ca. 7 poeng for kant/CAM/spiss, ca. 4 for CM og back, mindre for CDM og CB (der teller høyde, se tabellen). En vanlig kropp (Average Medium) gir omtrent 0, så poengene måler kroppen, ikke smidigheten en gang til.",
     "_data_info": "Kroppstypen hentes fra kortets FUT.GG-side (bodytypeCode og teksten 'Body Type'). Den er lik for alle kort av samme spiller, så promo- og evokort arver basekortets kropp. Evoer endrer aldri kroppstype eller høyde. Unike modeller (FUT.GG viser spillerens navn, f.eks. 'Kylian Mbappé') får størrelse fra høyden og bygning fra BMI, pluss et eget unik-tillegg. Mangler kroppstypen, men høyde og vekt finnes, anslås kroppen fra dem med halv vekt.",
     "frame_points": {
-      "_info": "Grunnpoeng per bygning (lean/average/stocky) og størrelse (short/medium/tall) og posisjonsgruppe.",
-      "W":   {"lean": {"short": 0.9, "medium": 1.3, "tall": 0.6}, "average": {"short": 0.4, "medium": 0.0, "tall": -1.2}, "stocky": {"short": -0.6, "medium": -1.2, "tall": -2.6}},
-      "ST":  {"lean": {"short": 0.3, "medium": 1.0, "tall": 1.0}, "average": {"short": -0.2, "medium": 0.2, "tall": 0.2}, "stocky": {"short": -0.6, "medium": -0.5, "tall": -1.2}},
-      "CAM": {"lean": {"short": 1.1, "medium": 1.3, "tall": 0.5}, "average": {"short": 0.6, "medium": 0.1, "tall": -1.0}, "stocky": {"short": -0.4, "medium": -0.9, "tall": -2.2}},
+      "_info": "Grunnpoeng per bygning (lean/average/stocky) og størrelse (short/medium/tall) og posisjonsgruppe. 20.10: korte, lette kropper litt opp for driblerne (W, ST, CAM), etter community-hypotesen i eierens dokument (Short/Lean og Short/Average mest responsive i tight dribling). Selvkalibreringen retter mot hva som spilles.",
+      "W":   {"lean": {"short": 1.2, "medium": 1.3, "tall": 0.6}, "average": {"short": 0.7, "medium": 0.0, "tall": -1.2}, "stocky": {"short": -0.6, "medium": -1.2, "tall": -2.6}},
+      "ST":  {"lean": {"short": 0.6, "medium": 1.0, "tall": 1.0}, "average": {"short": 0.2, "medium": 0.2, "tall": 0.2}, "stocky": {"short": -0.6, "medium": -0.5, "tall": -1.2}},
+      "CAM": {"lean": {"short": 1.3, "medium": 1.3, "tall": 0.5}, "average": {"short": 0.8, "medium": 0.1, "tall": -1.0}, "stocky": {"short": -0.4, "medium": -0.9, "tall": -2.2}},
       "CM":  {"lean": {"short": 0.5, "medium": 0.9, "tall": 0.6}, "average": {"short": 0.4, "medium": 0.3, "tall": -0.2}, "stocky": {"short": -0.3, "medium": -0.3, "tall": -1.0}},
       "CDM": {"lean": {"short": -0.2, "medium": 0.5, "tall": 0.8}, "average": {"short": -0.3, "medium": 0.4, "tall": 0.5}, "stocky": {"short": -0.6, "medium": 0.1, "tall": -0.2}},
       "FB":  {"lean": {"short": 0.7, "medium": 1.0, "tall": 0.4}, "average": {"short": 0.5, "medium": 0.3, "tall": -0.6}, "stocky": {"short": -0.3, "medium": -0.6, "tall": -1.6}},
@@ -157,7 +157,9 @@
     },
     "reputation": {
       "_info": "Kropper med rykte (eierens erfaring og tester): poeng som gis uansett tall, på kantskala, ganget med posisjonsfaktoren i combos.group_factor. Nøkkel: spillernavn, eller 'Navn|Nasjon' / 'Navn|versjon' når navnet er delt av flere. Gjelder alle kort av spilleren. Kilder: eieren 19.-20.10 (Mbappé-kroppen er noe eget, Dembélé fortjener mer, Little er smooth, Kanu føles dårlig).",
-      "points": {"Kylian Mbappé": 2.0, "Ousmane Dembélé": 1.5, "Kim Little": 1.5, "Kanu|FUT Heroes": -1.5}
+      "points": {"Kylian Mbappé": 2.0, "Ousmane Dembélé": 1.5, "Kim Little": 1.5, "Kanu|FUT Heroes": -1.5},
+      "_community_info": "Svakere belegg (nivå C: community-anekdoter, Reddit 2026, samlet i eierens dokument 'EA FC 27 Bodytype Community Tier System' 20.10): kandidater med kjent god kroppsfølelse, små poeng til eierens egne tester sier noe annet. Står spilleren i points, gjelder bare det.",
+      "community": {"Lionel Messi": 0.5, "Neymar Jr": 0.5, "Ronaldo|Icon": 0.5, "Ronaldinho": 0.5, "Maradona": 0.5}
     },
     "unique": {
       "_info": "Unike/signaturmodeller (egen skannet kropp og egne bevegelser). Fra 20.10 uten eget tillegg (eier: en unik kropp kan også føles dårlig): de vurderes som bygningen og størrelsen høyden og vekten gir, og rykte legges i reputation. Tunge eller høye unike modeller (f.eks. Haaland) får fortsatt lite, fordi størrelse og bygning tas fra høyde og BMI.",

@@ -96,15 +96,17 @@ def _norm(s) -> str:
 
 def reputation(player, bcfg: dict) -> float:
     """Points for a body with a known feel (body_profile.reputation), on the winger scale."""
-    pts = {k: v for k, v in ((bcfg.get("reputation") or {}).get("points") or {}).items() if not k.startswith("_")}
-    if not pts:
-        return 0.0
+    rc = bcfg.get("reputation") or {}
     name, nation = _norm(getattr(player, "name", "")), _norm(getattr(player, "nation", ""))
     rarity = _norm(getattr(player, "rarity", ""))
-    for key, v in pts.items():
-        n, _, extra = key.partition("|")   # 'Name', or 'Name|Nation' / 'Name|version' when the name is shared
-        if _norm(n) == name and (not extra or _norm(extra) == nation or _norm(extra) in rarity):
-            return float(v)
+    # the owner's own list first; the community list (weaker evidence) only for players the owner has not judged
+    for part in ("points", "community"):
+        for key, v in (rc.get(part) or {}).items():
+            if key.startswith("_"):
+                continue
+            n, _, extra = key.partition("|")   # 'Name', or 'Name|Nation' / 'Name|version' when the name is shared
+            if _norm(n) == name and (not extra or _norm(extra) == nation or _norm(extra) in rarity):
+                return float(v)
     return 0.0
 
 
