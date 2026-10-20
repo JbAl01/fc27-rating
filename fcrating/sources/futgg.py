@@ -422,8 +422,8 @@ def use_attributes(p: Player, rec: dict) -> bool:
 
 def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optional[Dict[str, List[int]]] = None) -> int:
     """Use FUT.GG's PlayStyles (and height where missing) on the cards it has. Returns how many.
-    Base cards (fetched for their roles) keep EA's PlayStyles and get their real roles (+ and ++);
-    special cards keep ++ in every role (EA's rule for special items)."""
+    Base cards (fetched for their roles) keep EA's PlayStyles. Every card FUT.GG has roles for gets them (+ and ++
+    per position); a special card without them keeps ++ in every role of its positions (EA's rule)."""
     n = 0
     for p in players:
         rec = cards.get(str(p.id)) if p.id else None
@@ -444,11 +444,12 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             # FUT.GG has every position the card can play; EA's ratings page only the first three
             p.alt_positions = [EA_POSITIONS[i] for i in r0["alt"] if i in EA_POSITIONS and EA_POSITIONS[i] != (p.position or "").upper()]
             p.positions_complete = True
-        if rec.get("kind") == "base":
-            roles = roles_from(rec, role_positions or {}, p.position)
-            if roles:
-                p.roles, p.roles_complete = roles, True
-        elif not rec.get("no_ps"):
+        # real familiarity (+/++) in every position the card can play, base and special cards alike (20.10: special
+        # cards kept only the assumed ++ in the primary position, so Zidane had no role at CM)
+        roles = roles_from(rec, role_positions or {}, p.position)
+        if roles:
+            p.roles, p.roles_complete = roles, True
+        if rec.get("kind") != "base" and not rec.get("no_ps"):
             if rec.get("img") and str(rec["img"]).startswith(CARD_IMAGE_HOSTS):
                 p.card_image = rec["img"]
             p.playstyles_plus = list(rec.get("psp") or [])

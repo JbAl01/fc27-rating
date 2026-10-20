@@ -151,6 +151,7 @@ FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
 - **Pedri nr. 1 på CM** er riktig ut fra dataene: rolle++ fra FUT.GG, mest verdifulle PS+ på CM (Pinged Pass+), Lean Medium med 92 smidighet og 92 balanse. Proffene bruker ham mye (12,8 %). Zidane taper på CM fordi han ikke har noen rolle der (bare som CAM).
 - **Fartsvekt sjekket mot bruk**: å doble farten på CM flytter de brukte kortene fra snitt topp 0,81 % til 0,74 %. For lite til å endre modellen.
 - **Roller som ikke er hentet ennå** (ca. 8 600 kort, mest under 75, pluss de 29 som manglet i FIFA Rosters-listen) ga 0 rollepoeng. Kjente kort har median + (65–84) og ++ (85+). Nå anslås de fra kort med samme posisjon og OVR (`impute_roles`), likt for Players og Evo Lab. Ekte roller fra FUT.GG overstyrer når siden er hentet.
+- **Spesialkort** (ikoner, helter, promo) brukte bare EAs regel «++ i hovedposisjonen», så Zidane hadde 0 i rolle på CM og Beckenbauer 0 på CDM. Nå brukes FUT.GG sine ekte roller for alle kort som er hentet (500+ spesialkort), og regelen gjelder alle posisjonene for de andre.
 - **Løp uten ball** vises nå for alle utespillere unntatt midtstoppere. Det teller fortsatt bare i IGR for spiss, kant og CAM.
 - **Sortering**: like verdier (Plass 0,1 % for nr. 4–9) sorteres etter IGR.
 

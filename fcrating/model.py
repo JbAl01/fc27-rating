@@ -212,6 +212,23 @@ def playstyle_bonus(player: Player, attrs: Dict[str, float], group: str,
 ROLE_ESTIMATE = "anslått"
 
 
+def extend_special_roles(players: List[Player]) -> int:
+    """A special card whose roles are EA's rule (++ in every role) and not FUT.GG's real list gets them in every
+    position it can play. The rule is set when the card is built, before all its positions are known, so the
+    other positions had none. FUT.GG's lists for 500+ special cards: other positions ++ in about 80 %."""
+    from .promo import special_roles
+    n = 0
+    for p in players:
+        lv = [v for r in (p.roles or {}).values() for k, v in r.items() if k == "alle roller (spesialkort)"]
+        if not lv:
+            continue
+        add = {pos: r for pos, r in special_roles(list(p.alt_positions or []), max(lv)).items() if pos not in p.roles}
+        if add:
+            p.roles = {**p.roles, **add}
+            n += 1
+    return n
+
+
 def impute_roles(players: List[Player], window: int = 3, min_known: int = 20) -> int:
     """Cards whose roles are not fetched yet (FUT.GG takes the best cards first) would get 0 role points, while
     known cards with the same OVR have + (65-84) or ++ (85+). Such a card gets the median level of known cards in
