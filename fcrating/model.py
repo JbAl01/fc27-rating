@@ -209,6 +209,54 @@ def playstyle_bonus(player: Player, attrs: Dict[str, float], group: str,
     return min(total, ps_cfg["diminishing"]["max_total"]), items
 
 
+ROLE_ESTIMATE = "anslått"
+
+
+def impute_roles(players: List[Player], window: int = 3, min_known: int = 20) -> int:
+    """Cards whose roles are not fetched yet (FUT.GG takes the best cards first) would get 0 role points, while
+    known cards with the same OVR have + (65-84) or ++ (85+). Such a card gets the median level of known cards in
+    the same position group and about the same OVR, for its primary and for its other positions separately, so a
+    card is not ranked lower only because its page has not been fetched. Players and Evo Lab read the same roles."""
+    import statistics
+    from .schema import position_group
+    known: Dict[Tuple[str, bool, int], List[int]] = {}
+    todo = []
+    for p in players:
+        if not (p.roles or p.roles_complete):
+            todo.append(p)
+            continue
+        if p.ovr is None:
+            continue
+        for i, pos in enumerate([p.position] + list(p.alt_positions or [])):
+            g = position_group(pos)
+            if g:
+                lv = max((p.roles.get(pos) or {}).values(), default=0)
+                known.setdefault((g, i == 0, int(p.ovr)), []).append(int(lv))
+    n = 0
+    for p in todo:
+        if p.ovr is None:
+            continue
+        roles = {}
+        for i, pos in enumerate([p.position] + list(p.alt_positions or [])):
+            g = position_group(pos)
+            if not g:
+                continue
+            vals: List[int] = []
+            w = window
+            while w <= 12:
+                vals = [v for o in range(int(p.ovr) - w, int(p.ovr) + w + 1) for v in known.get((g, i == 0, o), [])]
+                if len(vals) >= min_known:
+                    break
+                w += 1
+            lv = int(round(statistics.median(vals))) if vals else 0
+            if lv > 0:
+                roles[pos] = {ROLE_ESTIMATE: lv}
+        if roles:
+            p.roles = roles
+            n += 1
+    return n
+
+
 def role_bonus(player: Player, group: str, wcfg: dict) -> Tuple[float, Optional[str]]:
     rcfg = wcfg["roles"]
     best_level, best_name = -1, None
@@ -408,7 +456,8 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
     if not player.playstyles_complete:
         warnings.append("PlayStyle-listen er ufullstendig")
     if not player.roles_complete:
-        warnings.append("roller mangler")
+        warnings.append("roller anslått fra kort med samme posisjon og OVR (ikke hentet ennå)"
+                        if any(ROLE_ESTIMATE in r for r in (player.roles or {}).values()) else "roller mangler")
     if acc_type and player.accelerate_source and not chem and acc_type != player.accelerate_source:
         warnings.append(f"AcceleRATE avviker fra kilden ({player.accelerate_source})")
 

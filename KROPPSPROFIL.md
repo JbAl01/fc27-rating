@@ -147,6 +147,13 @@ Penalties            0.0   0.0   0.0   0.0   0.0   0.0   0.0
 FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
 ```
 
+## Rettet 20.10 ettermiddag (CM-sjekk, Pedri)
+- **Pedri nr. 1 på CM** er riktig ut fra dataene: rolle++ fra FUT.GG, mest verdifulle PS+ på CM (Pinged Pass+), Lean Medium med 92 smidighet og 92 balanse. Proffene bruker ham mye (12,8 %). Zidane taper på CM fordi han ikke har noen rolle der (bare som CAM).
+- **Fartsvekt sjekket mot bruk**: å doble farten på CM flytter de brukte kortene fra snitt topp 0,81 % til 0,74 %. For lite til å endre modellen.
+- **Roller som ikke er hentet ennå** (ca. 8 600 kort, mest under 75, pluss de 29 som manglet i FIFA Rosters-listen) ga 0 rollepoeng. Kjente kort har median + (65–84) og ++ (85+). Nå anslås de fra kort med samme posisjon og OVR (`impute_roles`), likt for Players og Evo Lab. Ekte roller fra FUT.GG overstyrer når siden er hentet.
+- **Løp uten ball** vises nå for alle utespillere unntatt midtstoppere. Det teller fortsatt bare i IGR for spiss, kant og CAM.
+- **Sortering**: like verdier (Plass 0,1 % for nr. 4–9) sorteres etter IGR.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.

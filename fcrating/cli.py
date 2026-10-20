@@ -59,6 +59,10 @@ def _load_players(files: List[str]) -> List[Player]:
         print(f"FUT.GG (PlayStyles, roller, høyde) brukt på {n} kort.")
     _fill_body(players)
     _fill_faces(players)
+    from .model import impute_roles
+    n = impute_roles(players)
+    if n:
+        print(f"Roller anslått for {n} kort som ikke er hentet fra FUT.GG ennå (samme posisjon og OVR).")
     return players
 
 
