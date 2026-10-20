@@ -9,7 +9,7 @@ Verktøyet skal måle **ingame-følelse**. Kroppstypen betyr mye for hvordan et 
 - **Data:** `fcrating/sources/futgg.py` `parse_body()` leser `bodytypeCode` og teksten «Body Type» og vekten fra FUT.GG-kortsiden. Kodene 1–9 er standardkroppene. Kode 10 og høyere er unike modeller, og der viser FUT.GG spillerens navn.
   - Kodene: 1 Lean Medium, 2 Average Medium, 3 Stocky Medium, 4 Lean Tall, 5 Average Tall, 6 Stocky Tall, 7 Lean Short, 8 Average Short, 9 Stocky Short.
   - Bekreftet med en probe 19.10: Mbappé, Haaland og Messi har 10 (Unik), Yamal 1, Bonmatí 8 og Ekitiké 4.
-- **Henting:** basekort uten `bt` hentes på nytt i den vanlige kjøringen (900 per kjøring). Den nye kommandoen `python -m fcrating hent-kropp --minutter 60` går i bakgrunnen under dypsøket (`dypsok.yml`), med 2,5 s pause mellom sidene (`config/sources.json` `body_delay_seconds`).
+- **Henting:** basekort uten `bt` hentes på nytt i den vanlige kjøringen (900 per kjøring). Den nye kommandoen `python -m fcrating hent-kropp --minutter 60` går i bakgrunnen under dypsøket (jobb 2 i `oppdater.yml`), med 2,5 s pause mellom sidene (`config/sources.json` `body_delay_seconds`).
   - Én side per spiller, fordi promo- og evokort arver kroppen via `cli._fill_body`.
   - Cachen lagres trygt via en midlertidig fil og `os.replace`.
   - Omtrent 19 800 spillere. Rundt 2–3 døgn før alle er hentet.

@@ -1,4 +1,5 @@
-# Henter nye kort, rater alt og legger siden ut på GitHub Pages.
+# Henter nye kort, rater alt og legger siden ut på GitHub Pages. Deretter dypsøket i Evo Lab i SAMME kjøring
+# (jobb 2), så bare én kjøring står i kø om gangen: en ny push venter bak den som går og avbryter den ikke.
 # Oppsett: se «Legge ut siden for vennene dine» i README.md.
 name: Oppdater siden
 
@@ -66,14 +67,14 @@ jobs:
       contents: write          # for å lagre data/meta_start.json første gang
       pages: write
       id-token: write
-    timeout-minutes: 120      # henting (maks 55 min) + rating + raskt plansøk; dypsøket ligger i dypsok.yml
+    timeout-minutes: 120      # henting (maks 55 min) + rating + raskt plansøk; dypsøket er jobb 2 under
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       # Tidsfrister regnet fra start. Hentingen stopper etter 55 minutter. Dette løpet gjør bare det raske plansøket
       # (FC_FRIST = nå): siden er ute få minutter etter at hentingen er ferdig. Det fulle plansøket gjør
-      # «Dypsøk Evo Lab» (dypsok.yml) rett etterpå og legger ut siden på nytt.
+      # jobben «dypsok» under, rett etterpå i samme kjøring, og legger ut siden på nytt.
       - name: Sett tidsfrister
         run: |
           start=$(date +%s)
@@ -149,3 +150,83 @@ jobs:
       - name: Legg ut på GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+
+  # Dypsøk i Evo Lab: finner og beviser den beste evo-planen for kortene som bare har den raske planen,
+  # de som ender høyest først, og legger siden ut på nytt. Fremdriften lagres i cachen, så hver runde
+  # fortsetter der forrige slapp. Samtidig hentes kroppstyper fra FUT.GG.
+  dypsok:
+    name: Dypsøk Evo Lab
+    needs: oppdater
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      actions: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Sett tidsfrist
+        run: echo "FC_FRIST=$(( $(date +%s) + 70*60 ))" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Hent data fra forrige kjøring
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            data/ea_players.json
+            data/ea_players.meta.json
+            data/spesialkort.json
+            data/cache
+            data/evolab_cache.pkl
+          key: fcdata-dyp-${{ github.run_id }}
+          restore-keys: fcdata-
+
+      - name: Rate og søk dypt
+        run: |
+          files=""
+          for f in data/ea_players.json data/spesialkort.json data/mine_spillere.json; do
+            [ -f "$f" ] && files="$files $f"
+          done
+          if [ -z "$files" ]; then echo "Ingen kortdata i cachen."; exit 1; fi
+          # Kroppstype og vekt hentes fra FUT.GG mens dypsøket regner (det henter ingenting selv), så tiden ikke går til spille.
+          # Brukes fra neste kjøring. Lagres trygt (midlertidig fil), så ratingen under aldri leser en halv fil.
+          python -m fcrating hent-kropp --minutter 60 > kropp.log 2>&1 &
+          kp=$!
+          python -m fcrating rate $files --ignorer-brukte --lagre-meta-start --top 5
+          python -m fcrating publiser
+          wait $kp || echo "Kroppshentingen feilet (prøver igjen neste gang)"
+          tail -n 5 kropp.log
+
+      - name: Lagre fremdriften
+        if: always()
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            data/ea_players.json
+            data/ea_players.meta.json
+            data/spesialkort.json
+            data/cache
+            data/evolab_cache.pkl
+          key: fcdata-dyp-${{ github.run_id }}
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+          name: github-pages-dyp   # eget navn: jobb 1 har alt lastet opp «github-pages» i samme kjøring
+
+      - name: Legg ut på GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+        with:
+          artifact_name: github-pages-dyp
