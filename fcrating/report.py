@@ -298,6 +298,7 @@ def _meta(results: List[dict], cfg: dict, intern: _Interner) -> dict:
         "stats": stats, "skill": skill, "feel": [ATTR_INDEX[k] for k in FEEL_KEYS],
         "fw": [[ATTR_INDEX[k], w] for k, w in wcfg["feel"]["attributes"].items() if not k.startswith("_")],
         "gk": group_label("GK"),
+        "norun": [group_label("GK"), group_label("CB")],
         "run": _run_meta(results, cfg),
         "toplg": TOP_LEAGUES,
         "prof": _prof_meta(cfg),

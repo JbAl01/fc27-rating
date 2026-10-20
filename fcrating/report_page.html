@@ -84,7 +84,7 @@ table.kv th small{display:block;font:400 12.5px/1.35 var(--text);color:var(--fai
 
 <div class="tw"><table class="data" id="tbl"><thead><tr>
 <th data-k="name">Spiller</th><th class="cmb" data-k="combo" title="Snittet av plassen i kategoriene du valgte (100 = best i posisjonen)">Kombo</th><th class="l" data-k="group">Pos</th><th data-k="ovr">OVR</th><th data-k="igr">IGR</th><th data-k="meta" title="IGR målt mot kortene som finnes nå. Synker når bedre kort kommer i posisjonen.">Meta</th><th data-k="top_pct">Plass</th>
-<th data-k="feel" title="Følelse med ball: hvor kvikk og lett kortet er å styre, med kroppen">Følelse</th><th data-k="pace" title="Acceleration og Sprint Speed">Fart</th><th data-k="skill" title="Tallene som betyr mest for posisjonen">Ferdigheter</th><th data-k="body" title="Poeng for kroppstypen i posisjonen: bygning, størrelse og hvor mye kroppen forsterker smidigheten">Kropp</th><th class="wrap" data-k="run_ai" title="Hvor smart og nyttig kortet løper når laget har ballen (spiss, kant og CAM)">Løp uten<br>ball</th><th class="wrap" data-k="stop" title="Hvor vanskelig kortet er å stoppe, med ball og på løp">Vanskelig<br>å stoppe</th>
+<th data-k="feel" title="Følelse med ball: hvor kvikk og lett kortet er å styre, med kroppen">Følelse</th><th data-k="pace" title="Acceleration og Sprint Speed">Fart</th><th data-k="skill" title="Tallene som betyr mest for posisjonen">Ferdigheter</th><th data-k="body" title="Poeng for kroppstypen i posisjonen: bygning, størrelse og hvor mye kroppen forsterker smidigheten">Kropp</th><th class="wrap" data-k="run_ai" title="Hvor smart og nyttig kortet løper når laget har ballen. Teller i IGR for spiss, kant og CAM.">Løp uten<br>ball</th><th class="wrap" data-k="stop" title="Hvor vanskelig kortet er å stoppe, med ball og på løp">Vanskelig<br>å stoppe</th>
 <th class="l" data-k="accelerate" title="Hvordan kortet kommer opp i fart">AcceleRATE</th><th data-k="evo_after" title="IGR med evoene som er ute nå (fra Evo Lab)">Etter evo</th><th class="price" data-k="price">Pris</th></tr></thead><tbody id="rows"></tbody></table></div>
 <button type="button" class="more-rows" id="more" hidden></button>
 
@@ -293,13 +293,13 @@ if(F.build!==""&&!(d.bf&&(F.build==="u"?d.bf[2]===1:(d.bf[2]===0&&d.bf[0]===+F.b
 if(F.bodyMin!==""&&(v.body==null||v.body<+F.bodyMin))return false;
 if(F.gem&&!(g?isGem(d.groups[g]):anyGem(d)))return false;if(F.meta&&!d.use)return false;if(F.evo&&d.evo_after==null)return false;if(F.wf4&&!(d.wf>=4))return false;if(F.sm4&&!(d.sm>=4))return false;return true}
 /* --- table --- */
-function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null;
-return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:isGem(e),run_ai:ru&&d.ra?d.ra.score:null,dec:ru&&d.ra?d.ra.dec??null:null,exe:ru&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,body:e.bd?e.bdp:null,feel:feelBall(d,e),playstyles:e.playstyles,role:e.role}}
+function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null,rok=!(META.norun||[META.gk]).includes(pg);
+return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:isGem(e),run_ai:rok&&d.ra?d.ra.score:null,dec:rok&&d.ra?d.ra.dec??null:null,exe:rok&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,body:e.bd?e.bdp:null,feel:feelBall(d,e),playstyles:e.playstyles,role:e.role}}
 /* «Følelse» in the table, filter and sort is følelse med ball: the feel score plus the body points in the position */
 function feelBall(d,e){return d.feel==null?null:d.feel+(e&&e.bd?e.bdp:0)}
 function rowsNow(){const q=$("q").value.trim().toLowerCase(),g=gs.value;
 let rows=DATA.filter(d=>(d.name+" "+d.version).toLowerCase().includes(q)&&(!g||g in d.groups)).map(d=>view(d,g)).filter(v=>pass(v,v,g));
-rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return 0;if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}
+const tie=(a,b)=>(b.igr??-1e9)-(a.igr??-1e9);rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return tie(a,b);if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}
 function head(){document.querySelectorAll("#tbl th").forEach(th=>{if(th.dataset.k===key)th.setAttribute("aria-sort",dir<0?"descending":"ascending");else th.removeAttribute("aria-sort")})}
 function render(){head();const rows=rowsNow(),tb=$("rows");tb.innerHTML="";
 $("count").textContent=rows.length===DATA.length?`${n0(DATA.length)} kort`:`${n0(rows.length)} av ${n0(DATA.length)} kort`;

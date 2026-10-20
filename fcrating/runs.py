@@ -153,6 +153,9 @@ def _top_pct(sorted_desc: List[float], v: float) -> float:
     return round(100.0 * (better + 1) / len(asc), 1)
 
 
+NO_RUN = ("GK", "CB")   # no runs worth measuring
+
+
 def add_run_ai(results: List[dict], cfg: dict) -> None:
     """Adds r["run_ai"] = {score, parts, body, wr, vs_ovr} and, for ST/W/CAM,
     by_group[g]["run"] = {rank, of, top_pct, ovr_top_pct, gem, up, down} where
@@ -174,7 +177,9 @@ def add_run_ai(results: List[dict], cfg: dict) -> None:
     weights = {k: v for k, v in _clean(rc["weights"]).items() if k not in rc["dropped"]}
     feats_of: Dict[int, Dict[str, float]] = {}
     for r in results:
-        if not any(g in r["by_group"] for g in groups):
+        # every card that can play in front of the centre backs gets its Løps-AI (shown for CM, CDM and backs too);
+        # IGR uses it only in `groups`
+        if not any(g not in NO_RUN for g in r["by_group"]):
             r["run_ai"] = None
             continue
         feats = features(r.get("attributes") or {}, r.get("work_rate_att"), rc, r.get("height_cm"))
