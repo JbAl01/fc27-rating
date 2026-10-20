@@ -55,12 +55,13 @@ def derive(height: Optional[float], weight: Optional[float], gender: Optional[st
            ) -> Tuple[Optional[str], Optional[str]]:
     """Size from height, build from BMI (unique models and cards without a body type)."""
     size = build = None
+    c = {**dcfg, **(dcfg.get("female") or {})} if gender == "F" else dcfg   # women: own limits, fitted to EA's labels
     if height:
-        h = height + (dcfg["female_offset_cm"] if gender == "F" else 0)
-        size = "short" if h < dcfg["short_below_cm"] else "tall" if h > dcfg["tall_above_cm"] else "medium"
+        h = height + (c.get("female_offset_cm", 0) if gender == "F" and not dcfg.get("female") else 0)
+        size = "short" if h < c["short_below_cm"] else "tall" if h > c["tall_above_cm"] else "medium"
         if weight:
             bmi = weight / (height / 100.0) ** 2
-            build = "lean" if bmi < dcfg["lean_below_bmi"] else "stocky" if bmi >= dcfg["stocky_from_bmi"] else "average"
+            build = "lean" if bmi < c["lean_below_bmi"] else "stocky" if bmi >= c["stocky_from_bmi"] else "average"
     return build, size
 
 
