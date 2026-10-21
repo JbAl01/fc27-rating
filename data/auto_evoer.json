@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-20T17:15:00Z",
+  "_sjekket": "2026-10-21T17:30:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -578,8 +578,8 @@
       "key": "middle_management",
       "name": "Middle Management",
       "cost": "gratis (treningsleir)",
-      "until": "2026-10-22T17:00Z",
-      "note": "Krav og tall er like hos FUTBIN og futnext. Fristen er futnext sin nedtelling «unlock within 4d5h» (samme som Touchline Magic og Nine Duty). Power Shot-taket (3) står ikke på noen av sidene; 3 er brukt fordi alle andre PlayStyle-evoer i FC 27 har tak 3. Roller og skill moves er ikke nevnt. Tallene er summen etter alle fire nivåer.",
+      "until": "2026-10-27T17:00Z",
+      "note": "Krav og tall er like hos FUTBIN og futnext. Fristen er flyttet: 21.10 kl. 17:15 UTC viser futnext «unlock within 6d» (liste og detaljside), FUTBIN «6 days» og Futmind «Send inn innen: 6 dg. og 4 t», som gir 27.10.2026 (før var den 22.10, også hos timesaver). Ingen kilde oppgir klokkeslett, så tidligste tid (17:00 UTC) er brukt. Power Shot-taket (3) står ikke på noen av sidene; 3 er brukt fordi alle andre PlayStyle-evoer i FC 27 har tak 3. Roller og skill moves er ikke nevnt. Tallene er summen etter alle fire nivåer.",
       "req": {
         "max_ovr": 74,
         "max_pace": 83,
@@ -690,7 +690,8 @@
       },
       "sources": [
         "https://www.futbin.com/27/evolutions/62/middle-management",
-        "https://www.futnext.com/evolutions/middle-management/2762"
+        "https://www.futnext.com/evolutions/middle-management/2762",
+        "https://futmind.com/no/evolutions/2762"
       ]
     },
     {
@@ -918,6 +919,109 @@
         "https://www.fut.gg/evolutions/2603-poor-sophia/",
         "https://www.futbin.com/27/evolutions/100/poor-sophia",
         "https://www.futnext.com/evolutions/poor-sophia/2813"
+      ]
+    },
+    {
+      "key": "side_stopper",
+      "name": "Side Stopper",
+      "cost": "gratis",
+      "until": "2026-10-31T17:00Z",
+      "note": "Krav og tall er like hos FUT.GG (listesiden) og Futmind (guide og evoside). Fristen 31.10.2026 står i Futmind-guiden (uten klokkeslett), og Futminds evoside viste «Submit by: 10 Days 0 Hours» 21.10 kl. 17:15 UTC; FUTBIN sier bare «Unlock 1 Weeks». Tidligste tid (17:00 UTC) er brukt. PlayStyles Intercept (nivå 2) og Slide Tackle (nivå 3) står bare hos Futmind; taket 3 er det umerkede tallet på slutten av FUT.GG-oppføringen (Futmind viser ikke tak). FUTBINs detaljside kunne ikke hentes. Evoen er merket repeterbar hos FUTBIN, men antall står ikke. Svakfot, skill moves og roller er ikke nevnt. Tallene er summen etter alle tre nivåer.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 83,
+        "max_ps": 7,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CDM",
+          "CB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          4,
+          83
+        ],
+        "ps": [
+          [
+            "Intercept",
+            3
+          ],
+          [
+            "Slide Tackle",
+            3
+          ]
+        ],
+        "stats": {
+          "acceleration": [
+            7,
+            83
+          ],
+          "balance": [
+            5,
+            76
+          ],
+          "interceptions": [
+            6,
+            82
+          ],
+          "standing_tackle": [
+            6,
+            83
+          ],
+          "stamina": [
+            6,
+            84
+          ],
+          "sprint_speed": [
+            7,
+            83
+          ],
+          "reactions": [
+            5,
+            80
+          ],
+          "heading_accuracy": [
+            6,
+            78
+          ],
+          "sliding_tackle": [
+            6,
+            83
+          ],
+          "strength": [
+            6,
+            80
+          ],
+          "short_passing": [
+            5,
+            76
+          ],
+          "composure": [
+            6,
+            78
+          ],
+          "def_awareness": [
+            6,
+            82
+          ],
+          "jumping": [
+            6,
+            78
+          ],
+          "aggression": [
+            6,
+            80
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/",
+        "https://futmind.com/articles/20112/ea-sports-fc-27-side-stopper-evolutions-guide-best-players-and-upgrades",
+        "https://futmind.com/evolutions/2812/side-stopper"
       ]
     }
   ],
