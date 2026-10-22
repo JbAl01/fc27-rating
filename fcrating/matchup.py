@@ -57,6 +57,7 @@ DEFAULTS = {
 
 def settings(cfg: dict) -> dict:
     s = {k: (dict(v) if isinstance(v, dict) else v) for k, v in DEFAULTS.items()}
+    s["_bcfg"] = cfg["weights"].get("body_profile")   # the owner's reputations, unscaled, for the defender's 1 v 1
     for k, v in _clean(cfg["weights"].get("matchup") or {}).items():
         s[k] = _clean(v) if isinstance(v, dict) else v
     return s
@@ -102,6 +103,10 @@ def profile(p: Player, r: dict, side: str, s: dict) -> Optional[List[float]]:
         vals["fri"] = _w(a, s["fri_def"])
         vals["kamp"] = _w(a, s["kamp_def"])
         vals["1v1"] = _w(a, s["1v1_def"])
+        from .body import reputation
+        rep = reputation(p, (s.get("_bcfg") or {})) if s.get("_bcfg") else 0.0
+        if vals["1v1"] is not None and rep:
+            vals["1v1"] += rep   # a body known to play better than its numbers (owner: Carreras) also defends better
         bonus = _ps(p.playstyles, p.playstyles_plus, s["ps_def"])
     if any(vals[k] is None for k in AXES):
         return None
