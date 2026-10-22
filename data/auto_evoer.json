@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-21T17:30:00Z",
+  "_sjekket": "2026-10-22T17:15:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1022,6 +1022,126 @@
         "https://www.fut.gg/evolutions/",
         "https://futmind.com/articles/20112/ea-sports-fc-27-side-stopper-evolutions-guide-best-players-and-upgrades",
         "https://futmind.com/evolutions/2812/side-stopper"
+      ]
+    },
+    {
+      "key": "composed_stopper",
+      "name": "Composed Stopper",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Fristen for å starte er ukjent: FUT.GG har tomme «Submit by»/«Expiry», futevolution.com sier «expires on December 10, 2026» (uten klokkeslett, og det er uklart om det er fristen for å starte), og FUTWIZ sier bare «Expires: 2 months». Ingen dato er satt. Krav og tall er like hos FUT.GG (per nivå) og futevolution (summer). Navnene på PlayStylene (Block og Bruiser) står bare hos futevolution; FUT.GG viser to PlayStyles (på nivå 2 og 3) med det umerkede tallet 4, og futevolution sier også tak 4. Hvilken av dem som kommer på hvilket nivå er ikke oppgitt. Evoen står ikke på futnext eller FUTBIN ennå. Repeterbar, roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle fire nivåer.",
+      "req": {
+        "max_ovr": 83,
+        "max_pace": 82,
+        "max_ps": 7,
+        "positions": [
+          "CB"
+        ],
+        "not_positions": [
+          "CDM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          85
+        ],
+        "ps": [
+          [
+            "Block",
+            4
+          ],
+          [
+            "Bruiser",
+            4
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            8,
+            78
+          ],
+          "agility": [
+            5,
+            75
+          ],
+          "dribbling": [
+            5,
+            75
+          ],
+          "def_awareness": [
+            12,
+            85
+          ],
+          "stamina": [
+            12,
+            80
+          ],
+          "vision": [
+            10,
+            80
+          ],
+          "balance": [
+            10,
+            80
+          ],
+          "composure": [
+            12,
+            83
+          ],
+          "standing_tackle": [
+            10,
+            85
+          ],
+          "strength": [
+            10,
+            86
+          ],
+          "short_passing": [
+            10,
+            82
+          ],
+          "reactions": [
+            12,
+            83
+          ],
+          "interceptions": [
+            10,
+            84
+          ],
+          "sliding_tackle": [
+            10,
+            84
+          ],
+          "aggression": [
+            10,
+            82
+          ],
+          "acceleration": [
+            8,
+            78
+          ],
+          "long_passing": [
+            10,
+            78
+          ],
+          "ball_control": [
+            5,
+            75
+          ],
+          "heading_accuracy": [
+            10,
+            82
+          ],
+          "jumping": [
+            12,
+            86
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2606-composed-stopper/",
+        "https://www.futevolution.com/news/fc-27-composed-stopper-evolution-guide"
       ]
     }
   ],
