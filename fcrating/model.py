@@ -421,6 +421,12 @@ def _frame_code(player: Player, wcfg: dict):
     return frame_code(frame_of(player, bcfg)) if bcfg else 0
 
 
+def _chem_pace(player: Player, attrs: Dict[str, float], cfg: dict):
+    from .chem import pace_choices
+    from .schema import position_group
+    return pace_choices(attrs, player.chem_acc, position_group(player.position), cfg)
+
+
 def _futgg_page(player: Player) -> Optional[str]:
     from .sources.futgg import player_page
     return player_page(player)
@@ -515,6 +521,7 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "hard_to_stop": {"score": stop_sc, "ball": stop_ball, "run": stop_run} if stop_sc is not None else None,
         "feel": round(feel, 1) if feel is not None else None,
         "feel_parts": feel_parts,
+        "chem_pace": _chem_pace(player, attrs, cfg) if not chem else None,
         "attributes": {k: v for k, v in attrs.items() if v},
         "height_cm": player.height_cm,
         "weight_kg": player.weight_kg,

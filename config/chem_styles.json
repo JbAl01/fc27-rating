@@ -5,27 +5,165 @@
       "verified": true,
       "_source": "Nagasato-kortet ditt (EasySBC-skjermbilde med Finisher)",
       "boosts": {
-        "positioning": 6, "finishing": 9, "shot_power": 3, "volleys": 3, "penalties": 3,
-        "agility": 6, "balance": 3, "reactions": 3, "dribbling": 9
+        "positioning": 6,
+        "finishing": 9,
+        "shot_power": 3,
+        "volleys": 3,
+        "penalties": 3,
+        "agility": 6,
+        "balance": 3,
+        "reactions": 3,
+        "dribbling": 9
+      },
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
       }
     },
-    "Basic": {"verified": false, "boosts": null},
-    "Sniper": {"verified": false, "boosts": null},
-    "Deadeye": {"verified": false, "boosts": null},
-    "Marksman": {"verified": false, "boosts": null},
-    "Hawk": {"verified": false, "boosts": null},
-    "Artist": {"verified": false, "boosts": null},
-    "Architect": {"verified": false, "boosts": null},
-    "Powerhouse": {"verified": false, "boosts": null},
-    "Maestro": {"verified": false, "boosts": null},
-    "Engine": {"verified": false, "boosts": null},
-    "Sentinel": {"verified": false, "boosts": null},
-    "Guardian": {"verified": false, "boosts": null},
-    "Gladiator": {"verified": false, "boosts": null},
-    "Backbone": {"verified": false, "boosts": null},
-    "Anchor": {"verified": false, "boosts": null},
-    "Hunter": {"verified": false, "boosts": null},
-    "Catalyst": {"verified": false, "boosts": null},
-    "Shadow": {"verified": false, "boosts": null}
-  }
+    "Basic": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 3
+      }
+    },
+    "Sniper": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Deadeye": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Marksman": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Hawk": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 3,
+        "sprint_speed": 3
+      }
+    },
+    "Artist": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Architect": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Powerhouse": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Maestro": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Engine": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 3,
+        "sprint_speed": 3
+      }
+    },
+    "Sentinel": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Guardian": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Gladiator": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Backbone": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 0,
+        "sprint_speed": 0
+      }
+    },
+    "Anchor": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 3,
+        "sprint_speed": 3
+      }
+    },
+    "Hunter": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 6,
+        "sprint_speed": 6
+      }
+    },
+    "Catalyst": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 6,
+        "sprint_speed": 6
+      }
+    },
+    "Shadow": {
+      "verified": false,
+      "boosts": null,
+      "pace": {
+        "acceleration": 6,
+        "sprint_speed": 6
+      }
+    }
+  },
+  "_pace_info": "Fart per kjemistil (Acceleration og Sprint Speed ved 3 chem). Regnet ut fra FUT.GG sine PAC-tall per stil (22.10.2026) med EAs formel PAC = 0,45 Acceleration + 0,55 Sprint Speed: +6 PAC kan bare være +6/+6, +3 bare +3/+3, Basic +1,7 bare +0/+3. Entydig, i motsetning til de andre hovedtallene. Finisher gir ingen fart."
 }

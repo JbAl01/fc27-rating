@@ -245,6 +245,33 @@ def card_attributes(html: str, card: Optional[str], game: str = "27") -> Optiona
     return None
 
 
+ACC_KEYS = {"explosive": "Explosive", "mostlyExplosive": "Mostly Explosive", "controlledExplosive": "Controlled Explosive",
+            "controlled": "Controlled", "controlledLengthy": "Controlled Lengthy", "mostlyLengthy": "Mostly Lengthy",
+            "lengthy": "Lengthy"}
+_ACC_BLOCK = re.compile(r"accelerateTypes:\$R\[\d+\]=\{(.*?)\}(?=,hasDynamic|,\w+:)", re.S)
+_ACC_LIST = re.compile(r'(\w+):\$R\[\d+\]=\[([^\]]*)\]')
+
+
+def accelerate_by_chem(html: str, card: Optional[str], game: str = "27") -> Optional[Dict[str, str]]:
+    """The AcceleRATE the card gets with each chemistry style, {"Hunter": "Explosive", ...}, from the card's own
+    page data (FUT.GG works it out from the boosted attributes). Only the block that belongs to this card."""
+    if not card:
+        return None
+    for m in _ACC_BLOCK.finditer(html):
+        nxt = html.find("accelerateTypes:", m.end())
+        tail = html[m.end():min(m.end() + 1500, nxt if nxt > 0 else len(html))]   # up to the next card's block
+        if '/%s-%s/"' % (game, card) not in tail:
+            continue
+        out = {}
+        for key, names in _ACC_LIST.findall(m.group(1)):
+            label = ACC_KEYS.get(key)
+            for n in re.findall(r'"([^"]+)"', names):
+                if label:
+                    out[n] = label
+        return out or None
+    return None
+
+
 def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> Optional[dict]:
     """The card's own PlayStyles: the first unbroken run of large icons, and its roles. None if the page has
     neither (layout changed, or not a card page) so nothing wrong is saved."""
@@ -271,6 +298,9 @@ def parse_card_page(html: str, card: Optional[str] = None, game: str = "27") -> 
     attrs = card_attributes(html, card, game)
     if attrs:
         rec.update(attrs)
+    acct = accelerate_by_chem(html, card, game)
+    if acct:
+        rec["acct"] = acct   # AcceleRATE per chemistry style
     # date of birth (evos with an age requirement, such as Future Stars Academy, need it)
     b = _BORN.search(html)
     if b:
@@ -311,7 +341,7 @@ def parse_body(html: str) -> dict:
 
 def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], limit: int, game: str = "27",
                 log=print, kind: Optional[str] = None, deadline: Optional[float] = None,
-                refetch: Optional[set] = None, body: bool = False) -> int:
+                refetch: Optional[set] = None, body: bool = False, acct: bool = False) -> int:
     """cards: (player id, card id) pairs in the order to fetch. Each card is fetched once.
     A page without PlayStyles is remembered as missing; a network error is tried again next run."""
     import urllib.error
@@ -329,7 +359,8 @@ def fetch_cards(fetcher, cache: FutggCache, cards: Iterable[Tuple[str, str]], li
         # cards fetched before the colours and attributes were read are fetched once more
         again = bool(old) and not old.get("missing") and (int(old.get("v") or 1) < PARSE_VERSION or (
             kind == "base" and card in (refetch or ()) and bool(old.get("roles")) and old["roles"].get("alt") is None)   # fetched before the positions were read, and EA's list may be cut
-            or ((kind == "base" or body) and "bt" not in old))   # fetched before body type and weight were read
+            or ((kind == "base" or body) and "bt" not in old)   # fetched before body type and weight were read
+            or (acct and "acct" not in old))   # fetched before the AcceleRATE per chemistry style was read
         if not player or not card or (card in cache.cards and not again):
             continue
         try:
@@ -456,6 +487,8 @@ def apply(players: List[Player], cards: Dict[str, dict], role_positions: Optiona
             p.playstyles = [x for x in rec.get("ps") or [] if x not in p.playstyles_plus]
             p.playstyles_complete = True
             p.ps_from_base = False
+        if rec.get("acct"):
+            p.chem_acc = dict(rec["acct"])
         if rec.get("height") and not p.height_cm:
             p.height_cm = float(rec["height"])
         if rec.get("bt") and not p.body_type:

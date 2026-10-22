@@ -414,6 +414,17 @@ def fetch_bodies(cfg_sources: dict, cache_dir: str, minutes: float, log=print) -
     try:
         n = futgg.fetch_cards(fetcher, fg, spec, 10 ** 6, log=log, deadline=end, body=True)
         n += futgg.fetch_cards(fetcher, fg, todo, 10 ** 6, log=log, kind="base", deadline=end)
+        # the rest of the time: AcceleRATE per chemistry style (per card, the attributes differ per version),
+        # the best cards first, read again once for pages saved before it was read
+        best = sorted(entries, key=lambda t: -t[1]["ovr"])
+        acc_sp = [(str(e.get("player_id") or fid), fid) for fid, e in best
+                  if not fr.is_base_version(e["version"]) and fid in fg.cards and "acct" not in fg.cards[fid] and not fg.cards[fid].get("missing")]
+        acc_bs = [(str(e.get("player_id") or fid), fid) for fid, e in best
+                  if fr.is_base_version(e["version"]) and fid in fg.cards and "acct" not in fg.cards[fid] and not fg.cards[fid].get("missing")]
+        if _time.time() < end and (acc_sp or acc_bs):
+            log(f"FUT.GG AcceleRATE per kjemistil: {len(acc_sp)} spesialkort og {len(acc_bs)} basekort mangler")
+            n += futgg.fetch_cards(fetcher, fg, acc_sp, 10 ** 6, log=log, deadline=end, acct=True)
+            n += futgg.fetch_cards(fetcher, fg, acc_bs, 10 ** 6, log=log, kind="base", deadline=end, acct=True)
     except Blocked as exc:
         log(f"FUT.GG stoppet: {exc}")
     finally:

@@ -272,6 +272,8 @@ class Player:
     # True for special cards whose PlayStyles are copied from the base card (FIFA Rosters has none):
     # promo cards can have more PlayStyles in the game than we know of.
     ps_from_base: bool = False
+    # AcceleRATE with each chemistry style, {"Hunter": "Explosive", ...} (FUT.GG card page)
+    chem_acc: Dict[str, str] = field(default_factory=dict)
 
     @property
     def uid(self) -> str:
@@ -382,6 +384,7 @@ class Player:
             nation=data.get("nation") or None,
             birthdate=parse_birthdate(data.get("birthdate")),
             ps_from_base=bool(data.get("ps_from_base", False)),
+            chem_acc=dict(data.get("chem_acc") or {}),
             work_rate_att=wr_att,
             work_rate_def=wr_def,
         )
