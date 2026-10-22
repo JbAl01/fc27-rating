@@ -195,6 +195,7 @@ def model_signature(cfg: dict) -> str:
     for k in ("learned", "rep_frames"):
         bp.pop(k, None)
     (w.get("position_calibration") or {}).pop("offsets", None)
+    (w.get("run_ai") or {}).pop("dropped", None)   # set while rating (runs.add_run_ai): not part of the model
     w.pop("self_calibration", None)
     return hashlib.sha1(json.dumps([w, cfg.get("playstyles")], sort_keys=True, ensure_ascii=False).encode()).hexdigest()[:12]
 

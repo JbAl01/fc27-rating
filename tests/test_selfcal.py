@@ -74,6 +74,16 @@ class SelfCalTests(unittest.TestCase):
             n += bool(full["body_detail"]["learn"])
         self.assertGreater(n, 0)
 
+    def test_signature_is_the_same_before_and_after_rating(self):
+        """22.10: rating wrote run_ai.dropped into the config, so the saved signature never matched the next
+        run's and the learned body points were thrown away every time."""
+        from fcrating.model import rank_by_position
+        cfg = load_config(ROOT / "config")
+        before = selfcal.model_signature(cfg)
+        res = [rate(copy.deepcopy(p), cfg) for p in BASE]
+        rank_by_position(res, cfg)
+        self.assertEqual(selfcal.model_signature(cfg), before)
+
     def test_test_list_has_both_parts(self):
         lines = selfcal.test_list(_results())
         self.assertTrue(lines[0].startswith("Spilles mye"))

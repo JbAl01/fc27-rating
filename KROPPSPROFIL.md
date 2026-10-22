@@ -158,6 +158,9 @@ FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
 - **Løp uten ball** vises nå for alle utespillere unntatt midtstoppere. Det teller fortsatt bare i IGR for spiss, kant og CAM.
 - **Sortering**: like verdier (Plass 0,1 % for nr. 4–9) sorteres etter IGR.
 
+## Rettet 22.10 (torsdagssjekk)
+- **De lærte kroppstilleggene ble aldri brukt.** Ratingen skriver `run_ai.dropped` inn i innstillingene, så signaturen som ble lagret med kalibreringen aldri stemte med neste kjøring, og tilleggene ble forkastet hver gang (posisjonsnivået ble brukt). Rettet i `model_signature`, med vakttest. Første kjøring etter rettelsen lærer på nytt, kjøringen etter bruker tilleggene.
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.
