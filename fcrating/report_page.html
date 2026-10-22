@@ -228,7 +228,7 @@ ${d.hs?kvd("Vanskelig å stoppe på løp",d.accelerate==="Lengthy"?"Lengthy: tar
 ${rg&&d.ra&&d.ra.dec!=null?kvd("Smarte løp","hvor og når han løper (Att. Position og Reactions)",fmt(d.ra.dec),""):""}
 ${rg&&d.ra&&d.ra.exe!=null?kvd("Får avstand","om løpet faktisk gir rom (fart, smidighet, kropp og Stamina)",fmt(d.ra.exe),""):""}
 ${d.accelerate?kvd("AcceleRATE",ACCTXT[d.accelerate]||"",esc(d.accelerate),""):""}
-${d.cp&&d.cp.best.length?kvd("Kjemistil for fart","mest fart med riktig AcceleRATE",d.cp.best.map(([s,t,v])=>`${esc(s)} ${fmt(v)} <span class="muted">${esc(t)}</span>`).join("<br>"),Object.keys(d.cp.types).length?Object.entries(d.cp.types).map(([t,ss])=>`${esc(t)}: ${esc(ss.join(", "))}`).join("<br>"):""):""}
+${d.cp&&d.cp.best.length?kvd("Kjemistil for fart","mest fart med riktig AcceleRATE",d.cp.best.map(([s,t,v])=>`${esc(s)} ${fmt(v)} <span class="muted">${esc(t)}</span>`).join("<br>"),Object.keys(d.cp.types).length?Object.entries(d.cp.types).map(([t,ss])=>`${esc(t)} med ${esc(ss.join(", "))}`).join("<br>")+`<br>${esc(d.cp.main||"")} med resten`:""):""}
 ${d.h?kvd("Høyde",d.ra&&d.ra.body?esc(d.ra.body.toLowerCase()):"",Math.round(d.h)+" cm",""):""}
 </tbody></table></details>`;
 if(rg){const sims=similarTo(d,rg,5);if(sims.length)h+=`<p>Lignende: ${list(sims.map(([o,dd])=>`<a href="#" data-q="${esc(o.name)}">${esc(o.name)}</a> (${Math.round(100*Math.exp(-dd/1.2))} % lik)`))}.</p>`}

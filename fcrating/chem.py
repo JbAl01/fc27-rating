@@ -42,4 +42,6 @@ def pace_choices(attrs: Dict[str, float], chem_acc: Dict[str, str], group: Optio
         rows.append([st, t, round(share * aa + (1 - share) * ss + acc_bonus(t, table), 1)])
         types.setdefault(t, []).append(st)
     rows.sort(key=lambda x: (-x[2], x[0]))
-    return {"best": rows[:top], "types": {t: sorted(v) for t, v in types.items()} if len(types) > 1 else {}}
+    main = max(types, key=lambda t: len(types[t]))
+    # only the styles that give another AcceleRATE than most of them (the ones worth knowing about)
+    return {"best": rows[:top], "main": main, "types": {t: sorted(v) for t, v in types.items() if t != main}}

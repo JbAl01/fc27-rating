@@ -23,7 +23,7 @@ class ChemPaceTests(unittest.TestCase):
         attrs = {"acceleration": 85, "sprint_speed": 85}
         r = pace_choices(attrs, {"Hunter": "Explosive", "Shadow": "Lengthy", "Finisher": "Explosive"}, "W", CFG)
         self.assertEqual(r["best"][0][0], "Hunter")
-        self.assertEqual(r["types"], {"Explosive": ["Finisher", "Hunter"], "Lengthy": ["Shadow"]})
+        self.assertEqual((r["main"], r["types"]), ("Explosive", {"Lengthy": ["Shadow"]}))
         self.assertIsNone(pace_choices(attrs, {}, "W", CFG))
 
     def test_mixed_types_lie_between(self):

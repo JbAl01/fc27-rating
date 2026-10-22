@@ -161,6 +161,10 @@ FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
 ## Rettet 22.10 (torsdagssjekk)
 - **De lærte kroppstilleggene ble aldri brukt.** Ratingen skriver `run_ai.dropped` inn i innstillingene, så signaturen som ble lagret med kalibreringen aldri stemte med neste kjøring, og tilleggene ble forkastet hver gang (posisjonsnivået ble brukt). Rettet i `model_signature`, med vakttest. Første kjøring etter rettelsen lærer på nytt, kjøringen etter bruker tilleggene.
 
+## Lagt til 22.10 kveld (Matchup og kjemistil)
+- **Matchup** (egen fane, `fcrating/matchup.py`): angriper mot forsvarer i fem dueller (fart, komme fri, nærkamp, 1 mot 1, luft), også kort etter beste evo-plan nå. Påvirker ikke IGR.
+- **Kjemistil for fart**: AcceleRATE per kjemistil fra FUT.GG-kortsiden (`acct`) og fart per stil (entydig fra FUT.GG sine PAC-tall). Tallene per attributt for de andre hovedtallene finnes ikke uten nettleser (FUT.GG laster dem i nettleseren, API-et er stengt i robots.txt), så følelse og IGR per kjemistil venter på dem (`config/chem_styles.json` `boosts`).
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.
