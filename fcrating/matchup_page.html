@@ -79,7 +79,7 @@ details.mx[open]>summary::before{content:"Mindre"}
 <p class="legal">Denne siden er ikke godkjent av eller tilknyttet EA eller deres lisensgivere. <a href="om.html">Om siden, kilder og personvern</a></p></footer>
 </div>
 <script>
-const D=__DATA__,S=D.strings,W=D.s.w,AX=["Fart","Komme fri","Nærkamp","1 mot 1","Luft"],AXL=["fart","å komme fri","nærkamp","1 mot 1","lufta"];
+const D=__DATA__,S=D.strings,W=D.s.w,AX=["Fart","Løpet","Nærkamp","1 mot 1","Luft"],AXA=["fart","å komme fri","nærkamp","1 mot 1","lufta"],AXD=["fart","å lese løpet","nærkamp","1 mot 1","lufta"],AXL=side=>side==="a"?AXA:AXD;
 const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=v=>v==null?"–":(Math.round(v*10)/10).toFixed(1).replace(".",","),sg=v=>(v>0?"+":"")+fmt(v);
 const card=(r,i,side)=>({i,side,name:S[r[0]],ver:S[r[1]],ovr:r[2],pos:r[3],igr:r[4],acc:S[r[5]],p:r[6],uid:S[r[7]],evo:r[8]?r[8].map(x=>S[x]):null,u:r[9]||0});
@@ -98,18 +98,18 @@ el.querySelectorAll("li").forEach(li=>{const go=()=>{onpick(list[+li.dataset.k])
 // how a card does against the most used cards on the other side, duel by duel
 function vsMeta(c){const opp=(c.side==="a"?MF:MA).filter(o=>o.uid!==c.uid);if(!opp.length)return null;
 const win=[0,0,0,0,0],lose=[0,0,0,0,0];let tot=0;for(const o of opp){const r=c.side==="a"?duel(c,o):duel(o,c);r.g.forEach((x,k)=>{const m=c.side==="a"?x:-x;if(m>=D.s.even)win[k]++;else if(m<=-D.s.even)lose[k]++});const t=c.side==="a"?r.t:-r.t;if(t>=D.s.even)tot++}
-const n=opp.length,good=[0,1,2,3,4].filter(k=>win[k]>=.6*n).map(k=>AXL[k]),bad=[0,1,2,3,4].filter(k=>lose[k]>=.6*n).map(k=>AXL[k]);
+const n=opp.length,L=AXL(c.side),good=[0,1,2,3,4].filter(k=>win[k]>=.6*n).map(k=>L[k]),bad=[0,1,2,3,4].filter(k=>lose[k]>=.6*n).map(k=>L[k]);
 return{n,win,lose,tot,good,bad}}
 function tip(c){const m=vsMeta(c);if(!m)return"";
 const head=c.side==="a"?(m.good.length?`Spill på ${join(m.good)}.`:"Ingen duell han vinner jevnt mot meta-forsvarerne."):(m.good.length?`Sterk i ${join(m.good)}.`:"Ingen duell han vinner jevnt mot meta-angriperne.");
 const tail=m.bad.length?` ${c.side==="a"?"Unngå":"Sårbar i"} ${join(m.bad)}.`:"";
 return`<p class="tip"><b>${head}</b>${tail}</p><details class="mx"><summary></summary><p class="muted" style="font-size:13px;margin:6px 0">Mot de ${m.n} mest brukte ${c.side==="a"?"forsvarerne":"angriperne"}: vinner samlet mot ${m.tot}.</p>
-<table class="wk"><thead><tr><th>Duell</th><th>Vinner</th><th>Taper</th></tr></thead><tbody>${AX.map((x,k)=>`<tr><td>${x}</td><td class="n">${m.win[k]} av ${m.n}</td><td class="n">${m.lose[k]} av ${m.n}</td></tr>`).join("")}</tbody></table></details>`}
+<table class="wk"><thead><tr><th>Duell</th><th>Vinner</th><th>Taper</th></tr></thead><tbody>${AX.map((x,k)=>`<tr><td>${k===1?(c.side==="a"?"Komme fri":"Lese løpet"):x}</td><td class="n">${m.win[k]} av ${m.n}</td><td class="n">${m.lose[k]} av ${m.n}</td></tr>`).join("")}</tbody></table></details>`}
 function chosen(el,c){el.innerHTML=c?`<div class="chosen ${c.side}"><div class="nm">${label(c)}</div><div class="sub n">${esc(c.pos)} · ${c.ovr} OVR · IGR ${fmt(c.igr)}${c.acc?" · "+esc(c.acc):""}</div>${c.evo?`<div class="sub">Evoer: ${esc(c.evo.join(" › "))}</div>`:""}${tip(c)}<button type="button" class="link" data-x>Fjern</button></div>`:"";
 const b=el.querySelector("[data-x]");if(b)b.onclick=()=>{if(c.side==="a")selA=null;else selD=null;draw()}}
 function split(av,dv,gap){const sh=Math.max(5,Math.min(95,50+Math.max(-10,Math.min(10,gap))*4.5));const aw=gap>=D.s.even,dw=gap<=-D.s.even;
 return`<div class="sp"><span class="v${dw?" lose":""}">${fmt(av)}</span><div class="track" role="img" aria-label="${fmt(av)} mot ${fmt(dv)}"><i class="a" style="width:${sh}%"></i><i class="d" style="width:${100-sh}%"></i></div><span class="v r${aw?" lose":""}">${fmt(dv)}</span></div>`}
-function result(a,d){const r=duel(a,d),aw=[],dw=[];r.g.forEach((x,k)=>{if(x>=D.s.even)aw.push(AXL[k]);else if(x<=-D.s.even)dw.push(AXL[k])});
+function result(a,d){const r=duel(a,d),aw=[],dw=[];r.g.forEach((x,k)=>{if(x>=D.s.even)aw.push(AXA[k]);else if(x<=-D.s.even)dw.push(AXD[k])});
 const who=Math.abs(r.t)<D.s.even?"Jevnt":(r.t>0?esc(a.name):esc(d.name))+" vinner";
 const why=[aw.length?`${esc(short(a.name))} vinner ${join(aw)}.`:"",dw.length?`${esc(short(d.name))} vinner ${join(dw)}.`:""].filter(Boolean).join(" ")||"Jevnt i alle dueller.";
 return`<section class="res" aria-live="polite"><p class="vw">${who}</p><p class="vy">${why}</p>
