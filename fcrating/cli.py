@@ -262,7 +262,19 @@ def _run_evolab(players, results, evos, cfg, out_dir, ignore_used=False):
     run = evolab.run(players, results, cfg, lab=lab, ignore_used=ignore_used)
     summary = evolab.summarize(run, players, results, cfg)
     evolab.update_evos(evos, summary, lab)
-    return evolab_report.write(summary, results, run, cfg, out_dir, players)
+    paths = evolab_report.write(summary, results, run, cfg, out_dir, players)
+    _write_matchup(players, results, cfg, out_dir, summary, lab)
+    return paths
+
+
+def _write_matchup(players, results, cfg, out_dir, summary=None, lab=None):
+    """output/matchup.html: attacker against defender, duel by duel (with the cards after their evo plan)."""
+    from . import matchup
+    try:
+        return matchup.write(players, results, cfg, out_dir, summary, lab)
+    except Exception as exc:   # the other pages must still be written
+        print(f"Matchup ble ikke laget: {exc}")
+        return None
 
 
 def cmd_rate(args) -> int:
@@ -289,6 +301,8 @@ def cmd_rate(args) -> int:
     group = args.group.upper() if args.group else None
     lab_paths = None if getattr(args, "uten_evolab", False) else _run_evolab(
         players, results, evos, cfg, args.out, ignore_used=getattr(args, "ignorer_brukte", False))
+    if not lab_paths:
+        _write_matchup(players, results, cfg, args.out)
     paths = write_outputs(results, evos, args.out, evolab=bool(lab_paths), meta_info=meta_info)  # write first, so output is saved even if printing fails
     print_tables(results, group, args.top if group else min(args.top, 10))
     print(f"\nSkrev {len(results)} spillere til {paths['html']}, {paths['csv']} og {paths['json']}")

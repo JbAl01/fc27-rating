@@ -25,7 +25,7 @@ MARKER = ".fcrating-site"
 MAX_FILE_BYTES = 25 * 1024 * 1024  # Cloudflare Pages: 25 MiB per file
 SPLIT_BYTES = 20 * 1024 * 1024     # bigger pages get their card data moved into separate files
 CHUNK_BYTES = 8 * 1024 * 1024
-PAGES = ("rapport.html", "evolab.html")
+PAGES = ("rapport.html", "evolab.html", "matchup.html")
 
 HEADERS = """/*
   X-Robots-Tag: noindex, nofollow
