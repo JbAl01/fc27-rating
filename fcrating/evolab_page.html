@@ -284,6 +284,11 @@ let dir=-1;
 let USED=new Set();try{USED=new Set(JSON.parse(localStorage.getItem("fc27-evolab-used")||"[]"))}catch(e){}
 const saveUsed=()=>{try{localStorage.setItem("fc27-evolab-used",JSON.stringify([...USED]))}catch(e){}};
 const isUsed=ei=>USED.has(EV[ei][0]);
+/* cards you have evolved: the evos of the plan are used up for the other cards, but not for this one */
+let OWN={};try{OWN=JSON.parse(localStorage.getItem("fc27-evolab-taken")||"{}")}catch(e){}
+const saveOwn=()=>{try{localStorage.setItem("fc27-evolab-taken",JSON.stringify(OWN))}catch(e){}};
+const ck=d=>d.name+"|"+d.ver;
+const usedFor=(d,ei)=>USED.has(EV[ei][0])&&!(OWN[ck(d)]||[]).includes(EV[ei][0]);
 for(const d of D)d._obj=0,d._orig={h0:{...d.h[0]},hs:d.h.map(x=>({...x})),lv:{...d.lv},rl:d.runs.live.slice(),sl:d.stops?d.stops.live.slice():null,c1:d.cats?d.cats[1]:null,plans:d.plans.slice(),tips:d.lm.tips};
 /* category values on the attribute scale, as profile.categories in Python */
 function catVals(d,a,det){if(!d.cats)return null;return CATS.map(c=>{if(c.src==="feel")return det.feel;if(c.src==="run")return d.runcard?det.run:null;
@@ -337,7 +342,7 @@ else rec(i+1,st,sk,done,chain,skipped)}else rec(i+1,st,sk,done,chain,skipped)};
 rec(0,st0,stKey(st0),"",[],[])}
 if(!ends.size)ends.set(stKey(st0),[st0,[]]);return ends}
 /* the best plan for each goal: IGR, løp uten ball, følelse, vanskelig å stoppe and forsvar (plans 0-4) */
-function searchPlans(d){const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
+function searchPlans(d){const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!usedFor(d,i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
 const rt=rater(d),rpp=d._orig.plans[0][1],scored=[];
 for(const[st,chain]of searchEnds(d,C).values()){const fin=rpp&&!d.c.primPP?rolesPP(st):st;scored.push({det:{...rt(fin),def:defRaw(fin.a,d.c.g)},chain,len:chain.length,prem:chain.reduce((n,[ei])=>n+(EV[ei][4]?1:0),0)})}
 const val=(t,m)=>t.det[m]!=null?t.det[m]:-1;
@@ -361,7 +366,7 @@ const twinKey=()=>OBJ===5&&TWIN?twinName(TWIN):"";
 /* every plan the search finds (all its end states) and the best plan for each goal: the one most like the target,
    then the higher IGR, then fewer evos. 0 when it is the IGR plan or no more alike (half a percentage point). */
 function twinPlan(d){if(!TWIN||d.c.g==="GK"||d.name===TWIN[0])return 0;
-const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!isUsed(i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
+const chk=new Set((d.lm.chk||[]).map(x=>S(x[0])));const C=EV.map((e,i)=>i).filter(i=>!usedFor(d,i)&&!isClosed(EV[i])&&!EV[i][5]&&!chk.has(EV[i][1])&&canEnterEver(d,EV[i]));
 const rt=rater(d),rpp=d._orig.plans[0][1],cands=d.plans.slice(0,5).filter(Boolean).map(p=>[p[0],p[1]]);
 for(const[,chain]of searchEnds(d,C,1500).values())cands.push([chain,rpp]);
 const sig=c=>c.map(x=>x.join(":")).join(",");let best=null;const seen=new Set();
@@ -389,20 +394,20 @@ function restore(d){const o=d._orig;d.h=o.hs.map(x=>({...x}));d.lv={...o.lv};d.r
 d.plans=o.plans.slice();d.lm.tips=o.tips;d._re=false;d._ak="";d._lr=null;d._obj=0;d._tw=""}
 /* bring one card up to date with the used evos and the chosen goal */
 function refreshCard(d){restore(d);for(let j=0;j<H.length;j++)TWC.delete(d.i+"|"+j);
-if(aff(d)){const uk=usedKey(),pc=d._upc||(d._upc=new Map());let pl=pc.get(uk),ak=uk;
+if(aff(d)){const uk=usedKey(d),pc=d._upc||(d._upc=new Map());let pl=pc.get(uk),ak=uk;
 /* sorted by «Likhet» the plan that counts is the one for likeness (searched in full below), so the IGR plan is the
    card's plan without the used evos (fast); the full search follows when the sort goes back to IGR */
 if(!pl){if(OBJ===5){pl=[repairPlan(d,d._orig.plans[0]),0,0,0,0];ak=uk+"~"}else{pl=searchPlans(d);if(pc.size>=6)pc.delete(pc.keys().next().value);pc.set(uk,pl)}}
 d.plans=pl.slice();d.lm.tips=[];d._re=true;d._ak=ak;forecastFrom(d,liveFields(d,d.plans[0]))}
 d._tw=twinKey();if(d._tw)d.plans[5]=twinPlan(d);
 const w=want(d);if(w)liveFields(d,d.plans[w]);d._obj=w;d._lr=null}
-const usedKey=()=>[...USED].sort().join("|");
+const usedKey=d=>[...USED].filter(k=>!d||!(OWN[ck(d)]||[]).includes(k)).sort().join("|");
 /* the plan without the used evos (and the evos that can no longer be taken after that), in the same order */
-function repairPlan(d,plan){let st=stateOf(d);const out=[];for(const[ei,pi]of plan[0]){if(isUsed(ei))continue;const e=EV[ei];if(check(e,st))continue;st=apply(e,st,pi>=0?e[8][8][pi]:null);out.push([ei,pi])}return[out,plan[1]]}
-const akOk=d=>{if(!aff(d))return!d._ak;const uk=usedKey();return d._ak===uk||(OBJ===5&&d._ak===uk+"~")};
+function repairPlan(d,plan){let st=stateOf(d);const out=[];for(const[ei,pi]of plan[0]){if(usedFor(d,ei))continue;const e=EV[ei];if(check(e,st))continue;st=apply(e,st,pi>=0?e[8][8][pi]:null);out.push([ei,pi])}return[out,plan[1]]}
+const akOk=d=>{if(!aff(d))return!d._ak;const uk=usedKey(d);return d._ak===uk||(OBJ===5&&d._ak===uk+"~")};
 /* does one of the evos marked as used take part in a plan of the card? (the evos of the plans never change: found once) */
 const planEvs=d=>d._pe||(d._pe=new Set(d._orig.plans.flatMap(p=>p?p[0].map(x=>x[0]):[])));
-const aff=d=>{if(!USED.size)return false;for(const ei of planEvs(d))if(isUsed(ei))return true;return false};
+const aff=d=>{if(!USED.size)return false;for(const ei of planEvs(d))if(usedFor(d,ei))return true;return false};
 /* out of date: other used evos, another plan wanted (goal in the sort or the plan picked in the card), or another «Ligner på» */
 const needsWork=d=>!akOk(d)||d._obj!==want(d)||(d._tw||"")!==twinKey();
 let usedJob=0;
@@ -416,8 +421,8 @@ let usedJob=0;
    are all done. */
 const MONO=new Set(["rel","p50","gain","feel","run","stop","def"]);let running=false,pendingRe=false;
 function recompute(){const job=++usedJob;running=true;pendingRe=false;OBJ=objNow();const f=SORT[F.sort]||SORT.rel,q=$("q").value.trim().toLowerCase();
-const tk=twinKey(),ukey=usedKey();
-const dear=d=>(aff(d)&&!akOk(d)&&!(d._upc&&d._upc.has(ukey))&&OBJ!==5)||(!!tk&&(d._tw||"")!==tk&&d.c.g!=="GK"&&d.name!==TWIN[0]);
+const tk=twinKey();
+const dear=d=>(aff(d)&&!akOk(d)&&!(d._upc&&d._upc.has(usedKey(d)))&&OBJ!==5)||(!!tk&&(d._tw||"")!==tk&&d.c.g!=="GK"&&d.name!==TWIN[0]);
 let todo=D.filter(needsWork);
 /* stale cards back to their plans with all evos, so what the table shows for them is the ceiling */
 for(const d of todo)if(dear(d)&&(d._re||d._tw))restore(d);
@@ -563,6 +568,7 @@ if(d._re)h+=`<p class="muted">Regnet på nytt uten evoene du har brukt.</p>`;
 if(mi>0)h+=`<p class="muted">Best for ${esc(goalTxt(mi))}${mi===5?` (${Math.round(twinSim(d)??0)} % lik)`:""}. IGR kan bli litt lavere.</p>`;
 if(!plan[0].length&&!plan[1])h+=`<p>Ingen av evoene som er ute nå passer kortet.</p>`;
 else{const res=runPlan(d,plan);h+=`<ol class="steps">${res.steps.map(s=>stepHtml(d,s)).join("")}</ol>`}
+if(plan[0].length){const own=OWN[ck(d)];h+=own?`<p class="warn" style="margin:0 0 10px">Du har tatt denne planen. Evoene er tatt ut for de andre kortene. <button type="button" class="link" data-untake>Angre</button></p>`:`<p style="margin:0 0 10px"><button type="button" data-take>Jeg har tatt denne planen</button></p>`}
 if(plan[0].length>1)h+=`<p class="muted">Ta dem i denne rekkefølgen.</p>`;
 const ul=(title,items,cls)=>items.length?`<p class="${cls||""}" style="margin-bottom:0">${title}</p><ul class="plain ${cls||""}">${items.map(([a,b])=>`<li>${esc(S(a))}: ${esc(S(b).replace(/^blir stengt: /,"går ikke etter planen, "))}</li>`).join("")}</ul>`:"";
 const more=ul("Usikkert om kortet kan ta:",lm.chk)+ul("Nesten innenfor kravene:",lm.near,"muted")+(mi===0&&!d._re?ul("Ikke med i planen:",lm.skip.slice(0,6),"muted"):"");
@@ -646,7 +652,11 @@ ${stale?'<p class="warn">En av evoene i planen har stengt siden siden ble laget.
 <div class="cols"><section>${planHtml(d)}</section>
 <section>${isNow()?"":`<details class="why"><summary>Anslag resten av året</summary>${forecastHtml(d)}</details>`}</section></div>
 <div class="sbxwrap"></div></div>`}
-function wireDetail(dt,d){dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{const v=+sel.value;if(v===(OBJ&&d.plans[OBJ]?OBJ:0))delete PLANSEL[d.i];else PLANSEL[d.i]=v;refreshCard(d);render()});
+function wireDetail(dt,d){const tk=dt.querySelector("[data-take]"),ut=dt.querySelector("[data-untake]");
+if(tk)tk.onclick=ev=>{ev.stopPropagation();const plan=d.plans[want(d)]||d.plans[0],keys=plan[0].map(([ei])=>EV[ei][0]);
+OWN[ck(d)]=keys;for(const[ei]of plan[0])if((EV[ei][6]||1)<=1)USED.add(EV[ei][0]);saveOwn();saveUsed();renderEvos();render();applyUsed()};
+if(ut)ut.onclick=ev=>{ev.stopPropagation();for(const k of OWN[ck(d)]||[])USED.delete(k);delete OWN[ck(d)];saveOwn();saveUsed();renderEvos();render();applyUsed()};
+dt.querySelectorAll("[data-plan]").forEach(sel=>sel.onchange=()=>{const v=+sel.value;if(v===(OBJ&&d.plans[OBJ]?OBJ:0))delete PLANSEL[d.i];else PLANSEL[d.i]=v;refreshCard(d);render()});
 dt.querySelector("[data-act=cmp]").onclick=ev=>{ev.stopPropagation();const k=d.name+"|"+d.ver;PINS=PINS.includes(k)?PINS.filter(x=>x!==k):PINS.concat(k).slice(-3);save();render()};
 dt.querySelector("[data-act=sbx]").onclick=ev=>{ev.stopPropagation();if(SBX[d.i]&&SBX[d.i].open)SBX[d.i].open=false;else{if(!SBX[d.i])SBX[d.i]={items:activePlan(d)[0].map(([ei,pi])=>({ei,pi})),rpp:!!d.plans[0][1],open:true};SBX[d.i].open=true}render()};
 dt.onclick=ev=>ev.stopPropagation();
