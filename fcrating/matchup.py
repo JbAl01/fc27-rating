@@ -47,7 +47,9 @@ DEFAULTS = {
     "ps_def": {"Bruiser": ["kamp", 1.0, 2.0], "Jockey": ["1v1", 1.0, 2.0], "Anticipate": ["1v1", 1.0, 2.0],
                "Intercept": ["fri", 1.0, 2.0], "Aerial Fortress": ["luft", 1.5, 3.0], "Rapid": ["fart", 1.0, 2.0],
                "Quick Step": ["fart", 0.5, 1.0]},
-    "weights": {"fart": 0.3, "fri": 0.25, "1v1": 0.2, "kamp": 0.15, "luft": 0.1},
+    # 22.10, tested against the cards the pros and the FUT.GG teams use (both sides, the same duel): 1 v 1 and
+    # speed decide most, the physical duel and the air less (used defenders top 3.35 -> 2.63 %, attackers 3.24 -> 2.62 %)
+    "weights": {"fart": 0.3, "fri": 0.25, "1v1": 0.3, "kamp": 0.1, "luft": 0.05},
     "even": 1.5, "clear": 4.0,
     "cap": 8.0,   # in the total a duel counts at most this much: a clear win counts in full, one duel never decides alone
 }
@@ -120,8 +122,10 @@ def _row(p: Player, r: dict, side: str, s: dict, intern, evo: Optional[dict] = N
         return None
     g = r.get("position_group")
     e = r["by_group"].get(g) or {}
+    u = r.get("usage") or {}
+    used = 0 if evo else round(sum(v[0] or 0 for k, v in u.items() if k in ("pro", "com") and v), 1)
     return [intern(r["name"]), intern((r.get("rarity") or "").replace("FC 27 ", "")), r.get("ovr"), group_label(g),
-            e.get("igr"), intern(r.get("accelerate") or ""), prof, intern(p.uid), evo]
+            e.get("igr"), intern(r.get("accelerate") or ""), prof, intern(p.uid), evo, used]
 
 
 def build(players: List[Player], results: List[dict], cfg: dict, summary: Optional[Dict[str, dict]] = None,
