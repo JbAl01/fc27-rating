@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-23T17:25:00Z",
+  "_sjekket": "2026-10-23T17:50:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1310,6 +1310,11 @@
     {
       "navn": "Line of Sight [SP 7]",
       "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde.",
+      "dato": "2026-10-23"
+    },
+    {
+      "navn": "Wicked Winger",
+      "grunn": "Ny RM/RW-evo med valg av PlayStyle+ på nivå 5 (Ultimate Scream, trolig Token Store). Bare fcdata.io har tall, og listesiden og detaljsiden der er uenige om flere økninger (f.eks. Penalties +12/+15, Acceleration +15/+12). Valgene for PlayStyle+ er ikke navngitt (lekkasjer sier Finesse Shot+, Quick Step+, Technical+). Kostnaden er uklar: fcdata sier gratis, futfc.gg sier 400 Scream Tokens for butikk-evoene. FUT.GG, futnext og FUTBIN viser den ikke ennå. Venter på andre kilde.",
       "dato": "2026-10-23"
     }
   ]
