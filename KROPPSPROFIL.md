@@ -167,6 +167,11 @@ FK Accuracy          0.0   0.0   0.0   0.0   0.0   0.0   0.0
 
 - **Rykte 22.10:** Álvaro Carreras +1,5 (eier: mye bedre i spillet enn tallene, proffene bruker ham mot ikoner). Gir +1,05 som back og +0,45 som midtstopper i IGR (kroppen teller mindre der), og +1,5 i forsvarerens 1 mot 1 i Matchup.
 
+## Endret 23.10 (følelse med ball, eier: Tsitaishvili mot Antony)
+- Følelse: Dribbling 0,18 (var 0,06), Reactions 0,08 (0,18), Ball Control 0,10 (0,15), Composure 0,03 (0,06). Treffet mot proffenes kort endres knapt (snitt topp 1,57 -> 1,55 %).
+- «Følelse med ball» (visning, eiertester, Matchup) = følelse + kropp + Rapid/Technical/Press Proven + svakfot (weights.json `feel_ball`). IGR har PlayStyles og svakfot i egne ledd, så ingenting telles to ganger.
+- Eiertestene: begge enige på følelse med ball (Tsitaishvili 88,2 mot Antony 88,0; Little 95,6 mot Kanu 82,9).
+
 ## Neste steg
 1. Etter 1–2 kjøringer: sjekk i loggen at «Kroppstype kjent for X av Y kort» stiger, og at `hent-kropp` i dypsøket ikke feiler (`kropp.log`).
 2. Sjekk kjente kort på siden: Mbappé og Messi (unik), Yamal (Lean Medium), Ekitiké og Barcola (Lean Tall), Haaland (unik og tung), en Stocky Tall-kant og et par bronse- eller sølv-evokort med Lean-kropp.
