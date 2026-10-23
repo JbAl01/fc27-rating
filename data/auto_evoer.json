@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-23T18:10:00Z",
+  "_sjekket": "2026-10-23T19:00:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1414,6 +1414,141 @@
       "sources": [
         "https://fcdata.io/fc27/evolutions/2808-wicked-winger/",
         "https://futfc.gg/fc-27-ultimate-scream-token-store-every-reward-and-what-to-pick/"
+      ]
+    },
+    {
+      "key": "center_spectre",
+      "name": "Center Spectre",
+      "cost": "gratis",
+      "until": "2026-11-02T18:00Z",
+      "repeat": 2,
+      "note": "Krav og tall er like hos fcdata, FUT.GG og futnext. Fristen 2.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november); FUT.GG har ingen dato. Repeterbar 2 står hos futnext. PlayStyle-navnene (Block / Pinged Pass) står bare hos futnext; taket 3 står hos alle tre. Krav som Evo Lab ikke kan sjekke: Long Shots maks 81 og Standing Tackle maks 78. Svakfot, skill moves og roller er ikke oppgitt.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 83,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CM",
+          "CDM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          5,
+          81
+        ],
+        "stats": {
+          "agility": [
+            5,
+            80
+          ],
+          "reactions": [
+            7,
+            80
+          ],
+          "dribbling": [
+            5,
+            80
+          ],
+          "heading_accuracy": [
+            3,
+            77
+          ],
+          "stamina": [
+            7,
+            81
+          ],
+          "short_passing": [
+            7,
+            82
+          ],
+          "balance": [
+            5,
+            80
+          ],
+          "ball_control": [
+            7,
+            80
+          ],
+          "composure": [
+            7,
+            78
+          ],
+          "jumping": [
+            3,
+            79
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Block, forsvar",
+            "stats": {
+              "interceptions": [
+                6,
+                78
+              ],
+              "def_awareness": [
+                8,
+                77
+              ],
+              "standing_tackle": [
+                6,
+                80
+              ],
+              "strength": [
+                6,
+                78
+              ],
+              "aggression": [
+                6,
+                80
+              ]
+            },
+            "ps": [
+              [
+                "Block",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: Pinged Pass, pasning og fart",
+            "stats": {
+              "acceleration": [
+                5,
+                78
+              ],
+              "sprint_speed": [
+                5,
+                78
+              ],
+              "long_shots": [
+                5,
+                78
+              ],
+              "vision": [
+                5,
+                80
+              ],
+              "long_passing": [
+                9,
+                82
+              ]
+            },
+            "ps": [
+              [
+                "Pinged Pass",
+                3
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2815-center-spectre/",
+        "https://www.fut.gg/evolutions/2631-center-spectre/",
+        "https://www.futnext.com/evolutions/center-spectre/2815"
       ]
     }
   ],
