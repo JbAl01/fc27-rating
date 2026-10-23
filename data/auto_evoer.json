@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-22T17:15:00Z",
+  "_sjekket": "2026-10-23T17:15:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1170,6 +1170,11 @@
       "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
       "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
       "dato": "2026-10-18"
+    },
+    {
+      "navn": "Corridor Control [SP+ 5]",
+      "grunn": "Ny (låses opp på nivå 5 i Premium Season Pass, LB/RB maks 80 OVR, maks 85 Pace). Bare FUT.GG kunne leses; futnext-, FUTBIN- og Destructoid-sidene for evoen kunne ikke hentes. FUT.GG viser også et umerket «3» på nivå 2 uten PlayStyle-navn. Venter på andre kilde.",
+      "dato": "2026-10-23"
     }
   ]
 }
