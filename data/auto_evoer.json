@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-23T17:15:00Z",
+  "_sjekket": "2026-10-23T17:25:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1143,6 +1143,142 @@
         "https://www.fut.gg/evolutions/2606-composed-stopper/",
         "https://www.futevolution.com/news/fc-27-composed-stopper-evolution-guide"
       ]
+    },
+    {
+      "key": "corridor_control",
+      "name": "Corridor Control",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Belønning i Premium Season Pass (FUT.GG: nivå 5; Destructoid: første evo i Season 2 Premium Pass). Fristen er ukjent: FUT.GG og Destructoid oppgir ingen dato, futnext viser bare nedtelling (48 dager). Krav og tall er like hos FUT.GG og Destructoid. Navnet Jockey står bare hos Destructoid; taket 3 står hos begge. Skill moves, roller og repeterbar er ikke oppgitt. Tallene er summen etter alle fem nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CB",
+          "CDM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          83
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "Jockey",
+            3
+          ]
+        ],
+        "stats": {
+          "shot_power": [
+            10,
+            78
+          ],
+          "curve": [
+            10,
+            81
+          ],
+          "dribbling": [
+            15,
+            80
+          ],
+          "sliding_tackle": [
+            10,
+            79
+          ],
+          "vision": [
+            10,
+            79
+          ],
+          "agility": [
+            10,
+            79
+          ],
+          "composure": [
+            10,
+            80
+          ],
+          "jumping": [
+            20,
+            82
+          ],
+          "acceleration": [
+            20,
+            84
+          ],
+          "crossing": [
+            10,
+            81
+          ],
+          "balance": [
+            10,
+            80
+          ],
+          "interceptions": [
+            15,
+            83
+          ],
+          "stamina": [
+            20,
+            85
+          ],
+          "sprint_speed": [
+            20,
+            84
+          ],
+          "short_passing": [
+            15,
+            80
+          ],
+          "reactions": [
+            10,
+            81
+          ],
+          "def_awareness": [
+            15,
+            82
+          ],
+          "strength": [
+            20,
+            80
+          ],
+          "positioning": [
+            10,
+            78
+          ],
+          "long_passing": [
+            10,
+            79
+          ],
+          "ball_control": [
+            15,
+            80
+          ],
+          "standing_tackle": [
+            10,
+            79
+          ],
+          "aggression": [
+            20,
+            81
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2615-corridor-control-sp-5/",
+        "https://destructoid.com/best-players-for-fc-27-corridor-control-evolution",
+        "https://www.futnext.com/evolutions/corridor-control/2810"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -1172,8 +1308,8 @@
       "dato": "2026-10-18"
     },
     {
-      "navn": "Corridor Control [SP+ 5]",
-      "grunn": "Ny (låses opp på nivå 5 i Premium Season Pass, LB/RB maks 80 OVR, maks 85 Pace). Bare FUT.GG kunne leses; futnext-, FUTBIN- og Destructoid-sidene for evoen kunne ikke hentes. FUT.GG viser også et umerket «3» på nivå 2 uten PlayStyle-navn. Venter på andre kilde.",
+      "navn": "Line of Sight [SP 7]",
+      "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde.",
       "dato": "2026-10-23"
     }
   ]
