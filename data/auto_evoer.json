@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-23T19:00:00Z",
+  "_sjekket": "2026-10-23T19:10:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1147,7 +1147,7 @@
     {
       "key": "corridor_control",
       "name": "Corridor Control",
-      "cost": "gratis",
+      "cost": "sesongpass, premium (nivå 5)",
       "until_ukjent": true,
       "note": "Belønning i Premium Season Pass (FUT.GG: nivå 5; Destructoid: første evo i Season 2 Premium Pass). Fristen er ukjent: FUT.GG og Destructoid oppgir ingen dato, futnext viser bare nedtelling (48 dager). Krav og tall er like hos FUT.GG og Destructoid. Navnet Jockey står bare hos Destructoid; taket 3 står hos begge. Skill moves, roller og repeterbar er ikke oppgitt. Tallene er summen etter alle fem nivåer.",
       "req": {
@@ -1278,7 +1278,8 @@
         "https://www.fut.gg/evolutions/2615-corridor-control-sp-5/",
         "https://destructoid.com/best-players-for-fc-27-corridor-control-evolution",
         "https://www.futnext.com/evolutions/corridor-control/2810"
-      ]
+      ],
+      "premium": true
     },
     {
       "key": "wicked_winger",
@@ -1549,6 +1550,204 @@
         "https://fcdata.io/fc27/evolutions/2815-center-spectre/",
         "https://www.fut.gg/evolutions/2631-center-spectre/",
         "https://www.futnext.com/evolutions/center-spectre/2815"
+      ]
+    },
+    {
+      "key": "midfield_roundabout",
+      "name": "Midfield Roundabout",
+      "cost": "sesongpass, premium (nivå 26)",
+      "premium": true,
+      "until_ukjent": true,
+      "note": "Bare én kilde (FUT.GG sin evoside, alle nivåer med tall); FUTBIN-siden kunne ikke hentes. Lagt inn etter eierens regel om én kilde (23.10). Fristen er ukjent: FUT.GG oppgir ingen dato. Nivå 2 viser en PlayStyle med tak 3 uten navn, så den er utelatt. På nivå 5 viser hvert valg et umerket «3» som ikke er tatt med. Repeterbar er ikke oppgitt. Sjekk mot en andre kilde.",
+      "req": {
+        "max_ovr": 82,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          14,
+          85
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "sm": [
+          1,
+          3
+        ],
+        "stats": {
+          "shot_power": [
+            15,
+            85
+          ],
+          "short_passing": [
+            20,
+            88
+          ],
+          "reactions": [
+            20,
+            86
+          ],
+          "interceptions": [
+            12,
+            80
+          ],
+          "strength": [
+            15,
+            79
+          ],
+          "vision": [
+            15,
+            81
+          ],
+          "long_passing": [
+            18,
+            84
+          ],
+          "ball_control": [
+            20,
+            88
+          ],
+          "heading_accuracy": [
+            10,
+            78
+          ],
+          "acceleration": [
+            15,
+            82
+          ],
+          "crossing": [
+            15,
+            81
+          ],
+          "agility": [
+            18,
+            85
+          ],
+          "dribbling": [
+            18,
+            85
+          ],
+          "jumping": [
+            12,
+            82
+          ],
+          "sprint_speed": [
+            15,
+            82
+          ],
+          "fk_accuracy": [
+            15,
+            78
+          ],
+          "balance": [
+            18,
+            85
+          ],
+          "composure": [
+            20,
+            86
+          ],
+          "stamina": [
+            18,
+            86
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Box to Box++",
+            "stats": {
+              "positioning": [
+                12,
+                83
+              ],
+              "long_shots": [
+                12,
+                83
+              ],
+              "standing_tackle": [
+                10,
+                82
+              ],
+              "aggression": [
+                10,
+                84
+              ]
+            },
+            "roles": [
+              [
+                "CM",
+                "Box-to-Box",
+                2
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: Playmaker++",
+            "stats": {
+              "positioning": [
+                12,
+                81
+              ],
+              "long_shots": [
+                10,
+                82
+              ],
+              "curve": [
+                12,
+                84
+              ],
+              "standing_tackle": [
+                10,
+                80
+              ]
+            },
+            "roles": [
+              [
+                "CM",
+                "Playmaker",
+                2
+              ]
+            ]
+          },
+          {
+            "label": "Valg C: Holding++",
+            "stats": {
+              "def_awareness": [
+                15,
+                80
+              ],
+              "standing_tackle": [
+                15,
+                82
+              ],
+              "sliding_tackle": [
+                10,
+                80
+              ],
+              "aggression": [
+                10,
+                82
+              ]
+            },
+            "roles": [
+              [
+                "CM",
+                "Holding",
+                2
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2605-midfield-roundabout-sp-26/",
+        "https://www.fut.gg/evolutions/best/"
       ]
     }
   ],
