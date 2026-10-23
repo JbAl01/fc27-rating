@@ -103,7 +103,7 @@ groups[g]={igr:a[0],tier:a[1],rank:a[2],of:a[3],top_pct:a[4],pace:a[5],skill:a[6
 run:ru?{rank:ru[0],of:ru[1],top:ru[2],otop:ru[3],gem:ru[4],up:tri(ru[5]),down:tri(ru[6]),res:ru[7],rtop:ru[8]}:null,obb:a[17]||0,stb:a[18]||0,rs:a[19]??null,ss:a[20]??null,meta:a[21]??null,bd:a[22]||null,bdp:a[22]?a[22][0]:0,cal:a[23]||0,gm:a[24]?{res:a[24][0],top:a[24][1],on:a[24][2],why:a[24][3].map(i=>STR[i])}:null}}
 const q=r[23],ra=q?{score:q[0],vs:q[1],body:STR[q[2]],wr:STR[q[3]],dec:q[4],exe:q[5]}:null;
 const v=r[21],evo=v==null?null:(typeof v==="number"?{x:STR[v]}:{a:v[0],n:v[1],g:v[2],b:v[3],o:v[4],rn:v[5],r:v[6],of:v[7],grp:v[8],acc:v[9]});
-return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||"",use:r[42]||null,bf:r[43]||0,wkg:r[44]||null,cp:r[45]||null}});
+return {uid:i,name:r[0],version:r[1],status:r[2],estimated:r[3],ovr:r[4],positions:r[5],position_group:r[6],feel:r[7],accelerate:r[8],obd:r[9],price:r[10],chem:r[11],warn:STR[r[12]],src:STR[r[13]],url:r[14],h:r[15],fph:r[16],fpa:r[17],wf:r[18],sm:r[19],at:r[20],evo,evo_after:evo&&evo.a!==undefined?evo.a:null,evo_gain:evo&&evo.g!==undefined?evo.g:null,groups,ra,gender:r[24]||"M",ps:(r[25]||[]).map(i=>STR[i]),prof:r[26]||[],style:STR[r[27]]||"",likes:(r[28]||[]).map(i=>STR[i]),hs:r[29]?{score:r[29][0],ball:r[29][1],run:r[29][2]}:null,lg:STR[r[30]]||"",na:STR[r[31]]||"",fg:r[32]||"",club:STR[r[33]]||"",img:r[34]||"",bg:r[35]||"",cl:r[36]||"",ni:r[37]||"",li:r[38]||"",fo:r[39]||"",cc:r[40]||"",bt:STR[r[41]]||"",use:r[42]||null,bf:r[43]||0,wkg:r[44]||null,cp:r[45]||null,fx:r[46]||0}});
 const ALTIMG={};DATA.forEach(d=>{const k=d.name+"|"+(d.club||"");if(d.img&&d.img.startsWith("https://game-assets.fut.gg/")&&!ALTIMG[k])ALTIMG[k]=d.img});
 const LGI={};DATA.forEach(d=>{if(d.li&&d.lg)LGI[d.lg]=d.li});DATA.forEach(d=>{if(!d.li&&d.lg)d.li=LGI[d.lg]||""});
 
@@ -213,7 +213,7 @@ const extra=[];if(e.role>0)extra.push(e.role_name?`rollen ${esc(e.role_name)}`:"
 if(e.obb>0)extra.push("off-balance");if(e.stb>0)extra.push("Standing Tackle");if(e.gkh>0)extra.push("høyde");
 const psn=d.ps||[];
 h+=`<div class="cols"><section><table class="kv"><tbody>
-${!gk?(()=>{const v=feelBall(d,e),S=sortedFor(g);return kvd("Følelse med ball",e.bd?`hvor kvikk og lett han er å styre: følelse ${fmt(d.feel)} ${sg(e.bdp)} for kroppen`:"hvor kvikk og lett han er å styre",fmt(v),pct(e.of>=META.x.min?topPct(S.fb,v):null))})():""}
+${!gk?(()=>{const v=feelBall(d,e),S=sortedFor(g);return kvd("Følelse med ball",`hvor kvikk og lett han er å styre: følelse ${fmt(d.feel)}${e.bd?` ${sg(e.bdp)} for kroppen`:""}${d.fx?` ${sg(d.fx)} for PlayStyles og svakfot`:""}`,fmt(v),pct(e.of>=META.x.min?topPct(S.fb,v):null))})():""}
 ${kvd("Fart","Acceleration og Sprint Speed",fmt(e.pace),pct(w.pp))}
 ${kvd("Ferdigheter",`det som betyr mest for en ${gl}: ${esc(list(skillTop(g)))}`,fmt(e.skill),pct(w.sp))}
 ${!gk?kvd("Kroppstype",bodyTxt(e),d.bt?esc(d.bt):"ikke hentet ennå",e.bd?sg(e.bdp):""):""}
@@ -297,7 +297,7 @@ if(F.gem&&!(g?isGem(d.groups[g]):anyGem(d)))return false;if(F.meta&&!d.use)retur
 function view(d,g){const pg=g||d.position_group,e=d.groups[pg]||{};const ru=e.run||null,rok=!(META.norun||[META.gk]).includes(pg);
 return {...d,combo:comboScore(d,pg),group:pg,alt:!!g&&g!==d.position_group,pse:e.pse,run:ru,gem:isGem(e),run_ai:rok&&d.ra?d.ra.score:null,dec:rok&&d.ra?d.ra.dec??null:null,exe:rok&&d.ra?d.ra.exe??null:null,run_vs:ru?ru.res:null,stop:d.hs&&pg!==META.gk?d.hs.score:null,igr:e.igr,meta:e.meta??null,mdrift:mdrift(pg),tier:e.tier,rank:e.rank,of:e.of,top_pct:e.top_pct,pace:e.pace,skill:e.skill,body:e.bd?e.bdp:null,feel:feelBall(d,e),playstyles:e.playstyles,role:e.role}}
 /* «Følelse» in the table, filter and sort is følelse med ball: the feel score plus the body points in the position */
-function feelBall(d,e){return d.feel==null?null:d.feel+(e&&e.bd?e.bdp:0)}
+function feelBall(d,e){return d.feel==null?null:d.feel+(e&&e.bd?e.bdp:0)+(d.fx||0)}
 function rowsNow(){const q=$("q").value.trim().toLowerCase(),g=gs.value;
 let rows=DATA.filter(d=>(d.name+" "+d.version).toLowerCase().includes(q)&&(!g||g in d.groups)).map(d=>view(d,g)).filter(v=>pass(v,v,g));
 const tie=(a,b)=>(b.igr??-1e9)-(a.igr??-1e9);rows.sort((a,b)=>{const x=a[key],y=b[key];if(x===y)return tie(a,b);if(x===null||x===undefined)return 1;if(y===null||y===undefined)return -1;return (x>y?1:-1)*dir});return rows}

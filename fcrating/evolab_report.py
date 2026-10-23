@@ -340,6 +340,8 @@ def render(summary: Dict[str, dict], results: List[dict], lab_run: dict, cfg: di
         "total": len(summary), "expired": lab_run.get("expired", []), "usedfile": lab_run.get("used", []),
         "top": lab.get("op", {}).get("top_pct", 5), "favs": favs if any(x[17] for x in rows) else [],
         "research": lab.get("_research", ""), "checked": lab.get("_checked", ""),
+        "fx": {"ps": {k: v for k, v in (cfg["weights"].get("feel_ball") or {}).get("ps", {}).items() if not k.startswith("_")},
+               "wf": {k: v for k, v in (cfg["weights"].get("feel_ball") or {}).get("weak_foot", {}).items() if not k.startswith("_")}},
         "stamp": datetime.now().strftime("%d.%m.%Y kl. %H:%M"), "rate": rate_meta(cfg), "rules": rules_meta(lab), "evos": evos,
         "toplg": TOP_LEAGUES, "pools": pools, "rpool": rpool, "fpool": fpool, "spool": spool, "targets": tg, "sim": sim, "catq": catq,
         "cats": [{"k": k, "l": prof["categories"][k]["label"], "panel": k in style_keys(cfg),

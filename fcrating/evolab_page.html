@@ -240,7 +240,11 @@ const psAt=d=>isNow()?liveRun(d).st:d.med;
 const bodyAt=d=>d.c.bd?((isNow()?d.lv.body:d.med.body)??null):null;
 /* «Følelse» on the page is følelse med ball: the feel score plus what the body gives (IGR has them as two parts) */
 const fb=(f,b)=>f==null?null:f+(b||0);
-const feelBallAt=d=>fb(feelAt(d),bodyAt(d)),feelBallNow=d=>fb(d.nowx.feel,d.c.bd?d.nowx.body:0);
+/* plus PlayStyles that change how the ball is carried and the weak foot (weights.json feel_ball), after the evos */
+const fxOf=(ps,psp,wf)=>{const X=META.fx||{ps:{},wf:{}};let t=0;for(const n in X.ps){if(psp.includes(n))t+=X.ps[n][1];else if(ps.includes(n))t+=X.ps[n][0]}return t+(wf!=null?(X.wf[String(wf)]||0):0)};
+const fxAt=d=>{if(isNow()){const st=liveRun(d).st;return fxOf(st.ps,st.psp,st.wf)}const m=d.med||{};return fxOf(d.ps.concat(m.ps||[]),d.psp.concat(m.psp||[]),m.wf?m.wf[1]:d.wf)};
+const fbx=(v,x)=>v==null?null:v+x;
+const feelBallAt=d=>fbx(fb(feelAt(d),bodyAt(d)),fxAt(d)),feelBallNow=d=>fbx(fb(d.nowx.feel,d.c.bd?d.nowx.body:0),fxOf(d.ps,d.psp,d.wf));
 function pctOf(g,ci,v){const q=(META.catq[g]||[])[ci];if(!q||v==null)return null;if(v>=q[0])return 0.5;for(let p=1;p<=100;p++){if(q[p]<=v)return p}return 100}
 function soonest(d){let m=null;for(const[ei]of activePlan(d)[0]){const t=untilMs(EV[ei][3]);if(t!=null&&(m==null||t<m))m=t}return m}
 const hasLive=d=>activePlan(d)[0].length>0;
@@ -582,7 +586,7 @@ const A=[d.base,buildLive(d)].concat(isNow()?[]:[buildEnd(d)]);
 const pick=(now,live,end)=>[now,live].concat(isNow()?[]:[end]);
 let t=`<table class="kv">${isNow()?"":"<thead><tr><th></th><th></th><th></th><th>Anslag</th></tr></thead>"}<tbody>`;
 const hd=t;
-t+=kvRow("Følelse med ball",pick(feelBallNow(d),fb(d.lv.feel,d.c.bd?d.lv.body:0),fb(d.med.feel,d.c.bd?d.med.body:0)));
+{const ls=liveRun(d).st,m=d.med||{};t+=kvRow("Følelse med ball",pick(feelBallNow(d),fbx(fb(d.lv.feel,d.c.bd?d.lv.body:0),fxOf(ls.ps,ls.psp,ls.wf)),fbx(fb(m.feel,d.c.bd?m.body:0),fxOf(d.ps.concat(m.ps||[]),d.psp.concat(m.psp||[]),m.wf?m.wf[1]:d.wf))))}
 t+=kvRow("Fart",pick(d.nowx.pace,d.lv.pace,d.med.pace));
 if(d.c.bd){/* body points now, after the live plan and in the forecast (the agility part moves with the evos) */
 const b0=d.nowx.body,b1=d.lv.body,b2=isNow()?null:d.med.body;

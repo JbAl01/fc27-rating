@@ -233,6 +233,7 @@ def html_row(r: dict, evo: Optional[dict], intern: _Interner) -> list:
         r.get("frame") or 0,
         r.get("weight_kg"),
         r.get("chem_pace") or 0,
+        r.get("feel_extra") or 0,
     ]
 
 

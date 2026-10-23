@@ -64,7 +64,7 @@ def common_group(a: dict, b: dict, wanted: Optional[str] = None) -> Optional[str
 def component(r: dict, g: str, key: str) -> Optional[float]:
     if key == "feel_ball":   # feel score + body points, the card in its own position when the test has none
         own = r["by_group"].get(g or r.get("position_group") or "", {})
-        return None if r.get("feel") is None else r["feel"] + (own.get("body") or 0.0)
+        return None if r.get("feel") is None else r["feel"] + (own.get("body") or 0.0) + (r.get("feel_extra") or 0.0)
     gr = r["by_group"].get(g, {})
     if key == "igr":
         return gr.get("igr")

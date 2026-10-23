@@ -421,6 +421,21 @@ def _frame_code(player: Player, wcfg: dict):
     return frame_code(frame_of(player, bcfg)) if bcfg else 0
 
 
+def feel_extra(ps, psp, weak_foot, wcfg: dict) -> float:
+    """What «Følelse med ball» adds to feel + body: PlayStyles that change how the ball is carried and the weak foot
+    (weights.json feel_ball). Shown on the pages and used in the owner's tests; IGR has these in its own parts."""
+    fc = wcfg.get("feel_ball") or {}
+    t = 0.0
+    for name, (base, plus) in _clean(fc.get("ps") or {}).items():
+        if name in (psp or []):
+            t += plus
+        elif name in (ps or []):
+            t += base
+    if weak_foot is not None:
+        t += float(_clean(fc.get("weak_foot") or {}).get(str(int(weak_foot)), 0.0))
+    return round(t, 2)
+
+
 def _chem_pace(player: Player, attrs: Dict[str, float], cfg: dict):
     from .chem import pace_choices
     from .schema import position_group
@@ -521,6 +536,7 @@ def rate(player: Player, cfg: dict, chem: Optional[str] = None, chem_level: int 
         "hard_to_stop": {"score": stop_sc, "ball": stop_ball, "run": stop_run} if stop_sc is not None else None,
         "feel": round(feel, 1) if feel is not None else None,
         "feel_parts": feel_parts,
+        "feel_extra": feel_extra(player.playstyles, player.playstyles_plus, player.weak_foot, wcfg),
         "chem_pace": _chem_pace(player, attrs, cfg) if not chem else None,
         "attributes": {k: v for k, v in attrs.items() if v},
         "height_cm": player.height_cm,

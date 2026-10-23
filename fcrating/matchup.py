@@ -41,8 +41,7 @@ DEFAULTS = {
     "1v1_def": {"standing_tackle": 0.4, "def_awareness": 0.2, "agility": 0.2, "acceleration": 0.1, "reactions": 0.1},
     "luft": {"heading_accuracy": 0.4, "jumping": 0.35, "strength": 0.25},
     "height": {"ref_cm": 182, "per_cm": 0.6, "max": 8},
-    "ps_att": {"Rapid": ["fart", 1.0, 2.0], "Quick Step": ["fart", 0.5, 1.0], "Enforcer": ["kamp", 1.5, 3.0],
-               "Bruiser": ["kamp", 1.0, 2.0], "Technical": ["1v1", 1.0, 2.0], "Press Proven": ["1v1", 0.5, 1.0],
+    "ps_att": {"Quick Step": ["fart", 0.5, 1.0], "Enforcer": ["kamp", 1.5, 3.0], "Bruiser": ["kamp", 1.0, 2.0],
                "Precision Header": ["luft", 1.0, 2.0], "Aerial Fortress": ["luft", 1.5, 3.0]},
     "ps_def": {"Bruiser": ["kamp", 1.0, 2.0], "Jockey": ["1v1", 1.0, 2.0], "Anticipate": ["1v1", 1.0, 2.0],
                "Intercept": ["fri", 1.0, 2.0], "Aerial Fortress": ["luft", 1.5, 3.0], "Rapid": ["fart", 1.0, 2.0],
@@ -97,7 +96,9 @@ def profile(p: Player, r: dict, side: str, s: dict) -> Optional[List[float]]:
         vals["fri"] = _w(a, s["fri_att"])
         vals["kamp"] = _w(a, s["kamp_att"])
         feel = r.get("feel")
-        vals["1v1"] = None if feel is None else feel + (e.get("body") or 0.0)
+        # følelse med ball, as on the pages: feel, body and what changes how the ball is carried (Rapid, Technical,
+        # Press Proven, weak foot), so those PlayStyles are not in ps_att as well
+        vals["1v1"] = None if feel is None else feel + (e.get("body") or 0.0) + (r.get("feel_extra") or 0.0)
         bonus = _ps(p.playstyles, p.playstyles_plus, s["ps_att"])
     else:
         vals["fri"] = _w(a, s["fri_def"])
