@@ -6,6 +6,32 @@ Dette er instruksen til den planlagte jobben som holder Evo Lab oppdatert. Eiere
 
 Mangler **alle** kilder fristen for å starte en evo, men to kilder er enige om krav og oppgraderinger: **legg evoen inn likevel**. Sett `"until_ukjent": true` (i stedet for `until`) og skriv i `note` at fristen er ukjent og hva kildene faktisk sier. Finn aldri på en dato. Evoer med `until_ukjent` fjernes ikke av opprydding på dato; fjern dem når ingen av listene (FUT.GG, futnext, FUTBIN) viser dem som åpne lenger, og sett inn `until` så snart en kilde oppgir fristen. Denne regelen går foran punkt 5 under når det bare gjelder fristen.
 
+## Kilder som faktisk virker (lærdom 23.10.2026, les dette først)
+
+Jobben har oftere feilet enn funnet noe fordi de vanlige sidene blokkerer eller henger etter. Dette er testet 23.10.2026:
+
+| Kilde | Status | Bruk |
+|---|---|---|
+| **fcdata.io** | Virker best. Listen har de nyeste evoene først, og detaljsidene har eksakt frist («Submit by 27 Nov 2026, 18:00») og alle nivåer med tall. | Første kilde. WebSearch `FC27 evolutions requirements upgrades` med `allowed_domains: ["fcdata.io"]` gir https://fcdata.io/evolutions/. Detaljsidene (https://fcdata.io/fc27/evolutions/<id>-<navn>/) lenkes fra listen. |
+| **futevolution.com** | Virker. Detaljsidene har «Submit by»-dato og krav. Listen viser bare 30 om gangen. | WebSearch `FC 27 evolutions active updated daily` med `allowed_domains: ["futevolution.com"]`. Detaljsider: https://www.futevolution.com/evolutions/template/<id>-<navn>. |
+| **FUT.GG** | Listen henger timer etter og har ingen datoer, men detaljsidene (https://www.fut.gg/evolutions/<id>-<navn>/) har alle nivåer med tall. | God andre kilde. Finn detaljsiden med WebSearch `"<evonavn>" FC 27 evo` (mode extended). https://www.fut.gg/evolutions/best/ lenker også til detaljsider. |
+| **futnext.com** | Listen virker (men kan være flere dager gammel i bufferen), detaljsidene feiler nesten alltid (client_error). | Bare til å se navn og at evoen er åpen. |
+| **Destructoid** | Virker **uten www**: https://destructoid.com/best-players-for-fc-27-<evo>-evolution. Med www feiler den ofte. | God andre kilde for tall. Oppgir sjelden frist. |
+| **FUTBIN** | Feiler nesten alltid (client_error) både på liste og detaljsider. | Ikke vent på den. |
+| Sportskeeda, 108game, moyens | Blokkert (robots). | Ikke prøv. |
+
+- Evo-ID-ene er de samme hos fcdata, futnext og futmind (f.eks. Wicked Winger = 2808 hos fcdata og futnext). FUT.GG og FUTBIN har egne ID-er.
+- **Søk bredt etter nye evoer.** Kjør i tillegg WebSearch (mode extended) `new FC 27 evolution` og `FC 27 evolution <promo-navn>` (aktiv promo, f.eks. Ultimate Scream). Nye evoer fra Season Pass (`[SP x]`, `[SP+ x]`) og Token Store er ekte evoer med tall og skal med.
+- Tidsrom: nytt innhold kommer kl. 18:00 britisk tid. Sidene trenger gjerne en time eller mer før detaljene er ute.
+
+## Når bare én kilde har evoen (regel fra eieren, 23.10.2026)
+
+Eieren vil heller ha evoen med enn ute. Har bare **én** kilde evoen, men den har en **detaljside med tall for alle nivåer** (fcdata, FUT.GG, futevolution eller Destructoid), og siden ikke motsier seg selv på krav: **legg den inn**. Skriv i `note` at bare én kilde hadde den, hvilken, og alt som er usikkert. Legg evoens side som første lenke i `sources` og en andre lenke som nevner evoen (liste- eller artikkelside) som nummer to, så evo-sjekk godtar filen. Neste kjøring skal sjekke evoen mot en andre kilde og rette tallene om de er feil. Navn på PlayStyles som kilden ikke viser, kan tas fra en annen kilde (også lekkasjer) hvis det står i `note`.
+
+Hopp fortsatt over evoen når kildene motsier hverandre om **krav**, eller når ingen kilde har tall for alle nivåer.
+
+Krav som Evo Lab ikke kan sjekke (f.eks. maks Strength eller maks Defending), skrives i `note`. Evoen legges likevel inn.
+
 ## Mål
 
 Finn nye evoer i FC 27 Ultimate Team og legg dem inn i `data/auto_evoer.json`, riktig og kontrollert, slik at Evo Lab planlegger med dem. Eieren vil ha **riktige data eller ingenting**. En evo som mangler, er bedre enn en evo med feil tall.
@@ -49,7 +75,7 @@ Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PRO
    - hvert nivå: hvilke attributter som økes, hvor mye og til hvilket tak («+X (maks Y)» blir `[X, Y]`), ny OVR, PlayStyles (med tallet EA viser som tak, f.eks. «Tiki Taka 3» blir `["Tiki Taka", 3]`), PlayStyle+ (`psp`), roller, svakfot og skill moves
    - ved valg (pathway): hvert valg som egen oppføring under `paths`, med en `label`
 
-5. **To kilder må være enige** om kravene, tallene og fristen. Gjør de ikke det, eller finnes bare én kilde, så **ikke legg inn evoen**. Skriv den i `_hoppet_over` (se under) med en kort grunn. Enkeltdetaljer som bare én kilde har (f.eks. hvilken PlayStyle et valg gir), kan legges inn hvis resten er sikkert, men da må du forklare det i `note`, og bare det du faktisk så i kilden.
+5. **To kilder bør være enige** om kravene, tallene og fristen. Finnes bare én kilde, følg regelen «Når bare én kilde har evoen» over. Er kildene uenige om kravene, så **ikke legg inn evoen**. Skriv den i `_hoppet_over` (se under) med en kort grunn. Enkeltdetaljer som bare én kilde har (f.eks. hvilken PlayStyle et valg gir), kan legges inn hvis resten er sikkert, men da må du forklare det i `note`, og bare det du faktisk så i kilden.
 
 6. **Finn aldri på tall.** Står det ikke i kildene, så utelat feltet, eller hopp over evoen.
 
