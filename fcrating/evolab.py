@@ -44,12 +44,15 @@ from .model import ALL_GROUPS, CONFIG_DIR, _clean, rate
 from .schema import ATTRIBUTE_LABELS, Player, parse_birthdate, position_group
 
 ROOT = Path(__file__).resolve().parent.parent
-CACHE_VERSION = 18
+CACHE_VERSION = 19
 SEARCH_MAX_NODES = 2000   # per card; when reached, the best plan found so far is used (never worse than the quick search)
 QUICK_NODES = 1500        # the fast search's budget when a run is short of time (the full search is done next run)
 REASON_WORDS = {"ovr": "blir OVR-en for høy", "pace": "blir farten for høy", "ps": "får kortet for mange PlayStyles",
-                "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene"}
-BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+"}
+                "psp": "får kortet for mange PlayStyle+", "pos": "stenger posisjonene", "stat": "blir en stat for høy"}
+BLOCK_WORDS = {"pace": "farten", "ps": "antall PlayStyles", "pos": "posisjonene", "psp": "antall PlayStyle+",
+               "stat": "taket på en stat"}
+LIMIT_CATS = ("ovr", "pace", "ps", "psp", "stat")   # requirements an earlier evo can push the card past
+FACE_LABELS = {"pace": "PAC", "shooting": "SHO", "passing": "PAS", "dribbling": "DRI", "defending": "DEF", "physical": "PHY"}
 
 
 # ---------------------------------------------------------------- config
@@ -127,6 +130,8 @@ def parse_evo(d: dict) -> dict:
             "positions": [str(x).upper() for x in req.get("positions") or []],
             "not_positions": [str(x).upper() for x in req.get("not_positions") or []],
             "requires_evo": req.get("requires_evo"),
+            "max_stats": {str(k): int(v) for k, v in (req.get("max_stats") or {}).items()},
+            "max_face": {str(k): int(v) for k, v in (req.get("max_face") or {}).items()},
             "born_from": parse_birthdate(req.get("born_from")), "born_to": parse_birthdate(req.get("born_to")),
         },
         "up": dict(_upgrade(up), paths=paths, rarity_after=up.get("rarity_after")),
@@ -218,6 +223,16 @@ def check_evo(d: dict, min_sources: int = 0, playstyles: Optional[set] = None) -
         v = req.get(k)
         if v is not None and (not isinstance(v, int) or isinstance(v, bool) or not 0 <= v <= 99):
             out.append(f"req.{k} må være et helt tall 0-99, er {v!r}")
+    for k, v in (req.get("max_stats") or {}).items():
+        if k not in ATTRIBUTE_LABELS:
+            out.append(f"req.max_stats: ukjent attributt {k!r}")
+        if not isinstance(v, int) or isinstance(v, bool) or not 0 <= v <= 99:
+            out.append(f"req.max_stats.{k} må være et helt tall 0-99, er {v!r}")
+    for k, v in (req.get("max_face") or {}).items():
+        if k not in FACE_LABELS:
+            out.append(f"req.max_face: ukjent hovedtall {k!r}")
+        if not isinstance(v, int) or isinstance(v, bool) or not 0 <= v <= 99:
+            out.append(f"req.max_face.{k} må være et helt tall 0-99, er {v!r}")
     for k in ("positions", "not_positions"):
         for p in req.get(k) or []:
             if str(p).upper() not in POSITIONS:
@@ -395,6 +410,19 @@ def birth_block(r: dict, born: Optional[str]) -> Optional[Tuple[str, str]]:
     return None
 
 
+def stat_block(r: dict, st: State, rules: dict) -> Optional[Tuple[str, int]]:
+    """A main stat (max_face) or single attribute (max_stats) above the evo's limit: (reason, how far above)."""
+    for which, cap in (r.get("max_face") or {}).items():
+        v = face_value(st.attrs, which, rules)
+        if v is not None and v > cap:
+            return f"{FACE_LABELS.get(which, which)} {v} (maks {cap})", int(v - cap)
+    for k, cap in (r.get("max_stats") or {}).items():
+        v = st.attrs.get(k)
+        if v is not None and v > cap:
+            return f"{ATTRIBUTE_LABELS.get(k, k)} {round(v)} (maks {cap})", int(math.ceil(v - cap))
+    return None
+
+
 def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
     """None if the card can enter the evo now, else (category, Norwegian reason)."""
     r = evo["req"]
@@ -424,6 +452,9 @@ def check(evo: dict, st: State, rules: dict) -> Optional[Tuple[str, str]]:
         pac = face_value(st.attrs, "pace", rules)
         if pac is not None and pac > r["max_pace"]:
             return "pace", f"PAC {pac} (maks {r['max_pace']})"
+    sb = stat_block(r, st, rules)
+    if sb:
+        return "stat", sb[0]
     if r["max_ps"] is not None:
         n = ps_count(st, rules)
         if n > r["max_ps"]:
@@ -849,7 +880,7 @@ def _changes(a: State, b: State) -> dict:
             "sm": [a.sm, b.sm] if a.sm != b.sm else None}
 
 
-NEAR = {"ovr": 2, "pace": 5, "ps": 2, "psp": 1}
+NEAR = {"ovr": 2, "pace": 5, "ps": 2, "psp": 1, "stat": 3}
 
 
 def _first_block(e: dict, st: State, rules: dict) -> Optional[str]:
@@ -876,6 +907,9 @@ def _close(e: dict, st: State, cat: str, rules: dict) -> bool:
         return ps_count(st, rules) - r["max_ps"] <= NEAR["ps"]
     if cat == "psp" and r["max_psp"] is not None:
         return len(st.psp) - r["max_psp"] <= NEAR["psp"]
+    if cat == "stat":
+        sb = stat_block(r, st, rules)
+        return sb is not None and sb[1] <= NEAR["stat"]
     return False
 
 
@@ -1017,9 +1051,16 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
                 out.add("ps")
             if u.get("psp"):
                 out.update(("ps", "psp"))
+            if u.get("stats") or u.get("face"):
+                out.add("stat")
         return out
 
     limit_of = {"ovr": "max_ovr", "pace": "max_pace", "ps": "max_ps", "psp": "max_psp"}
+
+    def limited(req: dict, x: str) -> bool:
+        if x == "stat":
+            return bool(req.get("max_stats") or req.get("max_face"))
+        return req[limit_of[x]] is not None
     # two passes: first a quick one that only skips an evo when it would shut the card out of a later evo
     # right away, then a wide one that may skip any evo that can lift OVR, pace or PlayStyles (with a node budget)
     for strict, order in [(True, o) for o in _plan_orders(cands)] + [(False, o) for o in _plan_orders(cands)]:
@@ -1029,7 +1070,7 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
         may_skip = []
         for i, e in enumerate(order):
             eff = effects(e)
-            may_skip.append(any(order[j]["req"][limit_of[x]] is not None for j in range(i + 1, n) for x in eff
+            may_skip.append(any(limited(order[j]["req"], x) for j in range(i + 1, n) for x in eff
                                 if order[j]["key"] != e["key"]))
 
         def blocks_later(i: int, st: State, nexts: List[State]) -> bool:
@@ -1044,7 +1085,7 @@ def search_ends(st0: State, cands: List[dict], rules: dict, max_nodes: int = 200
                     continue
                 for nxt in nexts:
                     why = check(ej, nxt, rules)
-                    if why is not None and why[0] in ("ovr", "pace", "ps", "psp"):
+                    if why is not None and why[0] in LIMIT_CATS:
                         return True
             return False
 
@@ -1256,6 +1297,9 @@ def search_best(st0: State, cands: List[dict], rules: dict, score, bound, key, p
             lim |= pace_attrs
         if q["max_ps"] is not None or q["max_psp"] is not None:
             lim.add("ps")
+        lim |= set(q.get("max_stats") or {})
+        for which in q.get("max_face") or {}:
+            lim |= set(_clean(rules["face"][which]))
         limits[e["key"]] = lim
 
     def free(e: dict, rest: List[dict]) -> bool:
@@ -1376,7 +1420,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
             continue
         if why is None or why[0] in ("pre",) or (why[0] == "ovr" and r["min_ovr"] is not None and st0.ovr < r["min_ovr"]):
             cands.append(e)
-        elif why[0] in ("ovr", "pace", "ps", "psp") and _close(e, st0, why[0], rules):
+        elif why[0] in LIMIT_CATS and _close(e, st0, why[0], rules):
             near.append([e["name"], why[1]])
     names = {e["key"]: e["name"] for e in evos}
     changed = True
@@ -1550,7 +1594,7 @@ def plan_live(p: Player, st0: State, evos: List[dict], ev: Evaluator, rules: dic
             if check(ej, before, rules) is not None:
                 continue
             why = check(ei, apply(ej, before, rules, chain[j][1]), rules)
-            if why and why[0] in ("ovr", "pace", "ps", "psp"):
+            if why and why[0] in LIMIT_CATS:
                 blocks.setdefault(i, []).append((ej["name"], why[0]))
     tips = []
     for i, lst in blocks.items():
@@ -1703,6 +1747,8 @@ def _check_dyn(e: dict, st: State, rules: dict) -> Optional[str]:
         pac = face_value(st.attrs, "pace", rules)
         if pac is not None and pac > r["max_pace"]:
             return "pace"
+    if (r.get("max_stats") or r.get("max_face")) and stat_block(r, st, rules):
+        return "stat"
     if r["max_ps"] is not None and ps_count(st, rules) > r["max_ps"]:
         return "ps"
     if r["max_psp"] is not None and len(st.psp) > r["max_psp"]:

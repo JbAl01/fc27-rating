@@ -1286,7 +1286,7 @@
       "name": "Wicked Winger",
       "cost": "gratis",
       "until": "2026-11-27T18:00Z",
-      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå; fcdatas listeside viser noen andre økninger (f.eks. Penalties +15, Acceleration +12), så sjekk mot FUT.GG/futnext når de har den. Fristen 27.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november). Krav som Evo Lab ikke kan sjekke: Strength maks 80 og Defending (hovedtall) maks 70. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, navnene Finesse Shot+, Quick Step+ og Technical+ er fra lekkasjer (futfc.gg). Kostnaden er oppgitt som gratis hos fcdata, men den kan ligge i Token Store (futfc.gg: 400 Scream Tokens per evo der).",
+      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå; fcdatas listeside viser noen andre økninger (f.eks. Penalties +15, Acceleration +12), så sjekk mot FUT.GG/futnext når de har den. Fristen 27.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november). Kravene Strength maks 80 og Defending (hovedtall) maks 70 er fra fcdata. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, navnene Finesse Shot+, Quick Step+ og Technical+ er fra lekkasjer (futfc.gg). Kostnaden er oppgitt som gratis hos fcdata, men den kan ligge i Token Store (futfc.gg: 400 Scream Tokens per evo der).",
       "req": {
         "max_ovr": 82,
         "max_pace": 90,
@@ -1294,7 +1294,13 @@
         "positions": [
           "RM",
           "RW"
-        ]
+        ],
+        "max_stats": {
+          "strength": 80
+        },
+        "max_face": {
+          "defending": 70
+        }
       },
       "up": {
         "ovr": [
@@ -1423,7 +1429,7 @@
       "cost": "gratis",
       "until": "2026-11-02T18:00Z",
       "repeat": 2,
-      "note": "Krav og tall er like hos fcdata, FUT.GG og futnext. Fristen 2.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november); FUT.GG har ingen dato. Repeterbar 2 står hos futnext. PlayStyle-navnene (Block / Pinged Pass) står bare hos futnext; taket 3 står hos alle tre. Krav som Evo Lab ikke kan sjekke: Long Shots maks 81 og Standing Tackle maks 78. Svakfot, skill moves og roller er ikke oppgitt.",
+      "note": "Krav og tall er like hos fcdata, FUT.GG og futnext. Fristen 2.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november); FUT.GG har ingen dato. Repeterbar 2 står hos futnext. PlayStyle-navnene (Block / Pinged Pass) står bare hos futnext; taket 3 står hos alle tre. Kravene Long Shots maks 81 og Standing Tackle maks 78 står hos fcdata og FUT.GG. Svakfot, skill moves og roller er ikke oppgitt.",
       "req": {
         "max_ovr": 80,
         "max_pace": 83,
@@ -1432,7 +1438,11 @@
         "positions": [
           "CM",
           "CDM"
-        ]
+        ],
+        "max_stats": {
+          "long_shots": 81,
+          "standing_tackle": 78
+        }
       },
       "up": {
         "ovr": [

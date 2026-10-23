@@ -148,7 +148,9 @@ def evos_meta(live: List[dict]):
             e["key"], e["name"], e.get("cost") or "", e.get("until") or "", 1 if e.get("premium") else 0, e.get("unchecked") or "",
             e.get("repeat", 1),
             [r["min_ovr"], r["max_ovr"], r["max_pace"], r["max_ps"], r["max_psp"], r["max_positions"], r["positions"],
-             r["not_positions"], r["requires_evo"] or "", r.get("born_from") or "", r.get("born_to") or ""],
+             r["not_positions"], r["requires_evo"] or "", r.get("born_from") or "", r.get("born_to") or "",
+             [[ATTR_INDEX[k], v] for k, v in (r.get("max_stats") or {}).items() if k in ATTR_INDEX],
+             [[k, v] for k, v in (r.get("max_face") or {}).items()]],
             upg(u) + [[[pa["label"]] + upg(pa) for pa in u["paths"]]],
             "", e.get("sources") or [], e.get("per_card", 1),   # the source notes stay in auto_evoer.json, not on the page
         ])

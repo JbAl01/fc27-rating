@@ -104,6 +104,14 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(evolab.check(evo("x", {"max_ps": 0}), st, RULES)[0], "ps")
         self.assertIsNone(evolab.check(evo("x", {"max_ovr": 80, "max_pace": 86}), st, RULES))
         self.assertEqual(evolab.check(evo("x", {"requires_evo": "y"}), st, RULES)[0], "pre")
+        # single attributes (max_stats) and main stats other than pace (max_face)
+        ls = st.attrs["long_shots"]
+        self.assertEqual(evolab.check(evo("x", {"max_stats": {"long_shots": int(ls) - 1}}), st, RULES)[0], "stat")
+        self.assertIsNone(evolab.check(evo("x", {"max_stats": {"long_shots": int(ls) + 1}}), st, RULES))
+        de = evolab.face_value(st.attrs, "defending", RULES)
+        why = evolab.check(evo("x", {"max_face": {"defending": de - 1}}), st, RULES)
+        self.assertEqual(why, ("stat", f"DEF {de} (maks {de - 1})"))
+        self.assertIsNone(evolab.check(evo("x", {"max_face": {"defending": de}}), st, RULES))
 
     def test_main_stats_as_ea_counts_them(self):
         # FC 27: DRI has Reactions and Composure, and .5 is rounded up (checked on every outfield card on EA's page)
@@ -269,6 +277,16 @@ class PlanTests(unittest.TestCase):
         plan = self.plan(p, [b, a])
         self.assertEqual([s["key"] for s in plan["steps"]], ["A", "B"])
         self.assertIn("farten", plan["tips"][0])
+
+    def test_stat_limit_trap(self):
+        # B raises Long Shots above A's attribute limit (max_stats), so A must come first
+        p = low_striker(ovr=74)
+        p.attributes["long_shots"] = 70
+        a = evo("A", {"max_ovr": 79, "max_stats": {"long_shots": 72}, "positions": ["ST"]}, {"ovr": [3, 79], "stats": {"finishing": [8, 85]}})
+        b = evo("B", {"max_ovr": 79, "positions": ["ST"]}, {"stats": {"long_shots": [8, 90]}})
+        plan = self.plan(p, [b, a])
+        self.assertEqual([s["key"] for s in plan["steps"]], ["A", "B"])
+        self.assertIn("stat", plan["tips"][0])
 
     def test_near_misses_and_unchecked(self):
         p = low_striker(ovr=76)
@@ -618,6 +636,15 @@ class AutoEvoFileTests(unittest.TestCase):
              "sources": ["https://a.example/x", "https://b.example/x"]}
         d.update(kw)
         return d
+
+    def test_stat_limits_are_checked(self):
+        ok = self.evo(req={"max_ovr": 80, "max_stats": {"long_shots": 81}, "max_face": {"defending": 70}})
+        self.assertEqual(evolab.check_evo(ok, min_sources=2), [])
+        bad = self.evo(req={"max_stats": {"langskudd": 81}, "max_face": {"forsvar": 70, "pace": "70"}})
+        probs = " ".join(evolab.check_evo(bad, min_sources=2))
+        self.assertIn("langskudd", probs)
+        self.assertIn("forsvar", probs)
+        self.assertIn("max_face.pace", probs)
 
     def test_valid_evo_has_no_problems(self):
         self.assertEqual(evolab.check_evo(self.evo(), min_sources=2), [])

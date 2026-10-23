@@ -159,12 +159,17 @@ const MND=["januar","februar","mars","april","mai","juni","juli","august","septe
 const dateNo=s=>{const[y,m,d]=s.split("-");return`${+d}. ${MND[+m-1]} ${y}`};
 function bornText(r){const a=r[9],b=r[10];return a&&b?`født mellom ${dateNo(a)} og ${dateNo(b)}`:a?`født ${dateNo(a)} eller senere`:b?`født ${dateNo(b)} eller tidligere`:""}
 function bornBlock(r,born){if(!(r[9]||r[10])||!born)return null;if((r[9]&&born<r[9])||(r[10]&&born>r[10]))return["age",`født ${dateNo(born)}, evoen krever ${bornText(r)}`];return null}
+/* attribute and main-stat limits (evolab.stat_block): r[11] [[attr index, max]], r[12] [[face, max]] */
+const FACEL={pace:"PAC",shooting:"SHO",passing:"PAS",dribbling:"DRI",defending:"DEF",physical:"PHY"};
+function statBlock(r,st){for(const[w,c]of r[12]||[]){const v=faceVal(st.a,w);if(v!=null&&v>c)return`${FACEL[w]||w} ${v} (maks ${c})`}
+for(const[i,c]of r[11]||[]){const v=st.a[i];if(v!=null&&v>c)return`${META.attrs[i]} ${Math.round(v)} (maks ${c})`}return null}
 function check(e,st){const r=e[7],pos=r[6],np=r[7];
 if(pos.length&&!st.pos.some(p=>pos.includes(p)))return["pos","feil posisjon"];const bad=st.pos.filter(p=>np.includes(p));if(bad.length)return["pos","har posisjonen "+bad[0]];
 if(r[5]!=null&&st.pos.length>r[5])return["pos",`${st.pos.length} posisjoner (maks ${r[5]})`];{const ab=bornBlock(r,st.born);if(ab)return ab}if(r[8]&&!st.done.includes(r[8]))return["pre","krever forrige evo i kjeden"];
 {const per=e[11]||1;if(st.done.includes(e[0])&&st.done.filter(k=>k===e[0]).length>=per)return["done",per===1?"allerede tatt":`allerede tatt ${per} ganger`]}
 if(r[0]!=null&&st.ovr<r[0])return["ovr",`OVR ${st.ovr} (minst ${r[0]})`];if(r[1]!=null&&st.ovr>r[1])return["ovr",`OVR ${st.ovr} (maks ${r[1]})`];
 if(r[2]!=null){const pac=faceVal(st.a,"pace");if(pac!=null&&pac>r[2])return["pace",`PAC ${pac} (maks ${r[2]})`]}
+{const sb=statBlock(r,st);if(sb)return["stat",sb]}
 if(r[3]!=null){const n=psCount(st);if(n>r[3])return["ps",`${n} PlayStyles (maks ${r[3]})`]}if(r[4]!=null&&st.psp.length>r[4])return["psp",`${st.psp.length} PlayStyle+ (maks ${r[4]})`];return null}
 const raise=(cur,g,c)=>Math.max(cur,Math.min(cur+g,c));
 function apply(e,st,path){const u=e[8],s={...st,a:st.a.slice(),ps:st.ps.slice(),psp:st.psp.slice(),done:st.done.slice()};
@@ -221,6 +226,7 @@ const SRCNAME=u=>/fut\.gg/.test(u)?"FUT.GG":/futnext/.test(u)?"futnext":/futbin/
 function reqText(e){const r=e[7],out=[];
 if(r[6].length)out.push(r[6].join(", "));if(r[1]!=null)out.push(r[0]!=null&&r[0]===r[1]?`OVR ${r[1]}`:`maks ${r[1]} OVR`);else if(r[0]!=null)out.push(`minst ${r[0]} OVR`);
 if(r[2]!=null)out.push(`maks ${r[2]} PAC`);if(r[3]!=null)out.push(`maks ${r[3]} PlayStyles`);if(r[4]!=null)out.push(r[4]===0?"ingen PlayStyle+":`maks ${r[4]} PlayStyle+`);
+for(const[w,c]of r[12]||[])out.push(`maks ${c} ${FACEL[w]||w}`);for(const[i,c]of r[11]||[])out.push(`maks ${c} ${META.attrs[i]}`);
 if(r[5]!=null)out.push(`maks ${r[5]} posisjoner`);if(r[7].length)out.push("ikke "+r[7].join(", "));if(r[9]||r[10])out.push(bornText(r));
 if(r[8]){const pre=EV.find(x=>x[0]===r[8]);out.push("etter "+(pre?pre[1]:r[8]))}return out.join(", ")||"alle"}
 

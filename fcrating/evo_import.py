@@ -163,6 +163,10 @@ def describe(evo: dict) -> List[str]:
         krav.append(f"maks {r['max_psp']} PlayStyle+")
     if "max_positions" in r:
         krav.append(f"maks {r['max_positions']} posisjoner")
+    for k, v in (r.get("max_face") or {}).items():
+        krav.append(f"{k.upper()[:3]} maks {v}")
+    for k, v in (r.get("max_stats") or {}).items():
+        krav.append(f"{ATTRIBUTE_LABELS.get(k, k)} maks {v}")
     if r.get("positions"):
         krav.append("posisjon " + "/".join(r["positions"]))
     if r.get("not_positions"):
