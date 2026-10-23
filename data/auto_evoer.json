@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-23T17:50:00Z",
+  "_sjekket": "2026-10-23T18:10:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1279,6 +1279,142 @@
         "https://destructoid.com/best-players-for-fc-27-corridor-control-evolution",
         "https://www.futnext.com/evolutions/corridor-control/2810"
       ]
+    },
+    {
+      "key": "wicked_winger",
+      "name": "Wicked Winger",
+      "cost": "gratis",
+      "until": "2026-11-27T18:00Z",
+      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå; fcdatas listeside viser noen andre økninger (f.eks. Penalties +15, Acceleration +12), så sjekk mot FUT.GG/futnext når de har den. Fristen 27.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november). Krav som Evo Lab ikke kan sjekke: Strength maks 80 og Defending (hovedtall) maks 70. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, navnene Finesse Shot+, Quick Step+ og Technical+ er fra lekkasjer (futfc.gg). Kostnaden er oppgitt som gratis hos fcdata, men den kan ligge i Token Store (futfc.gg: 400 Scream Tokens per evo der).",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 90,
+        "max_psp": 1,
+        "positions": [
+          "RM",
+          "RW"
+        ]
+      },
+      "up": {
+        "ovr": [
+          15,
+          85
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "stats": {
+          "finishing": [
+            12,
+            82
+          ],
+          "penalties": [
+            12,
+            80
+          ],
+          "short_passing": [
+            15,
+            81
+          ],
+          "balance": [
+            10,
+            82
+          ],
+          "composure": [
+            10,
+            82
+          ],
+          "acceleration": [
+            15,
+            87
+          ],
+          "shot_power": [
+            12,
+            84
+          ],
+          "vision": [
+            10,
+            82
+          ],
+          "long_passing": [
+            10,
+            75
+          ],
+          "reactions": [
+            10,
+            82
+          ],
+          "stamina": [
+            15,
+            80
+          ],
+          "sprint_speed": [
+            15,
+            87
+          ],
+          "long_shots": [
+            12,
+            80
+          ],
+          "crossing": [
+            15,
+            82
+          ],
+          "curve": [
+            15,
+            84
+          ],
+          "ball_control": [
+            15,
+            84
+          ],
+          "positioning": [
+            15,
+            83
+          ],
+          "volleys": [
+            12,
+            82
+          ],
+          "fk_accuracy": [
+            10,
+            80
+          ],
+          "agility": [
+            15,
+            84
+          ],
+          "dribbling": [
+            15,
+            84
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Finesse Shot+",
+            "psp": [
+              "Finesse Shot"
+            ]
+          },
+          {
+            "label": "Valg B: Quick Step+",
+            "psp": [
+              "Quick Step"
+            ]
+          },
+          {
+            "label": "Valg C: Technical+",
+            "psp": [
+              "Technical"
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2808-wicked-winger/",
+        "https://futfc.gg/fc-27-ultimate-scream-token-store-every-reward-and-what-to-pick/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -1310,11 +1446,6 @@
     {
       "navn": "Line of Sight [SP 7]",
       "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde.",
-      "dato": "2026-10-23"
-    },
-    {
-      "navn": "Wicked Winger",
-      "grunn": "Ny RM/RW-evo med valg av PlayStyle+ på nivå 5 (Ultimate Scream, trolig Token Store). Bare fcdata.io har tall, og listesiden og detaljsiden der er uenige om flere økninger (f.eks. Penalties +12/+15, Acceleration +15/+12). Valgene for PlayStyle+ er ikke navngitt (lekkasjer sier Finesse Shot+, Quick Step+, Technical+). Kostnaden er uklar: fcdata sier gratis, futfc.gg sier 400 Scream Tokens for butikk-evoene. FUT.GG, futnext og FUTBIN viser den ikke ennå. Venter på andre kilde.",
       "dato": "2026-10-23"
     }
   ]
