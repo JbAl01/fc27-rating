@@ -1,0 +1,42 @@
+name: probe
+on:
+  push:
+    branches: [claude/probe-card]
+permissions:
+  contents: write
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      TZ: Europe/Oslo
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: actions/cache/restore@v6
+        with:
+          path: |
+            data/ea_players.json
+            data/ea_players.meta.json
+            data/spesialkort.json
+            data/cache
+            data/evolab_cache.pkl
+          key: fcdata-probe-${{ github.run_id }}
+          restore-keys: fcdata-
+      - run: PYTHONPATH=. python ekstra/probe_card.py > /tmp/an.txt 2>&1
+        continue-on-error: true
+      - if: always()
+        run: |
+          git config user.name probe
+          git config user.email probe@example.com
+          git checkout --orphan probe-out-tmp
+          git rm -rf . -q || true
+          cp /tmp/an.txt an.txt || echo none > an.txt
+          cp -r /tmp/img img || true
+          cp -r /tmp/pages pages || true
+          git add -A
+          git commit -q -m "probe rate"
+          git push -f origin HEAD:probe-out
