@@ -92,13 +92,13 @@
         "short_passing",
         "vision"
       ],
-      "relevance": {"ST": 0.521, "W": 0.604, "CAM": 1.125, "CM": 1.125, "CDM": 1.125, "FB": 0.708, "CB": 0.708, "GK": 0.0},
+      "relevance": {"ST": 0.521, "W": 0.896, "CAM": 0.958, "CM": 1.125, "CDM": 1.125, "FB": 0.708, "CB": 0.708, "GK": 0.0},
       "_info": "FC 27: effekten som ga mottakeren bedre førstetouch er fjernet. Fortsatt høyest verdi for sentrale midtbanespillere (raske bakkepasninger slår press), men mindre verdt for spiss og kant."
     },
     "Incisive Pass": {
       "plus": 1.7,
       "base": 0.85,
-      "relevance": {"ST": 0.559, "W": 0.676, "CAM": 1.412, "CM": 1.412, "CDM": 0.824, "FB": 0.824, "CB": 0.529, "GK": 0.0},
+      "relevance": {"ST": 0.559, "W": 0.676, "CAM": 1.647, "CM": 1.412, "CDM": 0.824, "FB": 0.824, "CB": 0.529, "GK": 0.0},
       "category": "passing",
       "synergy": [
         "vision",
@@ -118,7 +118,7 @@
     "Low Driven Shot": {
       "plus": 2.4,
       "base": 1.2,
-      "relevance": {"ST": 1.125, "W": 1.021, "CAM": 1.021, "CM": 0.5, "CDM": 0.417, "FB": 0.333, "CB": 0.333, "GK": 0.0},
+      "relevance": {"ST": 1.125, "W": 1.021, "CAM": 1.042, "CM": 0.5, "CDM": 0.417, "FB": 0.333, "CB": 0.333, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -128,7 +128,7 @@
     "Intercept": {
       "plus": 1.7,
       "base": 0.89,
-      "relevance": {"ST": 0.294, "W": 0.294, "CAM": 0.294, "CM": 1.118, "CDM": 1.412, "FB": 1.265, "CB": 1.412, "GK": 0.0},
+      "relevance": {"ST": 0.294, "W": 0.294, "CAM": 0.294, "CM": 1.118, "CDM": 1.412, "FB": 1.265, "CB": 1.353, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "interceptions"
@@ -144,7 +144,7 @@
     "Anticipate": {
       "plus": 1.6,
       "base": 0.85,
-      "relevance": {"ST": 0.312, "W": 0.312, "CAM": 0.312, "CM": 1.031, "CDM": 1.187, "FB": 1.187, "CB": 1.5, "GK": 0.0},
+      "relevance": {"ST": 0.312, "W": 0.312, "CAM": 0.312, "CM": 1.031, "CDM": 1.187, "FB": 1.187, "CB": 1.688, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "standing_tackle"
@@ -174,7 +174,7 @@
     "Jockey": {
       "plus": 1.2,
       "base": 0.6,
-      "relevance": {"ST": 0.417, "W": 0.417, "CAM": 0.417, "CM": 0.958, "CDM": 1.375, "FB": 1.583, "CB": 1.583, "GK": 0.0},
+      "relevance": {"ST": 0.417, "W": 0.417, "CAM": 0.417, "CM": 0.958, "CDM": 1.375, "FB": 1.583, "CB": 2.0, "GK": 0.0},
       "category": "defending",
       "synergy": [
         "def_awareness"
@@ -192,7 +192,7 @@
     "Tiki Taka": {
       "plus": 2.2,
       "base": 1.0,
-      "relevance": {"ST": 0.773, "W": 0.773, "CAM": 1.114, "CM": 1.114, "CDM": 1.0, "FB": 0.773, "CB": 0.545, "GK": 0.0},
+      "relevance": {"ST": 0.773, "W": 0.773, "CAM": 1.045, "CM": 1.114, "CDM": 1.0, "FB": 0.773, "CB": 0.545, "GK": 0.0},
       "category": "passing",
       "synergy": [
         "short_passing"
@@ -201,7 +201,7 @@
     "Technical": {
       "plus": 1.5,
       "base": 1.2,
-      "relevance": {"ST": 1.267, "W": 1.433, "CAM": 1.433, "CM": 1.267, "CDM": 0.6, "FB": 0.6, "CB": 0.467, "GK": 0.0},
+      "relevance": {"ST": 1.267, "W": 1.433, "CAM": 1.633, "CM": 1.267, "CDM": 0.6, "FB": 0.6, "CB": 0.467, "GK": 0.0},
       "category": "ball",
       "synergy": [
         "dribbling"
@@ -223,12 +223,12 @@
       "synergy": [
         "strength"
       ],
-      "relevance": {"ST": 0.357, "W": 0.357, "CAM": 0.357, "CM": 0.821, "CDM": 1.357, "FB": 1.536, "CB": 1.714, "GK": 0.0}
+      "relevance": {"ST": 0.357, "W": 0.357, "CAM": 0.357, "CM": 0.821, "CDM": 1.357, "FB": 1.929, "CB": 1.643, "GK": 0.0}
     },
     "Gamechanger": {
       "plus": 1.0,
       "base": 0.5,
-      "relevance": {"ST": 1.15, "W": 1.4, "CAM": 1.4, "CM": 0.5, "CDM": 0.5, "FB": 0.5, "CB": 0.5, "GK": 0.0},
+      "relevance": {"ST": 2.8, "W": 2.45, "CAM": 1.4, "CM": 0.5, "CDM": 0.5, "FB": 0.5, "CB": 0.5, "GK": 0.0},
       "category": "shooting",
       "synergy": [
         "finishing",
@@ -374,8 +374,8 @@
       ]
     },
     "Far Reach": {
-      "plus": 2.0,
-      "base": 1.0,
+      "plus": 1.9,
+      "base": 0.95,
       "category": "goalkeeper",
       "synergy": [
         "gk_diving"
@@ -392,16 +392,16 @@
       ]
     },
     "Rush Out": {
-      "plus": 1.8,
-      "base": 0.9,
+      "plus": 2.2,
+      "base": 1.1,
       "category": "goalkeeper",
       "synergy": [
         "gk_speed"
       ]
     },
     "Footwork": {
-      "plus": 1.8,
-      "base": 0.9,
+      "plus": 2.0,
+      "base": 1.0,
       "category": "goalkeeper",
       "synergy": [
         "gk_reflexes"
@@ -434,6 +434,7 @@
   },
   "_posisjoner": "Hver PlayStyle har egen relevans per posisjon (relevance), satt slik at PlayStyle+ er verdt det posisjonens tier sier: S+ 2,4, S 1,9, A 1,4, B 0,9, C 0,5, ellers høyst 0,6; S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) får +0,3 ekstra. Rekkefølgen per posisjon er laget 18.10.2026 som snittet av to uavhengige posisjonsvise tier-lister (Operation Sports/eierens og en ekstern AI-liste; PlayStyle utenfor listen = 0,5) ut fra posisjonsvise tier-lister (bl.a. Operation Sports) og eierens vurderinger: Low Driven Shot best av skyte-PlayStylene, Finesse Shot svakere enn før, Rapid foran Quick Step. Endre tallene i relevance for å endre rekkefølgen.",
   "_s_tier_bonus": "S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) har +0,4 ekstra i verdien sin over det den ville fått etter tier alene (eierens ønske 18.10.2026). Low Driven Shot er den beste skyte-PlayStylen. Bonusen ganges som alt annet med posisjonens relevans og spillerens attributter, og telles i den samme avtagende summen.",
+  "_proffene_24_10": "Fem proffer (RvPLegend10, Guibarros, K1john, Stingrayjnr, Coach Venny, pacefc.gg/meta) valgte den ene PS+ de vil ha i hver posisjon. Der de fleste er enige, er den nr. 1 hos oss: spiss Gamechanger+ (3 av 5, foran Low Driven Shot+ 2), kant Rapid+ (2; Gamechanger+, LDS+ og Pinged Pass+ 1 hver), CAM Incisive Pass+ (3; LDS+ og Technical+ 1), CM Pinged Pass+ (5), CDM Pinged Pass+ (4; Intercept+ 1), back Bruiser+ (4; Quick Step+ 1), midtstopper Anticipate+ (4; Jockey+ 1), keeper Rush Out+ (4; Footwork+ 1). Det som fikk stemmer ligger over det som ingen valgte (Pinged Pass+ og Tiki Taka+ på CAM, Intercept+ og Bruiser+ på midtstopper, Far Reach+ på keeper).",
   "_tier_liste": "Rekkefølgen følger tier-listen eieren bruker (18.10.2026): S Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot. A Incisive Pass, Intercept, Anticipate, Quick Step, First Touch, Technical, Bruiser. B Finesse Shot, Jockey, Gamechanger, Inventive, Chip Shot. C Relentless, Whipped Pass, Press Proven, Trickster. F Acrobatic, Precision Header, Long Throw. Vanlig PlayStyle er skalert med samme faktor som PlayStyle+, så forskjellen mellom dem fra FC 27 består. De andre PlayStylene er ikke endret.",
   "_fc27": "FC 27 (EA Gameplay Deep Dive 29.07.2026 og Closed Beta Feedback Update 03.09.2026): Quick Step, Rapid, Technical, Finesse Shot, Precision Header, Tiki Taka, Jockey, Low Driven Shot og Pinged Pass er svekket eller har mindre forskjell mellom PS og PS+. Bruiser+ er litt svekket. Verdiene er justert, men ikke kalibrert: EA oppgir ingen prosenter."
 }
