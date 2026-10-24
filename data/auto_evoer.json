@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-23T19:10:00Z",
+  "_sjekket": "2026-10-24T17:18:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -1759,6 +1759,409 @@
         "https://www.fut.gg/evolutions/2605-midfield-roundabout-sp-26/",
         "https://www.fut.gg/evolutions/best/"
       ]
+    },
+    {
+      "key": "the_haunted_wall",
+      "name": "The Haunted Wall",
+      "cost": "gratis",
+      "until": "2026-11-27T18:00Z",
+      "note": "Krav og tall på nivå 1-3 er like hos FUT.GG, FUTBIN og futevolution. Fristen 27.11 kl. 18:00 står hos futevolution («Submit by Nov 27, 06:00 PM» / «until Fri Nov 27 2026 18:00 GMT»); FUT.GG har ingen dato. FUTBIN legger til «ikke GK». Nivå 4 er et valg mellom tre PlayStyles: Bruiser, Intercept eller Anticipate (futevolution-guiden og Destructoid/Yahoo); FUTBIN viser bare «Bruiser 4». Taket 4 står bare ved Bruiser hos FUTBIN, og futevolution-guiden sier «maks 4 PlayStyles» generelt, så taket 4 er brukt for alle tre. Gir også Ultimate Scream-rarity. Ikke repeterbar (futevolution). Tallene er summen etter nivå 1-3.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 85,
+        "max_ps": 7,
+        "not_positions": [
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          84
+        ],
+        "wf": [
+          1,
+          3
+        ],
+        "stats": {
+          "interceptions": [
+            7,
+            82
+          ],
+          "standing_tackle": [
+            10,
+            85
+          ],
+          "stamina": [
+            10,
+            83
+          ],
+          "acceleration": [
+            10,
+            78
+          ],
+          "heading_accuracy": [
+            5,
+            81
+          ],
+          "sliding_tackle": [
+            10,
+            81
+          ],
+          "strength": [
+            10,
+            85
+          ],
+          "sprint_speed": [
+            10,
+            78
+          ],
+          "def_awareness": [
+            7,
+            82
+          ],
+          "jumping": [
+            5,
+            84
+          ],
+          "aggression": [
+            5,
+            80
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Bruiser",
+            "ps": [
+              [
+                "Bruiser",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: Intercept",
+            "ps": [
+              [
+                "Intercept",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Valg C: Anticipate",
+            "ps": [
+              [
+                "Anticipate",
+                4
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2622-the-haunted-wall/",
+        "https://www.futbin.com/27/evolutions/119/the-haunted-wall",
+        "https://www.futevolution.com/evolutions/template/2622-the-haunted-wall",
+        "https://www.futevolution.com/news/fc-27-the-haunted-wall-evolution-guide"
+      ]
+    },
+    {
+      "key": "dual_identity",
+      "name": "Dual Identity",
+      "cost": "sesongpass, premium (nivå 14)",
+      "premium": true,
+      "until": "2026-12-10T18:00Z",
+      "note": "Belønning i Premium Season Pass nivå 14. Krav og økninger per nivå er like hos FUTBIN og futevolution. Takene (maks-tallene) står bare hos FUTBIN. Fristen 10.12 kl. 18:00 står hos futevolution («Submit by Dec 10, 06:00 PM»); FUTBIN sier bare «1 month». Svakfot +1 (maks 4) og PlayStyle Intercept med tak 3 på nivå 4 står bare hos FUTBIN. FUTBIN-teksten nevner «to taktiske veier», men begge kildene viser bare én vei med fire nivåer. Ikke repeterbar (futevolution). Tallene er summen etter alle fire nivåer.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 84,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CAM",
+          "CM",
+          "CDM"
+        ],
+        "not_positions": [
+          "CB",
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          85
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "Intercept",
+            3
+          ]
+        ],
+        "stats": {
+          "agility": [
+            6,
+            82
+          ],
+          "ball_control": [
+            6,
+            82
+          ],
+          "short_passing": [
+            20,
+            85
+          ],
+          "vision": [
+            20,
+            85
+          ],
+          "acceleration": [
+            6,
+            80
+          ],
+          "balance": [
+            6,
+            82
+          ],
+          "crossing": [
+            20,
+            86
+          ],
+          "dribbling": [
+            6,
+            83
+          ],
+          "long_passing": [
+            20,
+            85
+          ],
+          "curve": [
+            20,
+            85
+          ],
+          "reactions": [
+            6,
+            81
+          ],
+          "fk_accuracy": [
+            20,
+            84
+          ],
+          "sprint_speed": [
+            6,
+            81
+          ],
+          "composure": [
+            6,
+            82
+          ],
+          "interceptions": [
+            10,
+            83
+          ],
+          "def_awareness": [
+            10,
+            82
+          ],
+          "sliding_tackle": [
+            10,
+            82
+          ],
+          "standing_tackle": [
+            10,
+            83
+          ]
+        }
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/113/dual-identity",
+        "https://www.futevolution.com/evolutions/template/2616-dual-identity-sp-14"
+      ]
+    },
+    {
+      "key": "glue_or_genius",
+      "name": "Glue or Genius",
+      "cost": "sesongpass, standard (nivå 28)",
+      "until": "2026-12-10T18:00Z",
+      "note": "Belønning i Standard Season Pass nivå 28. Kravene (maks 84 OVR, ingen PlayStyle+) er like hos FUT.GG, FUTBIN og futevolution. Valget er Press Proven+ eller Inventive+ (FUTBIN: «Apply Press Proven+ or Inventive+»); FUT.GG viser to valg uten navn. Fristen 10.12 kl. 18:00 står hos futevolution; FUTBIN sier «1 month».",
+      "req": {
+        "max_ovr": 84,
+        "max_psp": 0
+      },
+      "up": {
+        "paths": [
+          {
+            "label": "Valg A: Press Proven+",
+            "psp": [
+              "Press Proven"
+            ]
+          },
+          {
+            "label": "Valg B: Inventive+",
+            "psp": [
+              "Inventive"
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/108/glue-or-genius",
+        "https://www.fut.gg/evolutions/2611-glue-or-genius-sp-28/",
+        "https://www.futevolution.com/evolutions/template/2611-glue-or-genius-sp-28"
+      ]
+    },
+    {
+      "key": "pamplona_grit",
+      "name": "Pamplona Grit",
+      "cost": "sesongpass, standard (nivå 16)",
+      "until_ukjent": true,
+      "note": "Belønning i Standard Season Pass nivå 16. Bare én kilde med tall (FUT.GG sin evoside, alle nivåer); FUTBIN-siden kunne ikke hentes. Lagt inn etter eierens regel om én kilde (23.10). Fristen er ukjent: FUT.GG oppgir ingen dato (futevolution oppgir 10.12 for de andre Season 2-evoene, men ikke for denne). FUT.GG viser et umerket «3» etter hvert nivå som kan være en PlayStyle uten navn; den er ikke tatt med. Repeterbar er ikke oppgitt. Sjekk mot en andre kilde.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 83,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CB"
+        ],
+        "not_positions": [
+          "LB",
+          "RB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          84
+        ],
+        "stats": {
+          "short_passing": [
+            10,
+            81
+          ],
+          "interceptions": [
+            10,
+            84
+          ],
+          "def_awareness": [
+            10,
+            85
+          ],
+          "sliding_tackle": [
+            10,
+            85
+          ],
+          "vision": [
+            10,
+            79
+          ],
+          "long_passing": [
+            10,
+            78
+          ],
+          "heading_accuracy": [
+            10,
+            85
+          ],
+          "standing_tackle": [
+            10,
+            85
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A",
+            "stats": {
+              "acceleration": [
+                7,
+                78
+              ],
+              "sprint_speed": [
+                7,
+                78
+              ],
+              "jumping": [
+                10,
+                81
+              ],
+              "stamina": [
+                10,
+                81
+              ],
+              "strength": [
+                10,
+                82
+              ],
+              "aggression": [
+                10,
+                83
+              ]
+            }
+          },
+          {
+            "label": "Valg B",
+            "stats": {
+              "acceleration": [
+                7,
+                77
+              ],
+              "sprint_speed": [
+                7,
+                77
+              ],
+              "jumping": [
+                10,
+                82
+              ],
+              "stamina": [
+                10,
+                82
+              ],
+              "strength": [
+                10,
+                83
+              ],
+              "aggression": [
+                10,
+                84
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2608-pamplona-grit-sp-16/",
+        "https://www.futbin.com/27/evolutions/105/pamplona-grit"
+      ]
+    },
+    {
+      "key": "pinged_pass_obj",
+      "name": "Pinged Pass",
+      "cost": "gratis (oppdrag)",
+      "until": "2026-10-29T18:00Z",
+      "note": "Erstatter oppføringen i config (frist 22.10), fordi evoen fortsatt er åpen. Krav og PlayStyle er like hos FUTBIN, FUT.GG og futevolution (oppdraget Pep's Domination). Ny frist 29.10 kl. 18:00 står hos futevolution («Submit by Oct 29, 06:00 PM»); FUTBIN sier «1 week». Taket 3 står hos FUTBIN.",
+      "req": {
+        "max_ovr": 79,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Pinged Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futbin.com/27/evolutions/14/pinged-pass",
+        "https://www.futevolution.com/evolutions/template/2501-pinged-pass",
+        "https://www.fut.gg/evolutions/2501-pinged-pass/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -1791,6 +2194,31 @@
       "navn": "Line of Sight [SP 7]",
       "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde.",
       "dato": "2026-10-23"
+    },
+    {
+      "navn": "Clinical or Technical? [SP+ 28]",
+      "grunn": "Krav like hos FUT.GG og futevolution (maks 85 OVR, ingen PS+), men bare valg A (Finesse Shot+) er navngitt (futevolution). Valg B har ikke navn i noen kilde.",
+      "dato": "2026-10-24"
+    },
+    {
+      "navn": "Channel Surfer [SP 11] og Flank Masterclass [SP+ 22]",
+      "grunn": "Bare futevolution har tall, og der står bare økningene, ikke takene (maks). FUT.GG- og FUTBIN-sidene kunne ikke hentes.",
+      "dato": "2026-10-24"
+    },
+    {
+      "navn": "Anticipate og Pinged Pass (nye, gratis, frist ca. 30.9.2027)",
+      "grunn": "Krav (maks 83 OVR, maks 2 PlayStyles) står hos FUT.GG og futevolution, men ingen kilde viser taket på PlayStylen, og futevolution oppgir CAM for Pinged Pass. FUTBIN-siden kunne ikke hentes.",
+      "dato": "2026-10-24"
+    },
+    {
+      "navn": "Creep Inside",
+      "grunn": "Ny evo (LB/RB, maks 80 OVR), men bare futmind har den, og futmind har ingen dato. Venter på FUT.GG/fcdata/futevolution.",
+      "dato": "2026-10-24"
+    },
+    {
+      "navn": "Ultimate Scream (+ Retro 17/19/20)",
+      "grunn": "Bare rarity/kortdesign eller et bestemt ferdig kort, ingen tall (futevolution: «Stat boost +0»).",
+      "dato": "2026-10-24"
     }
   ]
 }
