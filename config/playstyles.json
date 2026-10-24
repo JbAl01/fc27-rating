@@ -86,7 +86,7 @@
   "playstyles": {
     "Pinged Pass": {
       "plus": 2.4,
-      "base": 1.1,
+      "base": 1.2,
       "category": "passing",
       "synergy": [
         "short_passing",
@@ -107,7 +107,7 @@
     },
     "Quick Step": {
       "plus": 1.5,
-      "base": 0.81,
+      "base": 0.75,
       "_fc27_nerf": "FC 27 Gameplay Deep Dive: fartsøkningen ved dribling og akselerasjon er redusert for både PlayStyle og PlayStyle+, særlig for å jevne ut nivåene, så Acceleration teller mer. Var 0.8 / 1.6.",
       "category": "physical",
       "synergy": [
@@ -127,7 +127,7 @@
     },
     "Intercept": {
       "plus": 1.7,
-      "base": 0.89,
+      "base": 0.85,
       "relevance": {"ST": 0.294, "W": 0.294, "CAM": 0.294, "CM": 1.118, "CDM": 1.412, "FB": 1.265, "CB": 1.353, "GK": 0.0},
       "category": "defending",
       "synergy": [
@@ -143,7 +143,7 @@
     },
     "Anticipate": {
       "plus": 1.6,
-      "base": 0.85,
+      "base": 0.8,
       "relevance": {"ST": 0.312, "W": 0.312, "CAM": 0.312, "CM": 1.031, "CDM": 1.187, "FB": 1.187, "CB": 1.688, "GK": 0.0},
       "category": "defending",
       "synergy": [
@@ -152,7 +152,7 @@
     },
     "Finesse Shot": {
       "plus": 1.2,
-      "base": 0.75,
+      "base": 0.6,
       "relevance": {"ST": 1.792, "W": 1.792, "CAM": 1.583, "CM": 1.167, "CDM": 0.417, "FB": 0.417, "CB": 0.417, "GK": 0.0},
       "category": "shooting",
       "synergy": [
@@ -162,7 +162,7 @@
     },
     "Rapid": {
       "plus": 2.3,
-      "base": 0.95,
+      "base": 1.15,
       "relevance": {"ST": 1.065, "W": 1.174, "CAM": 0.848, "CM": 0.652, "CDM": 0.435, "FB": 0.957, "CB": 0.435, "GK": 0.0},
       "_fc27_nerf": "FC 27 Gameplay Deep Dive: 'slightly reduced the speed boost to dribbling animations'. Var 0.7 / 1.4.",
       "category": "ball",
@@ -182,7 +182,7 @@
     },
     "First Touch": {
       "plus": 1.5,
-      "base": 0.81,
+      "base": 0.75,
       "relevance": {"ST": 1.1, "W": 1.267, "CAM": 1.1, "CM": 0.933, "CDM": 0.6, "FB": 0.6, "CB": 0.467, "GK": 0.0},
       "category": "ball",
       "synergy": [
@@ -191,7 +191,7 @@
     },
     "Tiki Taka": {
       "plus": 2.2,
-      "base": 1.0,
+      "base": 1.1,
       "relevance": {"ST": 0.773, "W": 0.773, "CAM": 1.045, "CM": 1.114, "CDM": 1.0, "FB": 0.773, "CB": 0.545, "GK": 0.0},
       "category": "passing",
       "synergy": [
@@ -200,7 +200,7 @@
     },
     "Technical": {
       "plus": 1.5,
-      "base": 1.2,
+      "base": 0.75,
       "relevance": {"ST": 1.267, "W": 1.433, "CAM": 1.633, "CM": 1.267, "CDM": 0.6, "FB": 0.6, "CB": 0.467, "GK": 0.0},
       "category": "ball",
       "synergy": [
@@ -209,7 +209,7 @@
     },
     "Relentless": {
       "plus": 0.7,
-      "base": 0.38,
+      "base": 0.35,
       "category": "physical",
       "synergy": [
         "stamina"
@@ -218,7 +218,7 @@
     },
     "Bruiser": {
       "plus": 1.4,
-      "base": 0.78,
+      "base": 0.7,
       "category": "physical",
       "synergy": [
         "strength"
@@ -237,14 +237,14 @@
     },
     "Press Proven": {
       "plus": 0.6, "_eier_20_10": "Eier: Press Proven+ gjør kortet mye smoothere med ball i beinet. EA: Keeps (exceptionally) close control of the ball while dribbling at jog speed. Hevet fra B/A til A/S per posisjon (pluss x relevans: ST/W 1,6, CAM 1,9, CM 2,2, CDM 2,0), og synergien er Ball Control, Dribbling og Agility, så gode driblere får mest. Ekstra kombinasjon med kroppen i body_profile.combos.",
-      "base": 0.33,
+      "base": 0.3,
       "relevance": {"ST": 2.667, "W": 2.667, "CAM": 3.167, "CM": 3.667, "CDM": 3.333, "FB": 1.667, "CB": 1.333, "GK": 0.0},
       "category": "ball",
       "synergy": ["ball_control", "dribbling", "agility"]
     },
     "Block": {
       "plus": 0.9,
-      "base": 0.5,
+      "base": 0.45,
       "relevance": {"ST": 0.556, "W": 0.556, "CAM": 0.556, "CM": 1.056, "CDM": 1.556, "FB": 1.556, "CB": 2.111, "GK": 0.0},
       "category": "defending",
       "synergy": [
@@ -253,7 +253,7 @@
     },
     "Power Shot": {
       "plus": 2.2,
-      "base": 0.9,
+      "base": 1.1,
       "relevance": {"ST": 0.886, "W": 0.773, "CAM": 0.886, "CM": 0.455, "CDM": 0.364, "FB": 0.364, "CB": 0.364, "GK": 0.0},
       "category": "shooting",
       "synergy": [
@@ -263,7 +263,7 @@
     },
     "Precision Header": {
       "plus": 0.2,
-      "base": 0.17,
+      "base": 0.1,
       "relevance": {"ST": 2.5, "W": 2.5, "CAM": 2.5, "CM": 2.5, "CDM": 2.5, "FB": 2.5, "CB": 2.5, "GK": 0.0},
       "category": "shooting",
       "synergy": [
@@ -282,7 +282,7 @@
     },
     "Enforcer": {
       "plus": 0.7,
-      "base": 0.4,
+      "base": 0.35,
       "category": "physical",
       "synergy": [
         "strength"
@@ -291,7 +291,7 @@
     },
     "Whipped Pass": {
       "plus": 0.6,
-      "base": 0.34,
+      "base": 0.3,
       "category": "passing",
       "synergy": [
         "crossing"
@@ -318,7 +318,7 @@
     },
     "Chip Shot": {
       "plus": 0.9,
-      "base": 0.54,
+      "base": 0.45,
       "relevance": {"ST": 1.0, "W": 0.778, "CAM": 1.0, "CM": 0.778, "CDM": 0.556, "FB": 0.556, "CB": 0.556, "GK": 0.0},
       "category": "shooting",
       "synergy": [
@@ -327,7 +327,7 @@
     },
     "Inventive": {
       "plus": 1.0,
-      "base": 0.6,
+      "base": 0.5,
       "relevance": {"ST": 1.15, "W": 0.9, "CAM": 0.9, "CM": 0.9, "CDM": 0.5, "FB": 0.5, "CB": 0.5, "GK": 0.0},
       "category": "passing",
       "synergy": [
@@ -356,7 +356,7 @@
     },
     "Dead Ball": {
       "plus": 0.3,
-      "base": 0.2,
+      "base": 0.15,
       "relevance": {"ST": 1.667, "W": 1.667, "CAM": 1.667, "CM": 1.667, "CDM": 1.667, "FB": 1.667, "CB": 1.667, "GK": 0.0},
       "category": "shooting",
       "synergy": [
@@ -417,7 +417,7 @@
     },
     "Cross Claimer": {
       "plus": 0.9,
-      "base": 0.5,
+      "base": 0.45,
       "category": "goalkeeper",
       "synergy": [
         "gk_positioning"
@@ -434,7 +434,7 @@
   },
   "_posisjoner": "Hver PlayStyle har egen relevans per posisjon (relevance), satt slik at PlayStyle+ er verdt det posisjonens tier sier: S+ 2,4, S 1,9, A 1,4, B 0,9, C 0,5, ellers høyst 0,6; S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) får +0,3 ekstra. Rekkefølgen per posisjon er laget 18.10.2026 som snittet av to uavhengige posisjonsvise tier-lister (Operation Sports/eierens og en ekstern AI-liste; PlayStyle utenfor listen = 0,5) ut fra posisjonsvise tier-lister (bl.a. Operation Sports) og eierens vurderinger: Low Driven Shot best av skyte-PlayStylene, Finesse Shot svakere enn før, Rapid foran Quick Step. Endre tallene i relevance for å endre rekkefølgen.",
   "_s_tier_bonus": "S-tier PlayStyle+ (Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot) har +0,4 ekstra i verdien sin over det den ville fått etter tier alene (eierens ønske 18.10.2026). Low Driven Shot er den beste skyte-PlayStylen. Bonusen ganges som alt annet med posisjonens relevans og spillerens attributter, og telles i den samme avtagende summen.",
-  "_proffene_24_10": "Fem proffer (RvPLegend10, Guibarros, K1john, Stingrayjnr, Coach Venny, pacefc.gg/meta) valgte den ene PS+ de vil ha i hver posisjon. Der de fleste er enige, er den nr. 1 hos oss: spiss Gamechanger+ (3 av 5, foran Low Driven Shot+ 2), kant Rapid+ (2; Gamechanger+, LDS+ og Pinged Pass+ 1 hver), CAM Incisive Pass+ (3; LDS+ og Technical+ 1), CM Pinged Pass+ (5), CDM Pinged Pass+ (4; Intercept+ 1), back Bruiser+ (4; Quick Step+ 1), midtstopper Anticipate+ (4; Jockey+ 1), keeper Rush Out+ (4; Footwork+ 1). Det som fikk stemmer ligger over det som ingen valgte (Pinged Pass+ og Tiki Taka+ på CAM, Intercept+ og Bruiser+ på midtstopper, Far Reach+ på keeper).",
+  "_proffene_24_10": "Fem proffer (RvPLegend10, Guibarros, K1john, Stingrayjnr, Coach Venny, pacefc.gg/meta) valgte den ene PS+ de vil ha i hver posisjon. Der de fleste er enige, er den nr. 1 hos oss: spiss Gamechanger+ (3 av 5, foran Low Driven Shot+ 2), kant Rapid+ (2; Gamechanger+, LDS+ og Pinged Pass+ 1 hver), CAM Incisive Pass+ (3; LDS+ og Technical+ 1), CM Pinged Pass+ (5), CDM Pinged Pass+ (4; Intercept+ 1), back Bruiser+ (4; Quick Step+ 1), midtstopper Anticipate+ (4; Jockey+ 1), keeper Rush Out+ (4; Footwork+ 1). Vanlig (hvit) PlayStyle er halvparten av PS+ for alle, så de hvite har samme rekkefølge i hver posisjon (eier 24.10). Det som fikk stemmer ligger over det som ingen valgte (Pinged Pass+ og Tiki Taka+ på CAM, Intercept+ og Bruiser+ på midtstopper, Far Reach+ på keeper).",
   "_tier_liste": "Rekkefølgen følger tier-listen eieren bruker (18.10.2026): S Pinged Pass, Low Driven Shot, Rapid, Tiki Taka, Power Shot. A Incisive Pass, Intercept, Anticipate, Quick Step, First Touch, Technical, Bruiser. B Finesse Shot, Jockey, Gamechanger, Inventive, Chip Shot. C Relentless, Whipped Pass, Press Proven, Trickster. F Acrobatic, Precision Header, Long Throw. Vanlig PlayStyle er skalert med samme faktor som PlayStyle+, så forskjellen mellom dem fra FC 27 består. De andre PlayStylene er ikke endret.",
   "_fc27": "FC 27 (EA Gameplay Deep Dive 29.07.2026 og Closed Beta Feedback Update 03.09.2026): Quick Step, Rapid, Technical, Finesse Shot, Precision Header, Tiki Taka, Jockey, Low Driven Shot og Pinged Pass er svekket eller har mindre forskjell mellom PS og PS+. Bruiser+ er litt svekket. Verdiene er justert, men ikke kalibrert: EA oppgir ingen prosenter."
 }
