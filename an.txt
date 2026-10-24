@@ -1,0 +1,32 @@
+Basekort: 21204 FC 27-kort fra FIFA Rosters. De 19789 kortene i EA-filen brukes som mal for attributter, høyde, posisjoner og PlayStyles. 13 kort som mangler i FIFA Rosters-listen vurderes fra EAs eget kort.
+FUT.GG (PlayStyles, roller, høyde) brukt på 18278 kort.
+Kroppstype kjent for 18306 av 21857 kort (28 arvet fra spillerens andre kort).
+Roller anslått for 2143 kort som ikke er hentet fra FUT.GG ennå (samme posisjon og OVR).
+
+== før
+Modellsjekk (proffene): 90 kort, median topp 1.3 % i posisjonen, 2 utenfor topp 10 %: Emily Fox (RM 2.2 %, hos oss topp 11.6 %), Lewis Miley (RM 4.3 %, hos oss topp 10.7 %)
+Modellsjekk (FUT.GG-brukerne): 89 kort, median topp 1.3 % i posisjonen, 0 utenfor topp 10 %
+Eierens tester: 2 med vinner: Følelse med ball 100 %, IGR 0 % enig
+  Uenig: Giorgi Tsitaishvili skal være bedre enn Antony (med ball), IGR sier motsatt med 5.8
+  ST Ronaldo 105.4, Ousmane Dembélé 104.2, Hamm 104.1, Kylian Mbappé 103.6, Morgan 102.8, Emilio Butragueño 101.7, Eusébio 101.4, Agüero 101.0
+  W Ronaldinho 100.8, Caroline Graham Hansen 100.4, Best 100.1, Vini Jr. 100.0, Lamine Yamal 99.5, Heath 99.4, Garrincha 99.2, Hazard 98.3
+  CAM Zidane 103.9, Pelé 103.6, Cruyff 103.4, Alexia Putellas 101.0, Maradona 100.5, Zico 100.1, Charlton 99.7, Debinha 97.6
+  FB Nuno Mendes 96.6, Gisele Thompson 95.3, Achraf Hakimi 94.9, Cafu 94.8, Carlos Alberto 94.4, Marcelo 94.4, Nathaniel Brown 94.3, Roberto Carlos 93.2
+  CB Maldini 97.7, Beckenbauer 97.6, Lúcio 95.5, Córdoba 95.5, Pubill 95.4, Stam 94.9, Ferdinand 94.6, Desailly 94.6
+  GK Buffon 95.3, Thibaut Courtois 93.4, Kahn 92.7, Gianluigi Donnarumma 92.5, Schmeichel 92.0, van der Sar 91.7, Casillas 91.6, Cech 91.1
+Basekort: 21204 FC 27-kort fra FIFA Rosters. De 19789 kortene i EA-filen brukes som mal for attributter, høyde, posisjoner og PlayStyles. 13 kort som mangler i FIFA Rosters-listen vurderes fra EAs eget kort.
+FUT.GG (PlayStyles, roller, høyde) brukt på 18278 kort.
+Kroppstype kjent for 18306 av 21857 kort (28 arvet fra spillerens andre kort).
+Roller anslått for 2143 kort som ikke er hentet fra FUT.GG ennå (samme posisjon og OVR).
+
+== etter
+Modellsjekk (proffene): 90 kort, median topp 1.3 % i posisjonen, 2 utenfor topp 10 %: Emily Fox (RM 2.2 %, hos oss topp 11.2 %), Lewis Miley (RM 4.3 %, hos oss topp 10.3 %)
+Modellsjekk (FUT.GG-brukerne): 89 kort, median topp 1.3 % i posisjonen, 0 utenfor topp 10 %
+Eierens tester: 2 med vinner: Følelse med ball 100 %, IGR 0 % enig
+  Uenig: Giorgi Tsitaishvili skal være bedre enn Antony (med ball), IGR sier motsatt med 5.2
+  ST Ronaldo 105.2, Ousmane Dembélé 104.5, Hamm 104.1, Kylian Mbappé 103.8, Morgan 102.9, Eusébio 101.9, Emilio Butragueño 101.8, Agüero 100.4
+  W Caroline Graham Hansen 100.1, Ronaldinho 100.1, Best 100.0, Vini Jr. 99.5, Lamine Yamal 99.5, Garrincha 98.8, Heath 98.7, Hazard 98.1
+  CAM Zidane 103.7, Pelé 103.4, Cruyff 103.4, Alexia Putellas 100.9, Maradona 100.8, Zico 99.9, Charlton 99.4, Kaká 97.6
+  FB Nuno Mendes 96.7, Gisele Thompson 95.3, Achraf Hakimi 94.8, Cafu 94.6, Carlos Alberto 94.4, Marcelo 94.3, Nathaniel Brown 94.1, Roberto Carlos 93.2
+  CB Beckenbauer 98.1, Maldini 97.9, Córdoba 95.8, Pubill 95.5, Lúcio 95.2, Stam 95.0, Ferdinand 94.9, Dayot Upamecano 94.4
+  GK Buffon 95.2, Thibaut Courtois 93.6, Kahn 92.6, Gianluigi Donnarumma 92.4, Schmeichel 92.1, Casillas 91.8, van der Sar 91.7, Cech 91.0

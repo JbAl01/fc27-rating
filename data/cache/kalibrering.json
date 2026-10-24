@@ -1,0 +1,80 @@
+{
+ "t": "2026-10-23 21:27",
+ "model": "4748c60069f1",
+ "body": {
+  "atk": {
+   "average_medium": -0.3,
+   "average_short": 0.2,
+   "average_tall": -0.1,
+   "lean_medium": 0.3,
+   "lean_tall": 0.3,
+   "unique": -0.3
+  },
+  "def": {
+   "average_medium": -0.3,
+   "average_tall": -0.1,
+   "lean_medium": 0.2,
+   "lean_short": -0.1,
+   "lean_tall": 0.4,
+   "unique": -0.2
+  },
+  "mid": {
+   "average_medium": -0.5,
+   "average_tall": 0.1,
+   "lean_medium": 0.4,
+   "lean_tall": 0.6
+  }
+ },
+ "body_raw": {
+  "atk": {
+   "average_medium": -0.63,
+   "average_short": 0.48,
+   "average_tall": -0.2,
+   "lean_medium": 0.6,
+   "lean_short": -0.09,
+   "lean_tall": 0.63,
+   "unique": -0.61
+  },
+  "def": {
+   "average_medium": -0.68,
+   "average_short": 0.06,
+   "average_tall": -0.12,
+   "lean_medium": 0.46,
+   "lean_short": -0.19,
+   "lean_tall": 0.8,
+   "unique": -0.32
+  },
+  "mid": {
+   "average_medium": -0.93,
+   "average_short": 0.05,
+   "average_tall": 0.29,
+   "lean_medium": 0.76,
+   "lean_short": -0.03,
+   "lean_tall": 1.18,
+   "unique": 0.08
+  }
+ },
+ "body_used": {
+  "unique": 15,
+  "average_medium": 28,
+  "lean_medium": 28,
+  "average_short": 17,
+  "average_tall": 6,
+  "stocky_tall": 1,
+  "stocky_medium": 3,
+  "lean_tall": 11,
+  "lean_short": 6
+ },
+ "pos": {
+  "ST": -0.0,
+  "CM": 0.1,
+  "GK": -1.3,
+  "CAM": -1.8,
+  "W": -3.0,
+  "CDM": 2.2,
+  "CB": 3.3,
+  "FB": 0.2
+ },
+ "rows": 30742,
+ "changed": "2026-10-23 14:30"
+}
