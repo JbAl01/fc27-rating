@@ -128,6 +128,7 @@ Når jobben kjører uten at noen er til stede, kan WebFetch bli stoppet med `PRO
 - Alderskrav: `"born_from": "2003-10-09"` i `req` betyr født denne datoen eller senere, `"born_to"` født denne datoen eller tidligere (ISO-dato). Evo Lab sjekker det mot fødselsdatoen fra EA. Bruk ikke `unchecked` for alder.
 - Svakfot og skill moves: `wf: [økning, maks]` og `sm: [økning, maks]`.
 - PlayStyles: tallet ved siden av navnet er taket og skal alltid med. FUTBIN skriver det som «Jockey 3», FUT.GG viser det som et umerket tall ved nivået. Skriv `["Jockey", 3]`, aldri bare `"Jockey"`: uten taket legger Evo Lab til PlayStylen på kort som i spillet ikke får den (et kort med tre PlayStyles får ikke en PlayStyle med tak 3).
+- PlayStyle+: samme regel, taket er antall PlayStyle+ kortet kan ha før. «Technical+ 1» blir `["Technical", 1]`: et kort som allerede har en PS+ får ikke en ny (Wicked Winger, 25.10). Bare når evoen krever `"max_psp": 0` kan taket utelates. evo-sjekk stopper PS+ uten tak.
 - Roller: `"roles": [["ST", "Advanced Forward", 2]]` (1 = +, 2 = ++).
 - Repeatable: «Repeatable 2» på FUT.GG/futnext betyr at **to spillere** kan ta evoen. Skriv det som `"repeat": 2`. Det betyr ikke at samme kort kan ta den to ganger. Sier kildene uttrykkelig at **samme kort** kan ta evoen flere ganger (EA har gjort det før), skriv i tillegg `"per_card": N` (hvor mange ganger samme kort kan ta den). Uten `per_card` regner Evo Lab med én gang per kort.
 - Se `config/evolab.json` for ferdige eksempler på alle felt, og README under «Evoene og hvor de kommer fra».

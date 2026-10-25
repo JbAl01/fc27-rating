@@ -268,6 +268,11 @@ def check_evo(d: dict, min_sources: int = 0, playstyles: Optional[set] = None) -
                     out.append(f"{prefix}{kind}: ukjent PlayStyle {name!r}")
                 if cap is not None and not 1 <= cap <= 12:
                     out.append(f"{prefix}{kind}: tak {cap} for {name} ser feil ut")
+                if kind == "psp" and cap is None and req.get("max_psp") != 0:
+                    # owner 25.10: without its cap a PS+ is stacked on cards that already have one
+                    # (Wicked Winger has «PS+ 1»); not needed when the evo only takes cards with no PS+
+                    out.append(f"{prefix}psp: {name}+ mangler taket (tallet EA viser ved PlayStyle+, f.eks. "
+                               f"[\"{name}\", 1])")
         try:
             for pos, role, lv in _roles_list(u.get("roles")):
                 if pos not in POSITIONS or lv not in (1, 2):

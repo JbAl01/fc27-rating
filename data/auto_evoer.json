@@ -1284,9 +1284,9 @@
     {
       "key": "wicked_winger",
       "name": "Wicked Winger",
-      "cost": "gratis",
+      "cost": "900 Scream-tokens (Token Store)",
       "until": "2026-11-27T18:00Z",
-      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå; fcdatas listeside viser noen andre økninger (f.eks. Penalties +15, Acceleration +12), så sjekk mot FUT.GG/futnext når de har den. Fristen 27.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november). Kravene Strength maks 80 og Defending (hovedtall) maks 70 er fra fcdata. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, navnene Finesse Shot+, Quick Step+ og Technical+ er fra lekkasjer (futfc.gg). Kostnaden er oppgitt som gratis hos fcdata, men den kan ligge i Token Store (futfc.gg: 400 Scream Tokens per evo der).",
+      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå; fcdatas listeside viser noen andre økninger (f.eks. Penalties +15, Acceleration +12), så sjekk mot FUT.GG/futnext når de har den. Fristen 27.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november). Kravene Strength maks 80 og Defending (hovedtall) maks 70 er fra fcdata. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, navnene Finesse Shot+, Quick Step+ og Technical+ er fra lekkasjer (futfc.gg). Kostnaden er 900 Scream-tokens i Token Store (FUT.GG, timesaver.gg, antihype); fcdata sa gratis. PlayStyle+ på nivå 5 har tak 1 (timesaver.gg og antihype: «capped at 1»): et kort som allerede har en PlayStyle+ kan ta evoen, men får ikke en ny PS+. Rettet 25.10 etter beskjed fra eieren (Glue or Genius + Wicked Winger ga to PS+).",
       "req": {
         "max_ovr": 82,
         "max_pace": 90,
@@ -1401,26 +1401,38 @@
           {
             "label": "Valg A: Finesse Shot+",
             "psp": [
-              "Finesse Shot"
+              [
+                "Finesse Shot",
+                1
+              ]
             ]
           },
           {
             "label": "Valg B: Quick Step+",
             "psp": [
-              "Quick Step"
+              [
+                "Quick Step",
+                1
+              ]
             ]
           },
           {
             "label": "Valg C: Technical+",
             "psp": [
-              "Technical"
+              [
+                "Technical",
+                1
+              ]
             ]
           }
         ]
       },
       "sources": [
         "https://fcdata.io/fc27/evolutions/2808-wicked-winger/",
-        "https://futfc.gg/fc-27-ultimate-scream-token-store-every-reward-and-what-to-pick/"
+        "https://futfc.gg/fc-27-ultimate-scream-token-store-every-reward-and-what-to-pick/",
+        "https://timesaver.gg/blog/fc-27-ultimate-scream-token-store-every-item-ranked",
+        "https://antihype.com.br/c/games/wicked-winger-fc-27-evolucao-900-tokens/",
+        "https://www.fut.gg/evolutions/2623-wicked-winger/"
       ]
     },
     {

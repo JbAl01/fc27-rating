@@ -94,6 +94,25 @@ class RuleTests(unittest.TestCase):
         self.assertIn("Rapid", out.psp)
         self.assertNotIn("Rapid", out.ps)  # upgraded from PlayStyle to PlayStyle+
 
+    def test_glue_or_genius_then_wicked_winger_gives_one_playstyle_plus(self):
+        """Owner 25.10: Wicked Winger's PS+ has cap 1, so after Glue or Genius the card keeps one PS+."""
+        evos = {e["key"]: e for e in evolab.load_user_evos(evolab.auto_evos_path())}
+        gog, ww = evolab.parse_evo(evos["glue_or_genius"]), evolab.parse_evo(evos["wicked_winger"])
+        st = evolab.state_from(low_striker(ps=("Rapid",)))
+        st = evolab.apply(gog, st, RULES, gog["up"]["paths"][0])
+        self.assertEqual(st.psp, ["Press Proven"])
+        st = evolab.apply(ww, st, RULES, ww["up"]["paths"][2])
+        self.assertEqual(st.psp, ["Press Proven"])            # the evo is done, but no second PS+
+        fresh = evolab.apply(ww, evolab.state_from(low_striker(ps=("Rapid",))), RULES, ww["up"]["paths"][2])
+        self.assertEqual(fresh.psp, ["Technical"])            # a card with no PS+ gets it
+
+    def test_evo_check_wants_the_cap_on_playstyle_plus(self):
+        base = {"key": "x", "name": "x", "cost": "gratis", "until": "2026-12-01T18:00Z"}
+        no_cap = dict(base, req={"max_psp": 1}, up={"psp": ["Technical"]})
+        self.assertTrue(any("mangler taket" in m for m in evolab.check_evo(no_cap)))
+        self.assertFalse(any("mangler taket" in m for m in evolab.check_evo(dict(no_cap, req={"max_psp": 0}))))
+        self.assertFalse(any("mangler taket" in m for m in evolab.check_evo(dict(no_cap, up={"psp": [["Technical", 1]]}))))
+
     def test_requirements(self):
         st = evolab.state_from(low_striker(ovr=80, pace=(86, 86)))
         self.assertEqual(evolab.check(evo("x", {"max_ovr": 79}), st, RULES)[0], "ovr")
