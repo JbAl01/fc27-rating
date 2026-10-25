@@ -318,8 +318,8 @@ const more=x=>!!(x[0]||x[1]||x[2]||x[3].length||x[4].length||x[7].length||x[5].s
 const P=j=>paths[j].slice(1),clean=all.filter(j=>j<0||!atk(P(j)));
 if(clean.length&&!atk(u))return clean;return(clean.length?clean:all).filter(j=>more(u)||(j>=0&&more(P(j))))}
 function bestPathIdx(e,st,allowed){const paths=e[8][8];if(!paths.length)return -1;const ok=(allowed||paths.map((p,j)=>j)).filter(j=>j>=0);if(!ok.length)return -1;let bi=ok[0],bv=-Infinity;
-paths.forEach((p,j)=>{if(!ok.includes(j))return;let v=0;for(const[n]of p[6])if(!st.ps.includes(n)&&!st.psp.includes(n))v+=psVal(n,false,st.g);
-for(const[n]of p[7])if(!st.psp.includes(n))v+=psVal(n,true,st.g)-(st.ps.includes(n)?psVal(n,false,st.g):0);if(v>bv){bv=v;bi=j}});return bi}
+paths.forEach((p,j)=>{if(!ok.includes(j))return;let v=0;for(const[n,c]of p[6])if(!st.ps.includes(n)&&!st.psp.includes(n)&&!(c&&st.ps.length+st.psp.length>=c))v+=psVal(n,false,st.g);
+for(const[n,c]of p[7])if(!st.psp.includes(n)&&!(c&&st.psp.length>=c))v+=psVal(n,true,st.g)-(st.ps.includes(n)?psVal(n,false,st.g):0);if(v>bv){bv=v;bi=j}});return bi}
 function planOrders(C){const lim=(ei,k)=>{const v=EV[ei][7][LIMI[k]];return v==null?99:v};
 const keys=[ei=>[lim(ei,"ovr"),lim(ei,"ps"),lim(ei,"pace")],ei=>[lim(ei,"ps"),lim(ei,"ovr"),lim(ei,"pace")],ei=>[lim(ei,"pace"),lim(ei,"ovr"),lim(ei,"ps")]];
 const out=[],sigs=new Set();

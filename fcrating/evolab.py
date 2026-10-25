@@ -1667,7 +1667,8 @@ def generate_universe(lab: dict, u: int) -> List[List[dict]]:
                 if rng.random() < w.get("ps", 0.7):
                     opts = _wchoice(rng, pool["playstyles"], 2)
                     if rng.random() < w.get("ps_plus", 0.1) and opts:
-                        up["paths"] = [{"label": opts[0] + "+", "psp": [opts[0]]}] + [{"label": o, "ps": [o]} for o in opts[1:]]
+                        # every FC 27 PS+ evo so far gives it only to a card with no PS+ (max_psp 0 or cap 1)
+                        up["paths"] = [{"label": opts[0] + "+", "psp": [[opts[0], 1]]}] + [{"label": o, "ps": [o]} for o in opts[1:]]
                     else:
                         up["paths"] = [{"label": o, "ps": [o]} for o in opts]
                 if rng.random() < w.get("wf", 0):
@@ -1701,13 +1702,13 @@ def _best_path(evo: dict, st: State, group: str, cfg: dict, allowed: Optional[li
     if not paths:
         return None
 
-    def val(p):
+    def val(p):   # only what the card really gets: a PlayStyle past its cap is worth nothing
         v = 0.0
-        for n, _cap in p.get("ps", []):
-            if n not in st.ps and n not in st.psp:
+        for n, cap in p.get("ps", []):
+            if n not in st.ps and n not in st.psp and not (cap and len(st.ps) + len(st.psp) >= cap):
                 v += _ps_value(n, False, group, cfg)
-        for n, _cap in p.get("psp", []):
-            if n not in st.psp:
+        for n, cap in p.get("psp", []):
+            if n not in st.psp and not (cap and len(st.psp) >= cap):
                 v += _ps_value(n, True, group, cfg) - (_ps_value(n, False, group, cfg) if n in st.ps else 0)
         return v
     return max(paths, key=val)
