@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-24T17:18:00Z",
+  "_sjekket": "2026-10-25T18:20:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -2174,6 +2174,309 @@
         "https://www.futevolution.com/evolutions/template/2501-pinged-pass",
         "https://www.fut.gg/evolutions/2501-pinged-pass/"
       ]
+    },
+    {
+      "key": "creep_inside",
+      "name": "Creep Inside",
+      "cost": "gratis",
+      "until": "2026-11-03T18:00Z",
+      "note": "Krav og tall for alle fire nivåer er like hos fcdata, FUT.GG og futmind. Fristen 3.11 kl. 18:00 står hos fcdata og futmind (futmind: 18:00 UTC); FUT.GG har ingen dato. PlayStyle-navnene (Press Proven på nivå 2, Anticipate på nivå 3) står bare hos futmind; taket 3 står hos fcdata («1 PlayStyle↗3») og FUT.GG (umerket 3). fcdata utelukker også GK (futmind: bare utespillere). Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CB",
+          "GK"
+        ],
+        "max_stats": {
+          "agility": 86
+        }
+      },
+      "up": {
+        "ovr": [
+          4,
+          82
+        ],
+        "stats": {
+          "sprint_speed": [
+            5,
+            80
+          ],
+          "long_passing": [
+            5,
+            78
+          ],
+          "ball_control": [
+            10,
+            82
+          ],
+          "def_awareness": [
+            9,
+            80
+          ],
+          "aggression": [
+            4,
+            78
+          ],
+          "long_shots": [
+            4,
+            70
+          ],
+          "agility": [
+            6,
+            82
+          ],
+          "dribbling": [
+            8,
+            80
+          ],
+          "standing_tackle": [
+            5,
+            78
+          ],
+          "vision": [
+            5,
+            78
+          ],
+          "balance": [
+            4,
+            80
+          ],
+          "composure": [
+            8,
+            82
+          ],
+          "stamina": [
+            7,
+            86
+          ],
+          "acceleration": [
+            5,
+            80
+          ],
+          "short_passing": [
+            9,
+            82
+          ],
+          "reactions": [
+            9,
+            82
+          ],
+          "interceptions": [
+            9,
+            82
+          ],
+          "strength": [
+            4,
+            76
+          ]
+        },
+        "ps": [
+          [
+            "Press Proven",
+            3
+          ],
+          [
+            "Anticipate",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2833-creep-inside/",
+        "https://www.fut.gg/evolutions/2632-creep-inside/",
+        "https://futmind.com/articles/20395/ea-sports-fc-27-ultimate-team-creep-inside-evolution-guide"
+      ]
+    },
+    {
+      "key": "witching_hour",
+      "name": "Witching Hour",
+      "cost": "gratis",
+      "until": "2026-11-04T18:00Z",
+      "note": "Kom ut 25.10 kl. 18:00. Bare én kilde (fcdata sin evoside, alle nivåer); FUT.GG, futnext og FUTBIN viste den ikke ennå. Lagt inn etter eierens regel om én kilde (23.10) – sjekk mot en andre kilde neste kjøring. Fristen 4.11 kl. 18:00 er fra fcdata. Nivå 3 er et valg: A gir PlayStyle (tak 3), +1 svakfot (til 4) og avslutning; B gir PlayStyle (tak 3), +1 skill moves (til 4) og pasning. Navnene Gamechanger (A) og Incisive Pass (B) står i fcdatas beskrivelse, ikke ved selve nivået. Repeterbar er ikke oppgitt. Tallene er summen etter nivå 1-2.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CM",
+          "CAM"
+        ],
+        "not_positions": [
+          "ST",
+          "GK"
+        ],
+        "max_stats": {
+          "long_shots": 79,
+          "standing_tackle": 78
+        }
+      },
+      "up": {
+        "ovr": [
+          4,
+          81
+        ],
+        "stats": {
+          "agility": [
+            4,
+            80
+          ],
+          "reactions": [
+            5,
+            80
+          ],
+          "dribbling": [
+            5,
+            81
+          ],
+          "stamina": [
+            6,
+            84
+          ],
+          "short_passing": [
+            5,
+            82
+          ],
+          "balance": [
+            4,
+            80
+          ],
+          "ball_control": [
+            5,
+            82
+          ],
+          "composure": [
+            5,
+            80
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Gamechanger, avslutning",
+            "wf": [
+              1,
+              4
+            ],
+            "stats": {
+              "positioning": [
+                6,
+                81
+              ],
+              "finishing": [
+                6,
+                80
+              ],
+              "shot_power": [
+                6,
+                82
+              ],
+              "long_shots": [
+                6,
+                80
+              ]
+            },
+            "ps": [
+              [
+                "Gamechanger",
+                3
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: Incisive Pass, pasning",
+            "sm": [
+              1,
+              4
+            ],
+            "stats": {
+              "vision": [
+                6,
+                82
+              ],
+              "crossing": [
+                6,
+                80
+              ],
+              "long_passing": [
+                6,
+                82
+              ],
+              "curve": [
+                6,
+                80
+              ]
+            },
+            "ps": [
+              [
+                "Incisive Pass",
+                3
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2832-witching-hour/",
+        "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "anticipate_free",
+      "name": "Anticipate",
+      "cost": "gratis",
+      "until": "2027-09-29T23:00Z",
+      "note": "Gratis evo som gir PlayStylen Anticipate, ingen kamper. Kravene (maks 83 OVR, maks 2 PlayStyles, ingen posisjonskrav) er like hos fcdata og FUT.GG. Taket 3 står hos fcdata («1 PlayStyle↗3») og FUT.GG (umerket 3). fcdata oppgir «30 Sept 2027, 00:00» uten tidssone; brukt tidligste tolkning (00:00 britisk sommertid = 29.9 kl. 23:00 UTC). FUT.GG har ingen dato. Ikke det samme som PlayStyle+-evoen Anticipate+.",
+      "req": {
+        "max_ovr": 83,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Anticipate",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2831-anticipate/",
+        "https://www.fut.gg/evolutions/2629-anticipate/",
+        "https://www.futnext.com/evolutions"
+      ]
+    },
+    {
+      "key": "pinged_pass_free",
+      "name": "Pinged Pass (gratis, CAM)",
+      "cost": "gratis",
+      "until": "2027-09-29T23:00Z",
+      "note": "Gratis evo som gir PlayStylen Pinged Pass, ingen kamper. Ikke den samme som objektiv-evoen pinged_pass_obj (frist 29.10). Kravene (maks 83 OVR, CAM, maks 2 PlayStyles) er like hos fcdata og FUT.GG (futevolution oppga også CAM 24.10). Taket 3 står hos fcdata («1 PlayStyle↗3») og FUT.GG (umerket 3). fcdata oppgir «30 Sept 2027, 00:00» uten tidssone; brukt tidligste tolkning (29.9 kl. 23:00 UTC). FUT.GG har ingen dato.",
+      "req": {
+        "max_ovr": 83,
+        "max_ps": 2,
+        "positions": [
+          "CAM"
+        ]
+      },
+      "up": {
+        "ps": [
+          [
+            "Pinged Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2830-pinged-pass/",
+        "https://www.fut.gg/evolutions/2630-pinged-pass/",
+        "https://www.futnext.com/evolutions"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -2204,13 +2507,13 @@
     },
     {
       "navn": "Line of Sight [SP 7]",
-      "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde.",
+      "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde. 25.10: futnext lister den (ID 2825), men detaljsiden kunne ikke hentes.",
       "dato": "2026-10-23"
     },
     {
       "navn": "Clinical or Technical? [SP+ 28]",
-      "grunn": "Krav like hos FUT.GG og futevolution (maks 85 OVR, ingen PS+), men bare valg A (Finesse Shot+) er navngitt (futevolution). Valg B har ikke navn i noen kilde.",
-      "dato": "2026-10-24"
+      "grunn": "Krav like hos FUT.GG, futevolution og fcdata (maks 85 OVR, ingen PS+, frist 10.12 hos fcdata), men bare valg A (Finesse Shot+) er navngitt (futevolution). Valg B har ikke navn i noen kilde (fcdata viser bare «1 PlayStyle+»).",
+      "dato": "2026-10-25"
     },
     {
       "navn": "Channel Surfer [SP 11] og Flank Masterclass [SP+ 22]",
@@ -2218,19 +2521,14 @@
       "dato": "2026-10-24"
     },
     {
-      "navn": "Anticipate og Pinged Pass (nye, gratis, frist ca. 30.9.2027)",
-      "grunn": "Krav (maks 83 OVR, maks 2 PlayStyles) står hos FUT.GG og futevolution, men ingen kilde viser taket på PlayStylen, og futevolution oppgir CAM for Pinged Pass. FUTBIN-siden kunne ikke hentes.",
-      "dato": "2026-10-24"
-    },
-    {
-      "navn": "Creep Inside",
-      "grunn": "Ny evo (LB/RB, maks 80 OVR), men bare futmind har den, og futmind har ingen dato. Venter på FUT.GG/fcdata/futevolution.",
-      "dato": "2026-10-24"
-    },
-    {
       "navn": "Ultimate Scream (+ Retro 17/19/20)",
       "grunn": "Bare rarity/kortdesign eller et bestemt ferdig kort, ingen tall (futevolution: «Stat boost +0»).",
       "dato": "2026-10-24"
+    },
+    {
+      "navn": "Shadow Striker++",
+      "grunn": "Roles++-evo (rolleoppgradering). Slike er allerede regnet inn i reglene, hoppes over etter EVO-JOBB.",
+      "dato": "2026-10-25"
     }
   ]
 }
