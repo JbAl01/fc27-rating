@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-25T18:20:00Z",
+  "_sjekket": "2026-10-26T18:20:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -2477,6 +2477,65 @@
         "https://www.fut.gg/evolutions/2630-pinged-pass/",
         "https://www.futnext.com/evolutions"
       ]
+    },
+    {
+      "key": "line_of_sight",
+      "name": "Line of Sight",
+      "cost": "sesongpass, standard (nivå 7)",
+      "until": "2026-12-10T18:00Z",
+      "note": "Keeper-evo i Standard Season Pass, nivå 7 (FUT.GG, futevolution; Destructoid: Season 2 Pass, premium trengs ikke). Krav og tall er like hos FUT.GG og Destructoid. Fristen «Submit by Dec 10, 06:00 PM» står bare hos futevolution (FUT.GG og Destructoid har ingen dato); futevolution sine nivåtall er ufullstendige og ble ikke brukt. Navnet Footwork står bare hos Destructoid («Footwork|3»); FUT.GG viser bare det umerkede tallet 3 på nivå 2. Positioning er keeper-posisjonering. Repeterbar, roller, svakfot og skill moves er ikke oppgitt. Tallene er summen etter begge nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          40,
+          83
+        ],
+        "ps": [
+          [
+            "Footwork",
+            3
+          ]
+        ],
+        "stats": {
+          "reactions": [
+            35,
+            79
+          ],
+          "gk_kicking": [
+            40,
+            81
+          ],
+          "gk_reflexes": [
+            40,
+            82
+          ],
+          "gk_positioning": [
+            40,
+            81
+          ],
+          "gk_diving": [
+            40,
+            83
+          ],
+          "gk_handling": [
+            40,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2609-line-of-sight-sp-7/",
+        "https://www.destructoid.com/best-players-for-fc-27-line-of-sight-evolution/",
+        "https://www.futevolution.com/evolutions/template/2609-line-of-sight-sp-7",
+        "https://www.futnext.com/evolutions/line-of-sight/2825"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -2504,11 +2563,6 @@
       "navn": "PlayStyle+-evoene (Low Driven Shot+, Slide Tackle+ osv.)",
       "grunn": "Krever kortrarity «Star Performer» og ingen PlayStyle+ fra før (FUTBIN og futnext er enige), og Evo Lab kan ikke sjekke rarity ennå. Legges inn når det støttes.",
       "dato": "2026-10-18"
-    },
-    {
-      "navn": "Line of Sight [SP 7]",
-      "grunn": "Keeper-evo fra Standard Season Pass nivå 7. Bare futevolution.com har tall, og nivå 2 står tomt der. Venter på andre kilde. 25.10: futnext lister den (ID 2825), men detaljsiden kunne ikke hentes.",
-      "dato": "2026-10-23"
     },
     {
       "navn": "Clinical or Technical? [SP+ 28]",
