@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-26T18:20:00Z",
+  "_sjekket": "2026-10-27T18:45:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -2536,6 +2536,316 @@
         "https://www.futevolution.com/evolutions/template/2609-line-of-sight-sp-7",
         "https://www.futnext.com/evolutions/line-of-sight/2825"
       ]
+    },
+    {
+      "key": "rise_from_the_grave",
+      "name": "Rise From the Grave",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-11-26T18:00Z",
+      "note": "Treningsleir-evo, fem nivåer. Krav og tall for alle nivåer er like hos fcdata, FUTBIN, futmind og Destructoid. Fristen 26.11 kl. 18:00 står hos fcdata og futmind (futmind: 18:00 UTC; fullføres innen 3.12). PlayStyle-navnene (Quick Step nivå 2, Technical nivå 3) står hos FUTBIN, futmind og Destructoid; taket 3 hos FUTBIN, Destructoid og fcdata. futmind: bare utespillere; fcdata utelukker også GK. FUTBIN kaller den repeterbar uten tall, så repeat er ikke satt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "RM",
+          "RW"
+        ],
+        "not_positions": [
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          36,
+          80
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Technical",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            40,
+            79
+          ],
+          "vision": [
+            35,
+            76
+          ],
+          "agility": [
+            35,
+            83
+          ],
+          "composure": [
+            35,
+            78
+          ],
+          "finishing": [
+            40,
+            77
+          ],
+          "crossing": [
+            40,
+            78
+          ],
+          "balance": [
+            35,
+            82
+          ],
+          "jumping": [
+            20,
+            72
+          ],
+          "shot_power": [
+            35,
+            80
+          ],
+          "short_passing": [
+            40,
+            77
+          ],
+          "reactions": [
+            35,
+            77
+          ],
+          "stamina": [
+            30,
+            80
+          ],
+          "acceleration": [
+            40,
+            85
+          ],
+          "long_shots": [
+            35,
+            76
+          ],
+          "long_passing": [
+            30,
+            72
+          ],
+          "ball_control": [
+            40,
+            82
+          ],
+          "strength": [
+            20,
+            68
+          ],
+          "sprint_speed": [
+            40,
+            84
+          ],
+          "volleys": [
+            30,
+            70
+          ],
+          "curve": [
+            35,
+            78
+          ],
+          "dribbling": [
+            40,
+            82
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2839-rise-from-the-grave/",
+        "https://www.futbin.com/27/evolutions/133/rise-from-the-grave",
+        "https://futmind.com/articles/20572/rise-from-the-grave-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultima",
+        "https://www.destructoid.com/best-players-for-fc-27-rise-from-the-grave-evolution/",
+        "https://www.futnext.com/evolutions/rise-from-the-grave/2839"
+      ]
+    },
+    {
+      "key": "channel_surfer",
+      "name": "Channel Surfer",
+      "cost": "sesongpass, standard (nivå 11)",
+      "until_ukjent": true,
+      "note": "Belønning i Standard Season Pass nivå 11 (Destructoid: gratisversjonen). Krav og tall for alle tre nivåer og begge valg på nivå 3 er like hos Destructoid og FUTWIZ (evo-siden). Fristen er ukjent: ingen kilde oppgir dato; futnext viser nedtelling 44d21h (samme som Line of Sight), futevolution «1 month». Maks PlayStyle+ er ikke oppgitt som krav. Repeterbar, roller, svakfot og skill moves er ikke oppgitt. Grunnoppgraderingen er nivå 1–2; valgene er nivå 3.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "positions": [
+          "LM",
+          "LW"
+        ],
+        "not_positions": [
+          "ST",
+          "LB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          7,
+          83
+        ],
+        "ps": [
+          [
+            "Press Proven",
+            3
+          ],
+          [
+            "Rapid",
+            3
+          ]
+        ],
+        "stats": {
+          "short_passing": [
+            7,
+            82
+          ],
+          "agility": [
+            10,
+            83
+          ],
+          "reactions": [
+            10,
+            83
+          ],
+          "dribbling": [
+            10,
+            84
+          ],
+          "crossing": [
+            7,
+            82
+          ],
+          "long_passing": [
+            7,
+            81
+          ],
+          "balance": [
+            10,
+            83
+          ],
+          "ball_control": [
+            10,
+            84
+          ],
+          "composure": [
+            10,
+            82
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: avslutning (tak 83–84)",
+            "stats": {
+              "acceleration": [
+                10,
+                84
+              ],
+              "sprint_speed": [
+                10,
+                84
+              ],
+              "positioning": [
+                10,
+                83
+              ],
+              "finishing": [
+                10,
+                83
+              ],
+              "shot_power": [
+                10,
+                82
+              ],
+              "long_shots": [
+                10,
+                81
+              ]
+            }
+          },
+          {
+            "label": "Valg B: fart (tak 85)",
+            "stats": {
+              "acceleration": [
+                10,
+                85
+              ],
+              "sprint_speed": [
+                10,
+                85
+              ],
+              "positioning": [
+                10,
+                82
+              ],
+              "finishing": [
+                10,
+                82
+              ],
+              "shot_power": [
+                10,
+                81
+              ],
+              "long_shots": [
+                10,
+                80
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://www.destructoid.com/best-players-for-fc-27-channel-surfer-evolution/",
+        "https://www.futwiz.com/evolutions/channel-surfer/129",
+        "https://www.futnext.com/evolutions/channel-surfer/2822"
+      ]
+    },
+    {
+      "key": "clinical_or_technical",
+      "name": "Clinical or Technical?",
+      "cost": "sesongpass, premium (nivå 28)",
+      "until": "2026-12-10T18:00Z",
+      "note": "Belønning i Premium Season Pass nivå 28 (SP+ 28). Kravene (maks 85 OVR, ingen PlayStyle+) er like hos fcdata, FUTWIZ og FUT.GG. Ett nivå med valg mellom to PlayStyle+, ingen andre tall. Navnene: Finesse Shot+ (futevolution, FUTWIZ-guiden, ikonnavn på FUTWIZ-evosiden) og Technical+ (FUTWIZ-guiden og ikonnavn på FUTWIZ-evosiden); fcdata viser bare «1 PlayStyle+». Fristen 10.12 kl. 18:00 står hos fcdata.",
+      "req": {
+        "max_ovr": 85,
+        "max_psp": 0
+      },
+      "up": {
+        "paths": [
+          {
+            "label": "Valg A: Finesse Shot+",
+            "psp": [
+              "Finesse Shot"
+            ]
+          },
+          {
+            "label": "Valg B: Technical+",
+            "psp": [
+              "Technical"
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2805-clinical-or-technical-sp-28/",
+        "https://www.futwiz.com/evolutions/clinical-or-technical/133",
+        "https://www.futwiz.com/guides/fc-27-season-2-evolutions"
+      ],
+      "premium": true
     }
   ],
   "_hoppet_over": [
@@ -2565,16 +2875,6 @@
       "dato": "2026-10-18"
     },
     {
-      "navn": "Clinical or Technical? [SP+ 28]",
-      "grunn": "Krav like hos FUT.GG, futevolution og fcdata (maks 85 OVR, ingen PS+, frist 10.12 hos fcdata), men bare valg A (Finesse Shot+) er navngitt (futevolution). Valg B har ikke navn i noen kilde (fcdata viser bare «1 PlayStyle+»).",
-      "dato": "2026-10-25"
-    },
-    {
-      "navn": "Channel Surfer [SP 11] og Flank Masterclass [SP+ 22]",
-      "grunn": "Bare futevolution har tall, og der står bare økningene, ikke takene (maks). FUT.GG- og FUTBIN-sidene kunne ikke hentes.",
-      "dato": "2026-10-24"
-    },
-    {
       "navn": "Ultimate Scream (+ Retro 17/19/20)",
       "grunn": "Bare rarity/kortdesign eller et bestemt ferdig kort, ingen tall (futevolution: «Stat boost +0»).",
       "dato": "2026-10-24"
@@ -2583,6 +2883,11 @@
       "navn": "Shadow Striker++",
       "grunn": "Roles++-evo (rolleoppgradering). Slike er allerede regnet inn i reglene, hoppes over etter EVO-JOBB.",
       "dato": "2026-10-25"
+    },
+    {
+      "navn": "Flank Masterclass [SP+ 22]",
+      "grunn": "Bare FUTWIZ har alle nivåer, og siden skiller ikke vanlige PlayStyles fra PlayStyle+ (viser «PlayStyles+ +4 (Quickstep)» på nivå 2 og PS+ i hvert valg på nivå 5). Tallet 4 og typen er uklare; Destructoid/FUTBIN kunne ikke hentes.",
+      "dato": "2026-10-27"
     }
   ]
 }
