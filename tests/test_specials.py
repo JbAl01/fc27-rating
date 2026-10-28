@@ -3,6 +3,7 @@ Run with:  python -m unittest discover -s tests"""
 import sys
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -230,6 +231,43 @@ class PromoPageTests(unittest.TestCase):
         self.assertEqual(found, len(fr.parse_list_page(html)))
         self.assertTrue(any("ingen fra FC 27" in m for m in log))
         self.assertTrue(all("v=17" not in e["url"] for e in cache.entries.values()))
+
+    def test_new_promo_is_found_without_being_added(self):
+        """Owner 28.10: Ultimate Scream came out after the weekly scan and was missing for a week."""
+        html = (FIX / "fifarosters_liste.html").read_text(encoding="utf-8")
+        front = '<a href="/ultimate-scream">US</a><a href="/futties">F</a><a href="/fut-future-stars">FS</a>'
+
+        class FakeFetcher:
+            def __init__(self, *a, **k):
+                self.urls = []
+
+            def get(self, url):
+                self.urls.append(url)
+                return front if url == fr.BASE_URL else html
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = fr.FifaRostersCache(str(Path(tmp) / "fifarosters"))
+            cache.entries["9"] = {"name": "Raphinha", "version": "FC 27 Ultimate Scream", "ovr": 90, "position": "LW",
+                                  "face": {}, "player_id": "1", "url": "https://f/9"}
+            self.assertEqual(specials.current_promo_pages(FakeFetcher(), cache, lambda *a: None), ["ultimate-scream"])
+            cache.meta["last_full_scan"] = "2999-01-01T00:00:00"     # weekly scan not due
+            cache.save()
+            cfg = {"specials": {"fifarosters": {"full_list_url": "https://www.fifarosters.com/futplayerslist.php?&pageNum={page}",
+                                                "totw_list_url": "https://www.fifarosters.com/totw.php?&pageNum={page}",
+                                                "full_scan_days": 7, "top_pages_per_run": 3, "promo_list_urls": [],
+                                                "detail_limit_per_run": 0},
+                                "futgg": {"enabled": False}, "realsport101": {"category_url": "x"}}}
+            fetchers = []
+
+            def make(*a, **k):
+                fetchers.append(FakeFetcher())
+                return fetchers[-1]
+            with mock.patch.object(specials, "PoliteFetcher", make):
+                specials.run_fetch(cfg, tmp, leaks=False, log=lambda *a: None)
+        urls = fetchers[0].urls
+        self.assertIn("https://www.fifarosters.com/futplayerslist.php?&pageNum=1", urls)     # top of the full list
+        self.assertTrue(any("/ultimate-scream" in u for u in urls))                           # the promo page, found
+        self.assertFalse(any("futties" in u for u in urls))                                   # no FC 27 card version
 
     def test_promo_url(self):
         want = "https://www.fifarosters.com/fut-future-stars.php?&pageNum={page}"

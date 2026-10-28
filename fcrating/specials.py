@@ -264,6 +264,28 @@ def scan_promo(fetcher, fr_cache: fr.FifaRostersCache, value: str, max_pages: Op
     return 0
 
 
+def current_promo_pages(fetcher, fr_cache: fr.FifaRostersCache, log=print) -> List[str]:
+    """Promo pages FIFA Rosters links from its front page whose name is an FC 27 card version we have
+    (version «Ultimate Scream» -> /ultimate-scream), so a new promo is read in full without anyone adding it
+    (owner 28.10: Ultimate Scream was missing for a week)."""
+    import re
+    try:
+        html = fetcher.get(fr.BASE_URL)
+    except Blocked:
+        raise
+    except Exception as exc:
+        log(f"  FIFA Rosters: forsiden svarte ikke ({exc})")
+        return []
+    links = set(re.findall(r'href="(?:https?://www\.fifarosters\.com)?/([a-z0-9-]+)(?:\.php)?"', html))
+    out = set()
+    for _, e in unique_entries(fr_cache):
+        if fr.is_base_version(e["version"]):
+            continue
+        slug = re.sub(r"[^a-z0-9]+", "-", re.sub(r"^fc\s*\d+\s*", "", e["version"], flags=re.I).lower()).strip("-")
+        out.update(c for c in (slug, "fut-" + slug) if slug and c in links)
+    return sorted(out)
+
+
 def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, detail_limit: Optional[int] = None,
               leaks: bool = True, fifarosters: bool = True, log=print,
               extra_promos: Optional[List[str]] = None,
@@ -296,10 +318,21 @@ def run_fetch(cfg_sources: dict, cache_dir: str, full: Optional[bool] = None, de
                 log("FIFA Rosters: går gjennom hele FC 27-listen (tar en stund første gang) ...")
                 fr.scan_list(fetcher, fr_cache, frc["full_list_url"], frc.get("max_pages"), log)
                 fr_cache.meta["last_full_scan"] = datetime.now().isoformat(timespec="seconds")
+            elif frc.get("top_pages_per_run"):
+                # the list is sorted by OVR: its first pages show every new promo card, whatever the promo is called
+                before = len(fr_cache.entries)
+                fr.scan_list(fetcher, fr_cache, frc["full_list_url"], int(frc["top_pages_per_run"]), log)
+                log(f"FIFA Rosters: de {frc['top_pages_per_run']} øverste sidene av hele listen, "
+                    f"{len(fr_cache.entries) - before} nye kort")
             log("FIFA Rosters: sjekker Team of the Week ...")
             if fr.scan_list(fetcher, fr_cache, frc["totw_list_url"], None, log) == 0:
                 log("  Fant ingen kort på TOTW-listen. Har FIFA Rosters endret oppsett? Se README.")
             promos = list(frc.get("promo_list_urls") or []) + list(extra_promos or [])
+            if frc.get("auto_promos", True):
+                found = current_promo_pages(fetcher, fr_cache, log)
+                if found:
+                    log(f"FIFA Rosters: promosider fra forsiden: {', '.join(found)}")
+                promos += found
             for raw in dict.fromkeys(promos):
                 scan_promo(fetcher, fr_cache, raw, frc.get("promo_max_pages", 20), log)
             specials = [fid for fid, e in unique_entries(fr_cache) if not fr.is_base_version(e["version"])]

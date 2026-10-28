@@ -24,6 +24,8 @@
       "totw_list_url": "https://www.fifarosters.com/totw.php?&pageNum={page}",
       "full_scan_days": 7,
       "_full_info": "Hele FC 27-listen (ca. 920 sider) gjennomgås én gang i uka. TOTW-listen sjekkes hver gang.",
+      "top_pages_per_run": 60,
+      "_top_pages_info": "De øverste sidene av hele listen (sortert etter OVR, 60 sider er ca. OVR 82 og over) leses hver kjøring, så nye promokort kommer med samme dag, uansett hva promoen heter (eier 28.10). Tar ca. 2 minutter.",
       "max_pages": null,
       "detail_limit_per_run": 300,
       "height_limit_per_run": 1000,
@@ -33,7 +35,8 @@
         "fut-future-stars"
       ],
       "promo_max_pages": 20,
-      "_promo_info": "Kampanjesider som sjekkes ved hver kjøring, slik TOTW gjøres. Skriv navnet fra adressen på FIFA Rosters, f.eks. 'fut-future-stars' for fifarosters.com/fut-future-stars. Når en ny kampanje starter, legg den til her eller kjør fetch-specials --promo navn. Andre nye kort kommer med ved ukesgjennomgangen (eller --full).",
+      "_promo_info": "Kampanjesider som leses i sin helhet hver kjøring, slik TOTW gjøres. Med auto_promos finnes de selv: en side FIFA Rosters lenker til fra forsiden og som heter det samme som en kortversjon (Ultimate Scream -> /ultimate-scream). Her kan du legge til flere med navnet fra adressen, f.eks. 'fut-future-stars'.",
+      "auto_promos": true,
       "use_base_cards": true,
       "_base_cards_info": "EAs ratingadresse (drop-api) gir FC 25-kort. Med true bygges FC 27-basekortene fra FIFA Rosters' liste (riktig OVR, posisjon, hovedtall, svakfot og skill moves), og attributtene anslås fra det eldre EA-kortet. EA-kortene rangeres da ikke selv."
     },
