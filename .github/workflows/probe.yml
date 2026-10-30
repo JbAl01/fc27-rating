@@ -1,0 +1,33 @@
+name: probe
+on:
+  push:
+    branches: [claude/probe-card]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/dl /tmp/pages
+          for id in $(gh run list -R ${{ github.repository }} -w "Oppdater siden" -L 6 --json databaseId,conclusion --jq '.[]|select(.conclusion=="success")|.databaseId'); do
+            if gh run download $id -R ${{ github.repository }} -n github-pages-dyp -D /tmp/dl 2>/dev/null || gh run download $id -R ${{ github.repository }} -n github-pages -D /tmp/dl 2>/dev/null; then echo "run $id" > /tmp/pages/run.txt; break; fi
+          done
+          cd /tmp/dl && tar xf artifact.tar && ls -la >> /tmp/pages/run.txt
+          cp evolab.html evolab-data-*.js /tmp/pages/ || true
+          for f in evolab-data-*.js rapport-data-*.js index.html; do echo "== $f"; grep -o -i '.\{300\}rivas.\{300\}' $f | head -8; done > /tmp/pages/rivas.txt 2>&1
+      - if: always()
+        run: |
+          git config user.name probe
+          git config user.email probe@example.com
+          git checkout --orphan probe-out-tmp
+          git rm -rf . -q || true
+          cp -r /tmp/pages pages || true
+          git add -A
+          git commit -q -m "probe rivas"
+          git push -f origin HEAD:probe-out
