@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-28T18:30:00Z",
+  "_sjekket": "2026-10-30T18:30:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -2940,6 +2940,149 @@
         "https://fcdata.io/fc27/evolutions/2840-bone-builder/",
         "https://futmind.com/articles/20719/ea-sports-fc-27-ultimate-team-bone-builder-evolution-guide"
       ]
+    },
+    {
+      "key": "false_seven",
+      "name": "False Seven",
+      "cost": "gratis",
+      "until": "2026-11-09T18:00Z",
+      "note": "Kom 30.10. Krav (maks 80 OVR, LM/LW, ikke CDM, maks Pace 86, maks 7 PlayStyles, ingen PlayStyle+) og tallene for nivå 1, 2 og valg A på nivå 3 er like hos fcdata og FUT.GG (FUT.GG: OVR +6 til 81). Valg B og C på nivå 3 står bare hos fcdata. Fristen 9.11 kl. 18:00 (fullføres innen 16.11) står bare hos fcdata; FUT.GG har ingen dato. Nivå 2 og hvert valg på nivå 3 gir 1 PlayStyle med tak 3 (fcdata: «1 PlayStyle↗3»), men ingen kilde viste navnene ennå, så PlayStyles er utelatt. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LM",
+          "LW"
+        ],
+        "not_positions": [
+          "CDM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          6,
+          81
+        ],
+        "stats": {
+          "acceleration": [
+            7,
+            82
+          ],
+          "agility": [
+            10,
+            82
+          ],
+          "reactions": [
+            10,
+            81
+          ],
+          "dribbling": [
+            10,
+            82
+          ],
+          "sprint_speed": [
+            7,
+            82
+          ],
+          "balance": [
+            10,
+            81
+          ],
+          "ball_control": [
+            10,
+            82
+          ],
+          "composure": [
+            10,
+            80
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: avslutning",
+            "stats": {
+              "positioning": [
+                8,
+                80
+              ],
+              "finishing": [
+                8,
+                81
+              ],
+              "shot_power": [
+                8,
+                80
+              ],
+              "long_shots": [
+                8,
+                79
+              ],
+              "volleys": [
+                8,
+                79
+              ]
+            }
+          },
+          {
+            "label": "Valg B: pasning",
+            "stats": {
+              "vision": [
+                8,
+                81
+              ],
+              "crossing": [
+                8,
+                82
+              ],
+              "fk_accuracy": [
+                8,
+                81
+              ],
+              "short_passing": [
+                8,
+                82
+              ],
+              "long_passing": [
+                8,
+                80
+              ]
+            }
+          },
+          {
+            "label": "Valg C: fysikk",
+            "stats": {
+              "heading_accuracy": [
+                8,
+                80
+              ],
+              "jumping": [
+                8,
+                80
+              ],
+              "stamina": [
+                8,
+                81
+              ],
+              "strength": [
+                8,
+                80
+              ],
+              "aggression": [
+                8,
+                80
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2841-false-seven/",
+        "https://www.fut.gg/whats-new/",
+        "https://www.fut.gg/evolutions/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -2982,6 +3125,11 @@
       "navn": "Flank Masterclass [SP+ 22]",
       "grunn": "Bare FUTWIZ har alle nivåer, og siden skiller ikke vanlige PlayStyles fra PlayStyle+ (viser «PlayStyles+ +4 (Quickstep)» på nivå 2 og PS+ i hvert valg på nivå 5). Tallet 4 og typen er uklare; Destructoid/FUTBIN kunne ikke hentes.",
       "dato": "2026-10-27"
+    },
+    {
+      "navn": "Ultimate Scream Regular Badge / Hero Badge",
+      "grunn": "Bare merke/kortdesign, ingen tall (FUT.GG, fcdata).",
+      "dato": "2026-10-30"
     }
   ]
 }
