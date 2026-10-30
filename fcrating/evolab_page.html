@@ -532,11 +532,21 @@ if(!c||c.k!==key){const tr=document.createElement("tr");tr.className="row"+(isOp
 const tog=()=>{open=open===d.i?null:d.i;render()};tr.onclick=tog;tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();tog()}};c={k:key,tr,dt:null};RC.set(d.i,c)}
 out.push(c.tr);
 if(isOpen){const dh=detail(d);if(!c.dt||c.dt.h!==dh||c.dt.n!==ncol){const dt=document.createElement("tr");dt.className="det";dt.innerHTML=`<td colspan="${ncol}">${dh}</td>`;wireDetail(dt,d);c.dt={h:dh,n:ncol,el:dt}}out.push(c.dt.el)}else c.dt=null});
-if(!rows.length){const tr=document.createElement("tr");tr.innerHTML=`<td colspan="${ncol}" class="l" style="padding:18px">Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».</td>`;out.push(tr)}
+if(!rows.length){const tr=document.createElement("tr");tr.innerHTML=`<td colspan="${ncol}" class="l" style="padding:18px"><div style="white-space:normal;max-width:calc(100vw - 72px);position:sticky;left:0">${emptyMsg()}</div></td>`;const cb=tr.querySelector("[data-clearmore]");if(cb)cb.onclick=clearMore;out.push(tr)}
+{const on=moreOn().length;$("more").querySelector("summary").textContent="Flere valg"+(on?` (${on} på)`:"")}
 tb.replaceChildren(...out);
 const m=$("morerows");m.hidden=rows.length<=shown;m.textContent=`Vis ${Math.min(PAGE,rows.length-shown)} til`;renderCompare();
 if(!running&&!pendingRe&&rows.slice(0,shown).some(needsWork)){pendingRe=true;setTimeout(recompute,50)}}
 function reset(){shown=PAGE;render()}
+/* the filters under «Flere valg» are remembered between visits, so the page says when they hide cards (owner 30.10: Rivas did not show) */
+const MOREF=[["kind","korttype"],["gender","kjønn"],["lg","liga"],["na","land"],["ovrMin","OVR fra"],["build","bygning"],["size","størrelse"],["live","bare evo nå"]];
+const moreOn=()=>MOREF.filter(([k])=>F[k]!==F0[k]&&F[k]!=null&&F[k]!=="").map(([,l])=>l).concat(Object.keys(F.pss).length?["PlayStyles"]:[]);
+const withoutMore=fn=>{const s=F;F={...F,...Object.fromEntries(MOREF.map(([k])=>[k,F0[k]])),pss:{}};try{return fn()}finally{F=s}};
+function clearMore(){for(const[k]of MOREF)F[k]=F0[k];F.pss={};sync();reset()}
+function emptyMsg(){const on=moreOn(),raw=$("q").value.trim(),q=raw.toLowerCase();
+if(!on.length)return"Ingen kort passer filtrene. Prøv en høyere OVR eller «Alle utespillere».";
+const n=withoutMore(()=>D.filter(d=>pass(d,q)).length),btn=' <button type="button" class="link" data-clearmore>Fjern dem</button>';
+return(n?(raw?`«${esc(raw)}» (${n0(n)} kort)`:`${n0(n)} kort`)+` skjules av ${esc(list(on))} under Flere valg.`:`Under Flere valg er ${esc(list(on))} på.`)+btn}
 
 /* ---------- detail ---------- */
 function diffs(a0,a1,n){const out=[];a1.forEach((v,i)=>{if(v!=null&&a0[i]!=null&&Math.round(v)!==Math.round(a0[i]))out.push([i,a0[i],v])});out.sort((x,y)=>(y[2]-y[1])-(x[2]-x[1]));return n?out.slice(0,n):out}
