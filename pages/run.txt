@@ -1,0 +1,29 @@
+run 41109183603
+total 148956
+drwxr-xr-x  3 runner runner     4096 Oct 30 21:19 .
+drwxrwxrwt 15 root   root       4096 Oct 30 21:50 ..
+-rw-r--r--  1 runner runner       61 Oct 30 21:19 .fcrating-site
+-rw-r--r--  1 runner runner      528 Oct 30 21:19 _headers
+-rw-r--r--  1 runner runner 76380160 Oct 30 21:50 artifact.tar
+-rw-r--r--  1 runner runner  8386760 Oct 30 21:19 evolab-data-1.js
+-rw-r--r--  1 runner runner  8387900 Oct 30 21:19 evolab-data-2.js
+-rw-r--r--  1 runner runner  8388644 Oct 30 21:19 evolab-data-3.js
+-rw-r--r--  1 runner runner  8387918 Oct 30 21:19 evolab-data-4.js
+-rw-r--r--  1 runner runner  3867503 Oct 30 21:19 evolab-data-5.js
+-rw-r--r--  1 runner runner  1457712 Oct 30 21:19 evolab.html
+drwxr-xr-x  2 runner runner     4096 Oct 30 21:02 fonts
+-rw-r--r--  1 runner runner      828 Oct 30 21:02 icon-180.png
+-rw-r--r--  1 runner runner      921 Oct 30 21:02 icon-192.png
+-rw-r--r--  1 runner runner     2672 Oct 30 21:02 icon-512.png
+-rw-r--r--  1 runner runner      543 Oct 30 21:02 icon.svg
+-rw-r--r--  1 runner runner   305956 Oct 30 21:19 index.html
+-rw-r--r--  1 runner runner      390 Oct 30 21:02 manifest.webmanifest
+-rw-r--r--  1 runner runner  3857354 Oct 30 21:19 matchup.html
+-rw-r--r--  1 runner runner    35749 Oct 30 21:19 om.html
+-rw-r--r--  1 runner runner  8387220 Oct 30 21:19 rapport-data-1.js
+-rw-r--r--  1 runner runner  8387965 Oct 30 21:19 rapport-data-2.js
+-rw-r--r--  1 runner runner  8387326 Oct 30 21:19 rapport-data-3.js
+-rw-r--r--  1 runner runner  7535165 Oct 30 21:19 rapport-data-4.js
+-rw-r--r--  1 runner runner   305956 Oct 30 21:19 rapport.html
+-rw-r--r--  1 runner runner       26 Oct 30 21:19 robots.txt
+-rw-r--r--  1 runner runner     1506 Oct 30 21:02 testliste.txt
