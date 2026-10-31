@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-10-30T18:30:00Z",
+  "_sjekket": "2026-10-31T18:30:00Z",
   "evos": [
     {
       "key": "future_stars_academy_3",
@@ -115,113 +115,6 @@
         "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
         "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
       ]
-    },
-    {
-      "key": "side_step",
-      "name": "Side Step",
-      "cost": "gratis",
-      "note": "Fristen for å starte (24.10.2026) er futnext sin nedtelling på listesiden («unlock within 4d23h» 19.10 kl. 17:12 UTC), og FUTBIN viser «5 days» igjen; det stemmer med at evoen åpnet 14.10 og har 10 dager. futnext sin detaljside sier «8d15h», så den tidligste er brukt (17:00 UTC). Evoen er merket repeterbar hos FUTBIN, men hvor mange ganger står ikke. Roller og skill moves er ikke nevnt. Fordeler på nivå: nivå 1 OVR/Crossing/Long Passing/Long Shots/Def. Awareness/Sprint Speed/svakfot, nivå 2 Curve/Finishing/FK/Stand Tackle/Volleys/Tiki Taka, nivå 3 Acceleration/Interceptions/Short Passing/Shot Power/Slide Tackle/Vision. Tallene her er summen etter alle tre nivåer (like hos FUTBIN, Destructoid og futnext).",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 85,
-        "max_ps": 7,
-        "positions": [
-          "LB",
-          "RB"
-        ],
-        "not_positions": [
-          "CB",
-          "CM"
-        ]
-      },
-      "up": {
-        "ovr": [
-          7,
-          81
-        ],
-        "wf": [
-          2,
-          3
-        ],
-        "ps": [
-          [
-            "Tiki Taka",
-            3
-          ]
-        ],
-        "stats": {
-          "acceleration": [
-            5,
-            83
-          ],
-          "sprint_speed": [
-            5,
-            83
-          ],
-          "crossing": [
-            7,
-            81
-          ],
-          "curve": [
-            7,
-            77
-          ],
-          "finishing": [
-            7,
-            78
-          ],
-          "interceptions": [
-            7,
-            78
-          ],
-          "long_passing": [
-            7,
-            76
-          ],
-          "long_shots": [
-            7,
-            78
-          ],
-          "def_awareness": [
-            7,
-            78
-          ],
-          "short_passing": [
-            7,
-            80
-          ],
-          "fk_accuracy": [
-            7,
-            78
-          ],
-          "shot_power": [
-            7,
-            77
-          ],
-          "sliding_tackle": [
-            7,
-            81
-          ],
-          "standing_tackle": [
-            7,
-            81
-          ],
-          "vision": [
-            7,
-            78
-          ],
-          "volleys": [
-            7,
-            76
-          ]
-        }
-      },
-      "sources": [
-        "https://www.futbin.com/27/evolutions/50/side-step",
-        "https://www.destructoid.com/best-players-for-fc-27-side-step-evolution/",
-        "https://www.futnext.com/evolutions/side-step/2757"
-      ],
-      "until": "2026-10-24T17:00Z"
     },
     {
       "key": "centre_stage",
@@ -3083,6 +2976,132 @@
         "https://www.fut.gg/whats-new/",
         "https://www.fut.gg/evolutions/"
       ]
+    },
+    {
+      "key": "two_faces_of_fear",
+      "name": "Two Faces of Fear",
+      "cost": "gratis",
+      "until": "2026-11-10T18:00Z",
+      "note": "Kom 31.10. Krav (maks 80 OVR, ST, maks 7 PlayStyles, ingen PlayStyle+, maks Pace 86, maks Dribbling 82) og tallene for nivå 1, 2 og valg B (False 9) er like hos fcdata og FUT.GG. Valg A (Target Forward) står bare med tall hos fcdata. Fristen 10.11 kl. 18:00 (fullføres innen 17.11) står bare hos fcdata; FUT.GG har ingen dato. Nivå 3 gir i begge valg 1 PlayStyle med tak 3 og en Role++; ingen kilde viser PlayStyle-navnet, så det er utelatt. FUT.GG viser rollen False 9++ for valg B; for valg A er rollen ikke navngitt (beskrivelsen sier Target Forward), så den er utelatt. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST"
+        ],
+        "max_face": {
+          "dribbling": 82
+        }
+      },
+      "up": {
+        "ovr": [
+          5,
+          81
+        ],
+        "stats": {
+          "sprint_speed": [
+            4,
+            82
+          ],
+          "finishing": [
+            8,
+            82
+          ],
+          "volleys": [
+            6,
+            80
+          ],
+          "reactions": [
+            7,
+            80
+          ],
+          "composure": [
+            7,
+            80
+          ],
+          "acceleration": [
+            4,
+            82
+          ],
+          "positioning": [
+            8,
+            82
+          ],
+          "shot_power": [
+            7,
+            82
+          ],
+          "penalties": [
+            6,
+            80
+          ],
+          "ball_control": [
+            6,
+            80
+          ],
+          "stamina": [
+            7,
+            78
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: Target Forward",
+            "stats": {
+              "heading_accuracy": [
+                8,
+                82
+              ],
+              "jumping": [
+                8,
+                82
+              ],
+              "strength": [
+                8,
+                85
+              ],
+              "aggression": [
+                6,
+                78
+              ]
+            }
+          },
+          {
+            "label": "Valg B: False 9",
+            "stats": {
+              "vision": [
+                8,
+                80
+              ],
+              "short_passing": [
+                8,
+                80
+              ],
+              "agility": [
+                6,
+                80
+              ],
+              "dribbling": [
+                6,
+                81
+              ]
+            },
+            "roles": [
+              [
+                "ST",
+                "False 9",
+                2
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2844-two-faces-of-fear/",
+        "https://www.fut.gg/evolutions/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -3130,6 +3149,11 @@
       "navn": "Ultimate Scream Regular Badge / Hero Badge",
       "grunn": "Bare merke/kortdesign, ingen tall (FUT.GG, fcdata).",
       "dato": "2026-10-30"
+    },
+    {
+      "navn": "Red Fire / Green Classic Arrow Spin / FC Pro Competitor Badge",
+      "grunn": "Bare kortdesign/merke, ingen tall (navn og kostnad hos fcdata).",
+      "dato": "2026-10-31"
     }
   ]
 }
