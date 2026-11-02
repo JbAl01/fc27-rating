@@ -1,352 +1,7 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-01T18:17:00Z",
+  "_sjekket": "2026-11-02T18:30:00Z",
   "evos": [
-    {
-      "key": "future_stars_academy_3",
-      "name": "Future Stars Academy III",
-      "cost": "gratis",
-      "until": "2026-10-26T17:00Z",
-      "note": "Kommer etter Future Stars Academy II (krever 82 OVR og Future Stars-kort). PlayStyle i hvert valg (Rapid, Power Shot, Technical) står bare hos én kilde (Futmind), og taket på dem er ukjent. Tallene i parentes er regnet som maks, som i de andre evoene. Fristen er fra Futmind, og 1 time tidligere enn Academy I og II for å være på den trygge siden.",
-      "req": {
-        "min_ovr": 82,
-        "max_ovr": 82,
-        "max_ps": 7,
-        "requires_evo": "future_stars_academy_2"
-      },
-      "up": {
-        "paths": [
-          {
-            "label": "Valg A: Rapid, fart",
-            "ovr": [
-              1,
-              83
-            ],
-            "stats": {
-              "sprint_speed": [
-                3,
-                87
-              ],
-              "acceleration": [
-                3,
-                87
-              ]
-            },
-            "ps": [
-              [
-                "Rapid",
-                3
-              ]
-            ]
-          },
-          {
-            "label": "Valg B: Power Shot, skudd",
-            "ovr": [
-              1,
-              83
-            ],
-            "stats": {
-              "finishing": [
-                4,
-                88
-              ],
-              "shot_power": [
-                3,
-                88
-              ],
-              "long_shots": [
-                3,
-                84
-              ],
-              "volleys": [
-                5,
-                82
-              ],
-              "composure": [
-                3,
-                85
-              ]
-            },
-            "ps": [
-              [
-                "Power Shot",
-                3
-              ]
-            ]
-          },
-          {
-            "label": "Valg C: Technical, dribling",
-            "ovr": [
-              1,
-              83
-            ],
-            "stats": {
-              "agility": [
-                4,
-                89
-              ],
-              "balance": [
-                2,
-                85
-              ],
-              "reactions": [
-                3,
-                86
-              ],
-              "ball_control": [
-                5,
-                89
-              ],
-              "dribbling": [
-                5,
-                89
-              ]
-            },
-            "ps": [
-              [
-                "Technical",
-                3
-              ]
-            ]
-          }
-        ]
-      },
-      "sources": [
-        "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
-        "https://futmind.com/articles/19096/future-stars-academy-iii-evolution-guide-cost-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
-      ]
-    },
-    {
-      "key": "future_stars_academy_4",
-      "name": "Future Stars Academy IV",
-      "cost": "gratis",
-      "until": "2026-10-26T17:00Z",
-      "note": "Siste steg etter Future Stars Academy III (krever 83 OVR og Future Stars Academy-kort; at Academy III må være gjort først står hos timesaver/FUT.GG-artikkelen, futnext og Futmind sier bare rarity Future Stars). Tallene er like hos futnext og Futmind. Fristen er fra Futmind (17:00 UTC). Taket 4 på Low Driven Shot er bare vist hos futnext (umerket «4»).",
-      "req": {
-        "min_ovr": 83,
-        "max_ovr": 83,
-        "max_ps": 7,
-        "requires_evo": "future_stars_academy_3"
-      },
-      "up": {
-        "ovr": [
-          2,
-          85
-        ],
-        "stats": {
-          "long_shots": [
-            3,
-            78
-          ],
-          "penalties": [
-            8,
-            75
-          ],
-          "composure": [
-            3,
-            80
-          ],
-          "jumping": [
-            5,
-            70
-          ],
-          "strength": [
-            4,
-            72
-          ],
-          "shot_power": [
-            3,
-            80
-          ],
-          "volleys": [
-            4,
-            76
-          ],
-          "crossing": [
-            6,
-            80
-          ],
-          "heading_accuracy": [
-            4,
-            72
-          ],
-          "stamina": [
-            3,
-            83
-          ],
-          "aggression": [
-            6,
-            60
-          ]
-        },
-        "paths": [
-          {
-            "label": "Valg A: Low Driven Shot, skudd",
-            "ps": [
-              [
-                "Low Driven Shot",
-                4
-              ]
-            ],
-            "stats": {
-              "finishing": [
-                1,
-                84
-              ],
-              "shot_power": [
-                3,
-                86
-              ],
-              "long_shots": [
-                2,
-                82
-              ],
-              "volleys": [
-                4,
-                82
-              ],
-              "composure": [
-                3,
-                84
-              ]
-            }
-          },
-          {
-            "label": "Valg B: pasning",
-            "stats": {
-              "vision": [
-                3,
-                88
-              ],
-              "short_passing": [
-                3,
-                88
-              ],
-              "long_passing": [
-                4,
-                86
-              ],
-              "reactions": [
-                4,
-                86
-              ],
-              "ball_control": [
-                2,
-                84
-              ],
-              "composure": [
-                4,
-                85
-              ]
-            }
-          }
-        ]
-      },
-      "sources": [
-        "https://www.futnext.com/evolutions/future-stars-academy-iv/2756",
-        "https://futmind.com/articles/19104/future-stars-academy-iv-evolution-guide-ea-sports-fc-27-ultimate-team"
-      ]
-    },
-    {
-      "key": "speed_bump",
-      "name": "Speed Bump",
-      "cost": "gratis",
-      "until": "2026-10-26T18:00Z",
-      "note": "Krav og tall er like hos futnext og Futmind. Fristen 26.10.2026 18:00 UTC er fra Futmind (etter at Storbritannia har gått over til vintertid), futnext sin nedtelling stemmer med den. PlayStyle-taket er 3 (FUTBIN: «Jockey 3», «Intercept 3»; FUT.GG viser samme tall): en PlayStyle legges bare til når kortet har færre enn 3. Roller, svakfot og skill moves er ikke nevnt. Tallene er summen etter alle tre nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 75,
-        "max_ps": 7,
-        "positions": [
-          "CB"
-        ],
-        "not_positions": [
-          "CDM"
-        ]
-      },
-      "up": {
-        "ovr": [
-          10,
-          83
-        ],
-        "ps": [
-          [
-            "Jockey",
-            3
-          ],
-          [
-            "Intercept",
-            3
-          ]
-        ],
-        "stats": {
-          "acceleration": [
-            10,
-            77
-          ],
-          "long_passing": [
-            4,
-            76
-          ],
-          "composure": [
-            14,
-            81
-          ],
-          "def_awareness": [
-            7,
-            82
-          ],
-          "jumping": [
-            10,
-            85
-          ],
-          "sprint_speed": [
-            10,
-            77
-          ],
-          "reactions": [
-            7,
-            80
-          ],
-          "interceptions": [
-            7,
-            82
-          ],
-          "standing_tackle": [
-            12,
-            82
-          ],
-          "strength": [
-            7,
-            86
-          ],
-          "short_passing": [
-            11,
-            80
-          ],
-          "ball_control": [
-            5,
-            76
-          ],
-          "heading_accuracy": [
-            5,
-            80
-          ],
-          "sliding_tackle": [
-            7,
-            82
-          ],
-          "aggression": [
-            5,
-            84
-          ]
-        }
-      },
-      "sources": [
-        "https://www.futnext.com/evolutions/speed-bump/2763",
-        "https://futmind.com/articles/19106/speed-bump-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
-      ]
-    },
     {
       "key": "middle_management",
       "name": "Middle Management",
@@ -3348,6 +3003,92 @@
       ],
       "premium": true,
       "note": "Erstatter oppføringen i config (frist 17.10): evoen er lagt ut på nytt med ny ID (fcdata 2814, FUT.GG 2624) og frist 30.9.2027 kl. 00:00 (fcdata, uten tidssone, brukt som britisk tid; futevolution: «11 months»; FUT.GG har ingen dato). Krav og tall er like hos fcdata og FUT.GG og som i config. fcdata og FUT.GG sier gratis, men futmind sier at den følger med Twilight Screamer EVO Pack og dukker opp under Rewards etter kjøp, så den er satt som premium og kan skrus av der. Hvor pakken selges nå, og prisen, er ikke funnet. PlayStyle-navnene (Tiki Taka, Press Proven) står i FUTWIZ-guiden og config; tak 3 hos fcdata."
+    },
+    {
+      "key": "no_soul_shall_pass",
+      "name": "No Soul Shall Pass",
+      "cost": "gratis",
+      "until": "2026-11-12T18:00Z",
+      "note": "Bare én kilde har detaljene: fcdata (FUT.GG viser navnet øverst i evolisten, men detaljsiden kunne ikke hentes; FUTBIN, futnext, futwiz og Destructoid ga ingenting). Må sjekkes mot en andre kilde neste kjøring. Krav og frist (12.11 kl. 18:00, fullføres innen 19.11; fcdata oppgir ikke tidssone, brukt som britisk tid) er fra fcdata; PlayStyle+, Pace og repeterbar står ikke oppført. Begge valg på nivå 2 gir 1 PlayStyle (tak 3) og 1 Role++, men fcdata navngir verken PlayStyle eller rolle, så de er utelatt her: Evo Lab regner derfor ikke med dem. Valg B gir også +2 svakfot (maks 3). POS er keeper-posisjonering. Tallene er nivå 1 pluss valget på nivå 2.",
+      "req": {
+        "max_ovr": 80,
+        "max_ps": 7,
+        "positions": [
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          3,
+          81
+        ],
+        "stats": {
+          "gk_diving": [
+            5,
+            78
+          ],
+          "gk_kicking": [
+            6,
+            81
+          ],
+          "gk_handling": [
+            5,
+            81
+          ],
+          "gk_reflexes": [
+            5,
+            81
+          ]
+        },
+        "paths": [
+          {
+            "label": "Valg A: fart og reflekser",
+            "stats": {
+              "acceleration": [
+                10,
+                45
+              ],
+              "sprint_speed": [
+                10,
+                45
+              ],
+              "reactions": [
+                5,
+                76
+              ],
+              "gk_reflexes": [
+                5,
+                83
+              ]
+            }
+          },
+          {
+            "label": "Valg B: posisjonering og svakfot",
+            "wf": [
+              2,
+              3
+            ],
+            "stats": {
+              "gk_positioning": [
+                5,
+                82
+              ],
+              "reactions": [
+                3,
+                78
+              ],
+              "gk_diving": [
+                5,
+                80
+              ]
+            }
+          }
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2845-no-soul-shall-pass/",
+        "https://www.fut.gg/evolutions/"
+      ]
     }
   ],
   "_hoppet_over": [
