@@ -1,150 +1,7 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-02T18:30:00Z",
+  "_sjekket": "2026-11-03T18:20:00Z",
   "evos": [
-    {
-      "key": "middle_management",
-      "name": "Middle Management",
-      "cost": "gratis (treningsleir)",
-      "until": "2026-10-27T17:00Z",
-      "note": "Krav og tall er like hos FUTBIN og futnext. Fristen er flyttet: 21.10 kl. 17:15 UTC viser futnext «unlock within 6d» (liste og detaljside), FUTBIN «6 days» og Futmind «Send inn innen: 6 dg. og 4 t», som gir 27.10.2026 (før var den 22.10, også hos timesaver). Ingen kilde oppgir klokkeslett, så tidligste tid (17:00 UTC) er brukt. Power Shot-taket (3) står ikke på noen av sidene; 3 er brukt fordi alle andre PlayStyle-evoer i FC 27 har tak 3. Roller og skill moves er ikke nevnt. Tallene er summen etter alle fire nivåer.",
-      "req": {
-        "max_ovr": 74,
-        "max_pace": 83,
-        "max_ps": 7,
-        "positions": [
-          "CDM",
-          "CM"
-        ],
-        "not_positions": [
-          "CAM",
-          "CB",
-          "ST"
-        ]
-      },
-      "up": {
-        "ovr": [
-          40,
-          80
-        ],
-        "wf": [
-          2,
-          3
-        ],
-        "ps": [
-          [
-            "Power Shot",
-            3
-          ]
-        ],
-        "stats": {
-          "finishing": [
-            40,
-            76
-          ],
-          "vision": [
-            50,
-            81
-          ],
-          "long_passing": [
-            50,
-            81
-          ],
-          "standing_tackle": [
-            40,
-            77
-          ],
-          "aggression": [
-            40,
-            75
-          ],
-          "shot_power": [
-            40,
-            77
-          ],
-          "crossing": [
-            50,
-            80
-          ],
-          "curve": [
-            50,
-            79
-          ],
-          "sliding_tackle": [
-            40,
-            76
-          ],
-          "acceleration": [
-            40,
-            75
-          ],
-          "long_shots": [
-            40,
-            76
-          ],
-          "fk_accuracy": [
-            50,
-            80
-          ],
-          "interceptions": [
-            40,
-            77
-          ],
-          "jumping": [
-            40,
-            75
-          ],
-          "sprint_speed": [
-            40,
-            75
-          ],
-          "volleys": [
-            40,
-            75
-          ],
-          "short_passing": [
-            50,
-            81
-          ],
-          "def_awareness": [
-            40,
-            76
-          ],
-          "strength": [
-            40,
-            76
-          ]
-        }
-      },
-      "sources": [
-        "https://www.futbin.com/27/evolutions/62/middle-management",
-        "https://www.futnext.com/evolutions/middle-management/2762",
-        "https://futmind.com/no/evolutions/2762"
-      ]
-    },
-    {
-      "key": "gamechanger_ps",
-      "name": "Gamechanger",
-      "cost": "gratis",
-      "until": "2026-10-27T18:00Z",
-      "note": "Krav og PlayStyle er like hos FUTBIN og futnext. Fristen er futnext sin nedtelling «unlock within 9d6h» på listesiden (detaljsiden sier 11 dager, FUTBIN «1 uke»); den tidligste er brukt. Taket 3 står ved PlayStylen hos begge.",
-      "req": {
-        "max_ovr": 80,
-        "max_ps": 2
-      },
-      "up": {
-        "ps": [
-          [
-            "Gamechanger",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://www.futbin.com/27/evolutions/60/gamechanger",
-        "https://www.futnext.com/evolutions/gamechanger/2761"
-      ]
-    },
     {
       "key": "quick_step_ps",
       "name": "Quick Step",
@@ -717,7 +574,7 @@
       "name": "Wicked Winger",
       "cost": "900 Scream-tokens (Token Store)",
       "until": "2026-11-27T18:00Z",
-      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå, og krav og tall stemmer med FUT.GGs evoliste (sjekket 1.11). fcdatas blogg oppgir butikkens varer til 13.11 kl. 17:59 UTC. Fristen 27.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november). Kravene Strength maks 80 og Defending (hovedtall) maks 70 er fra fcdata. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, navnene Finesse Shot+, Quick Step+ og Technical+ er fra lekkasjer (futfc.gg). Kostnaden er 900 Scream-tokens i Token Store (FUT.GG, timesaver.gg, antihype); fcdata sa gratis. PlayStyle+ på nivå 5 har tak 1 (timesaver.gg og antihype: «capped at 1»): et kort som allerede har en PlayStyle+ kan ta evoen, men får ikke en ny PS+. Rettet 25.10 etter beskjed fra eieren (Glue or Genius + Wicked Winger ga to PS+).",
+      "note": "Lagt inn etter beskjed fra eieren 23.10, selv om bare én kilde (fcdata.io) hadde tallene. Tallene er fra fcdatas egen evoside, nivå for nivå, og krav og tall stemmer med FUT.GGs evoliste (sjekket 1.11). fcdatas blogg oppgir butikkens varer til 13.11 kl. 17:59 UTC. Fristen 27.11 kl. 18:00 er fra fcdata og futevolution (18:00 britisk tid = 18:00 UTC i november). Kravene Strength maks 80 og Defending (hovedtall) maks 70 er fra fcdata. Nivå 5 er et valg av én PlayStyle+; fcdata navngir ikke valgene, men Destructoid bekrefter navnene Finesse Shot+, Quick Step+ og Technical+ og alle kravene (sjekket 3.11). Kostnaden er 900 Scream-tokens i Token Store (FUT.GG, timesaver.gg, antihype); fcdata sa gratis. PlayStyle+ på nivå 5 har tak 1 (timesaver.gg og antihype: «capped at 1»): et kort som allerede har en PlayStyle+ kan ta evoen, men får ikke en ny PS+. Rettet 25.10 etter beskjed fra eieren (Glue or Genius + Wicked Winger ga to PS+).",
       "req": {
         "max_ovr": 82,
         "max_pace": 90,
@@ -863,7 +720,9 @@
         "https://futfc.gg/fc-27-ultimate-scream-token-store-every-reward-and-what-to-pick/",
         "https://timesaver.gg/blog/fc-27-ultimate-scream-token-store-every-item-ranked",
         "https://antihype.com.br/c/games/wicked-winger-fc-27-evolucao-900-tokens/",
-        "https://www.fut.gg/evolutions/2623-wicked-winger/"
+        "https://www.fut.gg/evolutions/2623-wicked-winger/",
+        "https://www.destructoid.com/best-players-for-fc-27-wicked-winger-evolution/",
+        "https://www.futevolution.com/evolutions/template/2623-wicked-winger"
       ]
     },
     {
@@ -3009,7 +2868,7 @@
       "name": "No Soul Shall Pass",
       "cost": "gratis",
       "until": "2026-11-12T18:00Z",
-      "note": "Bare én kilde har detaljene: fcdata (FUT.GG viser navnet øverst i evolisten, men detaljsiden kunne ikke hentes; FUTBIN, futnext, futwiz og Destructoid ga ingenting). Må sjekkes mot en andre kilde neste kjøring. Krav og frist (12.11 kl. 18:00, fullføres innen 19.11; fcdata oppgir ikke tidssone, brukt som britisk tid) er fra fcdata; PlayStyle+, Pace og repeterbar står ikke oppført. Begge valg på nivå 2 gir 1 PlayStyle (tak 3) og 1 Role++, men fcdata navngir verken PlayStyle eller rolle, så de er utelatt her: Evo Lab regner derfor ikke med dem. Valg B gir også +2 svakfot (maks 3). POS er keeper-posisjonering. Tallene er nivå 1 pluss valget på nivå 2.",
+      "note": "Krav (maks 80 OVR, GK, maks 7 PlayStyles) og tallene for begge nivåer og valg er like hos fcdata, FUT.GG, futmind og Destructoid (sjekket 3.11). Fristen 12.11 kl. 18:00 UTC (fullføres innen 19.11) står hos fcdata og futmind. Valg A gir Sweeper Keeper++ og valg B Ball Playing Keeper++ (FUT.GG, futmind, Destructoid). PlayStyle i valg A: futmind og FUTWIZ (ikon) har 1v1 Close Down, Destructoid skriver Rush Out; 1v1 Close Down er brukt, fordi det er FC 27-navnet på samme PlayStyle (se config/playstyles.json). Valg B gir Long Ball Pass (futmind, Destructoid, FUTWIZ). Tak 3 på begge (futmind, Destructoid, FUTWIZ). PlayStyle+, Pace og repeterbar står ikke oppført. Valg B gir også +2 svakfot (maks 3). POS er keeper-posisjonering. Tallene er nivå 1 pluss valget på nivå 2.",
       "req": {
         "max_ovr": 80,
         "max_ps": 7,
@@ -3060,7 +2919,20 @@
                 5,
                 83
               ]
-            }
+            },
+            "ps": [
+              [
+                "1v1 Close Down",
+                3
+              ]
+            ],
+            "roles": [
+              [
+                "GK",
+                "Sweeper Keeper",
+                2
+              ]
+            ]
           },
           {
             "label": "Valg B: posisjonering og svakfot",
@@ -3081,13 +2953,29 @@
                 5,
                 80
               ]
-            }
+            },
+            "ps": [
+              [
+                "Long Ball Pass",
+                3
+              ]
+            ],
+            "roles": [
+              [
+                "GK",
+                "Ball Playing Keeper",
+                2
+              ]
+            ]
           }
         ]
       },
       "sources": [
         "https://fcdata.io/fc27/evolutions/2845-no-soul-shall-pass/",
-        "https://www.fut.gg/evolutions/"
+        "https://www.fut.gg/evolutions/2647-no-soul-shall-pass/",
+        "https://futmind.com/articles/21159/no-soul-shall-pass-evolution-guide-ea-sports-fc-27-ultimate-team",
+        "https://www.destructoid.com/best-players-fc-27-no-soul-shall-pass-evolution/",
+        "https://www.futwiz.com/evolutions/no-soul-shall-pass/148"
       ]
     }
   ],
@@ -3129,8 +3017,8 @@
     },
     {
       "navn": "Flank Masterclass [SP+ 22]",
-      "grunn": "Bare FUTWIZ har alle nivåer, og FUTWIZ er ikke blant kildene som kan stå alene. Siden merker Quickstep (nivå 2) og valgene på nivå 5 som PlayStyle+ med tallet 4, men det kan være vanlige PlayStyles. FUT.GGs side (2607) kunne ikke hentes, og fcdata og Destructoid har den ikke.",
-      "dato": "2026-11-01"
+      "grunn": "Bare FUTWIZ har alle nivåer, og FUTWIZ er ikke blant kildene som kan stå alene. Krav (RM/RW, maks 82 OVR, maks Pace 90) og mål (85) bekreftes av FUTWIZ-guiden og u7buy, men de har ikke nivåene. Evosiden merker Quickstep (nivå 2) og valgene på nivå 5 som PlayStyle+ med tallet 4, men det kan være vanlige PlayStyles. FUT.GGs side (2607), FUTBIN og FUTWIZ-evosiden kunne ikke hentes 3.11, og fcdata og Destructoid har den ikke.",
+      "dato": "2026-11-03"
     },
     {
       "navn": "Ultimate Scream Regular Badge / Hero Badge",
