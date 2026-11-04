@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-03T18:20:00Z",
+  "_sjekket": "2026-11-04T18:20:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -24,109 +24,6 @@
         "https://www.futbin.com/27/evolutions/52/quick-step",
         "https://www.futnext.com/evolutions/quick-step/2747"
       ]
-    },
-    {
-      "key": "zoomaestro",
-      "name": "Zoomaestro",
-      "cost": "gratis",
-      "note": "Kom 18.10.2026. Fristen for å starte er futnext sin nedtelling («unlock within 9d» 19.10 kl. 17:12 UTC, både liste og detaljside), som gir 28.10 kl. 18:00 UTC (etter at Storbritannia har gått over til vintertid); FUTBIN viser «1 Weeks». Krav som Evo Lab ikke sjekker: maks 74 Defending og maks skill moves (Destructoid sier 4, Futmind og futnext 3; eieren bekreftet 4 tidligere). Oppgraderingene er like hos Destructoid, Futmind og futnext; PlayStyle-taket 3 står hos Destructoid. Roller og svakfot er ikke nevnt. Tallene er summen etter alle tre nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 75,
-        "max_ps": 7,
-        "positions": [
-          "CAM",
-          "CM"
-        ]
-      },
-      "up": {
-        "ovr": [
-          7,
-          83
-        ],
-        "sm": [
-          1,
-          4
-        ],
-        "ps": [
-          [
-            "First Touch",
-            3
-          ],
-          [
-            "Technical",
-            3
-          ],
-          [
-            "Rapid",
-            3
-          ]
-        ],
-        "stats": {
-          "positioning": [
-            5,
-            84
-          ],
-          "short_passing": [
-            10,
-            85
-          ],
-          "balance": [
-            7,
-            82
-          ],
-          "dribbling": [
-            10,
-            83
-          ],
-          "acceleration": [
-            10,
-            83
-          ],
-          "long_shots": [
-            5,
-            83
-          ],
-          "curve": [
-            5,
-            81
-          ],
-          "reactions": [
-            7,
-            82
-          ],
-          "composure": [
-            10,
-            81
-          ],
-          "sprint_speed": [
-            10,
-            83
-          ],
-          "vision": [
-            10,
-            82
-          ],
-          "agility": [
-            7,
-            85
-          ],
-          "ball_control": [
-            10,
-            85
-          ],
-          "stamina": [
-            5,
-            84
-          ]
-        }
-      },
-      "sources": [
-        "https://www.destructoid.com/best-players-for-fc-27-zoomaestro-evolution/",
-        "https://futmind.com/articles/19919/fc-27-zoomaestro-evolution-guide-best-players-requirements-and-upgrades",
-        "https://www.futnext.com/evolutions/zoomaestro/2764"
-      ],
-      "until": "2026-10-28T18:00Z"
     },
     {
       "key": "poor_sophia",
@@ -2977,6 +2874,116 @@
         "https://www.destructoid.com/best-players-fc-27-no-soul-shall-pass-evolution/",
         "https://www.futwiz.com/evolutions/no-soul-shall-pass/148"
       ]
+    },
+    {
+      "key": "glow_guard",
+      "name": "Glow Guard",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-11-26T18:00Z",
+      "note": "Treningsleir-evo, fire nivåer. Krav og tall for alle nivåer er like hos fcdata og futmind. Fristen 26.11 kl. 18:00 står hos begge (futmind: 18:00 UTC); fullføres innen 3.12. PlayStyle-navnene (Intercept nivå 2, Aerial Fortress nivå 3) står bare hos futmind; taket 3 står hos begge (fcdata: «1 PlayStyle↗3»). futmind: bare utespillere; fcdata utelukker også GK. Ingen av kildene oppgir krav til PlayStyle+ eller om den er repeterbar, så max_psp og repeat er ikke satt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 80,
+        "max_ps": 7,
+        "positions": [
+          "CB"
+        ],
+        "not_positions": [
+          "LB",
+          "RB",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          40,
+          80
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Intercept",
+            3
+          ],
+          [
+            "Aerial Fortress",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            40,
+            76
+          ],
+          "reactions": [
+            40,
+            75
+          ],
+          "def_awareness": [
+            45,
+            81
+          ],
+          "stamina": [
+            45,
+            77
+          ],
+          "vision": [
+            40,
+            76
+          ],
+          "composure": [
+            40,
+            75
+          ],
+          "standing_tackle": [
+            45,
+            81
+          ],
+          "strength": [
+            45,
+            79
+          ],
+          "short_passing": [
+            40,
+            75
+          ],
+          "interceptions": [
+            45,
+            80
+          ],
+          "sliding_tackle": [
+            45,
+            80
+          ],
+          "aggression": [
+            45,
+            78
+          ],
+          "acceleration": [
+            40,
+            75
+          ],
+          "long_passing": [
+            40,
+            76
+          ],
+          "heading_accuracy": [
+            45,
+            81
+          ],
+          "jumping": [
+            45,
+            80
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2852-glow-guard/",
+        "https://futmind.com/articles/21305/ea-sports-fc-27-ultimate-team-glow-guard-evolution-guide"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -3017,8 +3024,8 @@
     },
     {
       "navn": "Flank Masterclass [SP+ 22]",
-      "grunn": "Bare FUTWIZ har alle nivåer, og FUTWIZ er ikke blant kildene som kan stå alene. Krav (RM/RW, maks 82 OVR, maks Pace 90) og mål (85) bekreftes av FUTWIZ-guiden og u7buy, men de har ikke nivåene. Evosiden merker Quickstep (nivå 2) og valgene på nivå 5 som PlayStyle+ med tallet 4, men det kan være vanlige PlayStyles. FUT.GGs side (2607), FUTBIN og FUTWIZ-evosiden kunne ikke hentes 3.11, og fcdata og Destructoid har den ikke.",
-      "dato": "2026-11-03"
+      "grunn": "Bare FUTWIZ har alle nivåer, og FUTWIZ er ikke blant kildene som kan stå alene. Krav (RM/RW, maks 82 OVR, maks Pace 90) og mål (85) bekreftes av FUTWIZ-guiden og u7buy, men de har ikke nivåene. Evosiden merker Quickstep (nivå 2) og valgene på nivå 5 som PlayStyle+ med tallet 4, men det kan være vanlige PlayStyles. FUT.GGs side (2607), FUTBIN og FUTWIZ-evosiden kunne ikke hentes 3.11 eller 4.11, og fcdata og Destructoid har den ikke.",
+      "dato": "2026-11-04"
     },
     {
       "navn": "Ultimate Scream Regular Badge / Hero Badge",
