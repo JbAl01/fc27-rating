@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-05T18:30:00Z",
+  "_sjekket": "2026-11-06T12:00:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -2969,6 +2969,115 @@
       "sources": [
         "https://fcdata.io/fc27/evolutions/2851-strings-of-fate/",
         "https://www.fut.gg/evolutions/"
+      ]
+    },
+    {
+      "key": "matchday_marksman",
+      "name": "Matchday Marksman",
+      "cost": "gratis",
+      "until": "2026-11-16T18:00Z",
+      "note": "Bare én kilde hadde evoen 6.11: fcdata (detaljside med tall for alle fire nivåer). FUT.GG, futnext og FUTBIN kunne ikke hentes, og futevolution, futmind, Destructoid og FUTWIZ hadde den ikke. Fristen 16.11 kl. 18:00 (fullføres innen 23.11) står hos fcdata uten tidssone; 18:00 britisk tid = 18:00 UTC i november. OVR er satt etter fcdatas sammendrag («+6, maks 83»); per nivå viser fcdata +3 på nivå 1 for et 80-kort (som da når taket 83), så for kort under 80 er sammendraget brukt. Evoen gir også tre PlayStyles med tak 3 (én på nivå 2, to på nivå 4, fcdata: «1 PlayStyle↗3»), men fcdata navngir dem ikke, så de er utelatt og må legges inn når navnene er kjent. Repeterbar, roller og svakfot er ikke oppgitt. Neste kjøring bør sjekke mot en andre kilde. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 88,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "RM",
+          "RW"
+        ]
+      },
+      "up": {
+        "ovr": [
+          6,
+          83
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "stats": {
+          "shot_power": [
+            12,
+            83
+          ],
+          "crossing": [
+            15,
+            84
+          ],
+          "agility": [
+            10,
+            84
+          ],
+          "ball_control": [
+            10,
+            84
+          ],
+          "stamina": [
+            10,
+            82
+          ],
+          "sprint_speed": [
+            6,
+            84
+          ],
+          "positioning": [
+            15,
+            83
+          ],
+          "volleys": [
+            12,
+            77
+          ],
+          "short_passing": [
+            18,
+            85
+          ],
+          "balance": [
+            10,
+            82
+          ],
+          "dribbling": [
+            10,
+            85
+          ],
+          "acceleration": [
+            6,
+            84
+          ],
+          "finishing": [
+            15,
+            81
+          ],
+          "vision": [
+            15,
+            80
+          ],
+          "long_passing": [
+            15,
+            78
+          ],
+          "reactions": [
+            10,
+            82
+          ],
+          "composure": [
+            10,
+            82
+          ],
+          "curve": [
+            15,
+            85
+          ],
+          "long_shots": [
+            15,
+            83
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2849-matchday-marksman/",
+        "https://fcdata.io/evolutions/"
       ]
     }
   ],
