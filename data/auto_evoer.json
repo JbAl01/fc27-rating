@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-06T12:00:00Z",
+  "_sjekket": "2026-11-07T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -2976,7 +2976,7 @@
       "name": "Matchday Marksman",
       "cost": "gratis",
       "until": "2026-11-16T18:00Z",
-      "note": "Bare én kilde hadde evoen 6.11: fcdata (detaljside med tall for alle fire nivåer). FUT.GG, futnext og FUTBIN kunne ikke hentes, og futevolution, futmind, Destructoid og FUTWIZ hadde den ikke. Fristen 16.11 kl. 18:00 (fullføres innen 23.11) står hos fcdata uten tidssone; 18:00 britisk tid = 18:00 UTC i november. OVR er satt etter fcdatas sammendrag («+6, maks 83»); per nivå viser fcdata +3 på nivå 1 for et 80-kort (som da når taket 83), så for kort under 80 er sammendraget brukt. Evoen gir også tre PlayStyles med tak 3 (én på nivå 2, to på nivå 4, fcdata: «1 PlayStyle↗3»), men fcdata navngir dem ikke, så de er utelatt og må legges inn når navnene er kjent. Repeterbar, roller og svakfot er ikke oppgitt. Neste kjøring bør sjekke mot en andre kilde. Tallene er summen etter alle nivåer.",
+      "note": "Krav, nivåer og tall er like hos fcdata, FUT.GG, futmind og Destructoid (sjekket 7.11). Fristen 16.11 kl. 18:00 UTC (fullføres innen 23.11 18:00 UTC) står hos futmind; fcdata har samme tid uten tidssone. PlayStyles: Gamechanger (nivå 2) og Low Driven Shot + Finesse Shot (nivå 4), tak 3 (FUT.GG, futmind, Destructoid; fcdata viser «1 PlayStyle↗3» uten navn). OVR er satt etter sammendraget («+6, maks 83»). Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
       "req": {
         "max_ovr": 80,
         "max_pace": 88,
@@ -3073,11 +3073,50 @@
             15,
             83
           ]
-        }
+        },
+        "ps": [
+          [
+            "Gamechanger",
+            3
+          ],
+          [
+            "Low Driven Shot",
+            3
+          ],
+          [
+            "Finesse Shot",
+            3
+          ]
+        ]
       },
       "sources": [
         "https://fcdata.io/fc27/evolutions/2849-matchday-marksman/",
-        "https://fcdata.io/evolutions/"
+        "https://www.fut.gg/evolutions/2650-matchday-marksman/",
+        "https://futmind.com/articles/21388/matchday-marksman-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27",
+        "https://www.destructoid.com/best-players-for-fc-27-matchday-marksman-evolution/"
+      ]
+    },
+    {
+      "key": "intercept_free",
+      "name": "Intercept",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Fristen er ukjent: futevolution viser bare «Expires 1 week» (7.11), FUT.GG har ingen dato. Bare én kilde hadde detaljside (FUT.GG, 7.11): «Add Intercept to any qualified player», maks 80 OVR, maks 2 PlayStyles, ingen posisjonskrav, ingen kamper (låses opp via objektivet Ultimate Gauntlet 3). Taket 3 er det umerkede tallet ved nivået hos FUT.GG, som for Anticipate. FUT.GG viser ikke maks PS+. futevolution har evoen i listen (gratis, repeterbar 1) uten krav. FUTBIN-siden kunne ikke hentes, fcdata har den ikke. Neste kjøring bør sjekke mot en andre kilde. Ikke det samme som PlayStyle+-evoen Intercept+.",
+      "req": {
+        "max_ovr": 80,
+        "max_ps": 2
+      },
+      "up": {
+        "ps": [
+          [
+            "Intercept",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2651-intercept/",
+        "https://www.futevolution.com/evolutions"
       ]
     }
   ],
