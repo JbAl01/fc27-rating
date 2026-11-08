@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-07T18:30:00Z",
+  "_sjekket": "2026-11-08T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -23,109 +23,6 @@
       "sources": [
         "https://www.futbin.com/27/evolutions/52/quick-step",
         "https://www.futnext.com/evolutions/quick-step/2747"
-      ]
-    },
-    {
-      "key": "side_stopper",
-      "name": "Side Stopper",
-      "cost": "gratis",
-      "until": "2026-10-31T17:00Z",
-      "note": "Krav og tall er like hos FUT.GG (listesiden) og Futmind (guide og evoside). Fristen 31.10.2026 står i Futmind-guiden (uten klokkeslett), og Futminds evoside viste «Submit by: 10 Days 0 Hours» 21.10 kl. 17:15 UTC; FUTBIN sier bare «Unlock 1 Weeks». Tidligste tid (17:00 UTC) er brukt. PlayStyles Intercept (nivå 2) og Slide Tackle (nivå 3) står bare hos Futmind; taket 3 er det umerkede tallet på slutten av FUT.GG-oppføringen (Futmind viser ikke tak). FUTBINs detaljside kunne ikke hentes. Evoen er merket repeterbar hos FUTBIN, men antall står ikke. Svakfot, skill moves og roller er ikke nevnt. Tallene er summen etter alle tre nivåer.",
-      "req": {
-        "max_ovr": 81,
-        "max_pace": 83,
-        "max_ps": 7,
-        "positions": [
-          "LB",
-          "RB"
-        ],
-        "not_positions": [
-          "CDM",
-          "CB"
-        ]
-      },
-      "up": {
-        "ovr": [
-          4,
-          83
-        ],
-        "ps": [
-          [
-            "Intercept",
-            3
-          ],
-          [
-            "Slide Tackle",
-            3
-          ]
-        ],
-        "stats": {
-          "acceleration": [
-            7,
-            83
-          ],
-          "balance": [
-            5,
-            76
-          ],
-          "interceptions": [
-            6,
-            82
-          ],
-          "standing_tackle": [
-            6,
-            83
-          ],
-          "stamina": [
-            6,
-            84
-          ],
-          "sprint_speed": [
-            7,
-            83
-          ],
-          "reactions": [
-            5,
-            80
-          ],
-          "heading_accuracy": [
-            6,
-            78
-          ],
-          "sliding_tackle": [
-            6,
-            83
-          ],
-          "strength": [
-            6,
-            80
-          ],
-          "short_passing": [
-            5,
-            76
-          ],
-          "composure": [
-            6,
-            78
-          ],
-          "def_awareness": [
-            6,
-            82
-          ],
-          "jumping": [
-            6,
-            78
-          ],
-          "aggression": [
-            6,
-            80
-          ]
-        }
-      },
-      "sources": [
-        "https://www.fut.gg/evolutions/",
-        "https://futmind.com/articles/20112/ea-sports-fc-27-side-stopper-evolutions-guide-best-players-and-upgrades",
-        "https://futmind.com/evolutions/2812/side-stopper"
       ]
     },
     {
@@ -3118,6 +3015,160 @@
         "https://www.fut.gg/evolutions/2651-intercept/",
         "https://www.futevolution.com/evolutions"
       ]
+    },
+    {
+      "key": "underdog_run",
+      "name": "Underdog Run",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-11-18T18:00Z",
+      "note": "Kom 8.11 kl. 18:00 UTC. Treningsleir-evo, fem nivåer (samme oppsett som Rise From the Grave, men for LM/LW). Krav og tall for alle nivåer er like hos fcdata og futmind. Fristen 18.11 kl. 18:00 (fullføres innen 25.11 kl. 18:00) står hos fcdata uten tidssone; futminds nedtelling gir samme tid i UTC. PlayStyle-navnene (Quick Step nivå 2, Technical nivå 3, Pinged Pass nivå 4) står bare hos futmind; taket 3 hos begge (fcdata: «1 PlayStyle ↗3»). fcdata utelukker CM og GK, futmind bare CM. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LM",
+          "LW"
+        ],
+        "not_positions": [
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          36,
+          80
+        ],
+        "wf": [
+          1,
+          3
+        ],
+        "sm": [
+          2,
+          4
+        ],
+        "face": {
+          "defending": [
+            15,
+            55
+          ]
+        },
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Technical",
+            3
+          ],
+          [
+            "Pinged Pass",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            40,
+            84
+          ],
+          "volleys": [
+            30,
+            72
+          ],
+          "long_passing": [
+            35,
+            84
+          ],
+          "ball_control": [
+            40,
+            82
+          ],
+          "stamina": [
+            30,
+            82
+          ],
+          "positioning": [
+            40,
+            81
+          ],
+          "vision": [
+            40,
+            82
+          ],
+          "curve": [
+            35,
+            84
+          ],
+          "dribbling": [
+            40,
+            82
+          ],
+          "strength": [
+            20,
+            68
+          ],
+          "finishing": [
+            40,
+            79
+          ],
+          "crossing": [
+            40,
+            84
+          ],
+          "agility": [
+            35,
+            83
+          ],
+          "composure": [
+            35,
+            78
+          ],
+          "aggression": [
+            20,
+            72
+          ],
+          "shot_power": [
+            35,
+            82
+          ],
+          "fk_accuracy": [
+            35,
+            78
+          ],
+          "balance": [
+            35,
+            82
+          ],
+          "acceleration": [
+            40,
+            85
+          ],
+          "long_shots": [
+            35,
+            78
+          ],
+          "short_passing": [
+            40,
+            84
+          ],
+          "reactions": [
+            35,
+            77
+          ],
+          "jumping": [
+            20,
+            76
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2854-underdog-run/",
+        "https://futmind.com/evolutions/2854/underdog-run",
+        "https://fcdata.io/evolutions/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -3175,6 +3226,11 @@
       "navn": "Season 2 Badge [SP 27] / Ultimate Scream [SP+ 26] / Retro 17/19 [SP+ 26] / Retro 20 [SP 27]",
       "grunn": "Bare merke/kortdesign eller et bestemt ferdig kort, ingen tall (FUT.GG sesongpass, futevolution).",
       "dato": "2026-11-01"
+    },
+    {
+      "navn": "Blue Fire / Ice Cold",
+      "grunn": "Bare kortdesign, ingen tall (fcdata, futevolution).",
+      "dato": "2026-11-08"
     }
   ]
 }
