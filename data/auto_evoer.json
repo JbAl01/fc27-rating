@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-08T18:30:00Z",
+  "_sjekket": "2026-11-09T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -438,145 +438,6 @@
         "https://www.fut.gg/evolutions/2623-wicked-winger/",
         "https://www.destructoid.com/best-players-for-fc-27-wicked-winger-evolution/",
         "https://www.futevolution.com/evolutions/template/2623-wicked-winger"
-      ]
-    },
-    {
-      "key": "center_spectre",
-      "name": "Center Spectre",
-      "cost": "gratis",
-      "until": "2026-11-02T18:00Z",
-      "repeat": 2,
-      "note": "Krav og tall er like hos fcdata, FUT.GG og futnext. Fristen 2.11 kl. 18:00 er fra fcdata (18:00 britisk tid = 18:00 UTC i november); FUT.GG har ingen dato. Repeterbar 2 står hos futnext. PlayStyle-navnene (Block / Pinged Pass) står bare hos futnext; taket 3 står hos alle tre. Kravene Long Shots maks 81 og Standing Tackle maks 78 står hos fcdata og FUT.GG. Svakfot, skill moves og roller er ikke oppgitt.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 83,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "CM",
-          "CDM"
-        ],
-        "max_stats": {
-          "long_shots": 81,
-          "standing_tackle": 78
-        }
-      },
-      "up": {
-        "ovr": [
-          5,
-          81
-        ],
-        "stats": {
-          "agility": [
-            5,
-            80
-          ],
-          "reactions": [
-            7,
-            80
-          ],
-          "dribbling": [
-            5,
-            80
-          ],
-          "heading_accuracy": [
-            3,
-            77
-          ],
-          "stamina": [
-            7,
-            81
-          ],
-          "short_passing": [
-            7,
-            82
-          ],
-          "balance": [
-            5,
-            80
-          ],
-          "ball_control": [
-            7,
-            80
-          ],
-          "composure": [
-            7,
-            78
-          ],
-          "jumping": [
-            3,
-            79
-          ]
-        },
-        "paths": [
-          {
-            "label": "Valg A: Block, forsvar",
-            "stats": {
-              "interceptions": [
-                6,
-                78
-              ],
-              "def_awareness": [
-                8,
-                77
-              ],
-              "standing_tackle": [
-                6,
-                80
-              ],
-              "strength": [
-                6,
-                78
-              ],
-              "aggression": [
-                6,
-                80
-              ]
-            },
-            "ps": [
-              [
-                "Block",
-                3
-              ]
-            ]
-          },
-          {
-            "label": "Valg B: Pinged Pass, pasning og fart",
-            "stats": {
-              "acceleration": [
-                5,
-                78
-              ],
-              "sprint_speed": [
-                5,
-                78
-              ],
-              "long_shots": [
-                5,
-                78
-              ],
-              "vision": [
-                5,
-                80
-              ],
-              "long_passing": [
-                9,
-                82
-              ]
-            },
-            "ps": [
-              [
-                "Pinged Pass",
-                3
-              ]
-            ]
-          }
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2815-center-spectre/",
-        "https://www.fut.gg/evolutions/2631-center-spectre/",
-        "https://www.futnext.com/evolutions/center-spectre/2815"
       ]
     },
     {
@@ -3169,6 +3030,192 @@
         "https://futmind.com/evolutions/2854/underdog-run",
         "https://fcdata.io/evolutions/"
       ]
+    },
+    {
+      "key": "clean_sheet_nights",
+      "name": "Clean Sheet Nights",
+      "cost": "gratis",
+      "until": "2026-11-19T18:00Z",
+      "note": "Kom 9.11. Krav og tall for alle tre nivåer er like hos fcdata og futmind (9.11). Fristen 19.11 kl. 18:00 UTC (fullføres innen 26.11 kl. 18:00 UTC) står hos futmind; fcdata har samme tid uten tidssone. PlayStyle-navnene (Jockey nivå 1, Intercept nivå 2, Quick Step nivå 3) står bare hos futmind; taket 3 hos begge (fcdata: «1 PlayStyle↗3»). Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LB",
+          "RB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          3,
+          82
+        ],
+        "stats": {
+          "reactions": [
+            10,
+            80
+          ],
+          "interceptions": [
+            8,
+            82
+          ],
+          "standing_tackle": [
+            10,
+            83
+          ],
+          "stamina": [
+            10,
+            86
+          ],
+          "crossing": [
+            10,
+            78
+          ],
+          "ball_control": [
+            10,
+            80
+          ],
+          "heading_accuracy": [
+            12,
+            80
+          ],
+          "sliding_tackle": [
+            12,
+            83
+          ],
+          "strength": [
+            8,
+            80
+          ],
+          "short_passing": [
+            10,
+            80
+          ],
+          "composure": [
+            10,
+            80
+          ],
+          "def_awareness": [
+            10,
+            82
+          ],
+          "jumping": [
+            12,
+            80
+          ],
+          "aggression": [
+            12,
+            82
+          ]
+        },
+        "ps": [
+          [
+            "Jockey",
+            3
+          ],
+          [
+            "Intercept",
+            3
+          ],
+          [
+            "Quick Step",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2859-clean-sheet-nights/",
+        "https://futmind.com/evolutions/2859/clean-sheet-nights",
+        "https://futmind.com/articles/21658/clean-sheet-nights-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimat"
+      ]
+    },
+    {
+      "key": "hawk_instinct",
+      "name": "Hawk Instinct",
+      "cost": "gratis",
+      "until_ukjent": true,
+      "note": "Fristen er ukjent: FUT.GG viser «Submit by» uten dato, Destructoid oppgir ingen frist, futevolution viser bare «Expires 6d» (9.11). Låses opp via Rush-objektivet «No Exit Allowed» (FUT.GG, Destructoid). Krav og tall for alle tre nivåer er like hos FUT.GG og Destructoid (9.11). PlayStyle-navnene (Power Shot nivå 2, Relentless nivå 3) står bare hos Destructoid; FUT.GG viser taket 3 uten navn. FUTBIN kunne ikke hentes, fcdata har den ikke. Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          4,
+          82
+        ],
+        "stats": {
+          "acceleration": [
+            7,
+            83
+          ],
+          "finishing": [
+            10,
+            82
+          ],
+          "volleys": [
+            10,
+            82
+          ],
+          "stamina": [
+            7,
+            77
+          ],
+          "sprint_speed": [
+            7,
+            83
+          ],
+          "shot_power": [
+            10,
+            82
+          ],
+          "penalties": [
+            10,
+            82
+          ],
+          "strength": [
+            7,
+            78
+          ],
+          "positioning": [
+            10,
+            81
+          ],
+          "long_shots": [
+            10,
+            81
+          ],
+          "jumping": [
+            7,
+            78
+          ],
+          "aggression": [
+            7,
+            76
+          ]
+        },
+        "ps": [
+          [
+            "Power Shot",
+            3
+          ],
+          [
+            "Relentless",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2654-hawk-instinct/",
+        "https://www.destructoid.com/best-players-for-fc-27-hawk-instinct-evolution/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -3231,6 +3278,16 @@
       "navn": "Blue Fire / Ice Cold",
       "grunn": "Bare kortdesign, ingen tall (fcdata, futevolution).",
       "dato": "2026-11-08"
+    },
+    {
+      "navn": "Cosmic Drift",
+      "grunn": "Bare kortdesign («premium Cosmic Drift effect»), ingen tall (futevolution).",
+      "dato": "2026-11-09"
+    },
+    {
+      "navn": "Middle Management / Speed Bump",
+      "grunn": "Står bare på FUT.GGs «best»-side (som henger etter), ikke i de åpne listene hos fcdata eller futevolution. Trolig utløpt.",
+      "dato": "2026-11-09"
     }
   ]
 }
