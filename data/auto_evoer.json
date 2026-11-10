@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-09T18:30:00Z",
+  "_sjekket": "2026-11-10T18:45:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1016,125 +1016,6 @@
         "https://www.fut.gg/evolutions/2608-pamplona-grit-sp-16/",
         "https://www.futwiz.com/evolutions/pamplona-grit/127",
         "https://www.futbin.com/27/evolutions/105/pamplona-grit"
-      ]
-    },
-    {
-      "key": "creep_inside",
-      "name": "Creep Inside",
-      "cost": "gratis",
-      "until": "2026-11-03T18:00Z",
-      "note": "Krav og tall for alle fire nivåer er like hos fcdata, FUT.GG og futmind. Fristen 3.11 kl. 18:00 står hos fcdata og futmind (futmind: 18:00 UTC); FUT.GG har ingen dato. PlayStyle-navnene (Press Proven på nivå 2, Anticipate på nivå 3) står bare hos futmind; taket 3 står hos fcdata («1 PlayStyle↗3») og FUT.GG (umerket 3). fcdata utelukker også GK (futmind: bare utespillere). Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 85,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "LB",
-          "RB"
-        ],
-        "not_positions": [
-          "CB",
-          "GK"
-        ],
-        "max_stats": {
-          "agility": 86
-        }
-      },
-      "up": {
-        "ovr": [
-          4,
-          82
-        ],
-        "stats": {
-          "sprint_speed": [
-            5,
-            80
-          ],
-          "long_passing": [
-            5,
-            78
-          ],
-          "ball_control": [
-            10,
-            82
-          ],
-          "def_awareness": [
-            9,
-            80
-          ],
-          "aggression": [
-            4,
-            78
-          ],
-          "long_shots": [
-            4,
-            70
-          ],
-          "agility": [
-            6,
-            82
-          ],
-          "dribbling": [
-            8,
-            80
-          ],
-          "standing_tackle": [
-            5,
-            78
-          ],
-          "vision": [
-            5,
-            78
-          ],
-          "balance": [
-            4,
-            80
-          ],
-          "composure": [
-            8,
-            82
-          ],
-          "stamina": [
-            7,
-            86
-          ],
-          "acceleration": [
-            5,
-            80
-          ],
-          "short_passing": [
-            9,
-            82
-          ],
-          "reactions": [
-            9,
-            82
-          ],
-          "interceptions": [
-            9,
-            82
-          ],
-          "strength": [
-            4,
-            76
-          ]
-        },
-        "ps": [
-          [
-            "Press Proven",
-            3
-          ],
-          [
-            "Anticipate",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2833-creep-inside/",
-        "https://www.fut.gg/evolutions/2632-creep-inside/",
-        "https://futmind.com/articles/20395/ea-sports-fc-27-ultimate-team-creep-inside-evolution-guide"
       ]
     },
     {
@@ -3215,6 +3096,121 @@
       "sources": [
         "https://www.fut.gg/evolutions/2654-hawk-instinct/",
         "https://www.destructoid.com/best-players-for-fc-27-hawk-instinct-evolution/"
+      ]
+    },
+    {
+      "key": "under_the_lights",
+      "name": "Under the Lights",
+      "cost": "10 000 mynter / 100 FC Points",
+      "until": "2026-11-20T18:00Z",
+      "note": "Kom 10.11. Fire nivåer. Krav og tall er like hos fcdata (detaljside med alle nivåer) og futminds forside-kort (10.11). Fristen 20.11 kl. 18:00 (fullføres innen 27.11 kl. 18:00) står hos fcdata uten tidssone; futminds nedtelling (9 d 23 t ved 18-tiden 10.11) gir samme tid i UTC. PlayStyle-navnene (Pinged Pass, First Touch, Technical, én per nivå 2–4) står bare hos futmind, rekkefølgen per nivå er antatt ut fra listen; taket 3 hos begge (fcdata: «1 PlayStyle↗3»). futminds egen evoside og artikkel kunne ikke hentes. Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CAM",
+          "CM"
+        ],
+        "max_stats": {
+          "strength": 82
+        }
+      },
+      "up": {
+        "ovr": [
+          3,
+          83
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "stats": {
+          "acceleration": [
+            6,
+            80
+          ],
+          "long_shots": [
+            10,
+            82
+          ],
+          "agility": [
+            18,
+            85
+          ],
+          "dribbling": [
+            18,
+            85
+          ],
+          "sprint_speed": [
+            6,
+            81
+          ],
+          "vision": [
+            10,
+            82
+          ],
+          "balance": [
+            18,
+            84
+          ],
+          "composure": [
+            15,
+            83
+          ],
+          "positioning": [
+            10,
+            82
+          ],
+          "short_passing": [
+            10,
+            84
+          ],
+          "reactions": [
+            12,
+            82
+          ],
+          "stamina": [
+            10,
+            82
+          ],
+          "shot_power": [
+            10,
+            82
+          ],
+          "curve": [
+            10,
+            82
+          ],
+          "ball_control": [
+            18,
+            85
+          ]
+        },
+        "ps": [
+          [
+            "Pinged Pass",
+            3
+          ],
+          [
+            "First Touch",
+            3
+          ],
+          [
+            "Technical",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2850-under-the-lights/",
+        "https://futmind.com/",
+        "https://fcdata.io/evolutions/"
       ]
     }
   ],
