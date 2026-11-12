@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-11T18:15:00Z",
+  "_sjekket": "2026-11-12T12:00:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -3076,6 +3076,115 @@
       "sources": [
         "https://fcdata.io/fc27/evolutions/2850-under-the-lights/",
         "https://futmind.com/",
+        "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "streets_wont_forget",
+      "name": "Streets Won't Forget",
+      "cost": "gratis",
+      "until": "2026-11-22T18:00Z",
+      "note": "Kom 12.11. Tre nivåer. Krav og tall er like hos fcdata (detaljside) og futmind (evoside og guide 12.11). Fristen 22.11 kl. 18:00 UTC står i futminds guide (fullføres innen 29.11 kl. 18:00 UTC); fcdata viser 22.11 kl. 19:00 uten tidssone (trolig CET). PlayStyle-navnene Finesse Shot og Technical (nivå 3) står bare hos futmind; taket 3 hos begge. fcdata utelukker også GK. Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 80,
+        "max_pace": 87,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LM",
+          "LW"
+        ],
+        "not_positions": [
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          4,
+          83
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "stats": {
+          "sprint_speed": [
+            10,
+            86
+          ],
+          "crossing": [
+            10,
+            87
+          ],
+          "short_passing": [
+            10,
+            87
+          ],
+          "curve": [
+            10,
+            87
+          ],
+          "stamina": [
+            5,
+            84
+          ],
+          "aggression": [
+            5,
+            75
+          ],
+          "acceleration": [
+            10,
+            87
+          ],
+          "vision": [
+            10,
+            85
+          ],
+          "fk_accuracy": [
+            10,
+            80
+          ],
+          "long_passing": [
+            10,
+            85
+          ],
+          "jumping": [
+            5,
+            78
+          ],
+          "strength": [
+            5,
+            70
+          ],
+          "agility": [
+            5,
+            87
+          ],
+          "balance": [
+            5,
+            86
+          ],
+          "reactions": [
+            5,
+            83
+          ]
+        },
+        "ps": [
+          [
+            "Finesse Shot",
+            3
+          ],
+          [
+            "Technical",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2860-streets-won-t-forget/",
+        "https://futmind.com/evolutions/2860/streets-wont-forget",
+        "https://futmind.com/articles/21852/ea-sports-fc-27-ultimate-team-streets-won-t-forget-evolution-guide",
         "https://fcdata.io/evolutions/"
       ]
     }
