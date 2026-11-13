@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-12T12:00:00Z",
+  "_sjekket": "2026-11-13T18:15:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -3185,6 +3185,115 @@
         "https://fcdata.io/fc27/evolutions/2860-streets-won-t-forget/",
         "https://futmind.com/evolutions/2860/streets-wont-forget",
         "https://futmind.com/articles/21852/ea-sports-fc-27-ultimate-team-streets-won-t-forget-evolution-guide",
+        "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "backline_bastion",
+      "name": "Backline Bastion",
+      "cost": "gratis",
+      "until": "2026-11-23T18:00Z",
+      "note": "Kom 13.11. Fire nivåer (4 kamper). Bare én kilde: fcdata (detaljside med alle nivåer). futnext, futevolution og FUTBIN kunne ikke hentes 13.11 (client_error), futminds side var ikke tilgjengelig ennå, og FUT.GG/Destructoid hadde den ikke ennå. Fristen 23.11 kl. 19:00 (fullføres innen 30.11 kl. 19:00) står hos fcdata uten tidssone; som for Streets Won't Forget er dette trolig CET, altså 18:00 UTC. Tre PlayStyles med tak 3 (fcdata: «1 PlayStyle↗3» på nivå 2–4), men bare to navn er oppgitt (Anticipate og Jockey, fra fcdatas beskrivelse); den tredje er ukjent og er utelatt. Rollene CB Stopper++ og Wide Back++ står i beskrivelsen (nivå 3 og 4). Repeterbar, svakfot og skill moves er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot en andre kilde.",
+      "req": {
+        "max_ovr": 82,
+        "max_ps": 7,
+        "positions": [
+          "CB"
+        ],
+        "max_stats": {
+          "acceleration": 80,
+          "sprint_speed": 80,
+          "strength": 90
+        }
+      },
+      "up": {
+        "ovr": [
+          5,
+          83
+        ],
+        "stats": {
+          "acceleration": [
+            10,
+            78
+          ],
+          "composure": [
+            10,
+            83
+          ],
+          "standing_tackle": [
+            10,
+            84
+          ],
+          "strength": [
+            10,
+            84
+          ],
+          "sprint_speed": [
+            10,
+            78
+          ],
+          "interceptions": [
+            10,
+            82
+          ],
+          "sliding_tackle": [
+            10,
+            84
+          ],
+          "aggression": [
+            10,
+            83
+          ],
+          "balance": [
+            10,
+            78
+          ],
+          "heading_accuracy": [
+            10,
+            83
+          ],
+          "jumping": [
+            10,
+            84
+          ],
+          "reactions": [
+            10,
+            80
+          ],
+          "def_awareness": [
+            10,
+            83
+          ],
+          "stamina": [
+            6,
+            83
+          ]
+        },
+        "ps": [
+          [
+            "Anticipate",
+            3
+          ],
+          [
+            "Jockey",
+            3
+          ]
+        ],
+        "roles": [
+          [
+            "CB",
+            "Stopper",
+            2
+          ],
+          [
+            "CB",
+            "Wide Back",
+            2
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2867-backline-bastion/",
         "https://fcdata.io/evolutions/"
       ]
     }
