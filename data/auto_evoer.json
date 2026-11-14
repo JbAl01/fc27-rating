@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-13T18:15:00Z",
+  "_sjekket": "2026-11-14T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1437,100 +1437,6 @@
         "https://www.futwiz.com/guides/fc-27-season-2-evolutions"
       ],
       "premium": true
-    },
-    {
-      "key": "bone_builder",
-      "name": "Bone Builder",
-      "cost": "gratis",
-      "until": "2026-11-07T18:00Z",
-      "note": "Krav og tall for alle tre nivåer er like hos fcdata og futmind. Fristen 7.11 kl. 18:00 står hos begge (futmind: 18:00 UTC); fullføres innen 14.11. PlayStyle-navnet Pinged Pass står bare hos futmind; taket 3 står hos begge (fcdata: «1 PlayStyle↗3»). futmind: bare utespillere. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 81,
-        "max_pace": 84,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "CB"
-        ]
-      },
-      "up": {
-        "ovr": [
-          7,
-          82
-        ],
-        "wf": [
-          1,
-          3
-        ],
-        "stats": {
-          "short_passing": [
-            12,
-            85
-          ],
-          "agility": [
-            10,
-            74
-          ],
-          "ball_control": [
-            12,
-            83
-          ],
-          "def_awareness": [
-            4,
-            83
-          ],
-          "strength": [
-            4,
-            84
-          ],
-          "long_passing": [
-            14,
-            85
-          ],
-          "balance": [
-            10,
-            74
-          ],
-          "dribbling": [
-            14,
-            80
-          ],
-          "standing_tackle": [
-            4,
-            83
-          ],
-          "vision": [
-            15,
-            80
-          ],
-          "curve": [
-            15,
-            78
-          ],
-          "reactions": [
-            6,
-            81
-          ],
-          "composure": [
-            10,
-            84
-          ],
-          "jumping": [
-            4,
-            80
-          ]
-        },
-        "ps": [
-          [
-            "Pinged Pass",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2840-bone-builder/",
-        "https://futmind.com/articles/20719/ea-sports-fc-27-ultimate-team-bone-builder-evolution-guide"
-      ]
     },
     {
       "key": "false_seven",
@@ -3193,7 +3099,7 @@
       "name": "Backline Bastion",
       "cost": "gratis",
       "until": "2026-11-23T18:00Z",
-      "note": "Kom 13.11. Fire nivåer (4 kamper). Bare én kilde: fcdata (detaljside med alle nivåer). futnext, futevolution og FUTBIN kunne ikke hentes 13.11 (client_error), futminds side var ikke tilgjengelig ennå, og FUT.GG/Destructoid hadde den ikke ennå. Fristen 23.11 kl. 19:00 (fullføres innen 30.11 kl. 19:00) står hos fcdata uten tidssone; som for Streets Won't Forget er dette trolig CET, altså 18:00 UTC. Tre PlayStyles med tak 3 (fcdata: «1 PlayStyle↗3» på nivå 2–4), men bare to navn er oppgitt (Anticipate og Jockey, fra fcdatas beskrivelse); den tredje er ukjent og er utelatt. Rollene CB Stopper++ og Wide Back++ står i beskrivelsen (nivå 3 og 4). Repeterbar, svakfot og skill moves er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot en andre kilde.",
+      "note": "Kom 13.11. Fire nivåer (4 kamper). Krav og tall for alle nivåer er like hos fcdata, FUT.GG (2660), futmind og Destructoid (sjekket 14.11). Fristen 23.11 kl. 19:00 (fullføres innen 30.11 kl. 19:00) står bare hos fcdata, uten tidssone; som for Streets Won't Forget er dette trolig CET, altså 18:00 UTC. PlayStyles med tak 3: Jockey (nivå 2), Anticipate (nivå 3) og Quick Step (nivå 4); navnet Quick Step står hos futmind og Destructoid, ikke i FUT.GGs nivåblokker. Rollene CB Wide Back++ og Stopper++ (nivå 3 og 4). Repeterbar, svakfot, skill moves og PS+-grense er ikke oppgitt. Tallene er summen etter alle nivåer.",
       "req": {
         "max_ovr": 82,
         "max_ps": 7,
@@ -3271,11 +3177,15 @@
         },
         "ps": [
           [
+            "Jockey",
+            3
+          ],
+          [
             "Anticipate",
             3
           ],
           [
-            "Jockey",
+            "Quick Step",
             3
           ]
         ],
@@ -3294,6 +3204,141 @@
       },
       "sources": [
         "https://fcdata.io/fc27/evolutions/2867-backline-bastion/",
+        "https://www.fut.gg/evolutions/2660-backline-bastion/",
+        "https://futmind.com/articles/21976/backline-bastion-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate",
+        "https://www.destructoid.com/best-players-for-fc-27-backline-bastion-evolution/",
+        "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "striker_school",
+      "name": "Striker School",
+      "cost": "gratis (treningsleir)",
+      "until": "2026-11-26T18:00Z",
+      "note": "Kom 14.11. Treningsleir-evo, fem nivåer (samme oppsett som Rise From the Grave og Underdog Run, men for ST). Bare én kilde: fcdata (detaljside med alle nivåer); futmind, Destructoid, FUT.GG og futnext hadde den ikke eller kunne ikke hentes 14.11. Fristen 26.11 kl. 19:00 (fullføres innen 3.12 kl. 19:00) står hos fcdata uten tidssone; som for de andre treningsleir-evoene er dette trolig CET, altså 18:00 UTC. Tre PlayStyles med tak 3 (fcdata: «1 PlayStyle↗3» på nivå 2, 3 og 4; oversikten skriver «3 PlayStyles+»), men ingen navn er oppgitt, så de er utelatt. PS+-grense er ikke oppgitt. Svakfot: fcdata skriver «+2 WF ★↗4★» (eksempelkortet går fra 3 til 4 på grunn av taket). Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot en andre kilde.",
+      "req": {
+        "max_ovr": 74,
+        "max_ps": 7,
+        "positions": [
+          "ST"
+        ],
+        "max_stats": {
+          "acceleration": 85,
+          "sprint_speed": 85
+        }
+      },
+      "up": {
+        "ovr": [
+          40,
+          81
+        ],
+        "wf": [
+          2,
+          4
+        ],
+        "sm": [
+          1,
+          3
+        ],
+        "face": {
+          "defending": [
+            20,
+            45
+          ]
+        },
+        "stats": {
+          "sprint_speed": [
+            40,
+            83
+          ],
+          "volleys": [
+            35,
+            80
+          ],
+          "curve": [
+            40,
+            80
+          ],
+          "dribbling": [
+            35,
+            80
+          ],
+          "strength": [
+            35,
+            75
+          ],
+          "positioning": [
+            40,
+            82
+          ],
+          "penalties": [
+            40,
+            80
+          ],
+          "agility": [
+            35,
+            80
+          ],
+          "composure": [
+            40,
+            80
+          ],
+          "aggression": [
+            20,
+            70
+          ],
+          "finishing": [
+            40,
+            83
+          ],
+          "vision": [
+            35,
+            75
+          ],
+          "balance": [
+            35,
+            78
+          ],
+          "shot_power": [
+            40,
+            83
+          ],
+          "short_passing": [
+            40,
+            78
+          ],
+          "reactions": [
+            35,
+            78
+          ],
+          "jumping": [
+            30,
+            78
+          ],
+          "acceleration": [
+            40,
+            83
+          ],
+          "long_shots": [
+            35,
+            75
+          ],
+          "long_passing": [
+            30,
+            70
+          ],
+          "ball_control": [
+            40,
+            80
+          ],
+          "stamina": [
+            30,
+            80
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2866-striker-school/",
         "https://fcdata.io/evolutions/"
       ]
     }
@@ -3368,6 +3413,11 @@
       "navn": "Middle Management / Speed Bump",
       "grunn": "Står bare på FUT.GGs «best»-side (som henger etter), ikke i de åpne listene hos fcdata eller futevolution. Trolig utløpt.",
       "dato": "2026-11-09"
+    },
+    {
+      "navn": "Match Spark / Red Classic Arrow Spin",
+      "grunn": "Bare kortdesign, ingen tall (fcdata: Match Spark «+1158 Cosmetic», 20 000 mynter og 150 points; Red Classic Arrow Spin 10 000 mynter).",
+      "dato": "2026-11-14"
     }
   ]
 }
