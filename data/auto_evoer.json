@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-14T18:30:00Z",
+  "_sjekket": "2026-11-15T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -3215,7 +3215,7 @@
       "name": "Striker School",
       "cost": "gratis (treningsleir)",
       "until": "2026-11-26T18:00Z",
-      "note": "Kom 14.11. Treningsleir-evo, fem nivåer (samme oppsett som Rise From the Grave og Underdog Run, men for ST). Bare én kilde: fcdata (detaljside med alle nivåer); futmind, Destructoid, FUT.GG og futnext hadde den ikke eller kunne ikke hentes 14.11. Fristen 26.11 kl. 19:00 (fullføres innen 3.12 kl. 19:00) står hos fcdata uten tidssone; som for de andre treningsleir-evoene er dette trolig CET, altså 18:00 UTC. Tre PlayStyles med tak 3 (fcdata: «1 PlayStyle↗3» på nivå 2, 3 og 4; oversikten skriver «3 PlayStyles+»), men ingen navn er oppgitt, så de er utelatt. PS+-grense er ikke oppgitt. Svakfot: fcdata skriver «+2 WF ★↗4★» (eksempelkortet går fra 3 til 4 på grunn av taket). Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot en andre kilde.",
+      "note": "Kom 14.11. Treningsleir-evo, fem nivåer (4 t 48 min hver), kortet må stå låst til alle nivåer er ferdige. Krav og tall for alle nivåer er like hos fcdata, FUT.GG (2665), futmind og Destructoid (sjekket 15.11). Fristen 26.11 kl. 18:00 UTC står hos futmind (fullføres innen 3.12 kl. 18:00 UTC); fcdata skriver 19:00 uten tidssone. PlayStyles med tak 3: Low Driven Shot (nivå 2), Quick Step (nivå 3) og First Touch (nivå 4), navnene står hos alle tre guidene. Svakfot +2 (maks 4) og skill moves +1 (maks 3). PS+-grense, repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer.",
       "req": {
         "max_ovr": 74,
         "max_ps": 7,
@@ -3335,11 +3335,356 @@
             30,
             80
           ]
-        }
+        },
+        "ps": [
+          [
+            "Low Driven Shot",
+            3
+          ],
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "First Touch",
+            3
+          ]
+        ]
       },
       "sources": [
         "https://fcdata.io/fc27/evolutions/2866-striker-school/",
+        "https://www.fut.gg/evolutions/2665-striker-school/",
+        "https://futmind.com/articles/22116/ea-sports-fc-27-ultimate-team-striker-school-evolutions-guide",
+        "https://www.destructoid.com/best-players-for-fc-27-striker-school-evolution/",
         "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "right_hand_drive",
+      "name": "Right-Hand Drive",
+      "cost": "gratis",
+      "until": "2026-11-25T18:00Z",
+      "note": "Kom 15.11. Fire nivåer (4 kamper, Squad Battles Semi-Pro eller Rush/Rivals/Champions/Live Events). Bare én kilde: fcdata (detaljside med alle nivåer); FUT.GG, futnext, futevolution, FUTBIN, futmind og Destructoid hadde den ikke eller kunne ikke hentes 15.11. Fristen 25.11 kl. 19:00 (fullføres innen 2.12 kl. 19:00) står hos fcdata uten tidssone; som for de andre evoene er dette trolig CET, altså 18:00 UTC. Ekskluderte posisjoner CDM og GK. Nivå 2 gir én PlayStyle med tak 3, men navnet er ikke oppgitt, så den er utelatt. Repeterbar, roller, svakfot og skill moves er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot en andre kilde.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 90,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "RM",
+          "RW"
+        ],
+        "not_positions": [
+          "CDM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          6,
+          83
+        ],
+        "stats": {
+          "positioning": [
+            15,
+            82
+          ],
+          "volleys": [
+            10,
+            82
+          ],
+          "long_passing": [
+            10,
+            82
+          ],
+          "reactions": [
+            15,
+            85
+          ],
+          "finishing": [
+            15,
+            83
+          ],
+          "vision": [
+            10,
+            83
+          ],
+          "curve": [
+            10,
+            84
+          ],
+          "ball_control": [
+            15,
+            86
+          ],
+          "acceleration": [
+            12,
+            85
+          ],
+          "shot_power": [
+            15,
+            82
+          ],
+          "crossing": [
+            10,
+            85
+          ],
+          "agility": [
+            15,
+            87
+          ],
+          "dribbling": [
+            15,
+            86
+          ],
+          "sprint_speed": [
+            12,
+            85
+          ],
+          "long_shots": [
+            10,
+            80
+          ],
+          "short_passing": [
+            10,
+            83
+          ],
+          "balance": [
+            15,
+            85
+          ],
+          "composure": [
+            15,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2865-right-hand-drive/",
+        "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "flank_masterclass",
+      "name": "Flank Masterclass [SP+ 22]",
+      "cost": "sesongpass, premium (nivå 22)",
+      "until_ukjent": true,
+      "note": "Belønning i Premium Season Pass nivå 22. Fem nivåer (1 kamp hver, online). Krav og tall for alle nivåer er like hos FUT.GG (2607) og Destructoid (15.11); FUTWIZ bekreftet kravene 5.11. Fristen er ukjent: ingen kilde oppgir dato (FUT.GG viser «Submit by» uten verdi); sesongpass 2 slutter 3.12 kl. 07:59 UTC ifølge FUT.GG. Ekskluderte posisjoner CB og CM. PlayStyles med tak 4: Quick Step (nivå 2) og på nivå 5 ett valg av Finesse Shot, Technical eller Pinged Pass. Navnene står bare hos Destructoid, som kaller dem vanlige PlayStyles; FUT.GG viser bare tallet 4, og FUTWIZ merket dem som PlayStyle+ (usikkert, men evoen krever 0 PS+). Repeterbar, roller, svakfot og skill moves er ikke oppgitt. Tallene for nivå 1–4 er summen.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 90,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "RM",
+          "RW"
+        ],
+        "not_positions": [
+          "CB",
+          "CM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          10,
+          85
+        ],
+        "stats": {
+          "positioning": [
+            5,
+            80
+          ],
+          "volleys": [
+            10,
+            85
+          ],
+          "long_passing": [
+            5,
+            80
+          ],
+          "reactions": [
+            5,
+            80
+          ],
+          "jumping": [
+            6,
+            80
+          ],
+          "finishing": [
+            5,
+            80
+          ],
+          "vision": [
+            5,
+            80
+          ],
+          "curve": [
+            10,
+            80
+          ],
+          "ball_control": [
+            5,
+            82
+          ],
+          "stamina": [
+            10,
+            84
+          ],
+          "acceleration": [
+            10,
+            86
+          ],
+          "shot_power": [
+            5,
+            80
+          ],
+          "crossing": [
+            5,
+            81
+          ],
+          "agility": [
+            5,
+            82
+          ],
+          "dribbling": [
+            5,
+            80
+          ],
+          "strength": [
+            8,
+            75
+          ],
+          "sprint_speed": [
+            10,
+            87
+          ],
+          "long_shots": [
+            5,
+            78
+          ],
+          "short_passing": [
+            5,
+            80
+          ],
+          "balance": [
+            5,
+            80
+          ],
+          "composure": [
+            8,
+            85
+          ],
+          "aggression": [
+            8,
+            75
+          ]
+        },
+        "ps": [
+          [
+            "Quick Step",
+            4
+          ]
+        ],
+        "paths": [
+          {
+            "label": "Valg A: avslutning (Finesse Shot)",
+            "stats": {
+              "positioning": [
+                5,
+                85
+              ],
+              "finishing": [
+                10,
+                85
+              ],
+              "shot_power": [
+                10,
+                85
+              ],
+              "long_shots": [
+                5,
+                83
+              ],
+              "penalties": [
+                10,
+                84
+              ]
+            },
+            "ps": [
+              [
+                "Finesse Shot",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Valg B: driblinger (Technical)",
+            "stats": {
+              "agility": [
+                10,
+                87
+              ],
+              "balance": [
+                5,
+                85
+              ],
+              "reactions": [
+                5,
+                85
+              ],
+              "ball_control": [
+                5,
+                86
+              ],
+              "dribbling": [
+                10,
+                85
+              ]
+            },
+            "ps": [
+              [
+                "Technical",
+                4
+              ]
+            ]
+          },
+          {
+            "label": "Valg C: pasninger (Pinged Pass)",
+            "stats": {
+              "vision": [
+                5,
+                86
+              ],
+              "crossing": [
+                10,
+                87
+              ],
+              "fk_accuracy": [
+                5,
+                85
+              ],
+              "short_passing": [
+                10,
+                85
+              ],
+              "long_passing": [
+                10,
+                85
+              ]
+            },
+            "ps": [
+              [
+                "Pinged Pass",
+                4
+              ]
+            ]
+          }
+        ]
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2607-flank-masterclass-sp-22/",
+        "https://www.destructoid.com/best-players-for-fc-27-flank-masterclass-evolution/",
+        "https://www.fut.gg/season-pass/"
       ]
     }
   ],
@@ -3378,11 +3723,6 @@
       "navn": "Shadow Striker++",
       "grunn": "Roles++-evo (rolleoppgradering). Slike er allerede regnet inn i reglene, hoppes over etter EVO-JOBB.",
       "dato": "2026-10-25"
-    },
-    {
-      "navn": "Flank Masterclass [SP+ 22]",
-      "grunn": "Bare FUTWIZ har alle nivåer, og FUTWIZ er ikke blant kildene som kan stå alene. Krav (RM/RW, maks 82 OVR, maks Pace 90) og mål (85) bekreftes av FUTWIZ-guiden og u7buy, men de har ikke nivåene. Evosiden merker Quickstep (nivå 2) og valgene på nivå 5 som PlayStyle+ med tallet 4, men det kan være vanlige PlayStyles. FUT.GGs side (2607), FUTBIN og FUTWIZ-evosiden kunne ikke hentes 3.–5.11, og fcdata og Destructoid har den ikke.",
-      "dato": "2026-11-05"
     },
     {
       "navn": "Ultimate Scream Regular Badge / Hero Badge",
