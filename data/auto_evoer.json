@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-15T18:30:00Z",
+  "_sjekket": "2026-11-16T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1437,174 +1437,6 @@
         "https://www.futwiz.com/guides/fc-27-season-2-evolutions"
       ],
       "premium": true
-    },
-    {
-      "key": "false_seven",
-      "name": "False Seven",
-      "cost": "gratis",
-      "until": "2026-11-09T18:00Z",
-      "note": "Kom 30.10. Krav (maks 80 OVR, LM/LW, ikke CDM, maks Pace 86, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle nivåer og alle tre valg er like hos fcdata, Destructoid og futmind. Fristen 9.11 kl. 18:00 (fullføres innen 16.11) står hos fcdata og futmind. PlayStyles: First Touch på nivå 2, og Power Shot, Tiki Taka eller Enforcer i valgene på nivå 3, tak 3 (Destructoid, futmind; fcdata: «1 PlayStyle↗3»). Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 86,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "LM",
-          "LW"
-        ],
-        "not_positions": [
-          "CDM",
-          "GK"
-        ]
-      },
-      "up": {
-        "ovr": [
-          6,
-          81
-        ],
-        "stats": {
-          "acceleration": [
-            7,
-            82
-          ],
-          "agility": [
-            10,
-            82
-          ],
-          "reactions": [
-            10,
-            81
-          ],
-          "dribbling": [
-            10,
-            82
-          ],
-          "sprint_speed": [
-            7,
-            82
-          ],
-          "balance": [
-            10,
-            81
-          ],
-          "ball_control": [
-            10,
-            82
-          ],
-          "composure": [
-            10,
-            80
-          ]
-        },
-        "paths": [
-          {
-            "label": "Valg A: Power Shot, avslutning",
-            "stats": {
-              "positioning": [
-                8,
-                80
-              ],
-              "finishing": [
-                8,
-                81
-              ],
-              "shot_power": [
-                8,
-                80
-              ],
-              "long_shots": [
-                8,
-                79
-              ],
-              "volleys": [
-                8,
-                79
-              ]
-            },
-            "ps": [
-              [
-                "Power Shot",
-                3
-              ]
-            ]
-          },
-          {
-            "label": "Valg B: Tiki Taka, pasning",
-            "stats": {
-              "vision": [
-                8,
-                81
-              ],
-              "crossing": [
-                8,
-                82
-              ],
-              "fk_accuracy": [
-                8,
-                81
-              ],
-              "short_passing": [
-                8,
-                82
-              ],
-              "long_passing": [
-                8,
-                80
-              ]
-            },
-            "ps": [
-              [
-                "Tiki Taka",
-                3
-              ]
-            ]
-          },
-          {
-            "label": "Valg C: Enforcer, fysikk",
-            "stats": {
-              "heading_accuracy": [
-                8,
-                80
-              ],
-              "jumping": [
-                8,
-                80
-              ],
-              "stamina": [
-                8,
-                81
-              ],
-              "strength": [
-                8,
-                80
-              ],
-              "aggression": [
-                8,
-                80
-              ]
-            },
-            "ps": [
-              [
-                "Enforcer",
-                3
-              ]
-            ]
-          }
-        ],
-        "ps": [
-          [
-            "First Touch",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2841-false-seven/",
-        "https://www.destructoid.com/best-players-for-fc-27-false-seven-evolution/",
-        "https://futmind.com/articles/20891/ea-sports-fc-27-ultimate-team-false-seven-evolutions-guide",
-        "https://www.fut.gg/evolutions/2642-false-seven/"
-      ]
     },
     {
       "key": "two_faces_of_fear",
@@ -3364,7 +3196,7 @@
       "name": "Right-Hand Drive",
       "cost": "gratis",
       "until": "2026-11-25T18:00Z",
-      "note": "Kom 15.11. Fire nivåer (4 kamper, Squad Battles Semi-Pro eller Rush/Rivals/Champions/Live Events). Bare én kilde: fcdata (detaljside med alle nivåer); FUT.GG, futnext, futevolution, FUTBIN, futmind og Destructoid hadde den ikke eller kunne ikke hentes 15.11. Fristen 25.11 kl. 19:00 (fullføres innen 2.12 kl. 19:00) står hos fcdata uten tidssone; som for de andre evoene er dette trolig CET, altså 18:00 UTC. Ekskluderte posisjoner CDM og GK. Nivå 2 gir én PlayStyle med tak 3, men navnet er ikke oppgitt, så den er utelatt. Repeterbar, roller, svakfot og skill moves er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot en andre kilde.",
+      "note": "Kom 15.11. Fire nivåer (4 kamper, Squad Battles Semi-Pro eller Rush/Rivals/Champions/Live Events). Bekreftet 16.11: krav (maks 82 OVR, maks Pace 90, maks 7 PlayStyles, ingen PlayStyle+, RM/RW, ikke CDM, bare utespillere) og tallene for alle nivåer er like hos fcdata og futmind. Fristen 25.11 kl. 18:00 UTC (fullføres innen 2.12 kl. 18:00 UTC) står hos futmind og stemmer med fcdata. PlayStyle på nivå 2 er Rapid med tak 3 (futmind: «Rapid ⤒3»; fcdata: én PlayStyle med tak 3). Repeterbar, roller, svakfot og skill moves er ikke oppgitt. Tallene er summen etter alle nivåer.",
       "req": {
         "max_ovr": 82,
         "max_pace": 90,
@@ -3457,10 +3289,17 @@
             15,
             84
           ]
-        }
+        },
+        "ps": [
+          [
+            "Rapid",
+            3
+          ]
+        ]
       },
       "sources": [
         "https://fcdata.io/fc27/evolutions/2865-right-hand-drive/",
+        "https://futmind.com/articles/22179/fc-27-right-hand-drive-evolution-guide-best-players-requirements-and-upgrades",
         "https://fcdata.io/evolutions/"
       ]
     },
