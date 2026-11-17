@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-16T18:30:00Z",
+  "_sjekket": "2026-11-17T18:15:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1439,153 +1439,6 @@
       "premium": true
     },
     {
-      "key": "two_faces_of_fear",
-      "name": "Two Faces of Fear",
-      "cost": "gratis",
-      "until": "2026-11-10T18:00Z",
-      "note": "Kom 31.10. Krav (maks 80 OVR, ST, maks 7 PlayStyles, ingen PlayStyle+, maks Pace 86, maks Dribbling 82) og tallene for alle nivåer og begge valg er like hos fcdata, Destructoid og futmind. Fristen 10.11 kl. 18:00 (fullføres innen 17.11) står hos fcdata og futmind. Valg A gir Precision Header og Target Forward++, valg B Incisive Pass og False 9++ (Destructoid, futmind); tak 3 på PlayStylene (fcdata, Destructoid). Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 86,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "ST"
-        ],
-        "max_face": {
-          "dribbling": 82
-        }
-      },
-      "up": {
-        "ovr": [
-          5,
-          81
-        ],
-        "stats": {
-          "sprint_speed": [
-            4,
-            82
-          ],
-          "finishing": [
-            8,
-            82
-          ],
-          "volleys": [
-            6,
-            80
-          ],
-          "reactions": [
-            7,
-            80
-          ],
-          "composure": [
-            7,
-            80
-          ],
-          "acceleration": [
-            4,
-            82
-          ],
-          "positioning": [
-            8,
-            82
-          ],
-          "shot_power": [
-            7,
-            82
-          ],
-          "penalties": [
-            6,
-            80
-          ],
-          "ball_control": [
-            6,
-            80
-          ],
-          "stamina": [
-            7,
-            78
-          ]
-        },
-        "paths": [
-          {
-            "label": "Valg A: Target Forward",
-            "stats": {
-              "heading_accuracy": [
-                8,
-                82
-              ],
-              "jumping": [
-                8,
-                82
-              ],
-              "strength": [
-                8,
-                85
-              ],
-              "aggression": [
-                6,
-                78
-              ]
-            },
-            "ps": [
-              [
-                "Precision Header",
-                3
-              ]
-            ],
-            "roles": [
-              [
-                "ST",
-                "Target Forward",
-                2
-              ]
-            ]
-          },
-          {
-            "label": "Valg B: False 9",
-            "stats": {
-              "vision": [
-                8,
-                80
-              ],
-              "short_passing": [
-                8,
-                80
-              ],
-              "agility": [
-                6,
-                80
-              ],
-              "dribbling": [
-                6,
-                81
-              ]
-            },
-            "roles": [
-              [
-                "ST",
-                "False 9",
-                2
-              ]
-            ],
-            "ps": [
-              [
-                "Incisive Pass",
-                3
-              ]
-            ]
-          }
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2844-two-faces-of-fear/",
-        "https://www.destructoid.com/best-players-for-fc-27-two-faces-of-fear-evolution/",
-        "https://futmind.com/articles/20993/ea-sports-fc-27-two-faces-of-fear-evolution-guide-best-players-and-pathways",
-        "https://www.fut.gg/evolutions/2643-two-faces-of-fear/"
-      ]
-    },
-    {
       "key": "luiz_legacy",
       "name": "Luiz Legacy",
       "cost": "gratis (Club Member-belønning)",
@@ -2617,92 +2470,6 @@
       ]
     },
     {
-      "key": "hawk_instinct",
-      "name": "Hawk Instinct",
-      "cost": "gratis",
-      "until_ukjent": true,
-      "note": "Fristen er ukjent: FUT.GG viser «Submit by» uten dato, Destructoid oppgir ingen frist, futevolution viser bare «Expires 6d» (9.11). Låses opp via Rush-objektivet «No Exit Allowed» (FUT.GG, Destructoid). Krav og tall for alle tre nivåer er like hos FUT.GG og Destructoid (9.11). PlayStyle-navnene (Power Shot nivå 2, Relentless nivå 3) står bare hos Destructoid; FUT.GG viser taket 3 uten navn. FUTBIN kunne ikke hentes, fcdata har den ikke. Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 85,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "ST"
-        ]
-      },
-      "up": {
-        "ovr": [
-          4,
-          82
-        ],
-        "stats": {
-          "acceleration": [
-            7,
-            83
-          ],
-          "finishing": [
-            10,
-            82
-          ],
-          "volleys": [
-            10,
-            82
-          ],
-          "stamina": [
-            7,
-            77
-          ],
-          "sprint_speed": [
-            7,
-            83
-          ],
-          "shot_power": [
-            10,
-            82
-          ],
-          "penalties": [
-            10,
-            82
-          ],
-          "strength": [
-            7,
-            78
-          ],
-          "positioning": [
-            10,
-            81
-          ],
-          "long_shots": [
-            10,
-            81
-          ],
-          "jumping": [
-            7,
-            78
-          ],
-          "aggression": [
-            7,
-            76
-          ]
-        },
-        "ps": [
-          [
-            "Power Shot",
-            3
-          ],
-          [
-            "Relentless",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://www.fut.gg/evolutions/2654-hawk-instinct/",
-        "https://www.destructoid.com/best-players-for-fc-27-hawk-instinct-evolution/"
-      ]
-    },
-    {
       "key": "under_the_lights",
       "name": "Under the Lights",
       "cost": "10 000 mynter / 100 FC Points",
@@ -3524,6 +3291,71 @@
         "https://www.fut.gg/evolutions/2607-flank-masterclass-sp-22/",
         "https://www.destructoid.com/best-players-for-fc-27-flank-masterclass-evolution/",
         "https://www.fut.gg/season-pass/"
+      ]
+    },
+    {
+      "key": "feline_flex",
+      "name": "Feline Flex",
+      "cost": "gratis",
+      "until": "2026-11-27T18:00Z",
+      "note": "Kom 17.11. Krav (maks 82 OVR, GK, maks 7 PlayStyles) og tallene er like hos fcdata (detaljside, to nivåer) og FUT.GGs evoliste (sjekket 17.11). Fristen 27.11 står hos fcdata («Submit by 27 Nov 2026, 19:00» uten tidssone, fullføres innen 4.12); satt til 18:00 UTC (18:00 britisk tid), som for de andre evoene fra fcdata. Én PlayStyle med tak 3 på nivå 2 (begge kilder viser taket); navnet Deflector står bare i fcdatas evoliste. fcdatas detaljside skriver «+3 OVR» (maks 84) i oppgraderingene, men eksempelkortet går 82→84 (+2) fordi taket er 84. PS+-grense, repeterbar, roller, svakfot og skill moves er ikke oppgitt. Tallene er summen etter begge nivåer.",
+      "req": {
+        "max_ovr": 82,
+        "max_ps": 7,
+        "positions": [
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          3,
+          84
+        ],
+        "ps": [
+          [
+            "Deflector",
+            3
+          ]
+        ],
+        "stats": {
+          "acceleration": [
+            6,
+            65
+          ],
+          "sprint_speed": [
+            6,
+            65
+          ],
+          "reactions": [
+            10,
+            80
+          ],
+          "gk_kicking": [
+            3,
+            80
+          ],
+          "gk_reflexes": [
+            10,
+            85
+          ],
+          "gk_positioning": [
+            10,
+            84
+          ],
+          "gk_diving": [
+            3,
+            82
+          ],
+          "gk_handling": [
+            3,
+            82
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2870-feline-flex/",
+        "https://www.fut.gg/evolutions/",
+        "https://fcdata.io/evolutions/"
       ]
     }
   ],
