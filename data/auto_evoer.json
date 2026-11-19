@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-17T18:15:00Z",
+  "_sjekket": "2026-11-19T18:15:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1754,121 +1754,6 @@
       "note": "Erstatter oppføringen i config (frist 17.10): evoen er lagt ut på nytt med ny ID (fcdata 2814, FUT.GG 2624) og frist 30.9.2027 kl. 00:00 (fcdata, uten tidssone, brukt som britisk tid; futevolution: «11 months»; FUT.GG har ingen dato). Krav og tall er like hos fcdata og FUT.GG og som i config. fcdata og FUT.GG sier gratis, men futmind sier at den følger med Twilight Screamer EVO Pack og dukker opp under Rewards etter kjøp, så den er satt som premium og kan skrus av der. Hvor pakken selges nå, og prisen, er ikke funnet. PlayStyle-navnene (Tiki Taka, Press Proven) står i FUTWIZ-guiden og config; tak 3 hos fcdata."
     },
     {
-      "key": "no_soul_shall_pass",
-      "name": "No Soul Shall Pass",
-      "cost": "gratis",
-      "until": "2026-11-12T18:00Z",
-      "note": "Krav (maks 80 OVR, GK, maks 7 PlayStyles) og tallene for begge nivåer og valg er like hos fcdata, FUT.GG, futmind og Destructoid (sjekket 3.11). Fristen 12.11 kl. 18:00 UTC (fullføres innen 19.11) står hos fcdata og futmind. Valg A gir Sweeper Keeper++ og valg B Ball Playing Keeper++ (FUT.GG, futmind, Destructoid). PlayStyle i valg A: futmind og FUTWIZ (ikon) har 1v1 Close Down, Destructoid skriver Rush Out; 1v1 Close Down er brukt, fordi det er FC 27-navnet på samme PlayStyle (se config/playstyles.json). Valg B gir Long Ball Pass (futmind, Destructoid, FUTWIZ). Tak 3 på begge (futmind, Destructoid, FUTWIZ). PlayStyle+, Pace og repeterbar står ikke oppført. Valg B gir også +2 svakfot (maks 3). POS er keeper-posisjonering. Tallene er nivå 1 pluss valget på nivå 2.",
-      "req": {
-        "max_ovr": 80,
-        "max_ps": 7,
-        "positions": [
-          "GK"
-        ]
-      },
-      "up": {
-        "ovr": [
-          3,
-          81
-        ],
-        "stats": {
-          "gk_diving": [
-            5,
-            78
-          ],
-          "gk_kicking": [
-            6,
-            81
-          ],
-          "gk_handling": [
-            5,
-            81
-          ],
-          "gk_reflexes": [
-            5,
-            81
-          ]
-        },
-        "paths": [
-          {
-            "label": "Valg A: fart og reflekser",
-            "stats": {
-              "acceleration": [
-                10,
-                45
-              ],
-              "sprint_speed": [
-                10,
-                45
-              ],
-              "reactions": [
-                5,
-                76
-              ],
-              "gk_reflexes": [
-                5,
-                83
-              ]
-            },
-            "ps": [
-              [
-                "1v1 Close Down",
-                3
-              ]
-            ],
-            "roles": [
-              [
-                "GK",
-                "Sweeper Keeper",
-                2
-              ]
-            ]
-          },
-          {
-            "label": "Valg B: posisjonering og svakfot",
-            "wf": [
-              2,
-              3
-            ],
-            "stats": {
-              "gk_positioning": [
-                5,
-                82
-              ],
-              "reactions": [
-                3,
-                78
-              ],
-              "gk_diving": [
-                5,
-                80
-              ]
-            },
-            "ps": [
-              [
-                "Long Ball Pass",
-                3
-              ]
-            ],
-            "roles": [
-              [
-                "GK",
-                "Ball Playing Keeper",
-                2
-              ]
-            ]
-          }
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2845-no-soul-shall-pass/",
-        "https://www.fut.gg/evolutions/2647-no-soul-shall-pass/",
-        "https://futmind.com/articles/21159/no-soul-shall-pass-evolution-guide-ea-sports-fc-27-ultimate-team",
-        "https://www.destructoid.com/best-players-fc-27-no-soul-shall-pass-evolution/",
-        "https://www.futwiz.com/evolutions/no-soul-shall-pass/148"
-      ]
-    },
-    {
       "key": "glow_guard",
       "name": "Glow Guard",
       "cost": "gratis (treningsleir)",
@@ -3356,6 +3241,133 @@
         "https://fcdata.io/fc27/evolutions/2870-feline-flex/",
         "https://www.fut.gg/evolutions/",
         "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "top_tier_striker",
+      "name": "Top Tier Striker",
+      "cost": "gratis",
+      "until": "2026-11-29T18:00Z",
+      "note": "Kom 18.–19.11. Bare én kilde så langt: fcdata (detaljside med alle fem nivåer, sjekket 19.11). FUT.GG har en detaljside (2670) og nevner evoen på «best»-siden, men den kunne ikke hentes; futmind, Destructoid og futfc.gg hadde den ikke ennå. Fristen: fcdata skriver «Submit by 29 Nov 2026, 19:00» uten tidssone (fullføres innen 6.12), satt til 18:00 UTC som for de andre evoene fra fcdata (samme visning ga 27.11 19:00 for Feline Flex). Fire PlayStyles med tak 4 (én på hvert av nivå 2–5); navnene Finesse Shot, Tiki Taka, Technical og Trickster står bare i fcdatas evoliste, ikke hvilket nivå hver kommer på. Krever 0 PlayStyle+. Svakfot +1 (maks 4) og skill moves +1 (maks 4). «+7 OVR (maks 84)» står på nivå 1. Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer. Neste kjøring bør sjekke mot FUT.GG eller en guide.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 90,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          7,
+          84
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "stats": {
+          "acceleration": [
+            15,
+            85
+          ],
+          "long_shots": [
+            15,
+            84
+          ],
+          "long_passing": [
+            15,
+            80
+          ],
+          "ball_control": [
+            15,
+            81
+          ],
+          "sprint_speed": [
+            15,
+            85
+          ],
+          "volleys": [
+            15,
+            84
+          ],
+          "curve": [
+            15,
+            80
+          ],
+          "dribbling": [
+            15,
+            81
+          ],
+          "positioning": [
+            15,
+            85
+          ],
+          "vision": [
+            15,
+            84
+          ],
+          "agility": [
+            20,
+            90
+          ],
+          "composure": [
+            15,
+            82
+          ],
+          "finishing": [
+            15,
+            85
+          ],
+          "crossing": [
+            15,
+            80
+          ],
+          "balance": [
+            15,
+            82
+          ],
+          "shot_power": [
+            15,
+            84
+          ],
+          "short_passing": [
+            15,
+            85
+          ],
+          "reactions": [
+            15,
+            82
+          ]
+        },
+        "ps": [
+          [
+            "Finesse Shot",
+            4
+          ],
+          [
+            "Tiki Taka",
+            4
+          ],
+          [
+            "Technical",
+            4
+          ],
+          [
+            "Trickster",
+            4
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2871-top-tier-striker/",
+        "https://fcdata.io/evolutions/",
+        "https://www.fut.gg/evolutions/best/"
       ]
     }
   ],
