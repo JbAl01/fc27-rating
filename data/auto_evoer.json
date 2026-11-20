@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-19T18:15:00Z",
+  "_sjekket": "2026-11-20T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -3369,6 +3369,448 @@
         "https://fcdata.io/evolutions/",
         "https://www.fut.gg/evolutions/best/"
       ]
+    },
+    {
+      "key": "high_voltage",
+      "name": "High Voltage",
+      "cost": "gratis",
+      "until": "2026-11-24T18:00Z",
+      "note": "Thunderstruck-evo, kom 20.11. Krav (maks 82 OVR, CM/CAM, maks Pace 86, maks Defending 76, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle tre nivåer er like hos fcdata og futmind. PlayStyle på nivå 2 er Incisive Pass med tak 3 (futmind: «Incisive Pass ⤒3»; fcdata: én PlayStyle med tak 3). Fristen 24.11 kl. 18:00 UTC står hos futmind («2026-11-24 18:00 UTC», samme frist for å fullføre) og stemmer med fcdata («Submit by 24 Nov 2026, 19:00» uten tidssone). Bare utespillere (futmind). Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 86,
+        "max_face": {
+          "defending": 76
+        },
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CM",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          83
+        ],
+        "stats": {
+          "sprint_speed": [
+            9,
+            80
+          ],
+          "long_shots": [
+            8,
+            79
+          ],
+          "short_passing": [
+            6,
+            85
+          ],
+          "reactions": [
+            7,
+            82
+          ],
+          "composure": [
+            8,
+            82
+          ],
+          "standing_tackle": [
+            9,
+            73
+          ],
+          "positioning": [
+            7,
+            82
+          ],
+          "vision": [
+            8,
+            83
+          ],
+          "long_passing": [
+            8,
+            80
+          ],
+          "ball_control": [
+            6,
+            84
+          ],
+          "interceptions": [
+            9,
+            73
+          ],
+          "acceleration": [
+            9,
+            79
+          ],
+          "shot_power": [
+            6,
+            84
+          ],
+          "crossing": [
+            11,
+            78
+          ],
+          "curve": [
+            10,
+            78
+          ],
+          "dribbling": [
+            7,
+            84
+          ],
+          "def_awareness": [
+            11,
+            68
+          ]
+        },
+        "ps": [
+          [
+            "Incisive Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2884-high-voltage/",
+        "https://futmind.com/articles/22462/ea-sports-fc-27-ultimate-team-high-voltage-evolution-guide"
+      ]
+    },
+    {
+      "key": "static_charge",
+      "name": "Static Charge",
+      "cost": "gratis",
+      "until": "2026-11-24T18:00Z",
+      "note": "Thunderstruck-evo, kom 20.11. Krav (maks 81 OVR, CM/CAM, maks Pace 86, maks Defending 76, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle fire nivåer er like hos fcdata og futmind. PlayStyle på nivå 2 er Pinged Pass med tak 3 (futmind: «Pinged Pass ⤒3»; fcdata: én PlayStyle med tak 3). Svakfot +2 (maks 3) og skill moves +2 (maks 3) hos begge. Fristen 24.11 kl. 18:00 UTC står hos futmind («2026-11-24 18:00 UTC», samme frist for å fullføre) og stemmer med fcdata («Submit by 24 Nov 2026, 19:00» uten tidssone). Bare utespillere (futmind). Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 86,
+        "max_face": {
+          "defending": 76
+        },
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CM",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          18,
+          82
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "stats": {
+          "positioning": [
+            25,
+            79
+          ],
+          "vision": [
+            25,
+            80
+          ],
+          "balance": [
+            20,
+            78
+          ],
+          "composure": [
+            25,
+            80
+          ],
+          "strength": [
+            20,
+            74
+          ],
+          "finishing": [
+            25,
+            76
+          ],
+          "short_passing": [
+            25,
+            83
+          ],
+          "reactions": [
+            25,
+            80
+          ],
+          "interceptions": [
+            20,
+            72
+          ],
+          "aggression": [
+            20,
+            78
+          ],
+          "acceleration": [
+            20,
+            75
+          ],
+          "shot_power": [
+            25,
+            82
+          ],
+          "long_passing": [
+            25,
+            79
+          ],
+          "ball_control": [
+            25,
+            82
+          ],
+          "standing_tackle": [
+            20,
+            72
+          ],
+          "sprint_speed": [
+            20,
+            76
+          ],
+          "long_shots": [
+            25,
+            77
+          ],
+          "agility": [
+            25,
+            80
+          ],
+          "dribbling": [
+            25,
+            81
+          ],
+          "stamina": [
+            30,
+            82
+          ]
+        },
+        "ps": [
+          [
+            "Pinged Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2886-static-charge/",
+        "https://futmind.com/articles/22464/ea-sports-fc-27-ultimate-team-static-charge-evolution-guide"
+      ]
+    },
+    {
+      "key": "full_overload",
+      "name": "Full Overload",
+      "cost": "gratis",
+      "until": "2026-11-24T18:00Z",
+      "note": "Thunderstruck-evo, kom 20.11. Krav (maks 83 OVR, CM/CAM, maks Pace 86, maks Defending 76, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle fem nivåer er like hos fcdata og futmind. PlayStyle på nivå 2 er Low Driven Shot med tak 3 (futmind: «Low Driven Shot ⤒3»; fcdata: én PlayStyle med tak 3). Svakfot +1 (maks 4) og skill moves +1 (maks 4) hos begge. Fristen 24.11 kl. 18:00 UTC står hos futmind («2026-11-24 18:00 UTC», samme frist for å fullføre) og stemmer med fcdata («Submit by 24 Nov 2026, 19:00» uten tidssone). Bare utespillere (futmind). Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 83,
+        "max_pace": 86,
+        "max_face": {
+          "defending": 76
+        },
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CM",
+          "CAM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          85
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "stats": {
+          "finishing": [
+            10,
+            80
+          ],
+          "fk_accuracy": [
+            12,
+            78
+          ],
+          "balance": [
+            7,
+            82
+          ],
+          "interceptions": [
+            10,
+            75
+          ],
+          "strength": [
+            11,
+            82
+          ],
+          "shot_power": [
+            6,
+            86
+          ],
+          "short_passing": [
+            6,
+            87
+          ],
+          "reactions": [
+            8,
+            87
+          ],
+          "def_awareness": [
+            12,
+            75
+          ],
+          "aggression": [
+            9,
+            80
+          ],
+          "acceleration": [
+            9,
+            84
+          ],
+          "long_shots": [
+            7,
+            82
+          ],
+          "long_passing": [
+            9,
+            85
+          ],
+          "ball_control": [
+            9,
+            87
+          ],
+          "standing_tackle": [
+            9,
+            78
+          ],
+          "sprint_speed": [
+            9,
+            85
+          ],
+          "vision": [
+            8,
+            88
+          ],
+          "curve": [
+            8,
+            84
+          ],
+          "dribbling": [
+            7,
+            87
+          ],
+          "jumping": [
+            9,
+            78
+          ],
+          "positioning": [
+            7,
+            84
+          ],
+          "crossing": [
+            9,
+            82
+          ],
+          "agility": [
+            7,
+            84
+          ],
+          "composure": [
+            7,
+            85
+          ],
+          "stamina": [
+            8,
+            85
+          ]
+        },
+        "ps": [
+          [
+            "Low Driven Shot",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2885-full-overload/",
+        "https://futmind.com/articles/22463/full-overload-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-tea"
+      ]
+    },
+    {
+      "key": "field_general",
+      "name": "Field General",
+      "cost": "gratis",
+      "until": "2026-12-08T18:00Z",
+      "note": "Kom 20.11. Bare én kilde så langt: fcdata (detaljside, ett nivå, ingen kamper). Krav: maks 81 OVR, maks 2 PlayStyles, ingen PlayStyle+, ingen posisjonskrav. Gir tre PlayStyles, hver med tak 3; navnene Long Ball Pass, Pinged Pass og Incisive Pass står i fcdatas beskrivelse. fcdata skriver «Submit by 8 Dec 2026, 19:00» uten tidssone; satt til 18:00 UTC som for de andre evoene fra fcdata. Repeterbar er ikke oppgitt. Neste kjøring bør sjekke mot FUT.GG, FUTBIN eller en guide.",
+      "req": {
+        "max_ovr": 81,
+        "max_ps": 2,
+        "max_psp": 0
+      },
+      "up": {
+        "ps": [
+          [
+            "Long Ball Pass",
+            3
+          ],
+          [
+            "Pinged Pass",
+            3
+          ],
+          [
+            "Incisive Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2878-field-general/",
+        "https://fcdata.io/evolutions/"
+      ]
+    },
+    {
+      "key": "zero_to_sixty",
+      "name": "Zero to Sixty",
+      "cost": "gratis",
+      "until": "2026-12-08T18:00Z",
+      "note": "Kom 20.11. Bare én kilde så langt: fcdata (detaljside, ett nivå, ingen kamper). Krav: maks 81 OVR, maks 2 PlayStyles, ingen PlayStyle+, ingen posisjonskrav. Gir tre PlayStyles, hver med tak 3; navnene Quick Step, Rapid og First Touch står i fcdatas beskrivelse. fcdata skriver «Submit by 8 Dec 2026, 19:00» uten tidssone; satt til 18:00 UTC som for de andre evoene fra fcdata. Repeterbar er ikke oppgitt. Neste kjøring bør sjekke mot FUT.GG, FUTBIN eller en guide.",
+      "req": {
+        "max_ovr": 81,
+        "max_ps": 2,
+        "max_psp": 0
+      },
+      "up": {
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Rapid",
+            3
+          ],
+          [
+            "First Touch",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2880-zero-to-sixty/",
+        "https://fcdata.io/evolutions/"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -3441,6 +3883,21 @@
       "navn": "Match Spark / Red Classic Arrow Spin",
       "grunn": "Bare kortdesign, ingen tall (fcdata: Match Spark «+1158 Cosmetic», 20 000 mynter og 150 points; Red Classic Arrow Spin 10 000 mynter).",
       "dato": "2026-11-14"
+    },
+    {
+      "navn": "Circuit Breaker",
+      "grunn": "Bare futmind (guide med alle nivåer, frist 30.11 18:00 UTC); ikke funnet hos fcdata, FUT.GG eller FUTBIN ennå. futmind er ikke blant kildene som kan stå alene. Legges inn når en andre kilde har den.",
+      "dato": "2026-11-20"
+    },
+    {
+      "navn": "Pocket Watcher / Cutting Edge",
+      "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står ikke på detaljsiden, og fcdatas oppsummering av svakfot/skill moves stemmer ikke med nivåene. Venter på en andre kilde.",
+      "dato": "2026-11-20"
+    },
+    {
+      "navn": "Thunderstruck Regular/Premium Badge / Yellow Lightning / Pink Lightning",
+      "grunn": "Bare merke/kortdesign, ingen tall (fcdata: «+1020/+1021 Cosmetic»).",
+      "dato": "2026-11-20"
     }
   ]
 }
