@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-20T18:30:00Z",
+  "_sjekket": "2026-11-21T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -3811,6 +3811,255 @@
         "https://fcdata.io/fc27/evolutions/2880-zero-to-sixty/",
         "https://fcdata.io/evolutions/"
       ]
+    },
+    {
+      "key": "circuit_breaker",
+      "name": "Circuit Breaker",
+      "cost": "gratis",
+      "until": "2026-11-30T18:00Z",
+      "note": "Thunderstruck-evo. Krav (maks 83 OVR, RW/RM, ikke ST, maks Defending 74, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle fire nivåer er like hos fcdata, FUT.GG og futmind. fcdata nevner også GK som utelukket posisjon. Navnene på PlayStylene (Quick Step, Trickster, Finesse Shot, hver med tak 3) står bare hos futmind; fcdata og FUT.GG viser tre PlayStyles med tak 3. Svakfot +1 (maks 4) og skill moves +1 (maks 4) hos alle. Fristen 30.11 kl. 18:00 UTC står hos futmind og stemmer med fcdata («Submit by 30 Nov 2026, 19:00» uten tidssone); FUT.GG viser ingen dato. FUT.GG sier online kreves, fcdata sier nei. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 83,
+        "max_face": {
+          "defending": 74
+        },
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "RW",
+          "RM"
+        ],
+        "not_positions": [
+          "ST"
+        ]
+      },
+      "up": {
+        "ovr": [
+          12,
+          86
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "stats": {
+          "acceleration": [
+            30,
+            88
+          ],
+          "shot_power": [
+            30,
+            81
+          ],
+          "short_passing": [
+            25,
+            82
+          ],
+          "balance": [
+            30,
+            86
+          ],
+          "composure": [
+            30,
+            84
+          ],
+          "sprint_speed": [
+            30,
+            88
+          ],
+          "long_shots": [
+            30,
+            80
+          ],
+          "long_passing": [
+            25,
+            80
+          ],
+          "reactions": [
+            30,
+            85
+          ],
+          "positioning": [
+            30,
+            83
+          ],
+          "vision": [
+            25,
+            80
+          ],
+          "curve": [
+            25,
+            81
+          ],
+          "ball_control": [
+            30,
+            86
+          ],
+          "finishing": [
+            30,
+            83
+          ],
+          "crossing": [
+            25,
+            81
+          ],
+          "agility": [
+            30,
+            87
+          ],
+          "dribbling": [
+            30,
+            85
+          ]
+        },
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Trickster",
+            3
+          ],
+          [
+            "Finesse Shot",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2889-circuit-breaker/",
+        "https://www.fut.gg/evolutions/2671-circuit-breaker/",
+        "https://futmind.com/articles/22465/ea-sports-fc-27-ultimate-team-circuit-breaker-evolution-guide"
+      ]
+    },
+    {
+      "key": "storm_wall",
+      "name": "Storm Wall",
+      "cost": "50 000 mynter / 250 FC Points",
+      "until": "2026-12-01T18:00Z",
+      "note": "Thunderstruck-evo for midtstoppere, kom 21.11. Krav (maks 82 OVR, CB, maks Pace 82, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle fire nivåer er like hos fcdata og futmind. Kostnaden er usikker: fcdata viser 50 000 mynter / 250 FC Points, futmind kaller den gratis. Nivå 1 gir PlayStyle+ Anticipate (tak 1); PlayStyles Quick Step, Intercept og Bruiser (tak 3) på nivå 2–4 (navnene fra futmind, fcdata viser én PlayStyle+ og tre PlayStyles med samme tak). Svakfot +2 (maks 3). OVR +16 (maks 86) hos begge. Fristen 1.12 kl. 18:00 UTC står hos futmind og stemmer med fcdata («Submit by 1 Dec 2026, 19:00» uten tidssone). Ikke funnet hos FUT.GG ennå. Repeterbar er ikke oppgitt.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 82,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          16,
+          86
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "stats": {
+          "crossing": [
+            20,
+            66
+          ],
+          "ball_control": [
+            20,
+            79
+          ],
+          "def_awareness": [
+            25,
+            86
+          ],
+          "stamina": [
+            20,
+            81
+          ],
+          "acceleration": [
+            25,
+            79
+          ],
+          "short_passing": [
+            20,
+            82
+          ],
+          "composure": [
+            20,
+            84
+          ],
+          "standing_tackle": [
+            25,
+            86
+          ],
+          "strength": [
+            25,
+            86
+          ],
+          "sprint_speed": [
+            25,
+            80
+          ],
+          "long_passing": [
+            20,
+            82
+          ],
+          "interceptions": [
+            25,
+            87
+          ],
+          "sliding_tackle": [
+            25,
+            87
+          ],
+          "aggression": [
+            22,
+            85
+          ],
+          "vision": [
+            12,
+            72
+          ],
+          "reactions": [
+            22,
+            86
+          ],
+          "heading_accuracy": [
+            20,
+            86
+          ],
+          "jumping": [
+            20,
+            88
+          ]
+        },
+        "psp": [
+          [
+            "Anticipate",
+            1
+          ]
+        ],
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Intercept",
+            3
+          ],
+          [
+            "Bruiser",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2888-storm-wall/",
+        "https://futmind.com/articles/22701/storm-wall-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -3885,11 +4134,6 @@
       "dato": "2026-11-14"
     },
     {
-      "navn": "Circuit Breaker",
-      "grunn": "Bare futmind (guide med alle nivåer, frist 30.11 18:00 UTC); ikke funnet hos fcdata, FUT.GG eller FUTBIN ennå. futmind er ikke blant kildene som kan stå alene. Legges inn når en andre kilde har den.",
-      "dato": "2026-11-20"
-    },
-    {
       "navn": "Pocket Watcher / Cutting Edge",
       "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står ikke på detaljsiden, og fcdatas oppsummering av svakfot/skill moves stemmer ikke med nivåene. Venter på en andre kilde.",
       "dato": "2026-11-20"
@@ -3898,6 +4142,11 @@
       "navn": "Thunderstruck Regular/Premium Badge / Yellow Lightning / Pink Lightning",
       "grunn": "Bare merke/kortdesign, ingen tall (fcdata: «+1020/+1021 Cosmetic»).",
       "dato": "2026-11-20"
+    },
+    {
+      "navn": "Blue Lightning / Green Lightning",
+      "grunn": "Bare kortdesign, ingen tall (fcdata: «+1018/+1019 Cosmetic», 10 000 mynter / 100 FC Points; futmind: «cosmetic Evolution»).",
+      "dato": "2026-11-21"
     }
   ]
 }
