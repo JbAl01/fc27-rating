@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-21T18:30:00Z",
+  "_sjekket": "2026-11-22T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1861,95 +1861,6 @@
       "sources": [
         "https://fcdata.io/fc27/evolutions/2852-glow-guard/",
         "https://futmind.com/articles/21305/ea-sports-fc-27-ultimate-team-glow-guard-evolution-guide"
-      ]
-    },
-    {
-      "key": "strings_of_fate",
-      "name": "Strings of Fate",
-      "cost": "gratis",
-      "until": "2026-11-15T18:00Z",
-      "note": "Krav og tall for alle tre nivåer er like hos fcdata (per nivå) og FUT.GG (listesiden). Fristen 15.11 kl. 18:00 (fullføres innen 22.11) står bare hos fcdata, uten tidssone; 18:00 britisk tid = 18:00 UTC i november. Evoen gir også én PlayStyle på nivå 2 med tak 3 (fcdata: «1 PlayStyle↗3», FUT.GG: umerket 3), men ingen kilde oppgir navnet ennå, så den er utelatt her og må legges inn når navnet er kjent. repeat 2 bygger på et umerket tall hos begge (fcdata «Free2», FUT.GG «New 2»), samme merking som Intro to Repeatable hos fcdata. Pace-krav, ekskluderte posisjoner og roller er ikke oppgitt. Futmind, futnext, futevolution og Destructoid hadde ikke evoen 5.11. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 81,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "CDM",
-          "CM"
-        ]
-      },
-      "up": {
-        "ovr": [
-          3,
-          82
-        ],
-        "wf": [
-          1,
-          4
-        ],
-        "stats": {
-          "crossing": [
-            12,
-            84
-          ],
-          "long_passing": [
-            15,
-            86
-          ],
-          "ball_control": [
-            3,
-            81
-          ],
-          "def_awareness": [
-            4,
-            77
-          ],
-          "strength": [
-            4,
-            76
-          ],
-          "fk_accuracy": [
-            12,
-            82
-          ],
-          "curve": [
-            10,
-            80
-          ],
-          "composure": [
-            4,
-            83
-          ],
-          "standing_tackle": [
-            3,
-            76
-          ],
-          "vision": [
-            15,
-            84
-          ],
-          "short_passing": [
-            15,
-            83
-          ],
-          "reactions": [
-            3,
-            81
-          ],
-          "interceptions": [
-            5,
-            79
-          ],
-          "stamina": [
-            3,
-            82
-          ]
-        }
-      },
-      "repeat": 2,
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2851-strings-of-fate/",
-        "https://www.fut.gg/evolutions/"
       ]
     },
     {
@@ -4060,6 +3971,120 @@
         "https://fcdata.io/fc27/evolutions/2888-storm-wall/",
         "https://futmind.com/articles/22701/storm-wall-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate-team"
       ]
+    },
+    {
+      "key": "lightning_rod",
+      "name": "Lightning Rod",
+      "cost": "gratis",
+      "until": "2026-12-02T18:00Z",
+      "note": "Thunderstruck-evo for CDM/CM, kom 22.11. Krav (maks 81 OVR, CDM/CM, ikke CB, maks 7 PlayStyles, ingen PlayStyle+) og alle attributtøkninger med tak er like hos fcdata (detaljside) og futmind (kort i evolisten; detaljsiden kunne ikke hentes). fcdata nevner også GK som utelukket. OVR +14 (maks 84). Svakfot +2 (maks 4) hos fcdata; futmind viser maks 4. PlayStyle-navnene (Intercept og Long Ball Pass, tak 3) står bare hos futmind; fcdata viser to PlayStyles med tak 3 uten navn. Kostnad gratis hos fcdata, futmind viser ingen kostnad. Fristen 2.12 kl. 18:00 UTC: fcdata «Submit by 2 Dec 2026, 19:00» uten tidssone, futmind nedtelling «9 Days 23 Hours» (hentet 22.11 ca. 18:15 UTC) stemmer. Repeterbar er ikke oppgitt. Tallene er summen etter alle fire nivåer.",
+      "req": {
+        "max_ovr": 81,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CDM",
+          "CM"
+        ],
+        "not_positions": [
+          "CB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          14,
+          84
+        ],
+        "wf": [
+          2,
+          4
+        ],
+        "stats": {
+          "sprint_speed": [
+            15,
+            80
+          ],
+          "reactions": [
+            12,
+            85
+          ],
+          "heading_accuracy": [
+            14,
+            78
+          ],
+          "jumping": [
+            11,
+            80
+          ],
+          "vision": [
+            11,
+            82
+          ],
+          "ball_control": [
+            9,
+            84
+          ],
+          "def_awareness": [
+            22,
+            84
+          ],
+          "stamina": [
+            13,
+            86
+          ],
+          "short_passing": [
+            8,
+            85
+          ],
+          "composure": [
+            13,
+            85
+          ],
+          "standing_tackle": [
+            20,
+            85
+          ],
+          "strength": [
+            20,
+            84
+          ],
+          "acceleration": [
+            15,
+            80
+          ],
+          "long_passing": [
+            11,
+            84
+          ],
+          "interceptions": [
+            20,
+            84
+          ],
+          "sliding_tackle": [
+            17,
+            83
+          ],
+          "aggression": [
+            18,
+            85
+          ]
+        },
+        "ps": [
+          [
+            "Intercept",
+            3
+          ],
+          [
+            "Long Ball Pass",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2887-lightning-rod/",
+        "https://futmind.com/evolutions",
+        "https://futmind.com/articles/22804/ea-sports-fc-27-ultimate-team-lightning-rod-evolution-guide"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -4135,8 +4160,8 @@
     },
     {
       "navn": "Pocket Watcher / Cutting Edge",
-      "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står ikke på detaljsiden, og fcdatas oppsummering av svakfot/skill moves stemmer ikke med nivåene. Venter på en andre kilde.",
-      "dato": "2026-11-20"
+      "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står fortsatt ikke på detaljsiden (sjekket 22.11), og ingen andre kilder (futmind, FUT.GG best-siden) har dem. Venter på en andre kilde.",
+      "dato": "2026-11-22"
     },
     {
       "navn": "Thunderstruck Regular/Premium Badge / Yellow Lightning / Pink Lightning",
