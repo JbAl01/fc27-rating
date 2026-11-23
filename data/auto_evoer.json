@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-22T18:30:00Z",
+  "_sjekket": "2026-11-23T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1861,131 +1861,6 @@
       "sources": [
         "https://fcdata.io/fc27/evolutions/2852-glow-guard/",
         "https://futmind.com/articles/21305/ea-sports-fc-27-ultimate-team-glow-guard-evolution-guide"
-      ]
-    },
-    {
-      "key": "matchday_marksman",
-      "name": "Matchday Marksman",
-      "cost": "gratis",
-      "until": "2026-11-16T18:00Z",
-      "note": "Krav, nivåer og tall er like hos fcdata, FUT.GG, futmind og Destructoid (sjekket 7.11). Fristen 16.11 kl. 18:00 UTC (fullføres innen 23.11 18:00 UTC) står hos futmind; fcdata har samme tid uten tidssone. PlayStyles: Gamechanger (nivå 2) og Low Driven Shot + Finesse Shot (nivå 4), tak 3 (FUT.GG, futmind, Destructoid; fcdata viser «1 PlayStyle↗3» uten navn). OVR er satt etter sammendraget («+6, maks 83»). Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 88,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "RM",
-          "RW"
-        ]
-      },
-      "up": {
-        "ovr": [
-          6,
-          83
-        ],
-        "sm": [
-          1,
-          4
-        ],
-        "stats": {
-          "shot_power": [
-            12,
-            83
-          ],
-          "crossing": [
-            15,
-            84
-          ],
-          "agility": [
-            10,
-            84
-          ],
-          "ball_control": [
-            10,
-            84
-          ],
-          "stamina": [
-            10,
-            82
-          ],
-          "sprint_speed": [
-            6,
-            84
-          ],
-          "positioning": [
-            15,
-            83
-          ],
-          "volleys": [
-            12,
-            77
-          ],
-          "short_passing": [
-            18,
-            85
-          ],
-          "balance": [
-            10,
-            82
-          ],
-          "dribbling": [
-            10,
-            85
-          ],
-          "acceleration": [
-            6,
-            84
-          ],
-          "finishing": [
-            15,
-            81
-          ],
-          "vision": [
-            15,
-            80
-          ],
-          "long_passing": [
-            15,
-            78
-          ],
-          "reactions": [
-            10,
-            82
-          ],
-          "composure": [
-            10,
-            82
-          ],
-          "curve": [
-            15,
-            85
-          ],
-          "long_shots": [
-            15,
-            83
-          ]
-        },
-        "ps": [
-          [
-            "Gamechanger",
-            3
-          ],
-          [
-            "Low Driven Shot",
-            3
-          ],
-          [
-            "Finesse Shot",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2849-matchday-marksman/",
-        "https://www.fut.gg/evolutions/2650-matchday-marksman/",
-        "https://futmind.com/articles/21388/matchday-marksman-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27",
-        "https://www.destructoid.com/best-players-for-fc-27-matchday-marksman-evolution/"
       ]
     },
     {
@@ -4084,6 +3959,129 @@
         "https://fcdata.io/fc27/evolutions/2887-lightning-rod/",
         "https://futmind.com/evolutions",
         "https://futmind.com/articles/22804/ea-sports-fc-27-ultimate-team-lightning-rod-evolution-guide"
+      ]
+    },
+    {
+      "key": "forked_lightning",
+      "name": "Forked Lightning",
+      "cost": "gratis",
+      "until": "2026-12-03T18:00Z",
+      "note": "Thunderstruck-evo for RW/LW/ST, kom 23.11. Krav (maks 81 OVR, RW/LW/ST, ikke CB, maks Pace 91, maks 7 PlayStyles, ingen PlayStyle+) og alle attributtøkninger med tak for alle fire nivåer er like hos fcdata (detaljside) og futmind (guide). fcdata nevner også GK som utelukket. OVR +4 (maks 84) på nivå 1, ingen OVR-økning oppgitt på nivå 2–4. PlayStyles (alle med tak 3): Quick Step (nivå 2) hos begge; Gamechanger (nivå 3) står bare hos futmind; Low Driven Shot (nivå 4) hos futmind og i fcdatas beskrivelse (fcdata viser bare «1 PlayStyle, 3» på nivå 3 og 4). Fristen 3.12 kl. 18:00 UTC: futmind «2026-12-03 18:00 UTC», fcdata «Submit by 3 Dec 2026, 19:00» uten tidssone. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 91,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "RW",
+          "LW",
+          "ST"
+        ],
+        "not_positions": [
+          "CB"
+        ]
+      },
+      "up": {
+        "ovr": [
+          4,
+          84
+        ],
+        "stats": {
+          "acceleration": [
+            6,
+            88
+          ],
+          "shot_power": [
+            6,
+            85
+          ],
+          "fk_accuracy": [
+            8,
+            78
+          ],
+          "agility": [
+            6,
+            87
+          ],
+          "dribbling": [
+            6,
+            87
+          ],
+          "sprint_speed": [
+            6,
+            88
+          ],
+          "long_shots": [
+            6,
+            82
+          ],
+          "short_passing": [
+            5,
+            84
+          ],
+          "balance": [
+            6,
+            86
+          ],
+          "composure": [
+            6,
+            85
+          ],
+          "positioning": [
+            8,
+            84
+          ],
+          "vision": [
+            5,
+            84
+          ],
+          "long_passing": [
+            8,
+            80
+          ],
+          "reactions": [
+            6,
+            85
+          ],
+          "stamina": [
+            5,
+            80
+          ],
+          "finishing": [
+            8,
+            84
+          ],
+          "crossing": [
+            8,
+            82
+          ],
+          "curve": [
+            8,
+            84
+          ],
+          "ball_control": [
+            6,
+            87
+          ]
+        },
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Gamechanger",
+            3
+          ],
+          [
+            "Low Driven Shot",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2892-forked-lightning/",
+        "https://futmind.com/articles/22880/forked-lightning-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
       ]
     }
   ],
