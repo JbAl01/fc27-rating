@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-23T18:30:00Z",
+  "_sjekket": "2026-11-24T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -4082,6 +4082,103 @@
       "sources": [
         "https://fcdata.io/fc27/evolutions/2892-forked-lightning/",
         "https://futmind.com/articles/22880/forked-lightning-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate"
+      ]
+    },
+    {
+      "key": "slick_operator",
+      "name": "Slick Operator",
+      "cost": "gratis (låses opp via objective)",
+      "until": "2026-12-07T18:00Z",
+      "note": "Thunderstruck-evo, låses opp via Storm Chaser-objective (Destructoid: scor et lavt skudd-mål i 15 ulike kamper). Krav (maks 81 OVR, ST/LW/RW, ikke CDM/CM, maks Pace 90, maks 7 PlayStyles, ingen PlayStyle+) og tallene for alle tre nivåer er like hos futwiz (detaljside) og Destructoid. PlayStyles Low Driven Shot og Gamechanger, begge med tak 3 (Destructoid; futwiz viser +3 og navnene i ikonene). Startfristen 7.12 kl. 18:00 står bare hos timesaver.gg («Activate by Mon 7 Dec, finish by Mon 14 Dec»); futwiz viser utløp «Mon 14 Dec, 18:00» (fullføring), som stemmer med samme mønster som Circuit Breaker. Tre nivåer, én kamp hver. Repeterbar, svakfot og skill moves er ikke oppgitt. Tallene er summen etter alle nivåer (Balance +12 på både nivå 1 og 3, tak 84).",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 90,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST",
+          "LW",
+          "RW"
+        ],
+        "not_positions": [
+          "CDM",
+          "CM"
+        ]
+      },
+      "up": {
+        "ovr": [
+          3,
+          83
+        ],
+        "stats": {
+          "acceleration": [
+            8,
+            86
+          ],
+          "sprint_speed": [
+            8,
+            86
+          ],
+          "positioning": [
+            10,
+            82
+          ],
+          "finishing": [
+            10,
+            83
+          ],
+          "shot_power": [
+            10,
+            82
+          ],
+          "long_shots": [
+            10,
+            81
+          ],
+          "volleys": [
+            10,
+            81
+          ],
+          "penalties": [
+            10,
+            82
+          ],
+          "agility": [
+            12,
+            84
+          ],
+          "balance": [
+            24,
+            84
+          ],
+          "reactions": [
+            12,
+            83
+          ],
+          "dribbling": [
+            12,
+            83
+          ],
+          "composure": [
+            10,
+            82
+          ]
+        },
+        "ps": [
+          [
+            "Low Driven Shot",
+            3
+          ],
+          [
+            "Gamechanger",
+            3
+          ]
+        ]
+      },
+      "sources": [
+        "https://www.futwiz.com/evolutions/slick-operator/171",
+        "https://www.destructoid.com/best-players-for-fc-27-slick-operator-evolution/",
+        "https://timesaver.gg/blog/fc-27-thunderstruck-evos-static-charge-free-85-chain-best-players"
       ]
     }
   ],
