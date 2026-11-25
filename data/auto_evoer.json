@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-24T18:30:00Z",
+  "_sjekket": "2026-11-25T18:15:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1884,160 +1884,6 @@
       "sources": [
         "https://www.fut.gg/evolutions/2651-intercept/",
         "https://www.futevolution.com/evolutions"
-      ]
-    },
-    {
-      "key": "underdog_run",
-      "name": "Underdog Run",
-      "cost": "gratis (treningsleir)",
-      "until": "2026-11-18T18:00Z",
-      "note": "Kom 8.11 kl. 18:00 UTC. Treningsleir-evo, fem nivåer (samme oppsett som Rise From the Grave, men for LM/LW). Krav og tall for alle nivåer er like hos fcdata og futmind. Fristen 18.11 kl. 18:00 (fullføres innen 25.11 kl. 18:00) står hos fcdata uten tidssone; futminds nedtelling gir samme tid i UTC. PlayStyle-navnene (Quick Step nivå 2, Technical nivå 3, Pinged Pass nivå 4) står bare hos futmind; taket 3 hos begge (fcdata: «1 PlayStyle ↗3»). fcdata utelukker CM og GK, futmind bare CM. Repeterbar er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 74,
-        "max_pace": 86,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "LM",
-          "LW"
-        ],
-        "not_positions": [
-          "CM",
-          "GK"
-        ]
-      },
-      "up": {
-        "ovr": [
-          36,
-          80
-        ],
-        "wf": [
-          1,
-          3
-        ],
-        "sm": [
-          2,
-          4
-        ],
-        "face": {
-          "defending": [
-            15,
-            55
-          ]
-        },
-        "ps": [
-          [
-            "Quick Step",
-            3
-          ],
-          [
-            "Technical",
-            3
-          ],
-          [
-            "Pinged Pass",
-            3
-          ]
-        ],
-        "stats": {
-          "sprint_speed": [
-            40,
-            84
-          ],
-          "volleys": [
-            30,
-            72
-          ],
-          "long_passing": [
-            35,
-            84
-          ],
-          "ball_control": [
-            40,
-            82
-          ],
-          "stamina": [
-            30,
-            82
-          ],
-          "positioning": [
-            40,
-            81
-          ],
-          "vision": [
-            40,
-            82
-          ],
-          "curve": [
-            35,
-            84
-          ],
-          "dribbling": [
-            40,
-            82
-          ],
-          "strength": [
-            20,
-            68
-          ],
-          "finishing": [
-            40,
-            79
-          ],
-          "crossing": [
-            40,
-            84
-          ],
-          "agility": [
-            35,
-            83
-          ],
-          "composure": [
-            35,
-            78
-          ],
-          "aggression": [
-            20,
-            72
-          ],
-          "shot_power": [
-            35,
-            82
-          ],
-          "fk_accuracy": [
-            35,
-            78
-          ],
-          "balance": [
-            35,
-            82
-          ],
-          "acceleration": [
-            40,
-            85
-          ],
-          "long_shots": [
-            35,
-            78
-          ],
-          "short_passing": [
-            40,
-            84
-          ],
-          "reactions": [
-            35,
-            77
-          ],
-          "jumping": [
-            20,
-            76
-          ]
-        }
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2854-underdog-run/",
-        "https://futmind.com/evolutions/2854/underdog-run",
-        "https://fcdata.io/evolutions/"
       ]
     },
     {
@@ -4255,8 +4101,8 @@
     },
     {
       "navn": "Pocket Watcher / Cutting Edge",
-      "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står fortsatt ikke på detaljsiden (sjekket 22.11), og ingen andre kilder (futmind, FUT.GG best-siden) har dem. Venter på en andre kilde.",
-      "dato": "2026-11-22"
+      "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står fortsatt ikke på detaljsiden (sjekket 25.11), og futnext-detaljsidene kunne ikke hentes. Venter på en andre kilde.",
+      "dato": "2026-11-25"
     },
     {
       "navn": "Thunderstruck Regular/Premium Badge / Yellow Lightning / Pink Lightning",
@@ -4267,6 +4113,11 @@
       "navn": "Blue Lightning / Green Lightning",
       "grunn": "Bare kortdesign, ingen tall (fcdata: «+1018/+1019 Cosmetic», 10 000 mynter / 100 FC Points; futmind: «cosmetic Evolution»).",
       "dato": "2026-11-21"
+    },
+    {
+      "navn": "Switchback Dynamo",
+      "grunn": "Ny 25.11, bare fcdata (gratis, LB/RB, maks 74 OVR, Pace maks 86, frist «5 Dec 2026, 19:00»). Detaljsiden viser ikke navnene på PlayStylen, PlayStyle+ eller de to nye posisjonene, og ingen andre kilder (FUT.GG, FUTBIN, futmind, Destructoid) har den ennå. Venter på en andre kilde.",
+      "dato": "2026-11-25"
     }
   ]
 }
