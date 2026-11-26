@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-25T18:15:00Z",
+  "_sjekket": "2026-11-26T18:15:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1884,106 +1884,6 @@
       "sources": [
         "https://www.fut.gg/evolutions/2651-intercept/",
         "https://www.futevolution.com/evolutions"
-      ]
-    },
-    {
-      "key": "clean_sheet_nights",
-      "name": "Clean Sheet Nights",
-      "cost": "gratis",
-      "until": "2026-11-19T18:00Z",
-      "note": "Kom 9.11. Krav og tall for alle tre nivåer er like hos fcdata og futmind (9.11). Fristen 19.11 kl. 18:00 UTC (fullføres innen 26.11 kl. 18:00 UTC) står hos futmind; fcdata har samme tid uten tidssone. PlayStyle-navnene (Jockey nivå 1, Intercept nivå 2, Quick Step nivå 3) står bare hos futmind; taket 3 hos begge (fcdata: «1 PlayStyle↗3»). Repeterbar, roller og svakfot er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 86,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "LB",
-          "RB"
-        ]
-      },
-      "up": {
-        "ovr": [
-          3,
-          82
-        ],
-        "stats": {
-          "reactions": [
-            10,
-            80
-          ],
-          "interceptions": [
-            8,
-            82
-          ],
-          "standing_tackle": [
-            10,
-            83
-          ],
-          "stamina": [
-            10,
-            86
-          ],
-          "crossing": [
-            10,
-            78
-          ],
-          "ball_control": [
-            10,
-            80
-          ],
-          "heading_accuracy": [
-            12,
-            80
-          ],
-          "sliding_tackle": [
-            12,
-            83
-          ],
-          "strength": [
-            8,
-            80
-          ],
-          "short_passing": [
-            10,
-            80
-          ],
-          "composure": [
-            10,
-            80
-          ],
-          "def_awareness": [
-            10,
-            82
-          ],
-          "jumping": [
-            12,
-            80
-          ],
-          "aggression": [
-            12,
-            82
-          ]
-        },
-        "ps": [
-          [
-            "Jockey",
-            3
-          ],
-          [
-            "Intercept",
-            3
-          ],
-          [
-            "Quick Step",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2859-clean-sheet-nights/",
-        "https://futmind.com/evolutions/2859/clean-sheet-nights",
-        "https://futmind.com/articles/21658/clean-sheet-nights-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimat"
       ]
     },
     {
@@ -4026,6 +3926,412 @@
         "https://www.destructoid.com/best-players-for-fc-27-slick-operator-evolution/",
         "https://timesaver.gg/blog/fc-27-thunderstruck-evos-static-charge-free-85-chain-best-players"
       ]
+    },
+    {
+      "key": "switchback_dynamo",
+      "name": "Switchback Dynamo",
+      "cost": "gratis",
+      "until": "2026-12-05T18:00Z",
+      "note": "Krav og tall for alle fem nivåer er like hos FUT.GG, futmind, fcdata og timesaver.gg. Startfristen 5.12 kl. 18:00 UTC står hos futmind og timesaver (fcdata viser «5 Dec 2026, 19:00» uten tidssone, dvs. samme tid i CET); fullføring innen 12.12. PlayStylen Block (tak 3) er navngitt hos futmind og timesaver; FUT.GG og fcdata viser bare taket 3. Nivå 1 gir posisjonene LB og RB (Evo Lab har ikke felt for nye posisjoner). Kravet «maks 5 posisjoner» kan ikke sjekkes. GK er utelukket hos fcdata og futmind. Treningsleir (4t 48m per nivå), ingen kamper. Én per klubb (timesaver). Tallene er summen etter alle fem nivåer.",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CB",
+          "CDM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          30,
+          81
+        ],
+        "wf": [
+          1,
+          3
+        ],
+        "ps": [
+          [
+            "Block",
+            3
+          ]
+        ],
+        "stats": {
+          "dribbling": [
+            30,
+            75
+          ],
+          "standing_tackle": [
+            30,
+            79
+          ],
+          "aggression": [
+            30,
+            77
+          ],
+          "crossing": [
+            30,
+            75
+          ],
+          "agility": [
+            30,
+            77
+          ],
+          "composure": [
+            30,
+            75
+          ],
+          "sliding_tackle": [
+            30,
+            79
+          ],
+          "acceleration": [
+            30,
+            80
+          ],
+          "short_passing": [
+            30,
+            72
+          ],
+          "balance": [
+            30,
+            77
+          ],
+          "interceptions": [
+            30,
+            79
+          ],
+          "jumping": [
+            30,
+            77
+          ],
+          "sprint_speed": [
+            30,
+            81
+          ],
+          "long_passing": [
+            30,
+            70
+          ],
+          "reactions": [
+            30,
+            76
+          ],
+          "heading_accuracy": [
+            30,
+            76
+          ],
+          "stamina": [
+            30,
+            79
+          ],
+          "vision": [
+            30,
+            70
+          ],
+          "curve": [
+            30,
+            70
+          ],
+          "ball_control": [
+            30,
+            75
+          ],
+          "def_awareness": [
+            30,
+            81
+          ],
+          "strength": [
+            30,
+            79
+          ]
+        }
+      },
+      "sources": [
+        "https://www.fut.gg/evolutions/2692-switchback-dynamo/",
+        "https://futmind.com/articles/23052/switchback-dynamo-evolution-guide-best-players-requirements-and-upgrades-in-ea-sports-fc-27-ultimate",
+        "https://fcdata.io/fc27/evolutions/2893-switchback-dynamo/",
+        "https://timesaver.gg/blog/fc-27-switchback-dynamo-evolution-best-full-backs-free-81-chain"
+      ]
+    },
+    {
+      "key": "pocket_watcher",
+      "name": "Pocket Watcher",
+      "cost": "300 Thunderstruck-tokens (Token Store)",
+      "until": "2026-12-11T17:59Z",
+      "note": "Krav og tall for alle fem nivåer er like hos fcdata og timesaver.gg (som har tallene fra FUT.GG). Begge sier 300 tokens. Evoen kan startes til 25.12 kl. 18:00 UTC (timesaver; fcdata «25 Dec 2026, 19:00» uten tidssone), men tokenbutikken stenger 11.12 kl. 17:59 UTC (timesaver, via FUT.GG), så fristen er satt til det tidligste. Navnene står bare hos timesaver: PlayStyle+ Incisive Pass (nivå 1, tak 1), PlayStyles Low Driven Shot (nivå 2) og Gamechanger (nivå 3), begge tak 4. Nivå 4 gir en tredje PlayStyle (tak 4) som ingen kilde navngir; den er utelatt. Svakfot +3 (maks 4) og skill moves +3 (maks 4) står hos fcdata. GK er utelukket hos fcdata. Én per klubb (timesaver). Én kamp per nivå. Tallene er summen etter alle fem nivåer.",
+      "req": {
+        "max_ovr": 83,
+        "max_pace": 85,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "CAM",
+          "ST"
+        ],
+        "not_positions": [
+          "CM",
+          "LM",
+          "RM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          35,
+          86
+        ],
+        "wf": [
+          3,
+          4
+        ],
+        "sm": [
+          3,
+          4
+        ],
+        "psp": [
+          [
+            "Incisive Pass",
+            1
+          ]
+        ],
+        "ps": [
+          [
+            "Low Driven Shot",
+            4
+          ],
+          [
+            "Gamechanger",
+            4
+          ]
+        ],
+        "stats": {
+          "long_shots": [
+            30,
+            83
+          ],
+          "long_passing": [
+            40,
+            84
+          ],
+          "ball_control": [
+            40,
+            88
+          ],
+          "sprint_speed": [
+            30,
+            84
+          ],
+          "vision": [
+            50,
+            87
+          ],
+          "curve": [
+            40,
+            85
+          ],
+          "dribbling": [
+            40,
+            86
+          ],
+          "positioning": [
+            30,
+            86
+          ],
+          "crossing": [
+            50,
+            80
+          ],
+          "agility": [
+            40,
+            84
+          ],
+          "composure": [
+            40,
+            85
+          ],
+          "finishing": [
+            40,
+            83
+          ],
+          "fk_accuracy": [
+            45,
+            80
+          ],
+          "balance": [
+            40,
+            85
+          ],
+          "acceleration": [
+            30,
+            84
+          ],
+          "shot_power": [
+            40,
+            84
+          ],
+          "short_passing": [
+            40,
+            87
+          ],
+          "reactions": [
+            40,
+            86
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2872-pocket-watcher/",
+        "https://timesaver.gg/blog/fc-27-cutting-edge-pocket-watcher-evo-worth-thunderstruck-tokens",
+        "https://www.futnext.com/evolutions/pocket-watcher/2872"
+      ]
+    },
+    {
+      "key": "cutting_edge",
+      "name": "Cutting Edge",
+      "cost": "600 Thunderstruck-tokens (Token Store)",
+      "until": "2026-12-11T17:59Z",
+      "note": "Krav og tall for alle fem nivåer er like hos fcdata og timesaver.gg (som har tallene fra FUT.GG). Kostnad 600 tokens hos timesaver og i fcdata-listen; fcdatas detaljside viser «Free», trolig feil. Evoen kan startes til 25.12 kl. 18:00 UTC (timesaver; fcdata «25 Dec 2026, 19:00» uten tidssone), men tokenbutikken stenger 11.12 kl. 17:59 UTC (timesaver, via FUT.GG), så fristen er satt til det tidligste. Navnene står bare hos timesaver: PlayStyle+ Quick Step (nivå 1, tak 1), PlayStyles Finesse Shot (nivå 2), Gamechanger (nivå 3) og Technical (nivå 4), alle tak 4. Svakfot +3 (maks 4) og skill moves +3 (maks 4) står hos fcdata. Ingen kilde oppgir Pace-krav. ST og GK er utelukket hos fcdata; alternative posisjoner teller (timesaver). Én per klubb. Én kamp per nivå. Tallene er summen etter alle fem nivåer.",
+      "req": {
+        "max_ovr": 83,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LW"
+        ],
+        "not_positions": [
+          "ST",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          20,
+          87
+        ],
+        "wf": [
+          3,
+          4
+        ],
+        "sm": [
+          3,
+          4
+        ],
+        "psp": [
+          [
+            "Quick Step",
+            1
+          ]
+        ],
+        "ps": [
+          [
+            "Finesse Shot",
+            4
+          ],
+          [
+            "Gamechanger",
+            4
+          ],
+          [
+            "Technical",
+            4
+          ]
+        ],
+        "stats": {
+          "long_shots": [
+            25,
+            86
+          ],
+          "short_passing": [
+            15,
+            84
+          ],
+          "reactions": [
+            15,
+            82
+          ],
+          "sprint_speed": [
+            25,
+            88
+          ],
+          "volleys": [
+            25,
+            84
+          ],
+          "long_passing": [
+            15,
+            83
+          ],
+          "ball_control": [
+            25,
+            86
+          ],
+          "positioning": [
+            25,
+            86
+          ],
+          "penalties": [
+            25,
+            85
+          ],
+          "curve": [
+            25,
+            88
+          ],
+          "dribbling": [
+            25,
+            85
+          ],
+          "finishing": [
+            25,
+            85
+          ],
+          "vision": [
+            25,
+            87
+          ],
+          "agility": [
+            25,
+            88
+          ],
+          "composure": [
+            15,
+            82
+          ],
+          "acceleration": [
+            25,
+            88
+          ],
+          "shot_power": [
+            25,
+            85
+          ],
+          "crossing": [
+            20,
+            83
+          ],
+          "balance": [
+            20,
+            86
+          ],
+          "stamina": [
+            20,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2873-cutting-edge/",
+        "https://timesaver.gg/blog/fc-27-cutting-edge-pocket-watcher-evo-worth-thunderstruck-tokens",
+        "https://www.futnext.com/evolutions/cutting-edge/2873"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -4100,11 +4406,6 @@
       "dato": "2026-11-14"
     },
     {
-      "navn": "Pocket Watcher / Cutting Edge",
-      "grunn": "Bare fcdata (frist 25.12). Navnene på PlayStyle+ og de tre PlayStylene står fortsatt ikke på detaljsiden (sjekket 25.11), og futnext-detaljsidene kunne ikke hentes. Venter på en andre kilde.",
-      "dato": "2026-11-25"
-    },
-    {
       "navn": "Thunderstruck Regular/Premium Badge / Yellow Lightning / Pink Lightning",
       "grunn": "Bare merke/kortdesign, ingen tall (fcdata: «+1020/+1021 Cosmetic»).",
       "dato": "2026-11-20"
@@ -4115,9 +4416,14 @@
       "dato": "2026-11-21"
     },
     {
-      "navn": "Switchback Dynamo",
-      "grunn": "Ny 25.11, bare fcdata (gratis, LB/RB, maks 74 OVR, Pace maks 86, frist «5 Dec 2026, 19:00»). Detaljsiden viser ikke navnene på PlayStylen, PlayStyle+ eller de to nye posisjonene, og ingen andre kilder (FUT.GG, FUTBIN, futmind, Destructoid) har den ennå. Venter på en andre kilde.",
-      "dato": "2026-11-25"
+      "navn": "Static Surge / Tempest Strike",
+      "grunn": "Nye 26.11 (Thunderstruck, LB/RB, gratis, frist «30 Nov 2026, 19:00»), bare fcdata. Detaljsidene navngir ikke PlayStylene, og svakfot/skill moves er motstridende på siden. Ingen andre kilder (FUT.GG, futmind, timesaver, unplayed.gg) har dem ennå. Venter på en andre kilde.",
+      "dato": "2026-11-26"
+    },
+    {
+      "navn": "Positional Excellence",
+      "grunn": "Bare rarity («full chemistry in position»), ingen tall (fcdata: «No decoded upgrades»).",
+      "dato": "2026-11-26"
     }
   ]
 }
