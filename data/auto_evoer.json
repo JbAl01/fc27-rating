@@ -1,6 +1,6 @@
 {
   "_info": "Evoer lagt inn av den daglige sjekken (Claude). Hver evo er sjekket mot minst to kilder, se sources. Din egen data/mine_evoer.json overstyrer evoer med samme key. Sjekk med: py -m fcrating evo-sjekk",
-  "_sjekket": "2026-11-26T18:15:00Z",
+  "_sjekket": "2026-11-27T18:30:00Z",
   "evos": [
     {
       "key": "quick_step_ps",
@@ -1884,121 +1884,6 @@
       "sources": [
         "https://www.fut.gg/evolutions/2651-intercept/",
         "https://www.futevolution.com/evolutions"
-      ]
-    },
-    {
-      "key": "under_the_lights",
-      "name": "Under the Lights",
-      "cost": "10 000 mynter / 100 FC Points",
-      "until": "2026-11-20T18:00Z",
-      "note": "Kom 10.11. Fire nivåer. Krav og tall er like hos fcdata (detaljside med alle nivåer) og futminds forside-kort (10.11). Fristen 20.11 kl. 18:00 (fullføres innen 27.11 kl. 18:00) står hos fcdata uten tidssone; futminds nedtelling (9 d 23 t ved 18-tiden 10.11) gir samme tid i UTC. PlayStyle-navnene (Pinged Pass, First Touch, Technical, én per nivå 2–4) står bare hos futmind, rekkefølgen per nivå er antatt ut fra listen; taket 3 hos begge (fcdata: «1 PlayStyle↗3»). futminds egen evoside og artikkel kunne ikke hentes. Repeterbar og roller er ikke oppgitt. Tallene er summen etter alle nivåer.",
-      "req": {
-        "max_ovr": 80,
-        "max_pace": 86,
-        "max_ps": 7,
-        "max_psp": 0,
-        "positions": [
-          "CAM",
-          "CM"
-        ],
-        "max_stats": {
-          "strength": 82
-        }
-      },
-      "up": {
-        "ovr": [
-          3,
-          83
-        ],
-        "sm": [
-          1,
-          4
-        ],
-        "wf": [
-          1,
-          4
-        ],
-        "stats": {
-          "acceleration": [
-            6,
-            80
-          ],
-          "long_shots": [
-            10,
-            82
-          ],
-          "agility": [
-            18,
-            85
-          ],
-          "dribbling": [
-            18,
-            85
-          ],
-          "sprint_speed": [
-            6,
-            81
-          ],
-          "vision": [
-            10,
-            82
-          ],
-          "balance": [
-            18,
-            84
-          ],
-          "composure": [
-            15,
-            83
-          ],
-          "positioning": [
-            10,
-            82
-          ],
-          "short_passing": [
-            10,
-            84
-          ],
-          "reactions": [
-            12,
-            82
-          ],
-          "stamina": [
-            10,
-            82
-          ],
-          "shot_power": [
-            10,
-            82
-          ],
-          "curve": [
-            10,
-            82
-          ],
-          "ball_control": [
-            18,
-            85
-          ]
-        },
-        "ps": [
-          [
-            "Pinged Pass",
-            3
-          ],
-          [
-            "First Touch",
-            3
-          ],
-          [
-            "Technical",
-            3
-          ]
-        ]
-      },
-      "sources": [
-        "https://fcdata.io/fc27/evolutions/2850-under-the-lights/",
-        "https://futmind.com/",
-        "https://fcdata.io/evolutions/"
       ]
     },
     {
@@ -4332,6 +4217,930 @@
         "https://timesaver.gg/blog/fc-27-cutting-edge-pocket-watcher-evo-worth-thunderstruck-tokens",
         "https://www.futnext.com/evolutions/cutting-edge/2873"
       ]
+    },
+    {
+      "key": "static_surge",
+      "name": "Static Surge",
+      "cost": "gratis",
+      "until": "2026-11-30T18:00Z",
+      "note": "Thunderstruck-evo for LB/RB (første steg før Tempest Strike, men ingen kilde sier at den kreves). Krav (maks 81 OVR, LB/RB, ikke CB/CDM, maks Pace 86, maks 7 PlayStyles, ingen PlayStyle+) og alle attributtøkninger med tak for alle fem nivåer er like hos fcdata og FUT.GG. fcdata utelukker også GK. Ingen av sidene navngir PlayStylen på nivå 2 (bare taket 3); navnet Jockey er tatt fra beskrivelsen hos fcdata, usikkert. Svakfot +2 (maks 3) og skill moves +2 (maks 3) står i oppgraderingslinjene hos begge, men kortbildet hos fcdata viser 3★/4★, så dette er litt usikkert. Frist: fcdata «30 Nov 2026, 19:00» uten tidssone, satt til 18:00 UTC (samme som Tempest Strike hos futmind). 5 kamper. Repeterbar ikke oppgitt. Tallene er summen etter alle nivåer.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CB",
+          "CDM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          20,
+          82
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Jockey",
+            3
+          ]
+        ],
+        "stats": {
+          "crossing": [
+            25,
+            78
+          ],
+          "balance": [
+            20,
+            78
+          ],
+          "interceptions": [
+            25,
+            76
+          ],
+          "jumping": [
+            20,
+            76
+          ],
+          "short_passing": [
+            25,
+            76
+          ],
+          "reactions": [
+            25,
+            77
+          ],
+          "heading_accuracy": [
+            20,
+            73
+          ],
+          "stamina": [
+            30,
+            84
+          ],
+          "acceleration": [
+            20,
+            82
+          ],
+          "long_passing": [
+            20,
+            75
+          ],
+          "ball_control": [
+            25,
+            76
+          ],
+          "def_awareness": [
+            25,
+            75
+          ],
+          "strength": [
+            20,
+            75
+          ],
+          "sprint_speed": [
+            20,
+            83
+          ],
+          "curve": [
+            20,
+            75
+          ],
+          "dribbling": [
+            25,
+            76
+          ],
+          "standing_tackle": [
+            25,
+            77
+          ],
+          "aggression": [
+            20,
+            77
+          ],
+          "vision": [
+            20,
+            73
+          ],
+          "agility": [
+            20,
+            78
+          ],
+          "composure": [
+            20,
+            78
+          ],
+          "sliding_tackle": [
+            25,
+            77
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2896-static-surge/",
+        "https://www.fut.gg/evolutions/2695-static-surge/"
+      ]
+    },
+    {
+      "key": "tempest_strike",
+      "name": "Tempest Strike",
+      "cost": "gratis",
+      "until": "2026-11-30T18:00Z",
+      "note": "Thunderstruck-evo for LB/RB (naturlig steg etter Static Surge, som slutter på 82). Krav (maks 82 OVR, LB/RB, ikke CB/CDM, maks Pace 86, maks 7 PlayStyles, ingen PlayStyle+) og alle tall for fem nivåer er like hos fcdata, FUT.GG og futmind. fcdata utelukker også GK. PlayStyles (tak 3): Quick Step (nivå 2), Whipped Pass (nivå 3), Intercept (nivå 4), navngitt hos futmind og i fcdatas beskrivelse; FUT.GG viser bare taket 3. Svakfot +1 (maks 4), skill moves +1 (maks 4) (fcdatas kortbilde viser 3★ etter nivå 3, oppgraderingslinjene hos alle tre sier 4). Frist: futmind «2026-11-30 18:00 UTC», fcdata «30 Nov 2026, 19:00» uten tidssone. Repeterbar ikke oppgitt.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 86,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LB",
+          "RB"
+        ],
+        "not_positions": [
+          "CB",
+          "CDM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          12,
+          85
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "Quick Step",
+            3
+          ],
+          [
+            "Whipped Pass",
+            3
+          ],
+          [
+            "Intercept",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            12,
+            88
+          ],
+          "curve": [
+            13,
+            79
+          ],
+          "dribbling": [
+            10,
+            82
+          ],
+          "standing_tackle": [
+            13,
+            84
+          ],
+          "aggression": [
+            13,
+            79
+          ],
+          "vision": [
+            10,
+            78
+          ],
+          "agility": [
+            9,
+            83
+          ],
+          "composure": [
+            11,
+            81
+          ],
+          "sliding_tackle": [
+            25,
+            82
+          ],
+          "crossing": [
+            12,
+            83
+          ],
+          "balance": [
+            9,
+            83
+          ],
+          "interceptions": [
+            13,
+            83
+          ],
+          "jumping": [
+            13,
+            84
+          ],
+          "short_passing": [
+            10,
+            83
+          ],
+          "reactions": [
+            10,
+            84
+          ],
+          "heading_accuracy": [
+            10,
+            74
+          ],
+          "stamina": [
+            12,
+            86
+          ],
+          "acceleration": [
+            12,
+            87
+          ],
+          "long_passing": [
+            11,
+            78
+          ],
+          "ball_control": [
+            10,
+            83
+          ],
+          "def_awareness": [
+            15,
+            83
+          ],
+          "strength": [
+            15,
+            78
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2895-tempest-strike/",
+        "https://www.fut.gg/evolutions/2694-tempest-strike/",
+        "https://futmind.com/articles/23120/ea-sports-fc-27-ultimate-team-tempest-strike-evolution-guide"
+      ]
+    },
+    {
+      "key": "galvanic_wing",
+      "name": "Galvanic Wing",
+      "cost": "150 000 mynter eller 750 FC Points (fcdata; futmind sier gratis)",
+      "until": "2026-12-07T18:00Z",
+      "note": "Thunderstruck-evo for LW/LM. Krav (maks 83 OVR, LW/LM, ikke CB/RB/CM, maks Pace 90, maks 7 PlayStyles, ingen PlayStyle+) og alle attributtøkninger med tak for fem nivåer er like hos fcdata og futmind. fcdata utelukker også GK. Kostnaden er uklar: fcdata viser 150 000 mynter / 750 points, futmind sier gratis. PlayStyle+ Finesse Shot+ (nivå 1). PlayStyles (tak 5): Rapid og Low Driven Shot (nivå 2), Power Shot (nivå 3), Trickster (nivå 4), Gamechanger (nivå 5); Low Driven Shot og Gamechanger er bare navngitt hos futmind (fcdata viser antall og tak). Svakfot +2 (maks 4), skill moves +2 (maks 4). Startfrist 7.12 kl. 18:00 UTC (futmind; fcdata «7 Dec 2026, 19:00» uten tidssone), fullføring 14.12. 5 kamper.",
+      "req": {
+        "max_ovr": 83,
+        "max_pace": 90,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LW",
+          "LM"
+        ],
+        "not_positions": [
+          "CB",
+          "RB",
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          20,
+          87
+        ],
+        "wf": [
+          2,
+          4
+        ],
+        "sm": [
+          2,
+          4
+        ],
+        "psp": [
+          [
+            "Finesse Shot",
+            1
+          ]
+        ],
+        "ps": [
+          [
+            "Rapid",
+            5
+          ],
+          [
+            "Low Driven Shot",
+            5
+          ],
+          [
+            "Power Shot",
+            5
+          ],
+          [
+            "Trickster",
+            5
+          ],
+          [
+            "Gamechanger",
+            5
+          ]
+        ],
+        "stats": {
+          "finishing": [
+            40,
+            84
+          ],
+          "short_passing": [
+            35,
+            80
+          ],
+          "reactions": [
+            35,
+            86
+          ],
+          "strength": [
+            40,
+            76
+          ],
+          "shot_power": [
+            40,
+            84
+          ],
+          "long_passing": [
+            35,
+            87
+          ],
+          "ball_control": [
+            35,
+            88
+          ],
+          "acceleration": [
+            35,
+            91
+          ],
+          "long_shots": [
+            40,
+            83
+          ],
+          "curve": [
+            40,
+            87
+          ],
+          "dribbling": [
+            35,
+            88
+          ],
+          "sprint_speed": [
+            35,
+            91
+          ],
+          "vision": [
+            35,
+            85
+          ],
+          "agility": [
+            35,
+            90
+          ],
+          "composure": [
+            35,
+            84
+          ],
+          "positioning": [
+            35,
+            84
+          ],
+          "crossing": [
+            35,
+            87
+          ],
+          "balance": [
+            35,
+            88
+          ],
+          "stamina": [
+            35,
+            82
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2906-galvanic-wing/",
+        "https://futmind.com/articles/23248/ea-sports-fc-27-ultimate-team-galvanic-wing-evolution-guide"
+      ]
+    },
+    {
+      "key": "struck_by_lightning",
+      "name": "Struck by Lightning",
+      "cost": "gratis",
+      "until": "2026-12-07T18:00Z",
+      "note": "Thunderstruck-evo for LW/RW. Krav (maks 74 OVR, LW/RW, ikke CM/ST, maks Pace 88, maks 7 PlayStyles, ingen PlayStyle+) og alle tall for fem nivåer er like hos fcdata og futmind. fcdata utelukker også GK. PlayStyles (tak 3): Technical (nivå 2) og Rapid (nivå 3). Skill moves +2 (maks 3). Treningsleir, ingen kamper. Startfrist 7.12 kl. 18:00 UTC (futmind; fcdata «7 Dec 2026, 19:00» uten tidssone), fullføring 14.12. Repeterbar ikke oppgitt.",
+      "req": {
+        "max_ovr": 74,
+        "max_pace": 88,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "LW",
+          "RW"
+        ],
+        "not_positions": [
+          "CM",
+          "ST",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          30,
+          81
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "Technical",
+            3
+          ],
+          [
+            "Rapid",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            30,
+            79
+          ],
+          "penalties": [
+            30,
+            75
+          ],
+          "long_passing": [
+            30,
+            82
+          ],
+          "ball_control": [
+            30,
+            80
+          ],
+          "strength": [
+            30,
+            60
+          ],
+          "finishing": [
+            30,
+            80
+          ],
+          "vision": [
+            30,
+            81
+          ],
+          "curve": [
+            30,
+            83
+          ],
+          "dribbling": [
+            30,
+            82
+          ],
+          "aggression": [
+            30,
+            70
+          ],
+          "shot_power": [
+            30,
+            81
+          ],
+          "crossing": [
+            30,
+            82
+          ],
+          "agility": [
+            30,
+            83
+          ],
+          "composure": [
+            30,
+            80
+          ],
+          "acceleration": [
+            30,
+            88
+          ],
+          "long_shots": [
+            30,
+            80
+          ],
+          "fk_accuracy": [
+            30,
+            82
+          ],
+          "balance": [
+            30,
+            82
+          ],
+          "jumping": [
+            30,
+            60
+          ],
+          "sprint_speed": [
+            30,
+            88
+          ],
+          "volleys": [
+            30,
+            75
+          ],
+          "short_passing": [
+            30,
+            83
+          ],
+          "reactions": [
+            30,
+            79
+          ],
+          "stamina": [
+            30,
+            70
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2898-struck-by-lightning/",
+        "https://futmind.com/articles/23254/ea-sports-fc-27-ultimate-team-struck-by-lightning-evolution-guide"
+      ]
+    },
+    {
+      "key": "initial_spark",
+      "name": "Initial Spark",
+      "cost": "gratis",
+      "until": "2026-12-01T18:00Z",
+      "note": "Flash-evo (Thunderstruck, 27.11) for ST/LW/RW, første av tre (Initial Spark → Rolling Thunder → Final Bolt etter OVR-tak, men ingen kilde sier at de kreves). Krav (maks 81 OVR, ST/LW/RW, ikke CM, maks Pace 88, maks 7 PlayStyles, ingen PlayStyle+) og alle tall for fire nivåer er like hos fcdata og futmind. fcdata utelukker også GK. PlayStylen First Touch (tak 3, nivå 2) er bare navngitt hos futmind. Svakfot +2 (maks 3), skill moves +2 (maks 3). Frist 1.12 kl. 18:00 UTC (futmind; fcdata «1 Dec 2026, 19:00» uten tidssone). 4 kamper.",
+      "req": {
+        "max_ovr": 81,
+        "max_pace": 88,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST",
+          "LW",
+          "RW"
+        ],
+        "not_positions": [
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          15,
+          82
+        ],
+        "wf": [
+          2,
+          3
+        ],
+        "sm": [
+          2,
+          3
+        ],
+        "ps": [
+          [
+            "First Touch",
+            3
+          ]
+        ],
+        "stats": {
+          "positioning": [
+            25,
+            80
+          ],
+          "volleys": [
+            20,
+            72
+          ],
+          "curve": [
+            20,
+            76
+          ],
+          "ball_control": [
+            25,
+            82
+          ],
+          "strength": [
+            20,
+            70
+          ],
+          "finishing": [
+            25,
+            79
+          ],
+          "vision": [
+            20,
+            74
+          ],
+          "agility": [
+            20,
+            82
+          ],
+          "dribbling": [
+            25,
+            82
+          ],
+          "acceleration": [
+            20,
+            83
+          ],
+          "shot_power": [
+            20,
+            80
+          ],
+          "crossing": [
+            20,
+            76
+          ],
+          "balance": [
+            20,
+            80
+          ],
+          "composure": [
+            20,
+            78
+          ],
+          "sprint_speed": [
+            20,
+            84
+          ],
+          "long_shots": [
+            20,
+            76
+          ],
+          "short_passing": [
+            25,
+            77
+          ],
+          "reactions": [
+            25,
+            80
+          ],
+          "stamina": [
+            25,
+            78
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2907-initial-spark/",
+        "https://futmind.com/articles/23249/ea-sports-fc-27-initial-spark-evolutions-best-players-requirements-and-upgrades"
+      ]
+    },
+    {
+      "key": "rolling_thunder",
+      "name": "Rolling Thunder",
+      "cost": "gratis",
+      "until": "2026-12-01T18:00Z",
+      "note": "Flash-evo (Thunderstruck, 27.11) for ST/LW/RW, andre av tre. Krav (maks 82 OVR, ST/LW/RW, ikke CM, maks Pace 88, maks 7 PlayStyles, ingen PlayStyle+) og alle tall for tre nivåer er like hos fcdata og futmind. fcdata utelukker også GK. PlayStylen Rapid (tak 3, nivå 2) er bare navngitt hos futmind. Svakfot +1 (maks 4). Frist 1.12 kl. 18:00 UTC (futmind; fcdata «1 Dec 2026, 19:00» uten tidssone). 3 kamper.",
+      "req": {
+        "max_ovr": 82,
+        "max_pace": 88,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST",
+          "LW",
+          "RW"
+        ],
+        "not_positions": [
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          83
+        ],
+        "wf": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "Rapid",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            9,
+            86
+          ],
+          "shot_power": [
+            8,
+            82
+          ],
+          "short_passing": [
+            7,
+            79
+          ],
+          "reactions": [
+            7,
+            82
+          ],
+          "composure": [
+            8,
+            80
+          ],
+          "positioning": [
+            8,
+            82
+          ],
+          "long_shots": [
+            8,
+            78
+          ],
+          "agility": [
+            8,
+            84
+          ],
+          "ball_control": [
+            8,
+            84
+          ],
+          "acceleration": [
+            9,
+            83
+          ],
+          "finishing": [
+            10,
+            81
+          ],
+          "vision": [
+            8,
+            76
+          ],
+          "balance": [
+            8,
+            82
+          ],
+          "dribbling": [
+            8,
+            84
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2909-rolling-thunder/",
+        "https://futmind.com/articles/23250/ea-sports-fc-27-rolling-thunder-evolution-guide-best-players-and-upgrades"
+      ]
+    },
+    {
+      "key": "final_bolt",
+      "name": "Final Bolt",
+      "cost": "gratis",
+      "until": "2026-12-01T18:00Z",
+      "note": "Flash-evo (Thunderstruck, 27.11) for ST/LW/RW, tredje av tre. Krav (maks 83 OVR, ST/LW/RW, ikke CM, maks Pace 88, maks 7 PlayStyles, ingen PlayStyle+) og alle tall for fire nivåer er like hos fcdata og futmind. fcdata utelukker også GK. PlayStyles (tak 3): Technical (nivå 2) og Finesse Shot (nivå 3), bare navngitt hos futmind. Skill moves +1 (maks 4). Frist 1.12 kl. 18:00 UTC (futmind; fcdata «1 Dec 2026, 19:00» uten tidssone). 4 kamper.",
+      "req": {
+        "max_ovr": 83,
+        "max_pace": 88,
+        "max_ps": 7,
+        "max_psp": 0,
+        "positions": [
+          "ST",
+          "LW",
+          "RW"
+        ],
+        "not_positions": [
+          "CM",
+          "GK"
+        ]
+      },
+      "up": {
+        "ovr": [
+          8,
+          85
+        ],
+        "sm": [
+          1,
+          4
+        ],
+        "ps": [
+          [
+            "Technical",
+            3
+          ],
+          [
+            "Finesse Shot",
+            3
+          ]
+        ],
+        "stats": {
+          "sprint_speed": [
+            9,
+            89
+          ],
+          "long_shots": [
+            9,
+            84
+          ],
+          "short_passing": [
+            7,
+            80
+          ],
+          "reactions": [
+            8,
+            85
+          ],
+          "jumping": [
+            12,
+            82
+          ],
+          "positioning": [
+            8,
+            85
+          ],
+          "volleys": [
+            12,
+            84
+          ],
+          "curve": [
+            9,
+            85
+          ],
+          "ball_control": [
+            7,
+            86
+          ],
+          "stamina": [
+            9,
+            85
+          ],
+          "finishing": [
+            10,
+            85
+          ],
+          "vision": [
+            9,
+            80
+          ],
+          "agility": [
+            7,
+            86
+          ],
+          "dribbling": [
+            7,
+            86
+          ],
+          "strength": [
+            12,
+            80
+          ],
+          "acceleration": [
+            9,
+            86
+          ],
+          "shot_power": [
+            8,
+            88
+          ],
+          "crossing": [
+            9,
+            85
+          ],
+          "balance": [
+            7,
+            84
+          ],
+          "composure": [
+            8,
+            82
+          ]
+        }
+      },
+      "sources": [
+        "https://fcdata.io/fc27/evolutions/2908-final-bolt/",
+        "https://futmind.com/articles/23251/ea-sports-fc-27-ultimate-team-final-bolt-evolution-guide"
+      ]
     }
   ],
   "_hoppet_over": [
@@ -4414,11 +5223,6 @@
       "navn": "Blue Lightning / Green Lightning",
       "grunn": "Bare kortdesign, ingen tall (fcdata: «+1018/+1019 Cosmetic», 10 000 mynter / 100 FC Points; futmind: «cosmetic Evolution»).",
       "dato": "2026-11-21"
-    },
-    {
-      "navn": "Static Surge / Tempest Strike",
-      "grunn": "Nye 26.11 (Thunderstruck, LB/RB, gratis, frist «30 Nov 2026, 19:00»), bare fcdata. Detaljsidene navngir ikke PlayStylene, og svakfot/skill moves er motstridende på siden. Ingen andre kilder (FUT.GG, futmind, timesaver, unplayed.gg) har dem ennå. Venter på en andre kilde.",
-      "dato": "2026-11-26"
     },
     {
       "navn": "Positional Excellence",
